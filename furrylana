@@ -2,6 +2,6 @@
 
 cwd=$(dirname "${BASH_SOURCE[0]}")
 pwd=$(pwd)
-cd "$cwd/FurryLana/bin/Debug/"
+cd "$cwd/FurryLana/Build/Debug"
 mono FurryLana.exe
 cd "$pwd"

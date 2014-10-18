@@ -36,7 +36,26 @@ namespace FurryLana.Base.Application
         #region IApplication implementation
 
         public void Run ()
+        {   
+            Window.Run ();
+        }
+
+        public IGameManager  GameManager  { get; protected set; }
+        public IWindow       Window       { get; protected set; }
+        public IInputManager InputManager { get; protected set; }
+
+        #endregion
+
+        #region IResource implementation
+
+        public void Init ()
         {
+            Loaded = false;
+            //InputManager = new InputManager ();TODO
+            //GameManager = new GameManager ();TODO
+
+            Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080),
+                                 "FurryLana", new DummyGraphicsResource ()/*GameManager.RootGame*/);
             CreateTable ();
             
             Window.WindowResize = (GlfwWindowPtr window, int width, int height) => {
@@ -111,27 +130,7 @@ namespace FurryLana.Base.Application
                     Window.ToggleFullscreen ();
                 }
             };
-            
-            Window.Run ();
-            
-            Console.SetCursorPosition (0, origRow + 17);
-        }
 
-        public IGameManager  GameManager  { get; protected set; }
-        public IWindow       Window       { get; protected set; }
-        public IInputManager InputManager { get; protected set; }
-
-        #endregion
-
-        #region IResource implementation
-
-        public void Init ()
-        {
-            Loaded = false;
-            //InputManager = new InputManager ();TODO
-            //GameManager = new GameManager ();TODO
-            Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080),
-                                 "FurryLana", new DummyGraphicsResource ()/*GameManager.RootGame*/);
             Window.Init ();
             //InputManager.Init ();
             //GameManager.Init ();
@@ -152,6 +151,7 @@ namespace FurryLana.Base.Application
             //GameManager.Destroy ();
             //InputManager.Destroy ();
             Window.Destroy ();
+            Console.SetCursorPosition (0, origRow + 17);
         }
 
         public bool Loaded { get; protected set; }

@@ -23,35 +23,6 @@
 
 namespace FurryLana.Engine.Graphics.Interfaces
 {
-    public interface IGraphicsResource : IDrawable, IUpdate, IFrameSyncedUpdate
-    {
-        /// <summary>
-        /// Init this resource. Initialzes the resource within a valid gl context.
-        /// 
-        /// Why not use the constructor?:
-        /// The constructor may not have a valid gl context to initialize gl components.
-        /// </summary>
-        void Init ();
-        
-        /// <summary>
-        /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
-        /// </summary>
-        void Load ();
-        
-        /// <summary>
-        /// Destroy this resource.
-        /// 
-        /// Why not IDisposable:
-        /// IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
-        /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
-        /// context.
-        /// </summary>
-        void Destroy ();
-        
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="FurryLana.Interfaces.IGraphicsResource"/> is loaded.
-        /// </summary>
-        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
-        bool Loaded { get; }
-    }
+    public interface IGraphicsResource : IDrawable, IUpdate, IFrameSyncedUpdate, IResource
+    {}
 }

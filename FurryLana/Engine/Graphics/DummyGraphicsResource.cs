@@ -1,5 +1,5 @@
 //
-//  IEntity.cs
+//  DummyGraphicsResource.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -21,30 +21,51 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FurryLana.Engine.Graphics.Interfaces;
-using FurryLana.Engine.Interaction;
-using FurryLana.Engine.Model.Interfaces;
 
-namespace FurryLana.Engine.Entity.Interfaces
+namespace FurryLana.Engine.Graphics
 {
-    /// <summary>
-    /// Entity interface.
-    /// </summary>
-    public interface IEntity : IGraphicsResource, IPosition, IRotation
+    public class DummyGraphicsResource : IGraphicsResource
     {
-        /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
-        /// <value>The name.</value>
-        string Name { get; set; }
-        /// <summary>
-        /// Gets the ID.
-        /// </summary>
-        /// <value>The ID.</value>
-        int ID { get; }
-        /// <summary>
-        /// Gets the model.
-        /// </summary>
-        /// <value>The model.</value>
-        IModel Model { get; }
+        #region IResource implementation
+
+        public void Init ()
+        {
+            Loaded = false;
+        }
+
+        public void Load ()
+        {
+            Loaded = true;
+        }
+
+        public void Destroy ()
+        {
+            Loaded = false;
+        }
+
+        public bool Loaded { get; protected set; }
+
+        #endregion
+
+        #region IFrameSyncedUpdate implementation
+
+        public void FrameSyncedUpdate (float deltaTime)
+        {}
+
+        #endregion
+
+        #region IUpdate implementation
+
+        public void Update (int deltaTime)
+        {}
+
+        #endregion
+
+        #region IDrawable implementation
+
+        public void Draw ()
+        {}
+
+        #endregion
     }
 }

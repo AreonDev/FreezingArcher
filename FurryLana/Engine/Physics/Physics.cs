@@ -29,8 +29,8 @@ namespace FurryLara.Engine.Physics
     /// </summary>
     public class Physics
     {
-        public const int G = 9.81d;
-        const double timeBaseFactor = 0.001;
+        public const float G = 9.81f;
+        const float timeBaseFactor = 0.001f;
 
         /// <summary>
         /// Adds the gravity.
@@ -39,7 +39,9 @@ namespace FurryLara.Engine.Physics
         /// <param name="deltaTime">Delta time.</param>
         public static void AddGravity (IMoveable m, int deltaTime)
         {
-            m.Speed.Y -= G * deltaTime * timeBaseFactor;
+            var v = m.Speed;
+            v.Y -= G * deltaTime * timeBaseFactor;
+            m.Speed = v;
         }
     }
 }

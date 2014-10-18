@@ -28,6 +28,6 @@ namespace FurryLana.Engine.Graphics.Interfaces
         /// <summary>
         /// This update is called before every frame draw inside a gl context.
         /// </summary>
-        void FrameSyncedUpdate ();
+        void FrameSyncedUpdate (float deltaTime);
     }
 }

@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DFD52B9F-EB73-4A71-94F5-01F95237C339}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>FurryLana.Math</RootNamespace>
-    <AssemblyName>Math</AssemblyName>
+    <ProjectGuid>{DAD798AA-F43A-4470-A081-28EF938A21D3}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>FurryLana.Game</RootNamespace>
+    <AssemblyName>FurryLana</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -18,8 +18,13 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Externalconsole>True</Externalconsole>
     <PlatformTarget>x86</PlatformTarget>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* lib/&quot;" workingdir="${TargetDir}" />
+      </CustomCommands>
+    </CustomCommands>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -27,17 +32,39 @@
     <OutputPath>..\Build\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Externalconsole>True</Externalconsole>
     <PlatformTarget>x86</PlatformTarget>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* lib/&quot;" workingdir="${TargetDir}" />
+      </CustomCommands>
+    </CustomCommands>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="AngleEnum.cs" />
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>move "$(TargetDir)*.dll* lib\"</PostBuildEvent>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\Base\Base.csproj">
+      <Project>{F05A6D55-8FA2-4F0E-B330-AD52305DA877}</Project>
+      <Name>Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{E430674D-98AB-474A-BC42-A6DDE78623C7}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Math\Math.csproj">
+      <Project>{DFD52B9F-EB73-4A71-94F5-01F95237C339}</Project>
+      <Name>Math</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
@@ -47,4 +74,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
 </Project>

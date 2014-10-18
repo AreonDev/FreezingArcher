@@ -1,5 +1,5 @@
 //
-//  IMap.cs
+//  IModel.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,12 +20,11 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FurryLana.Engine.Model.Interfaces;
 
-namespace FurryLana.Engine.Map.Interfaces
+namespace FurryLana.Engine.Model.Interfaces
 {
-    public interface IMap
+    public interface IModel
     {
-        IModel Model { get; }
+        //TODO
     }
 }

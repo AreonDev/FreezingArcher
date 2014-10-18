@@ -24,9 +24,9 @@ using Pencil.Gaming;
 using Pencil.Gaming.MathUtils;
 using FurryLana.Engine.Graphics.Interfaces;
 
-namespace FurryLana.Base.Application.IApplication
+namespace FurryLana.Base.Application.Interfaces
 {
-    public interface IWindow
+    public interface IWindow : IResource
     {
         Vector2i             WindowedSize   { get; set; }
         Vector2i             FullscreenSize { get; set; }

@@ -1,5 +1,5 @@
 //
-//  IMap.cs
+//  IApplication.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,12 +20,17 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FurryLana.Engine.Model.Interfaces;
+using FurryLana.Engine.Game.Interfaces;
+using FurryLana.Engine.Input.Interfaces;
+using FurryLana.Engine.Graphics.Interfaces;
 
-namespace FurryLana.Engine.Map.Interfaces
+namespace FurryLana.Base.Application.Interfaces
 {
-    public interface IMap
+    public interface IApplication : IResource
     {
-        IModel Model { get; }
+        IGameManager GameManager { get; }
+        IWindow Window { get; }
+        IInputManager InputManager { get; }
+        void Run ();
     }
 }

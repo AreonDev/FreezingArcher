@@ -1,28 +1,16 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Math/AngleEnum.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Game/Main.cs">
     <Files>
-      <File FileName="Engine/Entity/Interfaces/IEntity.cs" Line="47" Column="9" />
-      <File FileName="Engine/Game/Interfaces/ILevel.cs" Line="23" Column="44" />
-      <File FileName="Engine/Map/Interfaces/IMap.cs" Line="30" Column="2" />
-      <File FileName="Math/AngleEnum.cs" Line="24" Column="19" />
+      <File FileName="Game/Main.cs" Line="24" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Base" expanded="True" />
-          <Node name="Engine" expanded="True">
-            <Node name="Entity" expanded="True">
-              <Node name="Interfaces" expanded="True" />
-            </Node>
-            <Node name="Game" expanded="True">
-              <Node name="Interfaces" expanded="True" />
-            </Node>
-            <Node name="Map" expanded="True">
-              <Node name="Interfaces" expanded="True" />
-            </Node>
-          </Node>
-          <Node name="Math" expanded="True" selected="True" />
+          <Node name="Engine" expanded="True" />
+          <Node name="Game" expanded="True" selected="True" />
+          <Node name="Math" expanded="True" />
         </State>
       </Pad>
       <Pad Id="ClassPad">

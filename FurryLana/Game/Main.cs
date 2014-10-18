@@ -1,5 +1,5 @@
 //
-//  IApplication.cs
+//  Main.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,15 +20,22 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FurryLana.Engine.Game.Interfaces;
+using FurryLana.Base.Application.Interfaces;
+using FurryLana.Base.Application;
 
-namespace FurryLana.Base.Application.IApplication
+namespace FurryLana.Game
 {
-    public interface IApplication
+    class FurryLana
     {
-        IGameManager GameManager { get; }
-        IWindow Window { get; }
-        IInputManager InputManager { get; }
-        void Run ();
+        public static IApplication Application;
+
+        public static void Main (string[] args)
+        {
+            Application = new TestApplication ();
+            Application.Init ();
+            Application.Load ();
+            Application.Run ();
+            Application.Destroy ();
+        }
     }
 }

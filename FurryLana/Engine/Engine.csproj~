@@ -63,10 +63,11 @@
     <Compile Include="Map\Interfaces\IMap.cs" />
     <Compile Include="Model\Interfaces\IModel.cs" />
     <Compile Include="Input\Interfaces\IInputManager.cs" />
-    <Compile Include="Graphics\Interfaces\IResource.cs" />
-    <Compile Include="Graphics\DummyGraphicsResource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>del "$(TargetDir)*.dll"</PostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Folder Include="Camera\" />
     <Folder Include="Camera\Interfaces\" />

@@ -1,0 +1,37 @@
+#Geben Sie Dateimuster an,
+#die Git ignorieren soll.
+
+#Beispiel:
+#Windows Thumbnails ignorieren
+Thumbs.db
+
+#Visual Studio Dateien ignorieren
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+[Bb]in
+[Dd]ebug*/
+*.lib
+*.sbr
+obj/
+[Rr]elease*/
+_ReSharper*/
+#ignore thumbnails created by windows
+#Ignore files build by Visual Studio
+[Tt]est[Rr]esult*
+
+*.userprefs
+[bB]inaries

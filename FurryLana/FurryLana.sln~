@@ -1,0 +1,73 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base", "Base.csproj", "{F05A6D55-8FA2-4F0E-B330-AD52305DA877}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{E430674D-98AB-474A-BC42-A6DDE78623C7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Debug|x86.ActiveCfg = Debug|x86
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Debug|x86.Build.0 = Debug|x86
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Release|x86.ActiveCfg = Release|x86
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Release|x86.Build.0 = Release|x86
+		{F05A6D55-8FA2-4F0E-B330-AD52305DA877}.Debug|x86.ActiveCfg = Debug|x86
+		{F05A6D55-8FA2-4F0E-B330-AD52305DA877}.Debug|x86.Build.0 = Debug|x86
+		{F05A6D55-8FA2-4F0E-B330-AD52305DA877}.Release|x86.ActiveCfg = Release|x86
+		{F05A6D55-8FA2-4F0E-B330-AD52305DA877}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Base.csproj
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.inheritsSet = null
+		$1.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $2
+		$2.AnonymousMethodBraceStyle = NextLine
+		$2.StatementBraceStyle = NextLine
+		$2.ElseNewLinePlacement = NewLine
+		$2.ElseIfNewLinePlacement = NewLine
+		$2.CatchNewLinePlacement = NewLine
+		$2.FinallyNewLinePlacement = NewLine
+		$2.BeforeIndexerDeclarationBracket = False
+		$2.AfterDelegateDeclarationParameterComma = True
+		$2.inheritsSet = Mono
+		$2.inheritsScope = text/x-csharp
+		$2.scope = text/x-csharp
+		$0.TextStylePolicy = $3
+		$3.FileWidth = 120
+		$3.TabWidth = 8
+		$3.inheritsSet = VisualStudio
+		$3.inheritsScope = text/plain
+		$3.scope = text/plain
+		$0.TextStylePolicy = $4
+		$4.inheritsSet = null
+		$4.scope = application/config+xml
+		$0.XmlFormattingPolicy = $5
+		$5.inheritsSet = null
+		$5.scope = application/config+xml
+		$0.TextStylePolicy = $6
+		$6.FileWidth = 120
+		$6.TabWidth = 8
+		$6.inheritsSet = VisualStudio
+		$6.inheritsScope = text/plain
+		$6.scope = application/xml
+		$0.XmlFormattingPolicy = $7
+		$7.DefaultFormat = $8
+		$8.ContentIndentString = "    "
+		$8.AttributesIndentString = "    "
+		$7.inheritsSet = Mono
+		$7.inheritsScope = application/xml
+		$7.scope = application/xml
+		$0.TextStylePolicy = $9
+		$9.inheritsSet = null
+		$9.scope = application/octet-stream
+		$0.StandardHeader = $10
+		$10.Text = @\n ${FileName}\n \n Author:\n      ${AuthorName} <${AuthorEmail}>\n\n Copyright (c) ${Year} ${CopyrightHolder}\n\n This program is free software; you can redistribute it and/or modify\n it under the terms of the GNU General Public License as published by\n the Free Software Foundation; either version 2 of the License, or\n (at your option) any later version.\n\n This program is distributed in the hope that it will be useful,\n but WITHOUT ANY WARRANTY; without even the implied warranty of\n MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n GNU General Public License for more details.\n \n You should have received a copy of the GNU General Public License\n along with this program; if not, write to the Free Software\n Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA\n
+		$10.IncludeInNewFiles = True
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,7 @@
+#! /bin/bash
+
+cwd=$(dirname "${BASH_SOURCE[0]}")
+pwd=$(pwd)
+cd "$cwd/FurryLana/bin/Debug/"
+mono FurryLana.exe
+cd "$pwd"

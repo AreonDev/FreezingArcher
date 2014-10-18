@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E430674D-98AB-474A-BC42-A6DDE78623C7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>FurryLana.Engine</RootNamespace>
+    <AssemblyName>Engine</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>False</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="rm NVorbis.dll Pencil.Gaming.dll Pencil.Gaming.dll.config" workingdir="${TargetDir}" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>True</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="rm NVorbis.dll Pencil.Gaming.dll Pencil.Gaming.dll.config" workingdir="${TargetDir}" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Pencil.Gaming">
+      <HintPath>..\Base\lib\Pencil.Gaming.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Camera\Interfaces\ICamera.cs" />
+    <Compile Include="Camera\Interfaces\ICameraManageable.cs" />
+    <Compile Include="Camera\Interfaces\ICameraManager.cs" />
+    <Compile Include="Game\Interfaces\IGame.cs" />
+    <Compile Include="Game\Interfaces\IGameManager.cs" />
+    <Compile Include="Graphics\Interfaces\IDrawable.cs" />
+    <Compile Include="Graphics\Interfaces\IFrameSyncedUpdate.cs" />
+    <Compile Include="Graphics\Interfaces\IUpdate.cs" />
+    <Compile Include="Graphics\Interfaces\IGraphicsResource.cs" />
+    <Compile Include="Interaction\IGoTo.cs" />
+    <Compile Include="Interaction\IMoveable.cs" />
+    <Compile Include="Interaction\IPosition.cs" />
+    <Compile Include="Interaction\IRotateable.cs" />
+    <Compile Include="Interaction\IRotation.cs" />
+    <Compile Include="Interaction\IKeyboardInteractable.cs" />
+    <Compile Include="Interaction\IMouseInteractable.cs" />
+    <Compile Include="Interaction\IDirectionMoveable.cs" />
+    <Compile Include="Interaction\IDirectionRotateable.cs" />
+    <Compile Include="Entity\Interfaces\IEntity.cs" />
+    <Compile Include="Physics\Physics.cs" />
+    <Compile Include="Game\Interfaces\ILevel.cs" />
+    <Compile Include="Game\Interfaces\ILevelManager.cs" />
+    <Compile Include="Map\Interfaces\IMap.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>del "$(TargetDir)*.dll"</PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Camera\" />
+    <Folder Include="Camera\Interfaces\" />
+    <Folder Include="Game\" />
+    <Folder Include="Game\Interfaces\" />
+    <Folder Include="Interaction\" />
+    <Folder Include="Entity\" />
+    <Folder Include="Entity\Interfaces\" />
+    <Folder Include="Physics\" />
+    <Folder Include="Map\" />
+    <Folder Include="Map\Interfaces\" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+          <TextStylePolicy inheritsSet="null" scope="text/x-csharp" />
+          <CSharpFormattingPolicy AnonymousMethodBraceStyle="NextLine" StatementBraceStyle="NextLine" ElseNewLinePlacement="NewLine" ElseIfNewLinePlacement="NewLine" CatchNewLinePlacement="NewLine" FinallyNewLinePlacement="NewLine" BeforeIndexerDeclarationBracket="False" AfterDelegateDeclarationParameterComma="True" inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
+          <TextStylePolicy FileWidth="120" TabWidth="8" inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/plain" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Math\Math.csproj">
+      <Project>{DFD52B9F-EB73-4A71-94F5-01F95237C339}</Project>
+      <Name>Math</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

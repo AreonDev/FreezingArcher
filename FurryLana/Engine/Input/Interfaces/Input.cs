@@ -28,12 +28,39 @@ namespace FurryLana.Engine.Input.Interfaces
     /// </summary>
     public enum Input
     {
+        /// <summary>
+        /// Mouse move input.
+        /// </summary>
         MouseMove,
+
+        /// <summary>
+        /// Left mouse button input.
+        /// </summary>
         LeftMouseButton,
+
+        /// <summary>
+        /// Right mouse button input.
+        /// </summary>
         RightMouseButton,
+
+        /// <summary>
+        /// Middle mouse button input.
+        /// </summary>
         MiddleMouseButton,
+
+        /// <summary>
+        /// A keyboard key.
+        /// </summary>
         A,
+
+        /// <summary>
+        /// B keyboard key.
+        /// </summary>
         B,
+
+        /// <summary>
+        /// C keyboard key.
+        /// </summary>
         C
         //... TODO
     }

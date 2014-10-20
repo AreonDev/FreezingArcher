@@ -39,6 +39,8 @@
       </CustomCommands>
     </CustomCommands>
     <ConsolePause>False</ConsolePause>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <GenerateDocumentation>True</GenerateDocumentation>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -54,7 +54,7 @@ namespace FurryLana.Engine.Graphics.Interfaces
         
         /// <summary>
         /// Gets a value indicating whether this
-        /// <see cref="FurryLana.Interfaces.IGraphicsResource"/> is loaded.
+        /// <see cref="FurryLana.Engine.Graphics.Interfaces.IResource"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         bool Loaded { get; }

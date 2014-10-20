@@ -28,7 +28,14 @@ namespace FurryLana.Math
     /// </summary>
     public enum AngleEnum
     {
+        /// <summary>
+        /// Angle in degree.
+        /// </summary>
         Degree,
+
+        /// <summary>
+        /// Angle in radian.
+        /// </summary>
         Radian
     }
 }

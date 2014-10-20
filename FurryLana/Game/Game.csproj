@@ -13,7 +13,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>..\Build\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -21,10 +21,12 @@
     <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* lib/&quot;" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/&quot;" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
     <ConsolePause>False</ConsolePause>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <GenerateDocumentation>True</GenerateDocumentation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -35,7 +37,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* lib/&quot;" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/&quot;" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
     <ConsolePause>False</ConsolePause>
@@ -50,7 +52,7 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>move "$(TargetDir)*.dll* lib\"</PostBuildEvent>
+    <PostBuildEvent>move "$(TargetDir)*.dll* $(TargetDir)*.xml lib\"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

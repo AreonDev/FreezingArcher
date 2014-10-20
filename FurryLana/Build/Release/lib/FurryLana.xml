@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FurryLana</name>
+    </assembly>
+    <members>
+        <member name="T:FurryLana.Game.FurryLana">
+            <summary>
+            FurryLana static main class.
+            </summary>
+        </member>
+        <member name="F:FurryLana.Game.FurryLana.Application">
+            <summary>
+            Global static instance of the application.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Game.FurryLana.Main(System.String[])">
+            <summary>
+            The entry point of the program, where the program control starts and ends.
+            </summary>
+            <param name="args">The command-line arguments.</param>
+        </member>
+    </members>
+</doc>

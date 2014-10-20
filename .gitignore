@@ -20,6 +20,8 @@ Thumbs.db
 *.tlh
 *.bak
 *.cache
+*.mdb
+*.vshost*
 *.ilk
 *.log
 #[Bb]in

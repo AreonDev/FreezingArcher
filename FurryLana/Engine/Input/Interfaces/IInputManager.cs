@@ -20,12 +20,21 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using System;
 using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Input.Interfaces
 {
+    /// <summary>
+    /// Input manager interface.
+    /// </summary>
     public interface IInputManager : IResource
     {
-        //TODO
+        /// <summary>
+        /// Registers for input.
+        /// </summary>
+        /// <param name="desc">Input description.</param>
+        /// <param name="action">Action.</param>
+        void RegisterForInput (IInputDescription desc, Action action);
     }
 }

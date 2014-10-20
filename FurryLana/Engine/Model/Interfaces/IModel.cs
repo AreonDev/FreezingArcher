@@ -23,6 +23,9 @@
 
 namespace FurryLana.Engine.Model.Interfaces
 {
+    /// <summary>
+    /// Model interface.
+    /// </summary>
     public interface IModel
     {
         //TODO

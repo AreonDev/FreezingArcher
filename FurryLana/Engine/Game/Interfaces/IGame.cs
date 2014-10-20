@@ -28,11 +28,33 @@ using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Game.Interfaces
 {
-    public interface IGame : IGraphicsResource
+    /// <summary>
+    /// Game interface.
+    /// </summary>
+    public interface IGame : IGraphicsResource, IManageable
     {
+        /// <summary>
+        /// Gets the level manager.
+        /// </summary>
+        /// <value>The level manager.</value>
         ILevelManager  LevelManager { get; }
+
+        /// <summary>
+        /// Gets the camera manager.
+        /// </summary>
+        /// <value>The camera manager.</value>
         ICameraManager CameraManager { get; }
+
+        /// <summary>
+        /// Gets the entities.
+        /// </summary>
+        /// <value>The entities.</value>
         List<IEntity>  Entities { get; }
+
+        /// <summary>
+        /// Gets or sets the projection matrix.
+        /// </summary>
+        /// <value>The projection matrix.</value>
         Matrix         ProjectionMatrix { get; set; }
     }
 }

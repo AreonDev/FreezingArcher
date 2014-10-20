@@ -23,8 +23,14 @@
 
 namespace FurryLana.Engine.Interaction
 {
+    /// <summary>
+    /// Mouse interactable interface.
+    /// </summary>
     public interface IMouseInteractable
     {
+        /// <summary>
+        /// Registers mouse input in the input manager.
+        /// </summary>
         void DoRegisterMouseInput ();
     }
 }

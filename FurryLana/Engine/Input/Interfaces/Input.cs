@@ -1,5 +1,5 @@
 //
-//  ILevel.cs
+//  Input.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,20 +20,21 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FurryLana.Engine.Graphics.Interfaces;
-using FurryLana.Engine.Map.Interfaces;
 
-namespace FurryLana.Engine.Game.Interfaces
+namespace FurryLana.Engine.Input.Interfaces
 {
     /// <summary>
-    /// Level interface.
+    /// Input.
     /// </summary>
-    public interface ILevel : IGraphicsResource, IManageable
+    public enum Input
     {
-        /// <summary>
-        /// Gets the map.
-        /// </summary>
-        /// <value>The map.</value>
-        IMap Map { get; }
+        MouseMove,
+        LeftMouseButton,
+        RightMouseButton,
+        MiddleMouseButton,
+        A,
+        B,
+        C
+        //... TODO
     }
 }

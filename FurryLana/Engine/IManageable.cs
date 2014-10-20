@@ -1,5 +1,5 @@
 //
-//  ILevel.cs
+//  IManageable.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,20 +20,18 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FurryLana.Engine.Graphics.Interfaces;
-using FurryLana.Engine.Map.Interfaces;
 
-namespace FurryLana.Engine.Game.Interfaces
+namespace FurryLana.Engine
 {
     /// <summary>
-    /// Level interface.
+    /// Manageable interface.
     /// </summary>
-    public interface ILevel : IGraphicsResource, IManageable
+    public interface IManageable
     {
         /// <summary>
-        /// Gets the map.
+        /// Gets or sets the name.
         /// </summary>
-        /// <value>The map.</value>
-        IMap Map { get; }
+        /// <value>The name.</value>
+        string Name { get; set; }
     }
 }

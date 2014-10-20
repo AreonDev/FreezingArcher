@@ -25,12 +25,15 @@ using Pencil.Gaming.MathUtils;
 
 namespace FurryLana.Engine.Interaction
 {
+    /// <summary>
+    /// Rotateable interface.
+    /// </summary>
     public interface IRotateable : IRotation
     {
         /// <summary>
         /// Rotate to given angles
         /// </summary>
-        /// <param name="rotation">rotation x,y,z</param>
+        /// <param name="rotation">Rotation x,y,z</param>
         /// <param name="angle">Angle format</param>
         void RotTo (Vector3 rotation, AngleEnum angle = AngleEnum.Degree);
     }

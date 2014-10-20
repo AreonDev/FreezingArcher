@@ -26,6 +26,9 @@ using FurryLana.Engine.Interaction;
 
 namespace FurryLana.Engine.Camera.Interfaces
 {
+    /// <summary>
+    /// Camera interface.
+    /// </summary>
     public interface ICamera : IPosition, IGraphicsResource, ICameraManageable
     {
         /// <summary>

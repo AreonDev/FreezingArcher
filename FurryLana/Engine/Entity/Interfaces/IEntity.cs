@@ -29,13 +29,8 @@ namespace FurryLana.Engine.Entity.Interfaces
     /// <summary>
     /// Entity interface.
     /// </summary>
-    public interface IEntity : IGraphicsResource, IPosition, IRotation
+    public interface IEntity : IGraphicsResource, IPosition, IRotation, IManageable
     {
-        /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
-        /// <value>The name.</value>
-        string Name { get; set; }
         /// <summary>
         /// Gets the ID.
         /// </summary>

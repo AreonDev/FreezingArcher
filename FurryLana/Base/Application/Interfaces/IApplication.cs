@@ -26,11 +26,32 @@ using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Base.Application.Interfaces
 {
+    /// <summary>
+    /// Application interface.
+    /// </summary>
     public interface IApplication : IResource
     {
+        /// <summary>
+        /// Gets the game manager.
+        /// </summary>
+        /// <value>The game manager.</value>
         IGameManager GameManager { get; }
+
+        /// <summary>
+        /// Gets the window.
+        /// </summary>
+        /// <value>The window.</value>
         IWindow Window { get; }
+
+        /// <summary>
+        /// Gets the input manager.
+        /// </summary>
+        /// <value>The input manager.</value>
         IInputManager InputManager { get; }
+
+        /// <summary>
+        /// Run this instance.
+        /// </summary>
         void Run ();
     }
 }

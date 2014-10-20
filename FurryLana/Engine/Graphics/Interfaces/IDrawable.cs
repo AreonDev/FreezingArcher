@@ -23,8 +23,14 @@
 
 namespace FurryLana.Engine.Graphics.Interfaces
 {
+    /// <summary>
+    /// Drawable interface.
+    /// </summary>
     public interface IDrawable
     {
+        /// <summary>
+        /// Draw this instance.
+        /// </summary>
         void Draw ();
     }
 }

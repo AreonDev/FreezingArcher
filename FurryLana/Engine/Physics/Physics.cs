@@ -29,7 +29,14 @@ namespace FurryLara.Engine.Physics
     /// </summary>
     public class Physics
     {
+        /// <summary>
+        /// Gravitation.
+        /// </summary>
         public const float G = 9.81f;
+
+        /// <summary>
+        /// The time base factor.
+        /// </summary>
         const float timeBaseFactor = 0.001f;
 
         /// <summary>

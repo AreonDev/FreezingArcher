@@ -1,5 +1,5 @@
 //
-//  ILevel.cs
+//  IManager.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,20 +20,45 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using System.Collections;
 using FurryLana.Engine.Graphics.Interfaces;
-using FurryLana.Engine.Map.Interfaces;
 
-namespace FurryLana.Engine.Game.Interfaces
+namespace FurryLana.Engine
 {
     /// <summary>
-    /// Level interface.
+    /// Manager interface.
     /// </summary>
-    public interface ILevel : IGraphicsResource, IManageable
+    public interface IManager : IResource, IEnumerable
     {
         /// <summary>
-        /// Gets the map.
+        /// Add the specified item.
         /// </summary>
-        /// <value>The map.</value>
-        IMap Map { get; }
+        /// <param name="item">Item.</param>
+        void Add (IManageable item);
+
+        /// <summary>
+        /// Remove the specified item.
+        /// </summary>
+        /// <param name="item">Item.</param>
+        void Remove (IManageable item);
+
+        /// <summary>
+        /// Remove by the specified name.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        void Remove (string name);
+
+        /// <summary>
+        /// Gets the IManageable by name.
+        /// </summary>
+        /// <returns>The IManageable.</returns>
+        /// <param name="name">Name.</param>
+        IManageable GetByName (string name);
+
+        /// <summary>
+        /// Gets the count.
+        /// </summary>
+        /// <value>The count.</value>
+        int Count { get; }
     }
 }

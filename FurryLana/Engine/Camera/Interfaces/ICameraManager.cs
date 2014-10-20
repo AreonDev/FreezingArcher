@@ -25,7 +25,10 @@ using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Camera.Interfaces
 {
-    public interface ICameraManager : IGraphicsResource, ICameraManageable
+    /// <summary>
+    /// Camera manager interface.
+    /// </summary>
+    public interface ICameraManager : IGraphicsResource, ICameraManageable, IManager
     {
         /// <summary>
         /// Get the active camera
@@ -84,31 +87,6 @@ namespace FurryLana.Engine.Camera.Interfaces
         /// Set ActiveCamera to the previous camera in the collection
         /// </summary>
         void Prev ();
-            
-        /// <summary>
-        /// Add a camera to the manager.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="camera">The camera.</param>
-        void Add (ICameraManageable camera);
-            
-        /// <summary>
-        /// Remove camera by name.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        void Remove (string name);
-            
-        /// <summary>
-        /// Remove the specified camera.
-        /// </summary>
-        /// <param name="camera">The camera.</param>
-        void Remove (ICameraManageable camera);
-            
-        /// <summary>
-        /// Get the count of cameras in this manager
-        /// </summary>
-        /// <value>The count.</value>
-        int Count { get; }
             
         /// <summary>
         /// Get or set the currently active camera.

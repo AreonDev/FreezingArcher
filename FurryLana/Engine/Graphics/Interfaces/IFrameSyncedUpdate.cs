@@ -23,11 +23,15 @@
 
 namespace FurryLana.Engine.Graphics.Interfaces
 {
+    /// <summary>
+    /// Frame synced update interface.
+    /// </summary>
     public interface IFrameSyncedUpdate
     {
         /// <summary>
         /// This update is called before every frame draw inside a gl context.
         /// </summary>
+        /// <param name="deltaTime">Time delta.</param>
         void FrameSyncedUpdate (float deltaTime);
     }
 }

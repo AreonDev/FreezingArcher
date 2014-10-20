@@ -1,5 +1,5 @@
 //
-//  ILevel.cs
+//  IInputDescription.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,20 +20,19 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FurryLana.Engine.Graphics.Interfaces;
-using FurryLana.Engine.Map.Interfaces;
+using System.Collections.Generic;
 
-namespace FurryLana.Engine.Game.Interfaces
+namespace FurryLana.Engine.Input.Interfaces
 {
     /// <summary>
-    /// Level interface.
+    /// Input description interface.
     /// </summary>
-    public interface ILevel : IGraphicsResource, IManageable
+    public interface IInputDescription
     {
         /// <summary>
-        /// Gets the map.
+        /// Gets the inputs.
         /// </summary>
-        /// <value>The map.</value>
-        IMap Map { get; }
+        /// <value>The inputs.</value>
+        List<Input> inputs { get; }
     }
 }

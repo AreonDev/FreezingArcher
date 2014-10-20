@@ -65,6 +65,10 @@
     <Compile Include="Input\Interfaces\IInputManager.cs" />
     <Compile Include="Graphics\Interfaces\IResource.cs" />
     <Compile Include="Graphics\DummyGraphicsResource.cs" />
+    <Compile Include="Input\Interfaces\IInputDescription.cs" />
+    <Compile Include="Input\Interfaces\Input.cs" />
+    <Compile Include="IManager.cs" />
+    <Compile Include="IManageable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

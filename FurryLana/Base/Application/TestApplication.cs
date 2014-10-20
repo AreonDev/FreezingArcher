@@ -31,23 +31,49 @@ using FurryLana.Base.Application.Interfaces;
 
 namespace FurryLana.Base.Application
 {
+    /// <summary>
+    /// Test application.
+    /// </summary>
     public class TestApplication : IApplication
     {
         #region IApplication implementation
 
+        /// <summary>
+        /// Run this instance.
+        /// </summary>
         public void Run ()
         {   
             Window.Run ();
         }
 
+        /// <summary>
+        /// Gets the game manager.
+        /// </summary>
+        /// <value>The game manager.</value>
         public IGameManager  GameManager  { get; protected set; }
+
+        /// <summary>
+        /// Gets the window.
+        /// </summary>
+        /// <value>The window.</value>
         public IWindow       Window       { get; protected set; }
+
+        /// <summary>
+        /// Gets the input manager.
+        /// </summary>
+        /// <value>The input manager.</value>
         public IInputManager InputManager { get; protected set; }
 
         #endregion
 
         #region IResource implementation
 
+        /// <summary>
+        /// Init this resource. Initialzes the resource within a valid gl context.
+        /// 
+        /// Why not use the constructor?:
+        /// The constructor may not have a valid gl context to initialize gl components.
+        /// </summary>
         public void Init ()
         {
             Loaded = false;
@@ -134,8 +160,14 @@ namespace FurryLana.Base.Application
             Window.Init ();
             //InputManager.Init ();
             //GameManager.Init ();
+
+            if (NeedsLoad != null)
+                NeedsLoad (this, null);
         }
 
+        /// <summary>
+        /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
+        /// </summary>
         public void Load ()
         {
             Loaded = false;
@@ -145,6 +177,14 @@ namespace FurryLana.Base.Application
             Loaded = true;
         }
 
+        /// <summary>
+        /// Destroy this resource.
+        /// 
+        /// Why not IDisposable:
+        /// IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
+        /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+        /// context.
+        /// </summary>
         public void Destroy ()
         {
             Loaded = false;
@@ -154,12 +194,30 @@ namespace FurryLana.Base.Application
             Console.SetCursorPosition (0, origRow + 17);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this
+        /// <see cref="FurryLana.Base.Application.TestApplication"/> is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }
+        
+        /// <summary>
+        /// Fire this event when you need the Load function to be called.
+        /// For example after init or when new resources needs to be loaded.
+        /// </summary>
+        /// <value>NeedsLoad handlers.</value>
+        public EventHandler NeedsLoad { get; set; }
 
         #endregion
 
+        /// <summary>
+        /// The original command line row.
+        /// </summary>
         protected int origRow;
-        
+
+        /// <summary>
+        /// Creates the event table.
+        /// </summary>
         protected void CreateTable ()
         {
             Console.Clear ();
@@ -184,7 +242,13 @@ namespace FurryLana.Base.Application
                     "+---------------+-------------------------------------------------------+\n";
             Console.Write (s);
         }
-        
+
+        /// <summary>
+        /// Writes s at x and y.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
+        /// <param name="s">The string to write.</param>
         protected void WriteAt (int x, int y, string s)
         {
             Console.SetCursorPosition (x, origRow + y);

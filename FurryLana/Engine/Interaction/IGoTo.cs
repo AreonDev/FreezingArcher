@@ -24,6 +24,9 @@ using Pencil.Gaming.MathUtils;
 
 namespace FurryLana.Engine.Interaction
 {
+    /// <summary>
+    /// Go to interface.
+    /// </summary>
     public interface IGoTo : IPosition
     {
         /// <summary>

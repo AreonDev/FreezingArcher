@@ -23,6 +23,9 @@
 
 namespace FurryLana.Engine.Graphics.Interfaces
 {
+    /// <summary>
+    /// Graphics resource interface.
+    /// </summary>
     public interface IGraphicsResource : IDrawable, IUpdate, IFrameSyncedUpdate, IResource
     {}
 }

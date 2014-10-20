@@ -23,8 +23,14 @@
 
 namespace FurryLana.Engine.Interaction
 {
+    /// <summary>
+    /// Keyboard interactable interface.
+    /// </summary>
     public interface IKeyboardInteractable
     {
+        /// <summary>
+        /// Registers keyboard input in the input manager.
+        /// </summary>
         void DoRegisterKeyboardInput ();
     }
 }

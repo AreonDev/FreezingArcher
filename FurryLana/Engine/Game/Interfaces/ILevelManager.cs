@@ -20,18 +20,13 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System.Collections;
 using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Game.Interfaces
 {
-    public interface ILevelManager : IEnumerable, IGraphicsResource
-    {
-        void Add (ILevel level);
-        void Remove (string name);
-        void Remove (ILevel level);
-        ILevel GetAt (int index);
-        ILevel GetByName (string name);
-        int Count { get; }
-    }
+    /// <summary>
+    /// Level manager interface.
+    /// </summary>
+    public interface ILevelManager : IGraphicsResource, IManager
+    {}
 }

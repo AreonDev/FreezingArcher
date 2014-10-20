@@ -20,9 +20,13 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using System;
 
 namespace FurryLana.Engine.Graphics.Interfaces
 {
+    /// <summary>
+    /// Resource interface.
+    /// </summary>
     public interface IResource
     {
         /// <summary>
@@ -49,9 +53,17 @@ namespace FurryLana.Engine.Graphics.Interfaces
         void Destroy ();
         
         /// <summary>
-        /// Gets a value indicating whether this <see cref="FurryLana.Interfaces.IGraphicsResource"/> is loaded.
+        /// Gets a value indicating whether this
+        /// <see cref="FurryLana.Interfaces.IGraphicsResource"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         bool Loaded { get; }
+
+        /// <summary>
+        /// Fire this event when you need the Load function to be called.
+        /// For example after init or when new resources needs to be loaded.
+        /// </summary>
+        /// <value>NeedsLoad handlers.</value>
+        EventHandler NeedsLoad { get; set; }
     }
 }

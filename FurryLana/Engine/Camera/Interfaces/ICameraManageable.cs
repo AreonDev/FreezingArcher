@@ -23,7 +23,10 @@
 
 namespace FurryLana.Engine.Camera.Interfaces
 {
-    public interface ICameraManageable
+    /// <summary>
+    /// Camera manageable interface.
+    /// </summary>
+    public interface ICameraManageable : IManageable
     {
         /// <summary>
         /// This method is called when the camera manager switches to this subject.
@@ -34,11 +37,5 @@ namespace FurryLana.Engine.Camera.Interfaces
         /// This method is called when the camera manager switches from this subject to another one.
         /// </summary>
         void Disable ();
-
-        /// <summary>
-        /// The Name is an unique identifier used to identify the subject inside a camera manager.
-        /// </summary>
-        /// <value>The name.</value>
-        string Name { get; set; }
     }
 }

@@ -25,10 +25,20 @@ using FurryLana.Base.Application;
 
 namespace FurryLana.Game
 {
-    class FurryLana
+    /// <summary>
+    /// FurryLana static main class.
+    /// </summary>
+    public class FurryLana
     {
+        /// <summary>
+        /// Global static instance of the application.
+        /// </summary>
         public static IApplication Application;
 
+        /// <summary>
+        /// The entry point of the program, where the program control starts and ends.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
         public static void Main (string[] args)
         {
             Application = new TestApplication ();

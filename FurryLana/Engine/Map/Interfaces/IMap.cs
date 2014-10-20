@@ -24,8 +24,15 @@ using FurryLana.Engine.Model.Interfaces;
 
 namespace FurryLana.Engine.Map.Interfaces
 {
+    /// <summary>
+    /// Map interface.
+    /// </summary>
     public interface IMap
     {
+        /// <summary>
+        /// Gets the model.
+        /// </summary>
+        /// <value>The model.</value>
         IModel Model { get; }
     }
 }

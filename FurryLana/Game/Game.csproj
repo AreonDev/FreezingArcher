@@ -21,7 +21,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/&quot;" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/ &amp;&amp; mv lib/FurryLana.xml .&quot;" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
     <ConsolePause>False</ConsolePause>
@@ -37,7 +37,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/&quot;" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/ &amp;&amp; mv lib/FurryLana.xml .&quot;" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
     <ConsolePause>False</ConsolePause>
@@ -52,7 +52,7 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>move "$(TargetDir)*.dll* $(TargetDir)*.xml lib\"</PostBuildEvent>
+    <PostBuildEvent>move "$(TargetDir)*.dll* $(TargetDir)*.xml lib\ &amp;&amp; move $(TargetDir)lib\FurryLana.xml $(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

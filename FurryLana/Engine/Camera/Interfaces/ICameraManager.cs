@@ -28,7 +28,7 @@ namespace FurryLana.Engine.Camera.Interfaces
     /// <summary>
     /// Camera manager interface.
     /// </summary>
-    public interface ICameraManager : IGraphicsResource, ICameraManageable, IManager
+    public interface ICameraManager : IGraphicsResource, ICameraManageable, IManager<ICameraManageable>
     {
         /// <summary>
         /// Get the active camera

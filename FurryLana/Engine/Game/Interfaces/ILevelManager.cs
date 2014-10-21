@@ -27,6 +27,6 @@ namespace FurryLana.Engine.Game.Interfaces
     /// <summary>
     /// Level manager interface.
     /// </summary>
-    public interface ILevelManager : IGraphicsResource, IManager
+    public interface ILevelManager : IGraphicsResource, IManager<ILevel>
     {}
 }

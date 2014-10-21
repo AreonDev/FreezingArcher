@@ -1,5 +1,5 @@
 //
-//  IManager.cs
+//  IResourceManager.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,46 +20,33 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System.Collections;
-using FurryLana.Engine.Graphics.Interfaces;
+using FurryLana.Engine.Input.Interfaces;
+using FurryLana.Engine.Model.Interfaces;
+using FurryLana.Engine.Texture.Interfaces;
 
-namespace FurryLana.Engine
+namespace FurryLana.Engine.Game.Interfaces
 {
     /// <summary>
-    /// Manager interface.
+    /// Resource manager interface.
     /// </summary>
-    public interface IManager<T> : IResource, IEnumerable
-        where T : IManageable
+    public interface IResourceManager
     {
         /// <summary>
-        /// Add the specified item.
+        /// Gets the input manager.
         /// </summary>
-        /// <param name="item">Item.</param>
-        void Add (T item);
+        /// <value>The input manager.</value>
+        IInputManager   InputManager   { get; }
 
         /// <summary>
-        /// Remove the specified item.
+        /// Gets the texture manager.
         /// </summary>
-        /// <param name="item">Item.</param>
-        void Remove (T item);
+        /// <value>The texture manager.</value>
+        ITextureManager TextureManager { get; }
 
         /// <summary>
-        /// Remove by the specified name.
+        /// Gets the model manager.
         /// </summary>
-        /// <param name="name">Name.</param>
-        void Remove (string name);
-
-        /// <summary>
-        /// Gets the IManageable by name.
-        /// </summary>
-        /// <returns>The IManageable.</returns>
-        /// <param name="name">Name.</param>
-        T GetByName (string name);
-
-        /// <summary>
-        /// Gets the count.
-        /// </summary>
-        /// <value>The count.</value>
-        int Count { get; }
+        /// <value>The model manager.</value>
+        IModelManager   ModelManager   { get; }
     }
 }

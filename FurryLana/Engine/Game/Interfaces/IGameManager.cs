@@ -26,7 +26,7 @@ namespace FurryLana.Engine.Game.Interfaces
     /// <summary>
     /// Game manager interface.
     /// </summary>
-    public interface IGameManager : IManager
+    public interface IGameManager : IManager<IGame>
     {
         /// <summary>
         /// Gets the root game.

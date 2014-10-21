@@ -1,5 +1,5 @@
 //
-//  IManager.cs
+//  IModelManager.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,46 +20,29 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System.Collections;
-using FurryLana.Engine.Graphics.Interfaces;
 
-namespace FurryLana.Engine
+namespace FurryLana.Engine.Model.Interfaces
 {
     /// <summary>
-    /// Manager interface.
+    /// Model manager interface.
     /// </summary>
-    public interface IManager<T> : IResource, IEnumerable
-        where T : IManageable
+    public interface IModelManager : IManager<IModel>
     {
         /// <summary>
-        /// Add the specified item.
+        /// Loads models from location.
         /// </summary>
-        /// <param name="item">Item.</param>
-        void Add (T item);
+        /// <param name="location">Location.</param>
+        void LoadFromLocation (string location);
 
         /// <summary>
-        /// Remove the specified item.
+        /// Loads models from xml.
         /// </summary>
-        /// <param name="item">Item.</param>
-        void Remove (T item);
+        /// <param name="filepath">Path to xml file.</param>
+        void LoadFromXML (string filepath);
 
         /// <summary>
-        /// Remove by the specified name.
+        /// Clear all models from model manager.
         /// </summary>
-        /// <param name="name">Name.</param>
-        void Remove (string name);
-
-        /// <summary>
-        /// Gets the IManageable by name.
-        /// </summary>
-        /// <returns>The IManageable.</returns>
-        /// <param name="name">Name.</param>
-        T GetByName (string name);
-
-        /// <summary>
-        /// Gets the count.
-        /// </summary>
-        /// <value>The count.</value>
-        int Count { get; }
+        void Clear ();
     }
 }

@@ -1,5 +1,5 @@
 //
-//  IManager.cs
+//  ITexture.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,46 +20,44 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System.Collections;
+using System.Drawing;
 using FurryLana.Engine.Graphics.Interfaces;
 
-namespace FurryLana.Engine
+namespace FurryLana.Engine.Texture.Interfaces
 {
     /// <summary>
-    /// Manager interface.
+    /// Texture interface.
     /// </summary>
-    public interface IManager<T> : IResource, IEnumerable
-        where T : IManageable
+    public interface ITexture : IResource, IManageable
     {
         /// <summary>
-        /// Add the specified item.
+        /// Gets or sets the width.
         /// </summary>
-        /// <param name="item">Item.</param>
-        void Add (T item);
+        /// <value>The width.</value>
+        int Width  { get; set; }
 
         /// <summary>
-        /// Remove the specified item.
+        /// Gets or sets the height.
         /// </summary>
-        /// <param name="item">Item.</param>
-        void Remove (T item);
+        /// <value>The height.</value>
+        int Height { get; set; }
 
         /// <summary>
-        /// Remove by the specified name.
+        /// Gets or sets the depth.
         /// </summary>
-        /// <param name="name">Name.</param>
-        void Remove (string name);
+        /// <value>The depth.</value>
+        int Depth  { get; set; }
 
         /// <summary>
-        /// Gets the IManageable by name.
+        /// Gets or sets the GL ID.
         /// </summary>
-        /// <returns>The IManageable.</returns>
-        /// <param name="name">Name.</param>
-        T GetByName (string name);
+        /// <value>The GL ID.</value>
+        int GLid   { get; set; }
 
         /// <summary>
-        /// Gets the count.
+        /// Convert this texture to a <see cref="System.Drawing.Bitmap"/> 
         /// </summary>
-        /// <value>The count.</value>
-        int Count { get; }
+        /// <returns>The bitmap.</returns>
+        Bitmap ToBitmap ();
     }
 }

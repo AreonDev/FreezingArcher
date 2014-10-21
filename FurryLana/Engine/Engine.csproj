@@ -39,6 +39,7 @@
     <Reference Include="Pencil.Gaming">
       <HintPath>..\Base\lib\Pencil.Gaming.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -73,6 +74,10 @@
     <Compile Include="Input\Interfaces\Input.cs" />
     <Compile Include="IManager.cs" />
     <Compile Include="IManageable.cs" />
+    <Compile Include="Game\Interfaces\IResourceManager.cs" />
+    <Compile Include="Texture\Interfaces\ITexture.cs" />
+    <Compile Include="Texture\Interfaces\ITextureManager.cs" />
+    <Compile Include="Model\Interfaces\IModelManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -90,6 +95,8 @@
     <Folder Include="Model\Interfaces\" />
     <Folder Include="Input\" />
     <Folder Include="Input\Interfaces\" />
+    <Folder Include="Texture\" />
+    <Folder Include="Texture\Interfaces\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

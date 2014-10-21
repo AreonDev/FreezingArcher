@@ -51,7 +51,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
   <ItemGroup>
-    <None Include="Engine.cd" />
+    <None Include="Base.cd" />
     <None Include="lib\NVorbis.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

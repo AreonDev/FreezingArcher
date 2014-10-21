@@ -83,5 +83,6 @@
   </ProjectExtensions>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Game.cd" />
   </ItemGroup>
 </Project>

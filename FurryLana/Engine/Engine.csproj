@@ -95,7 +95,7 @@
   </ProjectExtensions>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ClassDiagram1.cd" />
+    <None Include="Engine.cd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Math\Math.csproj">

@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="FurryLana.Engine.Graphics.DummyGraphicsResource" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAgAAAAAEAAgAAAAAAAAAAAABAAAAAAAACAAAACAA=</HashCode>
+      <FileName>Graphics\DummyGraphicsResource.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FurryLara.Engine.Physics.Physics" Collapsed="true">
+    <Position X="26.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAgACAAAAAA=</HashCode>
+      <FileName>Physics\Physics.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="FurryLana.Engine.Camera.Interfaces.ICamera" Collapsed="true">
+    <Position X="11.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Camera\Interfaces\ICamera.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Camera.Interfaces.ICameraManageable" Collapsed="true">
+    <Position X="22.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Camera\Interfaces\ICameraManageable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Camera.Interfaces.ICameraManager" Collapsed="true">
+    <Position X="14.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgEAAAAAAAAACAAAAAAAAAAAAAIAQEAEAAAIAIAYAAA=</HashCode>
+      <FileName>Camera\Interfaces\ICameraManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Entity.Interfaces.IEntity" Collapsed="true">
+    <Position X="8.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Entity\Interfaces\IEntity.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Game.Interfaces.IGame" Collapsed="true">
+    <Position X="5.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAEAAAgAAAA=</HashCode>
+      <FileName>Game\Interfaces\IGame.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Game.Interfaces.IGameManager" Collapsed="true">
+    <Position X="16.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Game\Interfaces\IGameManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Game.Interfaces.ILevel" Collapsed="true">
+    <Position X="9.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Interfaces\ILevel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Game.Interfaces.ILevelManager" Collapsed="true">
+    <Position X="11.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Interfaces\ILevelManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Game.Interfaces.IResourceManager" Collapsed="true">
+    <Position X="25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABBAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Game\Interfaces\IResourceManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Graphics.Interfaces.IDrawable" Collapsed="true">
+    <Position X="9.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Interfaces\IDrawable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Graphics.Interfaces.IFrameSyncedUpdate" Collapsed="true">
+    <Position X="11.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Graphics\Interfaces\IFrameSyncedUpdate.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Graphics.Interfaces.IGraphicsResource" Collapsed="true">
+    <Position X="8.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Interfaces\IGraphicsResource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Graphics.Interfaces.IResource" Collapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAEAAAAAAAAAAAAAAABAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Graphics\Interfaces\IResource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Graphics.Interfaces.IUpdate" Collapsed="true">
+    <Position X="4.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Interfaces\IUpdate.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.IManageable" Collapsed="true">
+    <Position X="2.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IManageable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.IManager&lt;T&gt;" Collapsed="true">
+    <Position X="14.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>IManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Input.Interfaces.IInputDescription" Collapsed="true">
+    <Position X="28.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\Interfaces\IInputDescription.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Input.Interfaces.IInputManager" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\Interfaces\IInputManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Interaction.IDirectionMoveable" Collapsed="true">
+    <Position X="25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAABAAAAEAAAAIQAAAAAAAAAA=</HashCode>
+      <FileName>Interaction\IDirectionMoveable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Interaction.IDirectionRotateable" Collapsed="true">
+    <Position X="26.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAEAAAAAAEEAAAQAAAAAAAAACAAAAA=</HashCode>
+      <FileName>Interaction\IDirectionRotateable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Interaction.IGoTo" Collapsed="true">
+    <Position X="20.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Interaction\IGoTo.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Interaction.IKeyboardInteractable" Collapsed="true">
+    <Position X="25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interaction\IKeyboardInteractable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Interaction.IMouseInteractable" Collapsed="true">
+    <Position X="28.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interaction\IMouseInteractable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Interaction.IMoveable" Collapsed="true">
+    <Position X="18.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAABAABAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interaction\IMoveable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Interaction.IPosition" Collapsed="true">
+    <Position X="19.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interaction\IPosition.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Interaction.IRotateable" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interaction\IRotateable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Interaction.IRotation" Collapsed="true">
+    <Position X="0.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interaction\IRotation.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Map.Interfaces.IMap" Collapsed="true">
+    <Position X="26.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Map\Interfaces\IMap.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Model.Interfaces.IModel" Collapsed="true">
+    <Position X="6.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Interfaces\IModel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Model.Interfaces.IModelManager" Collapsed="true">
+    <Position X="12.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAEAABAAAA=</HashCode>
+      <FileName>Model\Interfaces\IModelManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Texture.Interfaces.ITexture" Collapsed="true">
+    <Position X="3.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAEAAAAAAAAAgACAAgAAAAAA=</HashCode>
+      <FileName>Texture\Interfaces\ITexture.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FurryLana.Engine.Texture.Interfaces.ITextureManager" Collapsed="true">
+    <Position X="14.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAABAAAA=</HashCode>
+      <FileName>Texture\Interfaces\ITextureManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="FurryLana.Engine.Input.Interfaces.Input" Collapsed="true">
+    <Position X="25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAABAAAAAAAAAAAAoAGEAAA=</HashCode>
+      <FileName>Input\Interfaces\Input.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

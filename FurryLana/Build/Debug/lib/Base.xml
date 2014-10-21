@@ -249,11 +249,11 @@
             </summary>
             <value>The window.</value>
         </member>
-        <member name="P:FurryLana.Base.Application.TestApplication.InputManager">
+        <member name="P:FurryLana.Base.Application.TestApplication.ResourceManager">
             <summary>
-            Gets the input manager.
+            Gets the resource manager.
             </summary>
-            <value>The input manager.</value>
+            <value>The resource manager.</value>
         </member>
         <member name="M:FurryLana.Base.Application.TestApplication.Init">
             <summary>
@@ -326,11 +326,11 @@
             </summary>
             <value>The window.</value>
         </member>
-        <member name="P:FurryLana.Base.Application.Interfaces.IApplication.InputManager">
+        <member name="P:FurryLana.Base.Application.Interfaces.IApplication.ResourceManager">
             <summary>
-            Gets the input manager.
+            Gets the resource manager.
             </summary>
-            <value>The input manager.</value>
+            <value>The resource manager.</value>
         </member>
         <member name="M:FurryLana.Base.Application.Interfaces.IApplication.Run">
             <summary>

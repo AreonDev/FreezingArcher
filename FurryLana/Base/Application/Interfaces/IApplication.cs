@@ -44,10 +44,10 @@ namespace FurryLana.Base.Application.Interfaces
         IWindow Window { get; }
 
         /// <summary>
-        /// Gets the input manager.
+        /// Gets the resource manager.
         /// </summary>
-        /// <value>The input manager.</value>
-        IInputManager InputManager { get; }
+        /// <value>The resource manager.</value>
+        IResourceManager ResourceManager { get; }
 
         /// <summary>
         /// Run this instance.

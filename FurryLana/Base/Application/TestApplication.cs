@@ -59,10 +59,10 @@ namespace FurryLana.Base.Application
         public IWindow       Window       { get; protected set; }
 
         /// <summary>
-        /// Gets the input manager.
+        /// Gets the resource manager.
         /// </summary>
-        /// <value>The input manager.</value>
-        public IInputManager InputManager { get; protected set; }
+        /// <value>The resource manager.</value>
+        public IResourceManager ResourceManager { get; protected set; }
 
         #endregion
 

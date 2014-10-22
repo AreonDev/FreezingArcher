@@ -27,6 +27,7 @@
     <ConsolePause>False</ConsolePause>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <GenerateDocumentation>True</GenerateDocumentation>
+    <PostBuildEvent>move /Y *.dll* lib\ &amp;&amp; move /Y *.pdb lib\ &amp;&amp; move /Y lib\FurryLana.pdb .</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -43,6 +44,7 @@
     <ConsolePause>False</ConsolePause>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <GenerateDocumentation>True</GenerateDocumentation>
+    <PostBuildEvent>move /Y *.dll* lib\</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

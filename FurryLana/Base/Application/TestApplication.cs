@@ -50,13 +50,13 @@ namespace FurryLana.Base.Application
         /// Gets the game manager.
         /// </summary>
         /// <value>The game manager.</value>
-        public IGameManager  GameManager  { get; protected set; }
+        public IGameManager  GameManager        { get; protected set; }
 
         /// <summary>
         /// Gets the window.
         /// </summary>
         /// <value>The window.</value>
-        public IWindow       Window       { get; protected set; }
+        public IWindow       Window             { get; protected set; }
 
         /// <summary>
         /// Gets the resource manager.
@@ -145,7 +145,7 @@ namespace FurryLana.Base.Application
                 WriteAt (32, 13, string.Format ("{0:f}", yoffs));
             };
             
-            Window.KeyAction = (GlfwWindowPtr window, Key key, int scancode, KeyAction action, KeyModifier mods) => {
+            Window.KeyAction = (GlfwWindowPtr window, Key key, int scancode, KeyAction action, KeyModifiers mods) => {
                 WriteAt (1, 13, "             ");
                 WriteAt (1, 13, key.ToString ());
                 WriteAt (15, 13, "        ");

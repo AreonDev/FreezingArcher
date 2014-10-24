@@ -100,6 +100,7 @@ namespace FurryLana.Base.Application
         public void Destroy ()
         {
             Glfw.DestroyWindow (Win);
+            Glfw.DestroyWindow (Ful);
             Glfw.Terminate ();
         }
 
@@ -129,11 +130,22 @@ namespace FurryLana.Base.Application
         }
 
         /// <summary>
-        /// Show this window.
+        /// Show this window in its specified states.
         /// </summary>
         public void Show ()
         {
-            Glfw.ShowWindow (Win);
+            if (Fullscreen)
+            {
+                Glfw.HideWindow (Win);
+                Glfw.ShowWindow (Ful);
+                Glfw.MakeContextCurrent (Ful);
+            }
+            else
+            {
+                Glfw.HideWindow (Ful);
+                Glfw.ShowWindow (Win);
+                Glfw.MakeContextCurrent (Win);
+            }
         }
 
         /// <summary>
@@ -142,6 +154,7 @@ namespace FurryLana.Base.Application
         public void Hide ()
         {
             Glfw.HideWindow (Win);
+            Glfw.HideWindow (Ful);
         }
 
         /// <summary>
@@ -150,6 +163,7 @@ namespace FurryLana.Base.Application
         public void Minimize ()
         {
             Glfw.IconifyWindow (Win);
+            Glfw.IconifyWindow (Ful);
         }
 
         /// <summary>
@@ -158,6 +172,7 @@ namespace FurryLana.Base.Application
         public void Restore ()
         {
             Glfw.RestoreWindow (Win);
+            Glfw.RestoreWindow (Ful);
         }
 
         /// <summary>
@@ -165,7 +180,7 @@ namespace FurryLana.Base.Application
         /// </summary>
         public void Run ()
         {
-            while (!Glfw.WindowShouldClose (Win))
+            while (!Glfw.WindowShouldClose (Win) && !Glfw.WindowShouldClose (Ful))
             {
                 float deltaTime = (float) Glfw.GetTime ();
                 Glfw.SetTime (0.0);
@@ -176,14 +191,17 @@ namespace FurryLana.Base.Application
                 Resource.FrameSyncedUpdate (deltaTime);
                 Resource.Draw ();
 
-                Glfw.SwapBuffers (Win);
+                if (Fullscreen)
+                    Glfw.SwapBuffers (Ful);
+                else
+                    Glfw.SwapBuffers (Win);
+
                 Glfw.PollEvents ();
 
-                if (RecreateWindow)
+                if (SwapWindow)
                 {
-                    Glfw.DestroyWindow (Win);
-                    CreateWindow ();
-                    RecreateWindow = false;
+                    Show ();
+                    SwapWindow = false;
                 }
 
                 Thread.Sleep (17);
@@ -203,8 +221,7 @@ namespace FurryLana.Base.Application
             set
 	    {
                 MWindowSize = value;
-		if (!Fullscreen)
-		    Glfw.SetWindowSize (Win, value.X, value.Y);
+                Glfw.SetWindowSize (Win, value.X, value.Y);
             }
         }
 
@@ -221,8 +238,7 @@ namespace FurryLana.Base.Application
             set
 	    {
                 MFullscreenSize = value;
-		if (Fullscreen)
-		    Glfw.SetWindowSize (Win, value.X, value.Y);
+                Glfw.SetWindowSize (Ful, value.X, value.Y);
             }
         }
 
@@ -240,6 +256,7 @@ namespace FurryLana.Base.Application
 	    {
                 MTitle = value;
 		Glfw.SetWindowTitle (Win, value);
+                Glfw.SetWindowTitle (Ful, value);
             }
         }
 
@@ -256,7 +273,7 @@ namespace FurryLana.Base.Application
             set
 	    {
                 if (MFullscreen != value)
-		    RecreateWindow = true;
+		    SwapWindow = true;
 		MFullscreen = value;
             }
         }
@@ -356,9 +373,9 @@ namespace FurryLana.Base.Application
 	protected Vector2i      MWindowSize;
 
         /// <summary>
-        /// The recreate window toggle.
+        /// The swap window toggle.
         /// </summary>
-	protected bool          RecreateWindow;
+	protected bool          SwapWindow;
 
         /// <summary>
         /// The window.
@@ -366,45 +383,60 @@ namespace FurryLana.Base.Application
         protected GlfwWindowPtr Win;
 
         /// <summary>
+        /// The fullscreen window.
+        /// </summary>
+        protected GlfwWindowPtr Ful;
+
+        /// <summary>
         /// Creates the window.
         /// </summary>
 	protected void CreateWindow ()
         {
-            Win = Fullscreen ? CreateFullscreen () : CreateWindowed ();
+            Glfw.WindowHint (WindowHint.ContextVersionMajor, 3);
+            Glfw.WindowHint (WindowHint.ContextVersionMinor, 3);
 
-            Glfw.MakeContextCurrent (Win);
+            Win = Glfw.CreateWindow (WindowedSize.X, WindowedSize.Y, Title,
+                                     GlfwMonitorPtr.Null, GlfwWindowPtr.Null);
+
+            Ful = Glfw.CreateWindow (FullscreenSize.X, FullscreenSize.Y, Title,
+                                     Glfw.GetPrimaryMonitor (), Win);
+
+            if (Fullscreen)
+                Glfw.MakeContextCurrent (Ful);
+            else
+                Glfw.MakeContextCurrent (Win);
 
             Glfw.SetCursorPosCallback     (Win, MouseMove);
+            Glfw.SetCursorPosCallback     (Ful, MouseMove);
+
             Glfw.SetCursorEnterCallback   (Win, MouseOver);
+            Glfw.SetCursorEnterCallback   (Ful, MouseOver);
+
             Glfw.SetMouseButtonCallback   (Win, MouseButton);
+            Glfw.SetMouseButtonCallback   (Ful, MouseButton);
+
             Glfw.SetScrollCallback        (Win, MouseScroll);
+            Glfw.SetScrollCallback        (Ful, MouseScroll);
+
             Glfw.SetKeyCallback           (Win, KeyAction);
+            Glfw.SetKeyCallback           (Ful, KeyAction);
+
             Glfw.SetWindowCloseCallback   (Win, WindowClose);
+            Glfw.SetWindowCloseCallback   (Ful, WindowClose);
+
             Glfw.SetWindowFocusCallback   (Win, WindowFocus);
+            Glfw.SetWindowFocusCallback   (Ful, WindowFocus);
+
             Glfw.SetWindowIconifyCallback (Win, WindowMinimize);
+            Glfw.SetWindowIconifyCallback (Ful, WindowMinimize);
+
             Glfw.SetWindowPosCallback     (Win, WindowMove);
+            Glfw.SetWindowPosCallback     (Ful, WindowMove);
+
             Glfw.SetWindowSizeCallback    (Win, WindowResize);
+            Glfw.SetWindowSizeCallback    (Ful, WindowResize);
+
             Glfw.SetErrorCallback         (WindowError);
-        }
-
-        /// <summary>
-        /// Create a windowed window.
-        /// </summary>
-        /// <returns>The window.</returns>
-        protected GlfwWindowPtr CreateWindowed ()
-        {
-            return Glfw.CreateWindow (WindowedSize.X, WindowedSize.Y, Title,
-                                      GlfwMonitorPtr.Null, GlfwWindowPtr.Null);
-        }
-
-        /// <summary>
-        /// Create a fullscreen window.
-        /// </summary>
-        /// <returns>The window.</returns>
-        protected GlfwWindowPtr CreateFullscreen ()
-        {
-            return Glfw.CreateWindow (FullscreenSize.X, FullscreenSize.Y, Title,
-                                      Glfw.GetPrimaryMonitor (), GlfwWindowPtr.Null);
         }
     }
 }

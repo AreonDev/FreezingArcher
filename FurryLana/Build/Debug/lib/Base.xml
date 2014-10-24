@@ -60,7 +60,7 @@
         </member>
         <member name="M:FurryLana.Base.Application.Window.Show">
             <summary>
-            Show this window.
+            Show this window in its specified states.
             </summary>
         </member>
         <member name="M:FurryLana.Base.Application.Window.Hide">
@@ -200,9 +200,9 @@
             The window size member variable.
             </summary>
         </member>
-        <member name="F:FurryLana.Base.Application.Window.RecreateWindow">
+        <member name="F:FurryLana.Base.Application.Window.SwapWindow">
             <summary>
-            The recreate window toggle.
+            The swap window toggle.
             </summary>
         </member>
         <member name="F:FurryLana.Base.Application.Window.Win">
@@ -210,22 +210,15 @@
             The window.
             </summary>
         </member>
+        <member name="F:FurryLana.Base.Application.Window.Ful">
+            <summary>
+            The fullscreen window.
+            </summary>
+        </member>
         <member name="M:FurryLana.Base.Application.Window.CreateWindow">
             <summary>
             Creates the window.
             </summary>
-        </member>
-        <member name="M:FurryLana.Base.Application.Window.CreateWindowed">
-            <summary>
-            Create a windowed window.
-            </summary>
-            <returns>The window.</returns>
-        </member>
-        <member name="M:FurryLana.Base.Application.Window.CreateFullscreen">
-            <summary>
-            Create a fullscreen window.
-            </summary>
-            <returns>The window.</returns>
         </member>
         <member name="T:FurryLana.Base.Application.TestApplication">
             <summary>

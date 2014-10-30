@@ -78,6 +78,10 @@
     <Compile Include="Texture\Interfaces\ITexture.cs" />
     <Compile Include="Texture\Interfaces\ITextureManager.cs" />
     <Compile Include="Model\Interfaces\IModelManager.cs" />
+    <Compile Include="Renderer\Interfaces\IFramebuffer.cs" />
+    <Compile Include="Renderer\Interfaces\IScopedFramebuffer.cs" />
+    <Compile Include="Renderer\Interfaces\IRenderer.cs" />
+    <Compile Include="Renderer\Interfaces\IInput.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -102,5 +106,9 @@
       <Project>{DFD52B9F-EB73-4A71-94F5-01F95237C339}</Project>
       <Name>Math</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Renderer\" />
+    <Folder Include="Renderer\Interfaces\" />
   </ItemGroup>
 </Project>

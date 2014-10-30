@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Math</name>
+    </assembly>
+    <members>
+        <member name="T:FurryLana.Math.AngleEnum">
+            <summary>
+            Enum to specify a angle format
+            </summary>
+        </member>
+        <member name="F:FurryLana.Math.AngleEnum.Degree">
+            <summary>
+            Angle in degree.
+            </summary>
+        </member>
+        <member name="F:FurryLana.Math.AngleEnum.Radian">
+            <summary>
+            Angle in radian.
+            </summary>
+        </member>
+    </members>
+</doc>

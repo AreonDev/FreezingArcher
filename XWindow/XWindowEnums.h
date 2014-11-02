@@ -27,7 +27,7 @@
 enum bool
 {
     true = 1,
-    fasle = 0
+    false = 0
 };
 
 /*

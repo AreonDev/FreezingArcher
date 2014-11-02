@@ -1,5 +1,5 @@
 /*
- *  XWindowEnums.h
+ *  WindowEnums.h
  *
  *  Author:
  *       Fin Christensen <christensen.fin@gmail.com>

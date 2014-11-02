@@ -1,5 +1,5 @@
 /*
- *  XWindow.h
+ *  Window.h
  *
  *  Author:
  *       Fin Christensen <christensen.fin@gmail.com>
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "XWindowTypes.h"
+#include "WindowTypes.h"
 
 /*
  * Get or set the size of the window in windowed mode

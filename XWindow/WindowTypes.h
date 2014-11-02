@@ -1,5 +1,5 @@
 /*
- *  XWindowDefs.h
+ *  WindowDefs.h
  *
  *  Author:
  *       Fin Christensen <christensen.fin@gmail.com>
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "XWindowEnums.h"
+#include "WindowEnums.h"
 
 typedef int Monitor; // monitor identifier
 typedef int Window;  // window identifier

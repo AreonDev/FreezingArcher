@@ -149,3 +149,36 @@ void Minimize ();
  * Restore the window if it was in minimized state
  */
 void Restore ();
+
+/*
+ * Initialize this object
+ */
+void Init ();
+
+/*
+ * Load this object
+ */
+void Load ();
+
+/*
+ * Destroy this object. This should close the window and delete everything
+ * associated with it
+ */
+void Destroy ();
+
+/*
+ * Get or set a bool indicating if this object is loaded or not
+ */
+bool GetLoaded ();
+void SetLoaded (bool);
+
+/*
+ * Variable storing a function which should be called from within this object
+ * is it needs to be reloaded
+ */
+Event NeedsLoad;
+
+/*
+ * Set the NeedsLoad function
+ */
+void SetNeedsLoad (Event);

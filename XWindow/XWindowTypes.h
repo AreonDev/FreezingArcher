@@ -204,6 +204,19 @@ typedef void (*CursorEnterFun) (Window, bool);
 typedef void (*ScrollFun) (Window, double, double);
 
 /*
+ * Description:
+ *   This function is called when the Load function of this object needs to be
+ *   recalled
+ *
+ * Return:
+ *   void
+ *
+ * Arguments:
+ *   void
+ */
+typedef void (*Event) (void);
+
+/*
  * Size structure
  */
 struct Size

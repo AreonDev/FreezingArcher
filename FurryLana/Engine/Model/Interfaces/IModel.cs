@@ -21,6 +21,8 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FurryLana.Engine.Graphics.Interfaces;
+using FurryLana.Engine.Texture.Interfaces;
+using System.IO;
 
 namespace FurryLana.Engine.Model.Interfaces
 {
@@ -29,6 +31,12 @@ namespace FurryLana.Engine.Model.Interfaces
     /// </summary>
     public interface IModel : IManageable, IResource
     {
-        //TODO
+        File     Path              { get; }
+        ITexture Diffuse           { get; set; }
+        ITexture Parallax          { get; set; }
+        ITexture Normal            { get; set; }
+        ITexture SpecularColor     { get; set; }
+        ITexture SpecularIntensity { get; set; }
+        ITexture Ambient           { get; set; }
     }
 }

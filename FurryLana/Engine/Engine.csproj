@@ -94,6 +94,7 @@
     <Compile Include="Model\Interfaces\IMeshKey.cs" />
     <Compile Include="Model\Interfaces\INodeAnimationChannel.cs" />
     <Compile Include="Model\AssimpModel.cs" />
+    <Compile Include="Material\Material.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

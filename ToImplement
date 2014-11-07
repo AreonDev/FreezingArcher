@@ -15,7 +15,7 @@
   * implement draw logic
 * TODO [#C] ILevelManager [?]
   * simple manager of ILevel
-* TODO [#A] IResourceManager (should it be done by the renderer?) [Fin/David]
+* TODO [#A] IResourceManager (should it be done by the renderer?) [Paul]
   * wrapper around IInputManager, ITextureManager and IModelManager
 * TODO [#C] IInputManager implementation (and design?) [?]
   * does the input manager manage enough?
@@ -25,7 +25,7 @@
   * maybe use unicode-utf8 instead (?)
 * TODO [#B] Design a map interface - the currently used one is way too simple [?]
   * this should be done in the near future
-* TODO [#A] IMaterial implementation [?]
+* DONE [#A] IMaterial implementation [Paul]
   * should be trivial
 * TODO [#A] IModel implementation [Fin]
   * nearly done - vao/vbo/shader integration missing
@@ -45,7 +45,7 @@
 * TODO [#A] ITexture implementation [Fin]
   * should abstract the gl 2D texture and 3D texture
     * use a 3D texture when detph is greater than 1
-* TODO [#A] ITextureManager implementation [Fin]
+* TODO [#A] ITextureManager implementation [Paul]
   * implement load methods
     * xml load may be added later on
 * TODO [#A] Design IRenderer and implement it [David]

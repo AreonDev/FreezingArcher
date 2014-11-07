@@ -25,13 +25,45 @@ using FurryLana.Engine.Renderer.Interfaces;
 
 namespace FurryLana.Engine.Interfaces.Material
 {
+    /// <summary>
+    /// Material interface.
+    /// </summary>
     public interface IMaterial
     {
-        ITexture Diffuse      { get; set; } // diffuse color map rgba
-        ITexture NormalHeight { get; set; } // normalmap rgb; heightmap a
-        ITexture Specular     { get; set; } // specular color map rgb; specular intensity a
-        ITexture Ambient      { get; set; } // ambient color map rgba
+        /// <summary>
+        /// Gets or sets the diffuse color map.
+        /// RGBA channel used.
+        /// </summary>
+        /// <value>The diffuse color map.</value>
+        ITexture Diffuse      { get; set; }
 
+        /// <summary>
+        /// Gets or sets the height and normal map.
+        /// Normalmap channels: RGB
+        /// Heightmap channels: A
+        /// </summary>
+        /// <value>The height and normal map.</value>
+        ITexture NormalHeight { get; set; }
+
+        /// <summary>
+        /// Gets or sets the specular map.
+        /// Specularcolor: RGB
+        /// Specularintensity: A
+        /// </summary>
+        /// <value>The specular map.</value>
+        ITexture Specular     { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ambient map.
+        /// </summary>
+        /// <value>The ambient map.</value>
+        ITexture Ambient      { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the shader program.
+        /// </summary>
+        /// <value>The shader program.</value>
         IShaderProgram ShaderProgram { get; set; }
     }
 }

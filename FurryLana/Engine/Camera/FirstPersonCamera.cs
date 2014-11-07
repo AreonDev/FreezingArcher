@@ -45,17 +45,19 @@ namespace FurryLana.Engine.Camera
         }
 
 
-        public Pencil.Gaming.MathUtils.Matrix ViewMatrix
+        public Matrix ViewMatrix
         {
             get
             {
                 return ViewMatrix;
-//                throw new NotImplementedException();
             }
-            set;
+            set
+            {
+                ViewMatrix = value;
+            }
         }
 
-        public Pencil.Gaming.MathUtils.Vector3 Position
+        public Vector3 Position
         {
             get { throw new NotImplementedException(); }
         }

@@ -4,6 +4,13 @@
         <name>Engine</name>
     </assembly>
     <members>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="!:FreezingArcher.Engine.Camera.FirstPersonCamera" /> class.
+            </summary>
+            <param name="name">The camera name used to identify it inside a camera manager.</param>
+            <param name="character">The character the camera is tracked to (must not be null).</param>
+        </member>
         <member name="T:FurryLana.Engine.Camera.Interfaces.ICamera">
             <summary>
             Camera interface.

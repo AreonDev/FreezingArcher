@@ -35,77 +35,77 @@ namespace FurryLana.Engine.Camera.Interfaces
         /// </summary>
         /// <returns>The camera.</returns>
         ICamera GetActive ();
-            
+
         /// <summary>
         /// Get the active camera group.
         /// </summary>
         /// <returns>The active group.</returns>
         ICameraManager GetActiveGroup ();
-            
+
         /// <summary>
         /// Set the active camera.
         /// </summary>
         /// <param name="name">The camera name.</param>
         void SetActive (string name);
-            
+
         /// <summary>
         /// Set the active camera in the currently active group. If the camera is not available it will not be changed.
         /// </summary>
         /// <param name="camera">The camera.</param>
         void SetActive (ICamera camera);
-            
+
         /// <summary>
         /// Set the active camera and set a new group if necessary.
         /// </summary>
         /// <param name="name">The camera name.</param>
         void SetActiveRecursive (string name);
-            
+
         /// <summary>
         /// Set the active camera and set a new group if necessary.
         /// </summary>
         /// <param name="camera">The camera.</param>
         void SetActiveRecursive (ICamera camera);
-            
+
         /// <summary>
         /// Set the active camera group.
         /// </summary>
         /// <param name="group">The group.</param>
         void SetGroup (ICameraManager group);
-            
+
         /// <summary>
         /// Set the active camera group.
         /// </summary>
         /// <param name="name">The camera groups name.</param>
         void SetGroup (string name);
-            
+
         /// <summary>
         /// Set ActiveCamera to the next camera in the collection
         /// </summary>
         void Next ();
-            
+
         /// <summary>
         /// Set ActiveCamera to the previous camera in the collection
         /// </summary>
         void Prev ();
-            
+
         /// <summary>
         /// Get or set the currently active camera.
         /// </summary>
         /// <value>The camera.</value>
         ICamera ActiveCamera { get; set; }
-            
+
         /// <summary>
         /// Get or set the active camera group.
         /// </summary>
         /// <value>The active group.</value>
         ICameraManager ActiveGroup { get; set; }
-            
+
         /// <summary>
         /// Get a list of manageable objects inside the camera manager
         /// </summary>
         /// <value>The items.</value>
         List<ICameraManageable> Items { get; }
-            
+
         /// <summary>
         /// Get the internal active camera (only use this if you are a camera manager).
         /// </summary>

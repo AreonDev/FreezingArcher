@@ -29,16 +29,18 @@ namespace FurryLana.Engine.Model.Interfaces
     public interface IModelManager : IManager<IModel>
     {
         /// <summary>
-        /// Loads models from location.
+        /// Loads model from location.
         /// </summary>
-        /// <param name="location">Location.</param>
-        void LoadFromLocation (string location);
+        /// <returns>The model.</returns>
+        /// <param name="location">The path to the model.</param>
+        IModel LoadFromLocation (string location);
 
         /// <summary>
         /// Loads models from xml.
         /// </summary>
+        /// <returns>The model.</returns>
         /// <param name="filepath">Path to xml file.</param>
-        void LoadFromXML (string filepath);
+        IModel LoadFromXML (string filepath);
 
         /// <summary>
         /// Clear all models from model manager.

@@ -20,23 +20,29 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using System.Collections.Generic;
+using Assimp;
 using FurryLana.Engine.Graphics.Interfaces;
-using FurryLana.Engine.Texture.Interfaces;
-using System.IO;
 
 namespace FurryLana.Engine.Model.Interfaces
 {
     /// <summary>
     /// Model interface.
     /// </summary>
-    public interface IModel : IManageable, IResource
+    public interface IModel : IManageable, IGraphicsResource
     {
-        File     Path              { get; }
-        ITexture Diffuse           { get; set; }
-        ITexture Parallax          { get; set; }
-        ITexture Normal            { get; set; }
-        ITexture SpecularColor     { get; set; }
-        ITexture SpecularIntensity { get; set; }
-        ITexture Ambient           { get; set; }
+	/*List<IAnimation> Animations { get; set; }
+	List<ICamera>    Cameras    { get; set; }
+	List<ILight>     Lights     { get; set; }
+	List<IMaterial>  Materials  { get; set; }
+	List<IMesh>      Meshes     { get; set; }
+	List<ITexture>   Textures   { get; set; }*/
+
+        List<Animation>       Animations { get; }
+        List<Assimp.Camera>   Cameras    { get; }
+        List<Light>           Lights     { get; }
+        List<Material>        Materials  { get; }
+        List<Mesh>            Meshes     { get; }
+        List<EmbeddedTexture> Textures   { get; }
     }
 }

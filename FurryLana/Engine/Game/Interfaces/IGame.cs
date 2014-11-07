@@ -20,10 +20,6 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System.Collections.Generic;
-using Pencil.Gaming.MathUtils;
-using FurryLana.Engine.Camera.Interfaces;
-using FurryLana.Engine.Entity.Interfaces;
 using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Game.Interfaces
@@ -38,23 +34,5 @@ namespace FurryLana.Engine.Game.Interfaces
         /// </summary>
         /// <value>The level manager.</value>
         ILevelManager  LevelManager { get; }
-
-        /// <summary>
-        /// Gets the camera manager.
-        /// </summary>
-        /// <value>The camera manager.</value>
-        ICameraManager CameraManager { get; }
-
-        /// <summary>
-        /// Gets the entities.
-        /// </summary>
-        /// <value>The entities.</value>
-        List<IEntity>  Entities { get; }
-
-        /// <summary>
-        /// Gets or sets the projection matrix.
-        /// </summary>
-        /// <value>The projection matrix.</value>
-        Matrix         ProjectionMatrix { get; set; }
     }
 }

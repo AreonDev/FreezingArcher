@@ -40,6 +40,9 @@
       <HintPath>..\Base\lib\Pencil.Gaming.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="AssimpNet">
+      <HintPath>..\Base\lib\AssimpNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -82,6 +85,14 @@
     <Compile Include="Renderer\Interfaces\IScopedFramebuffer.cs" />
     <Compile Include="Renderer\Interfaces\IRenderer.cs" />
     <Compile Include="Renderer\Interfaces\IInput.cs" />
+    <Compile Include="Material\Interfaces\IMaterial.cs" />
+    <Compile Include="Renderer\Interfaces\IShaderProgram.cs" />
+    <Compile Include="Model\AssimpModelManager.cs" />
+    <Compile Include="Model\Interfaces\IAnimation.cs" />
+    <Compile Include="Model\Interfaces\IMeshAnimationChannel.cs" />
+    <Compile Include="Model\Interfaces\IMeshKey.cs" />
+    <Compile Include="Model\Interfaces\INodeAnimationChannel.cs" />
+    <Compile Include="Model\AssimpModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -110,5 +121,7 @@
   <ItemGroup>
     <Folder Include="Renderer\" />
     <Folder Include="Renderer\Interfaces\" />
+    <Folder Include="Material\" />
+    <Folder Include="Material\Interfaces\" />
   </ItemGroup>
 </Project>

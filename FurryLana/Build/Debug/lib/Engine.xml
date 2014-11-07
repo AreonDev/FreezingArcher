@@ -128,24 +128,6 @@
             </summary>
             <value>The level manager.</value>
         </member>
-        <member name="P:FurryLana.Engine.Game.Interfaces.IGame.CameraManager">
-            <summary>
-            Gets the camera manager.
-            </summary>
-            <value>The camera manager.</value>
-        </member>
-        <member name="P:FurryLana.Engine.Game.Interfaces.IGame.Entities">
-            <summary>
-            Gets the entities.
-            </summary>
-            <value>The entities.</value>
-        </member>
-        <member name="P:FurryLana.Engine.Game.Interfaces.IGame.ProjectionMatrix">
-            <summary>
-            Gets or sets the projection matrix.
-            </summary>
-            <value>The projection matrix.</value>
-        </member>
         <member name="T:FurryLana.Engine.Game.Interfaces.IGameManager">
             <summary>
             Game manager interface.
@@ -424,6 +406,24 @@
             Gets the map.
             </summary>
             <value>The map.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Game.Interfaces.ILevel.CameraManager">
+            <summary>
+            Gets the camera manager.
+            </summary>
+            <value>The camera manager.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Game.Interfaces.ILevel.Entities">
+            <summary>
+            Gets the entities.
+            </summary>
+            <value>The entities.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Game.Interfaces.ILevel.ProjectionMatrix">
+            <summary>
+            Gets or sets the projection matrix.
+            </summary>
+            <value>The projection matrix.</value>
         </member>
         <member name="T:FurryLana.Engine.Game.Interfaces.ILevelManager">
             <summary>
@@ -742,14 +742,16 @@
         </member>
         <member name="M:FurryLana.Engine.Model.Interfaces.IModelManager.LoadFromLocation(System.String)">
             <summary>
-            Loads models from location.
+            Loads model from location.
             </summary>
-            <param name="location">Location.</param>
+            <returns>The model.</returns>
+            <param name="location">The path to the model.</param>
         </member>
         <member name="M:FurryLana.Engine.Model.Interfaces.IModelManager.LoadFromXML(System.String)">
             <summary>
             Loads models from xml.
             </summary>
+            <returns>The model.</returns>
             <param name="filepath">Path to xml file.</param>
         </member>
         <member name="M:FurryLana.Engine.Model.Interfaces.IModelManager.Clear">

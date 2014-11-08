@@ -9,6 +9,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>FurryLana.Engine</RootNamespace>
     <AssemblyName>Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -22,6 +24,7 @@
     <ConsolePause>False</ConsolePause>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <GenerateDocumentation>True</GenerateDocumentation>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -33,6 +36,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <GenerateDocumentation>True</GenerateDocumentation>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -120,10 +124,5 @@
       <Name>Math</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Renderer\" />
-    <Folder Include="Renderer\Interfaces\" />
-    <Folder Include="Material\" />
-    <Folder Include="Material\Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

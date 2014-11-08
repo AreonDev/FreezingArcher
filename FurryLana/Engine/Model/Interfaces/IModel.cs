@@ -41,7 +41,7 @@ namespace FurryLana.Engine.Model.Interfaces
         List<Animation>       Animations { get; }
         List<Assimp.Camera>   Cameras    { get; }
         List<Light>           Lights     { get; }
-        List<Material>        Materials  { get; }
+        List<Assimp.Material>        Materials  { get; }
         List<Mesh>            Meshes     { get; }
         List<EmbeddedTexture> Textures   { get; }
     }

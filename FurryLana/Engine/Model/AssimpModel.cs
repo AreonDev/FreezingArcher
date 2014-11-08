@@ -104,7 +104,7 @@ namespace FurryLana.Engine.Model
             }
         }
 
-        public List<Material> Materials
+        public List<Assimp.Material> Materials
         {
             get
             {

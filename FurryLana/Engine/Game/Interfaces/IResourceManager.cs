@@ -20,6 +20,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using FurryLana.Engine.Graphics.Interfaces;
 using FurryLana.Engine.Input.Interfaces;
 using FurryLana.Engine.Model.Interfaces;
 using FurryLana.Engine.Texture.Interfaces;
@@ -29,7 +30,7 @@ namespace FurryLana.Engine.Game.Interfaces
     /// <summary>
     /// Resource manager interface.
     /// </summary>
-    public interface IResourceManager
+    public interface IResourceManager : IResource
     {
         /// <summary>
         /// Gets the input manager.

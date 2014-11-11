@@ -15,7 +15,7 @@
   * implement draw logic
 * TODO [#C] ILevelManager [?]
   * simple manager of ILevel
-* TODO [#A] IResourceManager (should it be done by the renderer?) [Paul]
+* DONE [#A] IResourceManager (should it be done by the renderer?) [Paul]
   * wrapper around IInputManager, ITextureManager and IModelManager
 * TODO [#C] IInputManager implementation (and design?) [?]
   * does the input manager manage enough?
@@ -45,7 +45,7 @@
 * TODO [#A] ITexture implementation [Fin]
   * should abstract the gl 2D texture and 3D texture
     * use a 3D texture when detph is greater than 1
-* TODO [#A] ITextureManager implementation [Paul]
+* DONE [#A] ITextureManager implementation [Paul]
   * implement load methods
     * xml load may be added later on
 * TODO [#A] Design IRenderer and implement it [David]

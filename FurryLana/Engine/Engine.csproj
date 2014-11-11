@@ -99,6 +99,7 @@
     <Compile Include="Model\Interfaces\INodeAnimationChannel.cs" />
     <Compile Include="Model\AssimpModel.cs" />
     <Compile Include="Material\Material.cs" />
+    <Compile Include="Texture\TextureManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

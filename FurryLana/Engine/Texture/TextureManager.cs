@@ -100,9 +100,8 @@ namespace FurryLana.Engine.Texture
             get { return textures.Count; }
         }
         /// <summary>
-        /// Init this resource. Initialzes the resource within a valid gl context.
-        /// Why not use the constructor?:
-        /// The constructor may not have a valid gl context to initialize gl components.
+        /// Init this resource. This method may not be called from the main thread as the initialization process is
+        /// multi threaded.
         /// </summary>
         public void Init()
         {

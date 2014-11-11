@@ -42,7 +42,7 @@ namespace FurryLana.Base.Application
         /// Run this instance.
         /// </summary>
         public void Run ()
-        {   
+        {
             Window.Run ();
         }
 

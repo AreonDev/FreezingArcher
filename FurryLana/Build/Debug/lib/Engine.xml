@@ -4,12 +4,98 @@
         <name>Engine</name>
     </assembly>
     <members>
+        <member name="T:FurryLana.Engine.Camera.FirstPersonCamera">
+            <summary>
+            First person camera.
+            </summary>
+        </member>
         <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="!:FreezingArcher.Engine.Camera.FirstPersonCamera" /> class.
             </summary>
             <param name="name">The camera name used to identify it inside a camera manager.</param>
             <param name="character">The character the camera is tracked to (must not be null).</param>
+        </member>
+        <member name="P:FurryLana.Engine.Camera.FirstPersonCamera.ViewMatrix">
+            <summary>
+            Get or set the cameras view matrix
+            </summary>
+            <value>The view matrix</value>
+        </member>
+        <member name="P:FurryLana.Engine.Camera.FirstPersonCamera.Position">
+            <summary>
+            Position in space
+            </summary>
+            <value>The position.</value>
+        </member>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.Draw">
+            <summary>
+            Draw this instance.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.Update(System.Int32)">
+            <summary>
+            This update is called in an extra thread which does not have a valid gl context.
+            The updaterate might differ from the framerate.
+            </summary>
+            <param name="deltaTime">Time delta in miliseconds.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.FrameSyncedUpdate(System.Single)">
+            <summary>
+            This update is called before every frame draw inside a gl context.
+            </summary>
+            <param name="deltaTime">Time delta.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.Init">
+            <summary>
+            Init this resource. Initialzes the resource within a valid gl context.
+            Why not use the constructor?:
+            The constructor may not have a valid gl context to initialize gl components.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.Load">
+            <summary>
+            Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.Destroy">
+            <summary>
+            Destroy this resource.
+            Why not IDisposable:
+            IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
+            Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+            context.
+            </summary>
+        </member>
+        <member name="P:FurryLana.Engine.Camera.FirstPersonCamera.Loaded">
+            <summary>
+            Gets a value indicating whether this <see cref="T:FurryLana.Engine.Camera.FirstPersonCamera" /> is loaded.
+            </summary>
+            <value>
+                <c>true</c> if loaded; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Camera.FirstPersonCamera.NeedsLoad">
+            <summary>
+            Fire this event when you need the Load function to be called.
+            For example after init or when new resources needs to be loaded.
+            </summary>
+            <value>NeedsLoad handlers.</value>
+        </member>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.Enable">
+            <summary>
+            This method is called when the camera manager switches to this subject.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.Disable">
+            <summary>
+            This method is called when the camera manager switches from this subject to another one.
+            </summary>
+        </member>
+        <member name="P:FurryLana.Engine.Camera.FirstPersonCamera.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+            <value>The name.</value>
         </member>
         <member name="T:FurryLana.Engine.Camera.Interfaces.ICamera">
             <summary>
@@ -765,6 +851,184 @@
             <summary>
             Clear all models from model manager.
             </summary>
+        </member>
+        <member name="T:FurryLana.Engine.Interfaces.Material.IMaterial">
+            <summary>
+            Material interface.
+            </summary>
+        </member>
+        <member name="P:FurryLana.Engine.Interfaces.Material.IMaterial.Diffuse">
+            <summary>
+            Gets or sets the diffuse color map.
+            RGBA channel used.
+            </summary>
+            <value>The diffuse color map.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Interfaces.Material.IMaterial.NormalHeight">
+            <summary>
+            Gets or sets the height and normal map.
+            Normalmap channels: RGB
+            Heightmap channels: A
+            </summary>
+            <value>The height and normal map.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Interfaces.Material.IMaterial.Specular">
+            <summary>
+            Gets or sets the specular map.
+            Specularcolor: RGB
+            Specularintensity: A
+            </summary>
+            <value>The specular map.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Interfaces.Material.IMaterial.Ambient">
+            <summary>
+            Gets or sets the ambient map.
+            </summary>
+            <value>The ambient map.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Interfaces.Material.IMaterial.ShaderProgram">
+            <summary>
+            Gets or sets the shader program.
+            </summary>
+            <value>The shader program.</value>
+        </member>
+        <member name="T:FurryLana.Engine.Model.AssimpModelManager">
+            <summary>
+            Assimp model manager.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.LoadFromLocation(System.String)">
+            <summary>
+            Loads model from location.
+            </summary>
+            <returns>The model.</returns>
+            <param name="location">The path to the model.</param>
+            <param name="path">Path.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.LoadFromXML(System.String)">
+            <summary>
+            Loads models from xml.
+            </summary>
+            <returns>The model.</returns>
+            <param name="filepath">Path to xml file.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.Clear">
+            <summary>
+            Clear all models from model manager.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.Add(FurryLana.Engine.Model.Interfaces.IModel)">
+            <summary>
+            Add the specified item.
+            </summary>
+            <param name="item">Item.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.Remove(FurryLana.Engine.Model.Interfaces.IModel)">
+            <summary>
+            Remove the specified item.
+            </summary>
+            <param name="item">Item.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.Remove(System.String)">
+            <summary>
+            Remove the specified item.
+            </summary>
+            <param name="item">Item.</param>
+            <param name="name">Name.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.GetByName(System.String)">
+            <summary>
+            Gets the IManageable by name.
+            </summary>
+            <returns>The IManageable.</returns>
+            <param name="name">Name.</param>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModelManager.Count">
+            <summary>
+            Gets the count.
+            </summary>
+            <value>The count.</value>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.GetEnumerator">
+            <summary>
+            Gets the enumerator.
+            </summary>
+            <returns>The enumerator.</returns>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.Init">
+            <summary>
+            Init this resource. Initialzes the resource within a valid gl context.
+            Why not use the constructor?:
+            The constructor may not have a valid gl context to initialize gl components.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.Load">
+            <summary>
+            Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.Destroy">
+            <summary>
+            Destroy this resource.
+            Why not IDisposable:
+            IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
+            Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+            context.
+            </summary>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModelManager.Loaded">
+            <summary>
+            Gets or sets a value indicating whether this <see cref="T:FurryLana.Engine.Model.AssimpModelManager" /> is loaded.
+            </summary>
+            <value>
+                <c>true</c> if loaded; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModelManager.NeedsLoad">
+            <summary>
+            Fire this event when you need the Load function to be called.
+            For example after init or when new resources needs to be loaded.
+            </summary>
+            <value>NeedsLoad handlers.</value>
+        </member>
+        <member name="T:FurryLana.Engine.Material.Material">
+            <summary>
+            Material.
+            </summary>
+        </member>
+        <member name="P:FurryLana.Engine.Material.Material.Diffuse">
+            <summary>
+            Gets or sets the diffuse color map.
+            RGBA channel used.
+            </summary>
+            <value>The diffuse color map.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Material.Material.NormalHeight">
+            <summary>
+            Gets or sets the height and normal map.
+            Normalmap channels: RGB
+            Heightmap channels: A
+            </summary>
+            <value>The height and normal map.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Material.Material.Specular">
+            <summary>
+            Gets or sets the specular map.
+            Specularcolor: RGB
+            Specularintensity: A
+            </summary>
+            <value>The specular map.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Material.Material.Ambient">
+            <summary>
+            Gets or sets the ambient map.
+            </summary>
+            <value>The ambient map.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Material.Material.ShaderProgram">
+            <summary>
+            Gets or sets the shader program.
+            </summary>
+            <value>The shader program.</value>
         </member>
     </members>
 </doc>

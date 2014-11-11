@@ -216,6 +216,8 @@ namespace FurryLana.Engine.Model
         public void Destroy ()
         {
             models.ForEach ((m) => { m.Destroy (); });
+            models.Clear();
+            models = null;
         }
 
         /// <summary>

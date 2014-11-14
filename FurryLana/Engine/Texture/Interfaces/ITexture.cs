@@ -49,15 +49,14 @@ namespace FurryLana.Engine.Texture.Interfaces
         int Depth  { get; set; }
 
         /// <summary>
-        /// Gets or sets the GL ID.
-        /// </summary>
-        /// <value>The GL ID.</value>
-        int GLid   { get; set; }
-
-        /// <summary>
         /// Convert this texture to a <see cref="System.Drawing.Bitmap"/> 
         /// </summary>
         /// <returns>The bitmap.</returns>
         Bitmap ToBitmap ();
+
+        /// <summary>
+        /// Bind the texture.
+        /// </summary>
+        void Bind ();
     }
 }

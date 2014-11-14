@@ -48,9 +48,8 @@
         </member>
         <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.Init">
             <summary>
-            Init this resource. Initialzes the resource within a valid gl context.
-            Why not use the constructor?:
-            The constructor may not have a valid gl context to initialize gl components.
+            Init this resource. This method may not be called from the main thread as the initialization process is
+            multi threaded.
             </summary>
         </member>
         <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.Load">
@@ -96,6 +95,20 @@
             Gets or sets the name.
             </summary>
             <value>The name.</value>
+        </member>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.GetInitJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the init jobs.
+            </summary>
+            <returns>The init jobs.</returns>
+            <param name="list">List.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Camera.FirstPersonCamera.GetLoadJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the load jobs.
+            </summary>
+            <returns>The load jobs.</returns>
+            <param name="list">List.</param>
         </member>
         <member name="T:FurryLana.Engine.Camera.Interfaces.ICamera">
             <summary>
@@ -558,15 +571,26 @@
         </member>
         <member name="M:FurryLana.Engine.Graphics.Interfaces.IResource.Init">
             <summary>
-            Init this resource. Initialzes the resource within a valid gl context.
-            Why not use the constructor?:
-            The constructor may not have a valid gl context to initialize gl components.
+            Init this resource. This method may not be called from the main thread as the initialization process is
+            multi threaded.
             </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Graphics.Interfaces.IResource.GetInitJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the init jobs.
+            </summary>
+            <returns>The init jobs.</returns>
         </member>
         <member name="M:FurryLana.Engine.Graphics.Interfaces.IResource.Load">
             <summary>
             Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
             </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Graphics.Interfaces.IResource.GetLoadJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the load jobs.
+            </summary>
+            <returns>The load jobs.</returns>
         </member>
         <member name="M:FurryLana.Engine.Graphics.Interfaces.IResource.Destroy">
             <summary>
@@ -599,15 +623,28 @@
         </member>
         <member name="M:FurryLana.Engine.Graphics.DummyGraphicsResource.Init">
             <summary>
-            Init this resource. Initialzes the resource within a valid gl context.
-            Why not use the constructor?:
-            The constructor may not have a valid gl context to initialize gl components.
+            Init this resource. This method may not be called from the main thread as the initialization process is
+            multi threaded.
             </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Graphics.DummyGraphicsResource.GetInitJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the init jobs.
+            </summary>
+            <returns>The init jobs.</returns>
+            <param name="list">List.</param>
         </member>
         <member name="M:FurryLana.Engine.Graphics.DummyGraphicsResource.Load">
             <summary>
             Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
             </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Graphics.DummyGraphicsResource.GetLoadJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the load jobs.
+            </summary>
+            <returns>The load jobs.</returns>
+            <param name="list">List.</param>
         </member>
         <member name="M:FurryLana.Engine.Graphics.DummyGraphicsResource.Destroy">
             <summary>
@@ -795,16 +832,15 @@
             </summary>
             <value>The depth.</value>
         </member>
-        <member name="P:FurryLana.Engine.Texture.Interfaces.ITexture.GLid">
-            <summary>
-            Gets or sets the GL ID.
-            </summary>
-            <value>The GL ID.</value>
-        </member>
         <member name="M:FurryLana.Engine.Texture.Interfaces.ITexture.ToBitmap">
             <summary>
             Convert this texture to a <see cref="T:System.Drawing.Bitmap" /></summary>
             <returns>The bitmap.</returns>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Interfaces.ITexture.Bind">
+            <summary>
+            Bind the texture.
+            </summary>
         </member>
         <member name="T:FurryLana.Engine.Texture.Interfaces.ITextureManager">
             <summary>
@@ -957,15 +993,28 @@
         </member>
         <member name="M:FurryLana.Engine.Model.AssimpModelManager.Init">
             <summary>
-            Init this resource. Initialzes the resource within a valid gl context.
-            Why not use the constructor?:
-            The constructor may not have a valid gl context to initialize gl components.
+            Init this resource. This method may not be called from the main thread as the initialization process is
+            multi threaded.
             </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.GetInitJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the init jobs.
+            </summary>
+            <returns>The init jobs.</returns>
+            <param name="list">List.</param>
         </member>
         <member name="M:FurryLana.Engine.Model.AssimpModelManager.Load">
             <summary>
             Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
             </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModelManager.GetLoadJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the load jobs.
+            </summary>
+            <returns>The load jobs.</returns>
+            <param name="list">List.</param>
         </member>
         <member name="M:FurryLana.Engine.Model.AssimpModelManager.Destroy">
             <summary>
@@ -989,6 +1038,120 @@
             For example after init or when new resources needs to be loaded.
             </summary>
             <value>NeedsLoad handlers.</value>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModel.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FurryLana.Engine.Model.AssimpModel" /> class.
+            </summary>
+            <param name="model">Model.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModel.Init">
+            <summary>
+            Init this resource. This method may not be called from the main thread as the initialization process is
+            multi threaded.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModel.GetInitJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the init jobs.
+            </summary>
+            <returns>The init jobs.</returns>
+            <param name="list">List.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModel.Load">
+            <summary>
+            Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModel.GetLoadJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the load jobs.
+            </summary>
+            <returns>The load jobs.</returns>
+            <param name="list">List.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModel.Destroy">
+            <summary>
+            Destroy this resource.
+            Why not IDisposable:
+            IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
+            Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+            context.
+            </summary>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModel.Loaded">
+            <summary>
+            Gets or sets a value indicating whether this <see cref="T:FurryLana.Engine.Model.AssimpModel" /> is loaded.
+            </summary>
+            <value>
+                <c>true</c> if loaded; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModel.NeedsLoad">
+            <summary>
+            Fire this event when you need the Load function to be called.
+            For example after init or when new resources needs to be loaded.
+            </summary>
+            <value>NeedsLoad handlers.</value>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModel.FrameSyncedUpdate(System.Single)">
+            <summary>
+            This update is called before every frame draw inside a gl context.
+            </summary>
+            <param name="deltaTime">Time delta.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModel.Update(System.Int32)">
+            <summary>
+            This update is called in an extra thread which does not have a valid gl context.
+            The updaterate might differ from the framerate.
+            </summary>
+            <param name="deltaTime">Time delta in miliseconds.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Model.AssimpModel.Draw">
+            <summary>
+            Draw this instance.
+            </summary>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModel.Animations">
+            <summary>
+            Gets the animations.
+            </summary>
+            <value>The animations.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModel.Cameras">
+            <summary>
+            Gets the cameras.
+            </summary>
+            <value>The cameras.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModel.Lights">
+            <summary>
+            Gets the lights.
+            </summary>
+            <value>The lights.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModel.Materials">
+            <summary>
+            Gets the materials.
+            </summary>
+            <value>The materials.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModel.Meshes">
+            <summary>
+            Gets the meshes.
+            </summary>
+            <value>The meshes.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModel.Textures">
+            <summary>
+            Gets the textures.
+            </summary>
+            <value>The textures.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Model.AssimpModel.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+            <value>The name.</value>
         </member>
         <member name="T:FurryLana.Engine.Material.Material">
             <summary>
@@ -1029,6 +1192,300 @@
             Gets or sets the shader program.
             </summary>
             <value>The shader program.</value>
+        </member>
+        <member name="T:FurryLana.Engine.Texture.TextureManager">
+            <summary>
+            TexturesManager implemantation
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.Clear">
+            <summary>
+            Clear all textures from the texture manager.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.Add(FurryLana.Engine.Texture.Interfaces.ITexture)">
+            <summary>
+            Add the specified item.
+            </summary>
+            <param name="item">Item.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.Remove(FurryLana.Engine.Texture.Interfaces.ITexture)">
+            <summary>
+            Remove the specified item.
+            </summary>
+            <param name="item">Item.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.Remove(System.String)">
+            <summary>
+            Remove by the specified name.
+            </summary>
+            <param name="name">Name.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.GetByName(System.String)">
+            <summary>
+            Gets the IManageable by name.
+            </summary>
+            <param name="name">Name.</param>
+            <returns>
+            The IManageable.
+            </returns>
+        </member>
+        <member name="P:FurryLana.Engine.Texture.TextureManager.Count">
+            <summary>
+            Gets the count.
+            </summary>
+            <value>
+            The count.
+            </value>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.Init">
+            <summary>
+            Init this resource. This method may not be called from the main thread as the initialization process is
+            multi threaded.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.GetInitJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the init jobs.
+            </summary>
+            <returns>The init jobs.</returns>
+            <param name="list">List.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.Load">
+            <summary>
+            Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.GetLoadJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the load jobs.
+            </summary>
+            <returns>The load jobs.</returns>
+            <param name="list">List.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.Destroy">
+            <summary>
+            Destroy this resource.
+            Why not IDisposable:
+            IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
+            Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+            context.
+            </summary>
+        </member>
+        <member name="P:FurryLana.Engine.Texture.TextureManager.Loaded">
+            <summary>
+            Gets a value indicating whether this
+            <see cref="T:FurryLana.Engine.Graphics.Interfaces.IResource" /> is loaded.
+            </summary>
+            <value>
+                <c>true</c> if loaded; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.TextureManager.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through a collection.
+            </summary>
+            <returns>
+            An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+            </returns>
+        </member>
+        <member name="T:FurryLana.Engine.Texture.Texture">
+            <summary>
+            Texture implementation.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Texture.#ctor(System.Int32,System.Int32,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FurryLana.Engine.Texture.Texture" /> class.
+            </summary>
+            <param name="width">Width.</param>
+            <param name="height">Height.</param>
+            <param name="name">Name.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Texture.#ctor(System.Drawing.Bitmap,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FurryLana.Engine.Texture.Texture" /> class.
+            </summary>
+            <param name="bmp">Bmp.</param>
+            <param name="name">Name.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Texture.UpdateTexture">
+            <summary>
+            Updates the texture.
+            </summary>
+        </member>
+        <member name="F:FurryLana.Engine.Texture.Texture.width">
+            <summary>
+            The width.
+            </summary>
+        </member>
+        <member name="F:FurryLana.Engine.Texture.Texture.height">
+            <summary>
+            The height.
+            </summary>
+        </member>
+        <member name="F:FurryLana.Engine.Texture.Texture.depth">
+            <summary>
+            The depth.
+            </summary>
+        </member>
+        <member name="F:FurryLana.Engine.Texture.Texture.id">
+            <summary>
+            The identifier.
+            </summary>
+        </member>
+        <member name="F:FurryLana.Engine.Texture.Texture.loadBmp">
+            <summary>
+            Toggle to set if bitmap should be loaded.
+            </summary>
+        </member>
+        <member name="F:FurryLana.Engine.Texture.Texture.bmp">
+            <summary>
+            The bitmap.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Texture.ToBitmap">
+            <summary>
+            Tos the bitmap.
+            </summary>
+            <returns>The bitmap.</returns>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Texture.Bind">
+            <summary>
+            Bind the texture.
+            </summary>
+        </member>
+        <member name="P:FurryLana.Engine.Texture.Texture.Width">
+            <summary>
+            Gets or sets the width.
+            </summary>
+            <value>The width.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Texture.Texture.Height">
+            <summary>
+            Gets or sets the height.
+            </summary>
+            <value>The height.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Texture.Texture.Depth">
+            <summary>
+            Gets or sets the depth.
+            </summary>
+            <value>The depth.</value>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Texture.Init">
+            <summary>
+            Init this resource. This method may not be called from the main thread as the initialization process is
+            multi threaded.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Texture.GetInitJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the init jobs.
+            </summary>
+            <returns>The init jobs.</returns>
+            <param name="list">List.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Texture.Load">
+            <summary>
+            Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
+            </summary>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Texture.GetLoadJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the load jobs.
+            </summary>
+            <returns>The load jobs.</returns>
+            <param name="list">List.</param>
+        </member>
+        <member name="M:FurryLana.Engine.Texture.Texture.Destroy">
+            <summary>
+            Destroy this resource.
+            Why not IDisposable:
+            IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
+            Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+            context.
+            </summary>
+        </member>
+        <member name="P:FurryLana.Engine.Texture.Texture.Loaded">
+            <summary>
+            Gets or sets a value indicating whether this <see cref="T:FurryLana.Engine.Texture.Texture" /> is loaded.
+            </summary>
+            <value>
+                <c>true</c> if loaded; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Texture.Texture.NeedsLoad">
+            <summary>
+            Fire this event when you need the Load function to be called.
+            For example after init or when new resources needs to be loaded.
+            </summary>
+            <value>NeedsLoad handlers.</value>
+        </member>
+        <member name="P:FurryLana.Engine.Texture.Texture.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+            <value>The name.</value>
+        </member>
+        <member name="T:FurryLana.Engine.Graphics.VertexBuffer.PointerType">
+            <summary>
+            Represents the data type of the poitner
+            </summary>
+        </member>
+        <member name="F:FurryLana.Engine.Graphics.VertexBuffer.PointerType.Byte">
+            <summary>The byte</summary>
+        </member>
+        <member name="F:FurryLana.Engine.Graphics.VertexBuffer.PointerType.UnsignedByte">
+            <summary>The unsigned byte</summary>
+            <remarks>Use for color/attrib only!</remarks>
+        </member>
+        <member name="F:FurryLana.Engine.Graphics.VertexBuffer.PointerType.Short">
+            <summary>The short</summary>
+        </member>
+        <member name="F:FurryLana.Engine.Graphics.VertexBuffer.PointerType.UnsignedShort">
+            <summary>The unsigned short</summary>
+            <remarks>Use for color/attrib only!</remarks>
+        </member>
+        <member name="F:FurryLana.Engine.Graphics.VertexBuffer.PointerType.Int">
+            <summary>The int</summary>
+        </member>
+        <member name="F:FurryLana.Engine.Graphics.VertexBuffer.PointerType.UnsignedInt">
+            <summary>The unsigned int</summary>
+            <remarks>Use for color/attrib only!</remarks>
+        </member>
+        <member name="F:FurryLana.Engine.Graphics.VertexBuffer.PointerType.Float">
+            <summary>The float</summary>
+        </member>
+        <member name="F:FurryLana.Engine.Graphics.VertexBuffer.PointerType.Double">
+            <summary>The double</summary>
+        </member>
+        <member name="F:FurryLana.Engine.Graphics.VertexBuffer.PointerType.HalfFloat">
+            <summary>The half float</summary>
+        </member>
+        <member name="M:FurryLana.Engine.LinqExtensions.JoinSequence``1(System.Collections.Generic.IEnumerable{System.Collections.Generic.IEnumerable{``0}})">
+            <summary>
+            Joins the sequence.
+            </summary>
+            <returns>The sequence.</returns>
+            <param name="src">Source.</param>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:FurryLana.Engine.LinqExtensions.JoinSequence``1(System.Collections.Generic.IEnumerable{System.Collections.Generic.IEnumerable{``0}},``0)">
+            <summary>
+            Joins the sequence.
+            </summary>
+            <returns>The sequence.</returns>
+            <param name="src">Source.</param>
+            <param name="separator">Separator.</param>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:FurryLana.Engine.LinqExtensions.Join``1(System.Collections.Generic.IEnumerable{``0},System.String)">
+            <summary>
+            Join the specified enumerable and use the separator as the separator.
+            </summary>
+            <param name="joiner">Enumerable.</param>
+            <param name="separator">Separator.</param>
+            <typeparam name="T">The 1st type parameter.</typeparam>
         </member>
     </members>
 </doc>

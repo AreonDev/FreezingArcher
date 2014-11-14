@@ -7,9 +7,9 @@
 * TODO [#C] IEntity implementation [Martin]
   * BaseEntity class
   * PhysicalEntity class derived from BaseEntity
-* TODO [#B] IGame implementation [?]
+* TODO [#B] IGame implementation [Paul]
   * Manage game - have a look at FreezingArcherGame in FreezingArcher/Game
-* TODO [#B] IGameManager implementation [?]
+* TODO [#B] IGameManager implementation [Paul]
   * Manage IGraphicsResource/IResource handling (ResourceManager)
 * TODO [#C] ILevel implementation (should it be IScene?) [?]
   * implement draw logic
@@ -23,7 +23,7 @@
 * TODO [#C] Input enum - do we really need this? [?]
   * if we need it someone should add all necessary keys in a sensful order :D
   * maybe use unicode-utf8 instead (?)
-* TODO [#B] Design a map interface - the currently used one is way too simple [?]
+* TODO [#B] Design a map interface - the currently used one is way too simple [Fin]
   * this should be done in the near future
 * DONE [#A] IMaterial implementation [Paul]
   * should be trivial
@@ -38,11 +38,11 @@
   * implementation may be used from FreezingArcher
 * TODO [#B] IScopedFramebuffer implementation [Fin]
   * implementation may be used from FreezingArcher
-* TODO [#A] IShaderProgram [Fin]
+* DONE [#A] IShaderProgram [Fin]
   * for now we just use direct opengl API via Pencil.Gaming
     later on we should use the IRenderer to implement this
   * implementation may be used from FreezingArcher
-* TODO [#A] ITexture implementation [Fin]
+* DONE [#A] ITexture implementation [Fin]
   * should abstract the gl 2D texture and 3D texture
     * use a 3D texture when detph is greater than 1
 * DONE [#A] ITextureManager implementation [Paul]

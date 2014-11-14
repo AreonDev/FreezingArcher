@@ -20,15 +20,28 @@
         </member>
         <member name="M:FurryLana.Base.Application.Window.Init">
             <summary>
-            Init this resource. Initialzes the resource within a valid gl context.
-            Why not use the constructor?:
-            The constructor may not have a valid gl context to initialize gl components.
+            Init this resource. This method may not be called from the main thread as the initialization process is
+            multi threaded.
             </summary>
+        </member>
+        <member name="M:FurryLana.Base.Application.Window.GetInitJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the init jobs.
+            </summary>
+            <returns>The init jobs.</returns>
+            <param name="list">List.</param>
         </member>
         <member name="M:FurryLana.Base.Application.Window.Load">
             <summary>
             Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
             </summary>
+        </member>
+        <member name="M:FurryLana.Base.Application.Window.GetLoadJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the load jobs.
+            </summary>
+            <returns>The load jobs.</returns>
+            <param name="list">List.</param>
         </member>
         <member name="M:FurryLana.Base.Application.Window.Destroy">
             <summary>
@@ -250,15 +263,28 @@
         </member>
         <member name="M:FurryLana.Base.Application.TestApplication.Init">
             <summary>
-            Init this resource. Initialzes the resource within a valid gl context.
-            Why not use the constructor?:
-            The constructor may not have a valid gl context to initialize gl components.
+            Init this resource. This method may not be called from the main thread as the initialization process is
+            multi threaded.
             </summary>
+        </member>
+        <member name="M:FurryLana.Base.Application.TestApplication.GetInitJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the init jobs.
+            </summary>
+            <returns>The init jobs.</returns>
+            <param name="list">List.</param>
         </member>
         <member name="M:FurryLana.Base.Application.TestApplication.Load">
             <summary>
             Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
             </summary>
+        </member>
+        <member name="M:FurryLana.Base.Application.TestApplication.GetLoadJobs(System.Collections.Generic.List{System.Action})">
+            <summary>
+            Gets the load jobs.
+            </summary>
+            <returns>The load jobs.</returns>
+            <param name="list">List.</param>
         </member>
         <member name="M:FurryLana.Base.Application.TestApplication.Destroy">
             <summary>

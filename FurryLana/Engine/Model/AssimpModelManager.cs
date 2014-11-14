@@ -35,7 +35,6 @@ namespace FurryLana.Engine.Model
     public class AssimpModelManager : IModelManager
     {
         List<IModel>     models;
-        PostProcessSteps AssimpPostProcessSteps;
 
         #region IModelManager implementation
 
@@ -47,37 +46,7 @@ namespace FurryLana.Engine.Model
         /// <param name="path">Path.</param>
         public IModel LoadFromLocation (string path)
         {
-            Scene model;
-            using (AssimpContext importer = new AssimpContext ())
-            {
-                try
-                {
-                    model = importer.ImportFile (path, AssimpPostProcessSteps);
-                }
-                catch (FileNotFoundException e)
-                {
-                    throw new FileNotFoundException ("Model file \"" + path + "\" was not found!", path, e);
-                }
-                catch (AssimpException e)
-                {
-                    throw new AssimpException ("Error during model loading via Assimp (see inner exception)!", e);
-                }
-                catch (ObjectDisposedException e)
-                {
-                    throw new ObjectDisposedException ("Invalid Assimp context!", e);
-                }
-                catch (Exception e)
-                {
-                    throw new Exception ("Unknown error during loading file \"" + path + " via Assimp!", e);
-                }
-                
-                if (model == null)
-                {
-                    throw new Exception ("Unknown error during loading file \"" + path + " via Assimp!");
-                }
-            }
-
-            IModel imodel = new AssimpModel (model);
+            IModel imodel = new AssimpModel (path);
 
             Add (imodel);
 
@@ -184,13 +153,17 @@ namespace FurryLana.Engine.Model
         public void Init ()
         {
             models = new List<IModel> ();
+        }
 
-            AssimpPostProcessSteps =
-                PostProcessSteps.Triangulate |
-                    PostProcessSteps.GenerateNormals |
-                    PostProcessSteps.OptimizeMeshes |
-                    PostProcessSteps.JoinIdenticalVertices |
-                    PostProcessSteps.ImproveCacheLocality;
+        /// <summary>
+        /// Gets the init jobs.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetInitJobs (List<Action> list)
+        {
+            list.Add (Init);
+            return list;
         }
 
         /// <summary>
@@ -201,6 +174,17 @@ namespace FurryLana.Engine.Model
             Loaded = false;
             models.ForEach ((m) => { if (!m.Loaded) m.Load (); });
             Loaded = true;
+        }
+
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetLoadJobs (List<Action> list)
+        {
+            list.Add (Load);
+            return list;
         }
 
         /// <summary>

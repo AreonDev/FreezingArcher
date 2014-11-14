@@ -21,10 +21,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 
-using FurryLana.Engine.Texture.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using FurryLana.Engine.Texture.Interfaces;
 
 namespace FurryLana.Engine.Texture
 {
@@ -37,7 +38,7 @@ namespace FurryLana.Engine.Texture
 
         public void LoadFromLocation(string location)
         {
-            //Add(new Texture(new Bitmap(location)));
+            Add(new Texture(new Bitmap(location), location));
         }
 
         public void LoadFromXMl(string filepath)
@@ -99,6 +100,7 @@ namespace FurryLana.Engine.Texture
         {
             get { return textures.Count; }
         }
+
         /// <summary>
         /// Init this resource. This method may not be called from the main thread as the initialization process is
         /// multi threaded.
@@ -106,6 +108,17 @@ namespace FurryLana.Engine.Texture
         public void Init()
         {
            textures = new List<ITexture>();
+        }
+
+        /// <summary>
+        /// Gets the init jobs.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetInitJobs (List<Action> list)
+        {
+            list.Add (Init);
+            return list;
         }
 
         /// <summary>
@@ -119,6 +132,17 @@ namespace FurryLana.Engine.Texture
                     t.Load();
             });
             Loaded = true;
+        }
+
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetLoadJobs (List<Action> list)
+        {
+            list.Add (Load);
+            return list;
         }
 
         /// <summary>

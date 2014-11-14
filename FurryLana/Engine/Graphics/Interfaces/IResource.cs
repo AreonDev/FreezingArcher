@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Collections.Generic;
 
 namespace FurryLana.Engine.Graphics.Interfaces
 {
@@ -34,11 +35,23 @@ namespace FurryLana.Engine.Graphics.Interfaces
         /// multi threaded.
         /// </summary>
         void Init ();
+
+        /// <summary>
+        /// Gets the init jobs.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        List<Action> GetInitJobs (List<Action> list);
         
         /// <summary>
         /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
         /// </summary>
         void Load ();
+
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        List<Action> GetLoadJobs (List<Action> list);
         
         /// <summary>
         /// Destroy this resource.

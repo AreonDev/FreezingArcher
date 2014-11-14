@@ -19,5 +19,28 @@
             Angle in radian.
             </summary>
         </member>
+        <member name="T:FurryLana.Math.Pair`2">
+            <summary>
+            Represents a pair of 2 generic objects
+            </summary>
+            <typeparam name="X">Type of A</typeparam>
+            <typeparam name="Y">Type of B</typeparam>
+        </member>
+        <member name="P:FurryLana.Math.Pair`2.A">
+            <summary>Gets or sets the first item.</summary>
+            <value>A.</value>
+        </member>
+        <member name="P:FurryLana.Math.Pair`2.B">
+            <summary>Gets or sets the second item.</summary>
+            <value>The b.</value>
+        </member>
+        <member name="M:FurryLana.Math.Pair`2.#ctor(`0,`1)">
+            <summary>Initializes a new instance of the <see cref="T:FurryLana.Math.Pair`2" /> class.</summary>
+            <param name="a">first item.</param>
+            <param name="b">second item.</param>
+        </member>
+        <member name="M:FurryLana.Math.Pair`2.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:FurryLana.Math.Pair`2" /> class.</summary>
+        </member>
     </members>
 </doc>

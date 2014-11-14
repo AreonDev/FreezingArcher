@@ -22,6 +22,9 @@
 //
 using System;
 using FurryLana.Engine.Graphics.Interfaces;
+using FurryLana.Engine.Model.Interfaces;
+using FurryLana.Engine.Model;
+using System.Collections.Generic;
 
 namespace FurryLana.Engine.Graphics
 {
@@ -30,6 +33,8 @@ namespace FurryLana.Engine.Graphics
     /// </summary>
     public class DummyGraphicsResource : IGraphicsResource
     {
+        protected IModel model;
+
         #region IResource implementation
 
         /// <summary>
@@ -39,6 +44,20 @@ namespace FurryLana.Engine.Graphics
         public void Init ()
         {
             Loaded = false;
+            model = new AssimpModel ("Model/Data/Stone.fbx");
+            model.Init ();
+            NeedsLoad (this, null);
+        }
+
+        /// <summary>
+        /// Gets the init jobs.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetInitJobs (List<Action> list)
+        {
+            list.Add (Init);
+            return list;
         }
 
         /// <summary>
@@ -46,7 +65,20 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         public void Load ()
         {
+            Loaded = false;
+            model.Load ();
             Loaded = true;
+        }
+
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetLoadJobs (List<Action> list)
+        {
+            list.Add (Load);
+            return list;
         }
 
         /// <summary>
@@ -60,6 +92,7 @@ namespace FurryLana.Engine.Graphics
         public void Destroy ()
         {
             Loaded = false;
+            model.Destroy ();
         }
 
         /// <summary>
@@ -85,7 +118,10 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         /// <param name="deltaTime">Time delta.</param>
         public void FrameSyncedUpdate (float deltaTime)
-        {}
+        {
+            if (model != null && model.Loaded)
+                model.FrameSyncedUpdate (deltaTime);
+        }
 
         #endregion
 
@@ -97,7 +133,10 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         /// <param name="deltaTime">Time delta in miliseconds.</param>
         public void Update (int deltaTime)
-        {}
+        {
+            if (model != null && model.Loaded)
+                model.Update (deltaTime);
+        }
 
         #endregion
 
@@ -107,7 +146,10 @@ namespace FurryLana.Engine.Graphics
         /// Draw this instance.
         /// </summary>
         public void Draw ()
-        {}
+        {
+            if (model != null && model.Loaded)
+                model.Draw ();
+        }
 
         #endregion
     }

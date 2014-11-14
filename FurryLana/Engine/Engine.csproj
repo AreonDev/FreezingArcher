@@ -10,7 +10,6 @@
     <RootNamespace>FurryLana.Engine</RootNamespace>
     <AssemblyName>Engine</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -25,6 +24,7 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <GenerateDocumentation>True</GenerateDocumentation>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -37,6 +37,7 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <GenerateDocumentation>True</GenerateDocumentation>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -47,6 +48,7 @@
     <Reference Include="AssimpNet">
       <HintPath>..\Base\lib\AssimpNet.dll</HintPath>
     </Reference>
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -101,6 +103,18 @@
     <Compile Include="Model\AssimpModel.cs" />
     <Compile Include="Material\Material.cs" />
     <Compile Include="Texture\TextureManager.cs" />
+    <Compile Include="Texture\Texture.cs" />
+    <Compile Include="Graphics\VertexBuffer\VertexFormatInfo.cs" />
+    <Compile Include="Graphics\VertexBuffer\VertexAttribParam.cs" />
+    <Compile Include="Graphics\VertexBuffer\PointerType.cs" />
+    <Compile Include="Graphics\VertexBuffer\VertexArrayObject.cs" />
+    <Compile Include="Graphics\VertexBuffer\VertexBuffer.cs" />
+    <Compile Include="Graphics\VertexBuffer\VertexBufferTarget.cs" />
+    <Compile Include="Graphics\VertexBuffer\VertexBufferType.cs" />
+    <Compile Include="Graphics\Shader\ShaderProgram.cs" />
+    <Compile Include="Graphics\Shader\ShaderType.cs" />
+    <Compile Include="Graphics\Shader\Shader.cs" />
+    <Compile Include="LinqExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -119,6 +133,18 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Engine.cd" />
+    <None Include="Graphics\Shader\RenderTarget\stdmodel.vsh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphics\Shader\RenderTarget\stdmodel.fsh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Model\Data\Stone.fbx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Model\Data\Stone1.tif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Math\Math.csproj">
@@ -127,4 +153,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Graphics\VertexBuffer\" />
+    <Folder Include="Graphics\Shader\" />
+    <Folder Include="Graphics\Shader\RenderTarget\" />
+    <Folder Include="Model\Data\" />
+  </ItemGroup>
 </Project>

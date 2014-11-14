@@ -25,6 +25,7 @@ using FurryLana.Engine.Camera.Interfaces;
 using Pencil.Gaming.MathUtils;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace FurryLana.Engine.Camera
 {
@@ -211,5 +212,31 @@ namespace FurryLana.Engine.Camera
         /// </summary>
         /// <value>The name.</value>
         public string Name { get; set; }
+
+        #region IResource implementation
+
+        /// <summary>
+        /// Gets the init jobs.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetInitJobs (List<Action> list)
+        {
+            list.Add (Init);
+            return list;
+        }
+
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetLoadJobs (List<Action> list)
+        {
+            list.Add (Load);
+            return list;
+        }
+
+        #endregion
     }
 }

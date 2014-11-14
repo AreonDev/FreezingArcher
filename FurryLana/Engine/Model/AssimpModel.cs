@@ -22,7 +22,12 @@
 //
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Assimp;
+using Pencil.Gaming.MathUtils;
+using FurryLana.Engine.Graphics.Shader;
+using FurryLana.Engine.Graphics.VertexBuffer;
 using FurryLana.Engine.Model.Interfaces;
 
 namespace FurryLana.Engine.Model
@@ -33,12 +38,25 @@ namespace FurryLana.Engine.Model
         /// Initializes a new instance of the <see cref="FurryLana.Engine.Model.AssimpModel"/> class.
         /// </summary>
         /// <param name="model">Model.</param>
-        public AssimpModel (Scene model)
+        public AssimpModel (string location)
         {
-            this.model = model;
+            this.location = location;
+            Loaded = false;
         }
 
         protected Scene model;
+        protected string location;
+        protected PostProcessSteps AssimpPostProcessSteps;
+
+        VertexFormatInfo       vfi; // vertex format info
+        Vector3D[]             vrt; // vertices
+        byte[]                 idx; // indices
+        VertexBuffer<Vector3D> vbo; // vertex buffer object
+        VertexBuffer<byte>     ibo; // index buffer object
+        VertexArrayObject      vao; // vertex array object
+        Shader                 vsh; // vertex shader
+        Shader                 fsh; // fragment shader
+        ShaderProgram          shp; // shader program
 
         #region IResource implementation
 
@@ -47,17 +65,103 @@ namespace FurryLana.Engine.Model
         /// multi threaded.
         /// </summary>
         public void Init ()
-        {}
+        {
+            AssimpPostProcessSteps =
+                PostProcessSteps.Triangulate |
+                    PostProcessSteps.GenerateNormals |
+                    PostProcessSteps.OptimizeMeshes |
+                    PostProcessSteps.JoinIdenticalVertices |
+                    PostProcessSteps.ImproveCacheLocality;
+
+            using (AssimpContext importer = new AssimpContext ())
+            {
+                try
+                {
+                    model = importer.ImportFile (location, AssimpPostProcessSteps);
+                }
+                catch (FileNotFoundException e)
+                {
+                    throw new FileNotFoundException ("Model file \"" + location + "\" was not found!", location, e);
+                }
+                catch (AssimpException e)
+                {
+                    throw new AssimpException ("Error during model loading via Assimp (see inner exception)!", e);
+                }
+                catch (ObjectDisposedException e)
+                {
+                    throw new ObjectDisposedException ("Invalid Assimp context!", e);
+                }
+                catch (Exception e)
+                {
+                    throw new Exception ("Unknown error during loading file \"" + location + "\" via Assimp!", e);
+                }
+                
+                if (model == null)
+                {
+                    throw new Exception ("Unknown error during loading file \"" + location + "\" via Assimp!");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the init jobs.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetInitJobs (List<Action> list)
+        {
+            list.Add (Init);
+            return list;
+        }
 
         /// <summary>
         /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
         /// </summary>
         public void Load ()
-        {}
+        {
+            Loaded = false;
+
+            vsh = new Shader (ShaderType.VertexShader, "Graphics/Shader/RenderTarget/stdmodel.vsh");
+            fsh = new Shader (ShaderType.FragmentShader, "Graphics/Shader/RenderTarget/stdmodel.fsh");
+
+            shp = new ShaderProgram (vsh, fsh);
+
+            shp.Load ();
+            shp.Link ();
+
+            shp["ProjMatrix"] = Matrix.CreatePerspectiveFieldOfView (1f, 16f/9f, 0.1f, 200f);
+            shp["ViewMatrix"] = Matrix.LookAt (new Vector3 (0f, 0f, 0f),
+                                               new Vector3 (0f, 0f, 0f),
+                                               new Vector3 (0f, 1f, 0f));
+
+            vfi = new VertexFormatInfo ();
+            vfi.VertexParams = new VertexAttribParam[]
+            {
+                new VertexAttribParam (0, 3, 3 * sizeof (float), 0)
+            };
+
+            vrt = model.Meshes.Select (j => j.Vertices).JoinSequence ().ToArray ();
+
+            foreach (var v in vrt)
+                Console.WriteLine ("X: {0}, Y: {1}, Z: {2}", v.X, v.Y, v.Z);
+
+            Loaded = true;
+        }
+
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetLoadJobs (List<Action> list)
+        {
+            list.Add (Load);
+            return list;
+        }
 
         /// <summary>
         /// Destroy this resource.
-        /// 
+        ///
         /// Why not IDisposable:
         /// IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
         /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl

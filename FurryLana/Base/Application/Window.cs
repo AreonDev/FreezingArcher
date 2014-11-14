@@ -27,6 +27,7 @@ using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
 using FurryLana.Base.Application.Interfaces;
+using System.Collections.Generic;
 
 namespace FurryLana.Base.Application
 {
@@ -67,6 +68,21 @@ namespace FurryLana.Base.Application
                 Glfw.Terminate ();
                 throw new OperationCanceledException ("Glfw initialization failed!", e);
             }
+
+            JobExecuter initer = new JobExecuter ();
+            initer.InsertJobs (Resource.GetInitJobs (new List<Action> ()));
+            initer.ExecJobsParallel (Environment.ProcessorCount);
+        }
+
+        /// <summary>
+        /// Gets the init jobs.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetInitJobs (List<Action> list)
+        {
+            list.Add (Init);
+            return list;
         }
 
         /// <summary>
@@ -85,6 +101,21 @@ namespace FurryLana.Base.Application
                 Destroy ();
                 throw new OperationCanceledException ("Caught exception while loading the window!", e);
             }
+
+            JobExecuter loader = new JobExecuter ();
+            loader.InsertJobs (Resource.GetLoadJobs (new List<Action> ()));
+            loader.ExecJobsSequential ();
+        }
+
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        public List<Action> GetLoadJobs (List<Action> list)
+        {
+            list.Add (Load);
+            return list;
         }
 
         /// <summary>

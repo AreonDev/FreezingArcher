@@ -5,6 +5,7 @@ using FurryLana.Engine.Model.Interfaces;
 using FurryLana.Engine.Texture;
 using FurryLana.Engine.Texture.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace FurryLana.Engine.Game
 {
@@ -59,6 +60,16 @@ namespace FurryLana.Engine.Game
         }
 
         /// <summary>
+        /// Gets the initialize jobs.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        public List<Action> GetInitJobs(List<Action> list)
+        {
+            list.Add(Init);
+            return list;
+        }
+
+        /// <summary>
         /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
         /// </summary>
         public void Load()
@@ -68,6 +79,16 @@ namespace FurryLana.Engine.Game
             ModelManager.Load();
             InputManager.Load();
             Loaded = true;
+        }
+
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        public List<Action> GetLoadJobs (List<Action> list)
+        {
+            list.Add(Load);
+            return list;
         }
 
         /// <summary>

@@ -47,7 +47,9 @@ namespace FurryLana.Engine.Game
         /// </value>
         public IModelManager ModelManager { get; protected set; }
 
-        /// <summary>.
+        /// <summary>
+        /// Init this resource. This method may not be called from the main thread as the initialization process is
+        /// multi threaded.
         /// </summary>
         public void Init()
         {

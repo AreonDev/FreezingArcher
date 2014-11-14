@@ -41,10 +41,33 @@ namespace FurryLana.Engine.Camera
         /// <param name="character">The character the camera is tracked to (must not be null).</param>
         public FirstPersonCamera(string name)
         {
-
+            Vector3 Rotation = Vector3.Zero;
+            Vector3 Position = Vector3.Zero;
             Name = name;
         }
 
+        protected Func<double, double> Deg2Rad = MathHelper.ToDegrees;
+        protected Func<double, double> Rad2Deg = MathHelper.ToRadians;
+
+        /// <summary>
+        /// Gets or sets the rotation.
+        /// </summary>
+        /// <value>The rotation.</value>
+        public Vector3 Rotation { get; protected set; }
+
+        public void RotTo(Vector3 degree , Math.AngleEnum angle)
+        {
+            if (angle == Math.AngleEnum.Degree)
+            {
+                Rotation = new Vector3((float)Deg2Rad(degree.X), 
+                                       (float)Deg2Rad(degree.Y),
+                                       (float)Deg2Rad(degree.Z));
+            }
+            else
+            {
+                Rotation = degree;
+            }
+        }
         /// <summary>
         /// Get or set the cameras view matrix
         /// </summary>
@@ -65,16 +88,14 @@ namespace FurryLana.Engine.Camera
         /// Position in space
         /// </summary>
         /// <value>The position.</value>
-        public Vector3 Position
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Vector3 Position{ get; set; }
 
         /// <summary>
         /// Draw this instance.
         /// </summary>
-        public void Draw()
+        public void Draw(/*IRenderer renderer*/)
         {
+            //renderer.SetViewMatrix(ViewMatix);
             throw new NotImplementedException();
         }
 
@@ -88,13 +109,38 @@ namespace FurryLana.Engine.Camera
             throw new NotImplementedException();
         }
 
+        protected int LastUpdate = 0;
+        protected float elapsedTime = 0;
+        protected Vector3 lastRotation = Vector3.Zero;
+        protected Vector3 lastPosition = Vector3.Zero;
+
         /// <summary>
         /// This update is called before every frame draw inside a gl context.
         /// </summary>
         /// <param name="deltaTime">Time delta.</param>
         public void FrameSyncedUpdate(float deltaTime)
         {
-            throw new NotImplementedException();
+            elapsedTime = deltaTime - LastUpdate;
+            LastUpdate = (int)deltaTime;
+
+            Position = new Vector3(Position.X,Position.Y,Position.Z);
+            float magicSmoothing = (0.2f) * elapsedTime * 0.5f;
+            Vector3 rotationdiff = Rotation -lastRotation;
+            Vector3 rot = new Vector3(Rotation);
+            rot = lastRotation + rotationdiff * magicSmoothing;
+
+            float sinx = (float)System.Math.Sin(Position.X);
+            float siny = (float)System.Math.Sin(Position.Y);
+            float sinz = (float)System.Math.Sin(Position.Z);
+            float cosx = (float)System.Math.Cos(Position.X);
+            float cosy = (float)System.Math.Cos(Position.Y);
+            float cosz = (float)System.Math.Cos(Position.Z);
+
+
+            ViewMatrix = Matrix.CreateTranslation(new Vector3((float)-Position.X, (float)-Position.Y, (float)-Position.Z));
+            ViewMatrix *= Matrix.CreateFromQuaternion(new Quaternion(sinx, 0, 0, cosx) *
+                                                      new Quaternion(0, siny, 0, cosy) *
+                                                      new Quaternion(0, 0, sinz, cosz));
         }
 
         /// <summary>
@@ -102,17 +148,13 @@ namespace FurryLana.Engine.Camera
         /// multi threaded.
         /// </summary>
         public void Init()
-        {
-            throw new NotImplementedException();
-        }
+        {}
 
         /// <summary>
         /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
         /// </summary>
         public void Load()
-        {
-            throw new NotImplementedException();
-        }
+        {}
 
         /// <summary>
         /// Destroy this resource.
@@ -124,17 +166,14 @@ namespace FurryLana.Engine.Camera
         /// </summary>
         public void Destroy()
         {
-            throw new NotImplementedException();
+            
         }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="FurryLana.Engine.Camera.FirstPersonCamera"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
-        public bool Loaded
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool Loaded { get; protected set;}
 
         /// <summary>
         /// Fire this event when you need the Load function to be called.
@@ -165,9 +204,7 @@ namespace FurryLana.Engine.Camera
         /// This method is called when the camera manager switches from this subject to another one.
         /// </summary>
         public void Disable()
-        {
-            throw new NotImplementedException();
-        }
+        { }
 
         /// <summary>
         /// Gets or sets the name.

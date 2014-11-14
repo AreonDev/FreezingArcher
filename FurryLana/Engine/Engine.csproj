@@ -56,6 +56,7 @@
     <Compile Include="Camera\Interfaces\ICameraManager.cs" />
     <Compile Include="Game\Interfaces\IGame.cs" />
     <Compile Include="Game\Interfaces\IGameManager.cs" />
+    <Compile Include="Game\ResourceManager.cs" />
     <Compile Include="Graphics\Interfaces\IDrawable.cs" />
     <Compile Include="Graphics\Interfaces\IFrameSyncedUpdate.cs" />
     <Compile Include="Graphics\Interfaces\IUpdate.cs" />

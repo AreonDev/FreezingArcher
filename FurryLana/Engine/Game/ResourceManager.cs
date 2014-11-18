@@ -5,6 +5,7 @@ using FurryLana.Engine.Model.Interfaces;
 using FurryLana.Engine.Texture;
 using FurryLana.Engine.Texture.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace FurryLana.Engine.Game
 {
@@ -47,13 +48,25 @@ namespace FurryLana.Engine.Game
         /// </value>
         public IModelManager ModelManager { get; protected set; }
 
-        /// <summary>.
+        /// <summary>
+        /// Init this resource. This method may not be called from the main thread as the initialization process is
+        /// multi threaded.
         /// </summary>
         public void Init()
         {
             TextureManager.Init();
             ModelManager.Init();
             InputManager.Init();
+        }
+
+        /// <summary>
+        /// Gets the initialize jobs.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        public List<Action> GetInitJobs(List<Action> list)
+        {
+            list.Add(Init);
+            return list;
         }
 
         /// <summary>
@@ -66,6 +79,16 @@ namespace FurryLana.Engine.Game
             ModelManager.Load();
             InputManager.Load();
             Loaded = true;
+        }
+
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        public List<Action> GetLoadJobs (List<Action> list)
+        {
+            list.Add(Load);
+            return list;
         }
 
         /// <summary>

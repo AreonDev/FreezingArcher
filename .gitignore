@@ -6,7 +6,7 @@
 Thumbs.db
 
 #Visual Studio Dateien ignorieren
-#*.exe
+*.exe
 *.pdb
 *.user
 *.aps
@@ -24,17 +24,18 @@ Thumbs.db
 *.vshost*
 *.ilk
 *.log
-#[Bb]in
-#[Dd]ebug*/
+[Bb]in
+[Bb]uild
+[Dd]ebug*/
 *.lib
 *.sbr
 *~
 obj/
-#[Rr]elease*/
+[Rr]elease*/
 _ReSharper*/
 #ignore thumbnails created by windows
 #Ignore files build by Visual Studio
 [Tt]est[Rr]esult*
 
 *.userprefs
-#[bB]inaries
+[bB]inaries

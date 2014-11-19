@@ -85,9 +85,10 @@ namespace FurryLana.Engine.Game
         /// Gets the load jobs.
         /// </summary>
         /// <param name="list">The list.</param>
-        public List<Action> GetLoadJobs (List<Action> list)
+        public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add(Load);
+            NeedsLoad = reloader;
             return list;
         }
 

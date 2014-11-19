@@ -85,7 +85,7 @@ namespace FurryLana.Engine.Model
             models.Add (item);
             item.Init ();
 
-            NeedsLoad (this, null);
+            NeedsLoad ((Action) this.Load, null);
         }
 
         /// <summary>
@@ -181,9 +181,10 @@ namespace FurryLana.Engine.Model
         /// </summary>
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
-        public List<Action> GetLoadJobs (List<Action> list)
+        public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);
+            NeedsLoad = reloader;
             return list;
         }
 

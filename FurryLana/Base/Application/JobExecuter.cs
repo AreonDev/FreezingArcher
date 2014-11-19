@@ -1,3 +1,4 @@
+using FurryLana.Engine.Graphics.Interfaces;
 //
 //  JobExecuter.cs
 //
@@ -55,11 +56,23 @@ namespace FurryLana.Base.Application
             ParallelOptions ops = new ParallelOptions ();
             ops.MaxDegreeOfParallelism = load;
             Parallel.Invoke (ops, Jobs.ToArray ());
+            Jobs.Clear ();
         }
 
         public void ExecJobsSequential ()
         {
             Jobs.ForEach (a => a ());
+            Jobs.Clear ();
+        }
+
+        public void NeedsReexecHandler (object action, EventArgs args)
+        {
+            Action act = action as Action;
+
+            if (act == null)
+                throw new ArgumentException ("Action should be of type Action!");
+
+            Jobs.Add (act);
         }
     }
 }

@@ -49,6 +49,10 @@ namespace FurryLana.Base.Application
 	    MFullscreenSize = fullscreenSize;
 	    MTitle = title;
 	    Resource = resource;
+        Initer = new JobExecuter();
+        Initer.InsertJobs (Resource.GetInitJobs (new List<Action>()));
+        Loader = new JobExecuter();
+        Loader.InsertJobs (Resource.GetLoadJobs (new List<Action>(), new EventHandler (Loader.NeedsReexecHandler)));
         }
 
         #region IResource implementation
@@ -69,9 +73,7 @@ namespace FurryLana.Base.Application
                 throw new OperationCanceledException ("Glfw initialization failed!", e);
             }
 
-            JobExecuter initer = new JobExecuter ();
-            initer.InsertJobs (Resource.GetInitJobs (new List<Action> ()));
-            initer.ExecJobsParallel (Environment.ProcessorCount);
+            Initer.ExecJobsParallel (Environment.ProcessorCount);
         }
 
         /// <summary>
@@ -102,9 +104,7 @@ namespace FurryLana.Base.Application
                 throw new OperationCanceledException ("Caught exception while loading the window!", e);
             }
 
-            JobExecuter loader = new JobExecuter ();
-            loader.InsertJobs (Resource.GetLoadJobs (new List<Action> ()));
-            loader.ExecJobsSequential ();
+            Loader.ExecJobsSequential ();
         }
 
         /// <summary>
@@ -112,9 +112,10 @@ namespace FurryLana.Base.Application
         /// </summary>
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
-        public List<Action> GetLoadJobs (List<Action> list)
+        public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);
+            NeedsLoad = reloader;
             return list;
         }
 
@@ -415,6 +416,16 @@ namespace FurryLana.Base.Application
         /// The fullscreen window.
         /// </summary>
         protected GlfwWindowPtr Ful;
+
+        /// <summary>
+        /// The loader.
+        /// </summary>
+        protected JobExecuter Loader;
+
+        /// <summary>
+        /// The initer.
+        /// </summary>
+        protected JobExecuter Initer;
 
         /// <summary>
         /// Creates the window.

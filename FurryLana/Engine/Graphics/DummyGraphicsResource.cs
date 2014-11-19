@@ -46,7 +46,7 @@ namespace FurryLana.Engine.Graphics
             Loaded = false;
             model = new AssimpModel ("Model/Data/Stone.fbx");
             model.Init ();
-            NeedsLoad (this, null);
+            NeedsLoad ((Action) this.Load, null);
         }
 
         /// <summary>
@@ -75,9 +75,10 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
-        public List<Action> GetLoadJobs (List<Action> list)
+        public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);
+            NeedsLoad = reloader;
             return list;
         }
 

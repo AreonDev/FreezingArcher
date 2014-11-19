@@ -51,7 +51,7 @@ namespace FurryLana.Engine.Graphics.Interfaces
         /// Gets the load jobs.
         /// </summary>
         /// <returns>The load jobs.</returns>
-        List<Action> GetLoadJobs (List<Action> list);
+        List<Action> GetLoadJobs (List<Action> list, EventHandler reloader);
         
         /// <summary>
         /// Destroy this resource.

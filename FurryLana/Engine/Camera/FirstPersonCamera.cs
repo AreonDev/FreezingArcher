@@ -231,9 +231,10 @@ namespace FurryLana.Engine.Camera
         /// </summary>
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
-        public List<Action> GetLoadJobs (List<Action> list)
+        public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);
+            NeedsLoad = reloader;
             return list;
         }
 

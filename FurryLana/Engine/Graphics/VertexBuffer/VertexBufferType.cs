@@ -24,10 +24,24 @@ using Pencil.Gaming.Graphics;
 
 namespace FurryLana.Engine.Graphics.VertexBuffer
 {
+    /// <summary>
+    /// Vertex buffer type.
+    /// </summary>
     public enum VertexBufferType
     {
+        /// <summary>
+        /// The static.
+        /// </summary>
         Static = BufferUsageHint.StaticDraw,
+
+        /// <summary>
+        /// The dynamic.
+        /// </summary>
         Dynamic = BufferUsageHint.DynamicDraw,
+
+        /// <summary>
+        /// The stream.
+        /// </summary>
         Stream = BufferUsageHint.StreamDraw
     }
 }

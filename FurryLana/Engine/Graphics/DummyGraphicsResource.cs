@@ -33,6 +33,9 @@ namespace FurryLana.Engine.Graphics
     /// </summary>
     public class DummyGraphicsResource : IGraphicsResource
     {
+        /// <summary>
+        /// The model.
+        /// </summary>
         protected IModel model;
 
         #region IResource implementation
@@ -44,7 +47,7 @@ namespace FurryLana.Engine.Graphics
         public void Init ()
         {
             Loaded = false;
-            model = new AssimpModel ("Model/Data/Stone.fbx");
+            model = new AssimpModel ("Model/Data/Stone.obj");
             model.Init ();
             NeedsLoad ((Action) this.Load, null);
         }
@@ -75,6 +78,7 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
+        /// <param name="reloader">The NeedsLoad event handler.</param>
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);

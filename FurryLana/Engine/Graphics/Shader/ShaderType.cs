@@ -23,11 +23,26 @@
 
 namespace FurryLana.Engine.Graphics.Shader
 {
+    /// <summary>
+    /// Shader type.
+    /// </summary>
     public enum ShaderType
     {
+        /// <summary>
+        /// The fragment shader.
+        /// </summary>
         FragmentShader = Pencil.Gaming.Graphics.ShaderType.FragmentShader,
+        /// <summary>
+        /// The vertex shader.
+        /// </summary>
         VertexShader = Pencil.Gaming.Graphics.ShaderType.VertexShader,
+        /// <summary>
+        /// The geometry shader.
+        /// </summary>
         GeometryShader = Pencil.Gaming.Graphics.ShaderType.GeometryShader,
+        /// <summary>
+        /// The geometry shader ext.
+        /// </summary>
         GeometryShaderExt = Pencil.Gaming.Graphics.ShaderType.GeometryShaderExt
     }
 }

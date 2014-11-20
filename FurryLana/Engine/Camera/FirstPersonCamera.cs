@@ -36,18 +36,24 @@ namespace FurryLana.Engine.Camera
     {
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Engine.Camera.FirstPersonCamera"/> class.
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Camera.FirstPersonCamera"/> class.
         /// </summary>
         /// <param name="name">The camera name used to identify it inside a camera manager.</param>
-        /// <param name="character">The character the camera is tracked to (must not be null).</param>
         public FirstPersonCamera(string name)
         {
-            Vector3 Rotation = Vector3.Zero;
-            Vector3 Position = Vector3.Zero;
+            Rotation = Vector3.Zero;
+            Position = Vector3.Zero;
             Name = name;
         }
 
+        /// <summary>
+        /// Degree to radian function.
+        /// </summary>
         protected Func<double, double> Deg2Rad = MathHelper.ToDegrees;
+
+        /// <summary>
+        /// Radian to degree function.
+        /// </summary>
         protected Func<double, double> Rad2Deg = MathHelper.ToRadians;
 
         /// <summary>
@@ -56,11 +62,16 @@ namespace FurryLana.Engine.Camera
         /// <value>The rotation.</value>
         public Vector3 Rotation { get; protected set; }
 
+        /// <summary>
+        /// Rotate to a specific degree.
+        /// </summary>
+        /// <param name="degree">Degree.</param>
+        /// <param name="angle">Angle.</param>
         public void RotTo(Vector3 degree , Math.AngleEnum angle)
         {
             if (angle == Math.AngleEnum.Degree)
             {
-                Rotation = new Vector3((float)Deg2Rad(degree.X), 
+                Rotation = new Vector3((float)Deg2Rad(degree.X),
                                        (float)Deg2Rad(degree.Y),
                                        (float)Deg2Rad(degree.Z));
             }
@@ -110,9 +121,24 @@ namespace FurryLana.Engine.Camera
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// The last update.
+        /// </summary>
         protected int LastUpdate = 0;
+
+        /// <summary>
+        /// The elapsed time.
+        /// </summary>
         protected float elapsedTime = 0;
+
+        /// <summary>
+        /// The last rotation.
+        /// </summary>
         protected Vector3 lastRotation = Vector3.Zero;
+
+        /// <summary>
+        /// The last position.
+        /// </summary>
         protected Vector3 lastPosition = Vector3.Zero;
 
         /// <summary>
@@ -159,7 +185,7 @@ namespace FurryLana.Engine.Camera
 
         /// <summary>
         /// Destroy this resource.
-        /// 
+        ///
         /// Why not IDisposable:
         /// IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
         /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
@@ -167,7 +193,7 @@ namespace FurryLana.Engine.Camera
         /// </summary>
         public void Destroy()
         {
-            
+
         }
 
         /// <summary>
@@ -231,6 +257,7 @@ namespace FurryLana.Engine.Camera
         /// </summary>
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
+        /// <param name="reloader">The NeedsLoad event handler.</param>
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);

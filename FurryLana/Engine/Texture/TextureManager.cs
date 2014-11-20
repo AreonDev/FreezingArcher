@@ -34,13 +34,24 @@ namespace FurryLana.Engine.Texture
     /// </summary>
     public class TextureManager : ITextureManager
     {
+        /// <summary>
+        /// The textures.
+        /// </summary>
         protected List<ITexture> textures;
 
+        /// <summary>
+        /// Loads textures from the specified location.
+        /// </summary>
+        /// <param name="location">Location.</param>
         public void LoadFromLocation(string location)
         {
             Add(new Texture(new Bitmap(location), location));
         }
 
+        /// <summary>
+        /// Loads textures from xml.
+        /// </summary>
+        /// <param name="filepath">Path to xml file.</param>
         public void LoadFromXMl(string filepath)
         {
             throw new System.NotImplementedException();
@@ -139,6 +150,7 @@ namespace FurryLana.Engine.Texture
         /// </summary>
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
+        /// <param name="reloader">The NeedsLoad event handler.</param>
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);
@@ -169,6 +181,11 @@ namespace FurryLana.Engine.Texture
         /// </value>
         public bool Loaded { get; protected set; }
 
+        /// <summary>
+        /// Fire this event when you need the Load function to be called.
+        /// For example after init or when new resources needs to be loaded.
+        /// </summary>
+        /// <value>NeedsLoad handlers.</value>
         public EventHandler NeedsLoad { get; set; }
 
         /// <summary>

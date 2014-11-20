@@ -24,9 +24,19 @@ using Pencil.Gaming.Graphics;
 
 namespace FurryLana.Engine.Graphics.VertexBuffer
 {
+    /// <summary>
+    /// Vertex buffer target.
+    /// </summary>
     public enum VertexBufferTarget
     {
+        /// <summary>
+        /// The data buffer.
+        /// </summary>
         DataBuffer = BufferTarget.ArrayBuffer,
+
+        /// <summary>
+        /// The indice buffer.
+        /// </summary>
         IndiceBuffer = BufferTarget.ElementArrayBuffer,
     }
 }

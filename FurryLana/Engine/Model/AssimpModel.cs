@@ -32,28 +32,42 @@ using FurryLana.Engine.Model.Interfaces;
 
 namespace FurryLana.Engine.Model
 {
+    /// <summary>
+    /// Assimp model.
+    /// </summary>
     public class AssimpModel : IModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FurryLana.Engine.Model.AssimpModel"/> class.
         /// </summary>
-        /// <param name="model">Model.</param>
+        /// <param name="location">The location of the model.</param>
         public AssimpModel (string location)
         {
             this.location = location;
             Loaded = false;
         }
 
+        /// <summary>
+        /// The model.
+        /// </summary>
         protected Scene model;
+
+        /// <summary>
+        /// The location.
+        /// </summary>
         protected string location;
+
+        /// <summary>
+        /// The assimp post process steps.
+        /// </summary>
         protected PostProcessSteps AssimpPostProcessSteps;
 
         VertexFormatInfo       vfi; // vertex format info
         Vector3D[]             vrt; // vertices
-        byte[]                 idx; // indices
-        VertexBuffer<Vector3D> vbo; // vertex buffer object
-        VertexBuffer<byte>     ibo; // index buffer object
-        VertexArrayObject      vao; // vertex array object
+        //byte[]                 idx; // indices
+        //VertexBuffer<Vector3D> vbo; // vertex buffer object
+        //VertexBuffer<byte>     ibo; // index buffer object
+        //VertexArrayObject      vao; // vertex array object
         Shader                 vsh; // vertex shader
         Shader                 fsh; // fragment shader
         ShaderProgram          shp; // shader program
@@ -153,6 +167,7 @@ namespace FurryLana.Engine.Model
         /// </summary>
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
+        /// <param name="reloader">The NeedLoad event handler.</param>
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);

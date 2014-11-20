@@ -27,42 +27,85 @@ using FurryLana.Math;
 
 namespace FurryLana.Engine.Graphics.VertexBuffer
 {
+    /// <summary>
+    /// Vertex array object.
+    /// </summary>
     public class VertexArrayObject
     {
+        /// <summary>
+        /// Unbinds the vertex array object.
+        /// </summary>
         public static void UnbindVAO()
         {
             GL.BindVertexArray(0);
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.VertexBuffer.VertexArrayObject"/> class.
+        /// </summary>
         public VertexArrayObject()
         {
             ID = -1;
         }
+
+        /// <summary>
+        /// Gets the identifier.
+        /// </summary>
+        /// <value>The I.</value>
         public int ID { get; private set; }
         //Map of Integer (VBOId vs. VertexFormatInfo)
         private Dictionary<int, Pair<VertexBufferTarget, VertexFormatInfo>> vertexStructs = new Dictionary<int, Pair<VertexBufferTarget, VertexFormatInfo>>();
         private bool needsReload;
+
+        /// <summary>
+        /// Attachs the VBO.
+        /// </summary>
+        /// <param name="info">Info.</param>
+        /// <param name="VBOId">VBO identifier.</param>
+        /// <param name="idTarget">Identifier target.</param>
         [Obsolete("Prefer generic method")]
         public void AttachVBO(VertexFormatInfo info, int VBOId, VertexBufferTarget idTarget = VertexBufferTarget.DataBuffer)
         {
             vertexStructs.Add(VBOId, new Pair<VertexBufferTarget, VertexFormatInfo>(idTarget, info));
             needsReload = true;
         }
+
+        /// <summary>
+        /// Attachs the VBO.
+        /// </summary>
+        /// <param name="buf">Buffer.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public void AttachVBO<T>(VertexBuffer<T> buf) where T:struct
         {
             vertexStructs.Add(buf.ID, new Pair<VertexBufferTarget, VertexFormatInfo>(buf.Target, buf.VertexFormatInfo));
             needsReload = true;
         }
+
+        /// <summary>
+        /// Detachs the VBO.
+        /// </summary>
+        /// <param name="VBOId">VBO identifier.</param>
         [Obsolete("Prefer generic method")]
         public void DetachVBO(int VBOId)
         {
             vertexStructs.Remove(VBOId);
             needsReload = true;
         }
+
+        /// <summary>
+        /// Detachs the VBO.
+        /// </summary>
+        /// <param name="buf">Buffer.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public void DetachVBO<T>(VertexBuffer<T> buf) where T:struct
         {
             vertexStructs.Remove(buf.ID);
             needsReload = true;
         }
+
+        /// <summary>
+        /// Bind this instance.
+        /// </summary>
         public void Bind()
         {
             GL.BindVertexArray(ID);
@@ -82,6 +125,9 @@ namespace FurryLana.Engine.Graphics.VertexBuffer
             }
         }
 
+        /// <summary>
+        /// Load this instance.
+        /// </summary>
         public void Load()
         {
             if (Loaded) return;
@@ -93,6 +139,10 @@ namespace FurryLana.Engine.Graphics.VertexBuffer
             }
             Loaded = true;
         }
+
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
         public void Destroy()
         {
             if (!Loaded) return;
@@ -104,6 +154,12 @@ namespace FurryLana.Engine.Graphics.VertexBuffer
             }
             Loaded = false;
         }
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="FurryLana.Engine.Graphics.VertexBuffer.VertexArrayObject"/>
+        /// is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; private set; }
     }
 }

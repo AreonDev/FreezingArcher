@@ -24,8 +24,15 @@ using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Renderer.Interfaces
 {
+    /// <summary>
+    /// Shader program interface.
+    /// </summary>
     public interface IShaderProgram : IResource
     {
+        /// <summary>
+        /// Gets the identifier.
+        /// </summary>
+        /// <value>The identifier.</value>
         int ID { get; }
 
         /*void AttachVertexShader (IVertexShader vertexShader);

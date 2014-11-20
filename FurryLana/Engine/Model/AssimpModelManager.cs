@@ -42,8 +42,7 @@ namespace FurryLana.Engine.Model
         /// Loads model from location.
         /// </summary>
         /// <returns>The model.</returns>
-        /// <param name="location">The path to the model.</param>
-        /// <param name="path">Path.</param>
+        /// <param name="path">The path to the model.</param>
         public IModel LoadFromLocation (string path)
         {
             IModel imodel = new AssimpModel (path);
@@ -100,7 +99,6 @@ namespace FurryLana.Engine.Model
         /// <summary>
         /// Remove the specified item.
         /// </summary>
-        /// <param name="item">Item.</param>
         /// <param name="name">Name.</param>
         public void Remove (string name)
         {
@@ -181,6 +179,7 @@ namespace FurryLana.Engine.Model
         /// </summary>
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
+        /// <param name="reloader">The NeedsLoad event handler.</param>
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);

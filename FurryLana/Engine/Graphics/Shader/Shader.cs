@@ -28,12 +28,20 @@ using System.Text;
 
 namespace FurryLana.Engine.Graphics.Shader
 {
+    /// <summary>
+    /// Shader.
+    /// </summary>
     public class Shader
     {
         static Regex import_match = new Regex("#include *\\\"{0,1}(?<file>.*)\\\"{0,1}", RegexOptions.Compiled | RegexOptions.Multiline);
         static Regex lines = new Regex(@"\r\n|\n\r|\r|\n", RegexOptions.Compiled | RegexOptions.Multiline);
         private string source;
         private ShaderType type;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.Shader.Shader"/> class.
+        /// </summary>
+        /// <param name="type">Type.</param>
+        /// <param name="source">Source.</param>
         public Shader(ShaderType type, string source)
         {
             this.source = Process(source);
@@ -55,10 +63,19 @@ namespace FurryLana.Engine.Graphics.Shader
             }
             return source;
         }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.Shader.Shader"/> class.
+        /// </summary>
+        /// <param name="type">Type.</param>
+        /// <param name="f">F.</param>
         public Shader(ShaderType type, FileInfo f)
             : this(type, File.ReadAllText(f.FullName, Encoding.UTF8))
         { }
         private int shader_id;
+        /// <summary>
+        /// Gets the I.
+        /// </summary>
+        /// <value>The I.</value>
         public int ID
         {
             get
@@ -66,6 +83,9 @@ namespace FurryLana.Engine.Graphics.Shader
                 return shader_id;
             }
         }
+        /// <summary>
+        /// Compiles the shader.
+        /// </summary>
         protected void CompileShader()
         {
             shader_id = (int) GL.CreateShader((Pencil.Gaming.Graphics.ShaderType)type);
@@ -79,10 +99,16 @@ namespace FurryLana.Engine.Graphics.Shader
             Loaded = true;
         }
         #region IGraphicsResource Member
+        /// <summary>
+        /// Load this instance.
+        /// </summary>
         public void Load()
         {
             CompileShader();
         }
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
         public void Destroy()
         {
             if (shader_id >= 0)
@@ -90,6 +116,10 @@ namespace FurryLana.Engine.Graphics.Shader
             shader_id = -1;
             Loaded = false;
         }
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="FurryLana.Engine.Graphics.Shader.Shader"/> is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; private set; }
         #endregion
     }

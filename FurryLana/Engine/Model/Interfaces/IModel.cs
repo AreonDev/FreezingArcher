@@ -38,11 +38,40 @@ namespace FurryLana.Engine.Model.Interfaces
 	List<IMesh>      Meshes     { get; set; }
 	List<ITexture>   Textures   { get; set; }*/
 
+        /// <summary>
+        /// Gets the animations.
+        /// </summary>
+        /// <value>The animations.</value>
         List<Animation>       Animations { get; }
+
+        /// <summary>
+        /// Gets the cameras.
+        /// </summary>
+        /// <value>The cameras.</value>
         List<Assimp.Camera>   Cameras    { get; }
+
+        /// <summary>
+        /// Gets the lights.
+        /// </summary>
+        /// <value>The lights.</value>
         List<Light>           Lights     { get; }
+
+        /// <summary>
+        /// Gets the materials.
+        /// </summary>
+        /// <value>The materials.</value>
         List<Assimp.Material>        Materials  { get; }
+
+        /// <summary>
+        /// Gets the meshes.
+        /// </summary>
+        /// <value>The meshes.</value>
         List<Mesh>            Meshes     { get; }
+
+        /// <summary>
+        /// Gets the textures.
+        /// </summary>
+        /// <value>The textures.</value>
         List<EmbeddedTexture> Textures   { get; }
     }
 }

@@ -27,9 +27,16 @@ using Pencil.Gaming.MathUtils;
 
 namespace FurryLana.Engine.Graphics.Shader
 {
+    /// <summary>
+    /// Shader program.
+    /// </summary>
     public class ShaderProgram
     {
         private List<Shader> unatt = new List<Shader>();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.Shader.ShaderProgram"/> class.
+        /// </summary>
+        /// <param name="shaders">Shaders.</param>
         public ShaderProgram(params Shader[] shaders)
         {
             program_id = -1;
@@ -37,6 +44,9 @@ namespace FurryLana.Engine.Graphics.Shader
             this.unatt = new List<Shader>(shaders);
             Loaded = false;
         }
+        /// <summary>
+        /// Use this instance.
+        /// </summary>
         public IDisposable Use()
         {
             if (!linked) Link();
@@ -48,10 +58,16 @@ namespace FurryLana.Engine.Graphics.Shader
             }
             return r;
         }
+        /// <summary>
+        /// Clear this instance.
+        /// </summary>
         public static void Clear()
         {
             GL.UseProgram(curr_program = 0);
         }
+        /// <summary>
+        /// Link this instance.
+        /// </summary>
         public void Link()
         {
             unifmap = new Dictionary<string, int>();
@@ -63,10 +79,19 @@ namespace FurryLana.Engine.Graphics.Shader
                 throw new Exception(
                     String.Format("Error linking program: {0}", GL.GetProgramInfoLog(ID)));
         }
+        /// <summary>
+        /// Binds the attrib location.
+        /// </summary>
+        /// <param name="index">Index.</param>
+        /// <param name="name">Name.</param>
         public void BindAttribLocation(int index, string name)
         {
             GL.BindAttribLocation(ID, index, name);
         }
+        /// <summary>
+        /// Binds the attrib location.
+        /// </summary>
+        /// <param name="attribs">Attribs.</param>
         public void BindAttribLocation(params Tuple<int, string>[] attribs)
         {
             foreach (Tuple<int, string> t in attribs)
@@ -74,10 +99,19 @@ namespace FurryLana.Engine.Graphics.Shader
                 BindAttribLocation(t.Item1, t.Item2);
             }
         }
+        /// <summary>
+        /// Binds the frag data location.
+        /// </summary>
+        /// <param name="color">Color.</param>
+        /// <param name="name">Name.</param>
         public void BindFragDataLocation(int color, string name)
         {
             GL.BindFragDataLocation(ID, color, name);
         }
+        /// <summary>
+        /// Binds the frag data location.
+        /// </summary>
+        /// <param name="attribs">Attribs.</param>
         public void BindFragDataLocation(params Tuple<int, string>[] attribs)
         {
             foreach (Tuple<int, string> t in attribs)
@@ -85,6 +119,11 @@ namespace FurryLana.Engine.Graphics.Shader
                 BindFragDataLocation(t.Item1, t.Item2);
             }
         }
+        /// <summary>
+        /// Transforms the feedback varyings.
+        /// </summary>
+        /// <param name="mode">Mode.</param>
+        /// <param name="varyings">Varyings.</param>
         public void TransformFeedbackVaryings(TransformFeedbackMode mode, params string[] varyings)
         {
             GL.TransformFeedbackVaryings(ID, varyings.Length, varyings, mode);
@@ -106,6 +145,10 @@ namespace FurryLana.Engine.Graphics.Shader
             }
         }
         private int program_id;
+        /// <summary>
+        /// Gets the I.
+        /// </summary>
+        /// <value>The I.</value>
         public int ID
         {
             get
@@ -114,6 +157,10 @@ namespace FurryLana.Engine.Graphics.Shader
             }
         }
         private List<Shader> shaders;
+        /// <summary>
+        /// Gets the shaders.
+        /// </summary>
+        /// <value>The shaders.</value>
         public List<Shader> Shaders
         {
             get
@@ -123,6 +170,10 @@ namespace FurryLana.Engine.Graphics.Shader
         }
         private static int curr_program = 0;
         private Dictionary<string, int> unifmap;
+        /// <summary>
+        /// Sets the <see cref="FurryLana.Engine.Graphics.Shader.ShaderProgram"/> with the specified uniform.
+        /// </summary>
+        /// <param name="uniform">Uniform.</param>
         public unsafe object this[string uniform]
         {
             set
@@ -191,6 +242,9 @@ namespace FurryLana.Engine.Graphics.Shader
         }
         #region IGraphicsResource Member
         private bool linked = false;
+        /// <summary>
+        /// Load this instance.
+        /// </summary>
         public void Load()
         {
             if (Loaded) return;
@@ -206,6 +260,9 @@ namespace FurryLana.Engine.Graphics.Shader
             BindAttribLocation(4, "inBitangent");
             Loaded = true;
         }
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
         public void Destroy()
         {
             if (!Loaded) return;
@@ -217,6 +274,10 @@ namespace FurryLana.Engine.Graphics.Shader
             program_id = -1;
             Loaded = false;
         }
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="FurryLana.Engine.Graphics.Shader.ShaderProgram"/> is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; private set; }
         #endregion
     }

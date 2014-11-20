@@ -9,17 +9,25 @@ namespace FurryLana.Engine.Material
     /// </summary>
     public class Material : IMaterial
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Material.Material"/> class.
+        /// </summary>
+        /// <param name="diffuse">Diffuse texture.</param>
+        /// <param name="normalHeight">Normal/Height texture.</param>
+        /// <param name="specular">Specular texture.</param>
+        /// <param name="ambient">Ambient color texture.</param>
+        /// <param name="shaderProgram">Shader program.</param>
         public Material (ITexture diffuse,
                          ITexture normalHeight,
                          ITexture specular,
                          ITexture ambient,
-                         IShaderProgram shaderProgramm) 
+                         IShaderProgram shaderProgram) 
         {
             Diffuse = diffuse;
             NormalHeight = normalHeight;
             Specular = specular;
             Ambient = ambient;
-            ShaderProgram = shaderProgramm;
+            ShaderProgram = shaderProgram;
         }
 
         /// <summary>

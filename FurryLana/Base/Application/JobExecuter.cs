@@ -27,30 +27,56 @@ using System.Threading.Tasks;
 
 namespace FurryLana.Base.Application
 {
+    /// <summary>
+    /// Job executer.
+    /// </summary>
     public class JobExecuter
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Base.Application.JobExecuter"/> class.
+        /// </summary>
         public JobExecuter ()
         {
             Jobs = new List<Action> ();
         }
 
+        /// <summary>
+        /// Gets or sets the jobs.
+        /// </summary>
+        /// <value>The jobs.</value>
         public List<Action> Jobs { get; protected set; }
 
+        /// <summary>
+        /// Inserts the job.
+        /// </summary>
+        /// <param name="job">Job.</param>
         public void InsertJob (Action job)
         {
             Jobs.Add (job);
         }
 
+        /// <summary>
+        /// Inserts the jobs.
+        /// </summary>
+        /// <param name="jobs">Jobs.</param>
         public void InsertJobs (List<Action> jobs)
         {
             Jobs.AddRange (jobs);
         }
 
+        /// <summary>
+        /// Inserts the jobs.
+        /// </summary>
+        /// <param name="jobs">Jobs.</param>
         public void InsertJobs (Action[] jobs)
         {
             Jobs.AddRange (jobs);
         }
 
+        /// <summary>
+        /// Execs the jobs parallel.
+        /// </summary>
+        /// <param name="load">Load.</param>
         public void ExecJobsParallel (int load)
         {
             ParallelOptions ops = new ParallelOptions ();
@@ -59,12 +85,20 @@ namespace FurryLana.Base.Application
             Jobs.Clear ();
         }
 
+        /// <summary>
+        /// Execs the jobs sequential.
+        /// </summary>
         public void ExecJobsSequential ()
         {
             Jobs.ForEach (a => a ());
             Jobs.Clear ();
         }
 
+        /// <summary>
+        /// Handler for a NeedsReexec event or delegate.
+        /// </summary>
+        /// <param name="action">Action.</param>
+        /// <param name="args">Arguments.</param>
         public void NeedsReexecHandler (object action, EventArgs args)
         {
             Action act = action as Action;

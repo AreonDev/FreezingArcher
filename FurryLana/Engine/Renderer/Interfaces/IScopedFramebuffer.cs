@@ -24,8 +24,15 @@ using System;
 
 namespace FurryLana.Engine.Renderer.Interfaces
 {
+    /// <summary>
+    /// ScopedFramebuffer interface.
+    /// </summary>
     public interface IScopedFramebuffer : IDisposable
     {
+        /// <summary>
+        /// Gets the framebuffer.
+        /// </summary>
+        /// <value>The FB.</value>
         IFramebuffer FBO { get; }
     }
 }

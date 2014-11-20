@@ -23,10 +23,20 @@
 
 namespace FurryLana.Engine.Graphics.VertexBuffer
 {
+    /// <summary>
+    /// Vertex format info.
+    /// </summary>
     public class VertexFormatInfo
     {
+        /// <summary>
+        /// Gets or sets the vertex parameters.
+        /// </summary>
+        /// <value>The vertex parameters.</value>
         public VertexAttribParam[] VertexParams { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.VertexBuffer.VertexFormatInfo"/> class.
+        /// </summary>
         public VertexFormatInfo ()
         {
             VertexParams = new VertexAttribParam[0];

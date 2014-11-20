@@ -85,6 +85,7 @@ namespace FurryLana.Engine.Game
         /// Gets the load jobs.
         /// </summary>
         /// <param name="list">The list.</param>
+        /// <param name="reloader">The NeedsLoad event handler.</param>
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add(Load);
@@ -106,8 +107,17 @@ namespace FurryLana.Engine.Game
             InputManager.Destroy();
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="FurryLana.Engine.Game.ResourceManager"/> is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }
 
+        /// <summary>
+        /// Fire this event when you need the Load function to be called.
+        /// For example after init or when new resources needs to be loaded.
+        /// </summary>
+        /// <value>NeedsLoad handlers.</value>
         public EventHandler NeedsLoad { get; set; }
     }
 }

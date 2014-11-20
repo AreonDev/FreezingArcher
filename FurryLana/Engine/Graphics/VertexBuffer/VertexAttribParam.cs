@@ -23,15 +23,57 @@
 
 namespace FurryLana.Engine.Graphics.VertexBuffer
 {
+    /// <summary>
+    /// Vertex attrib parameter.
+    /// </summary>
     public class VertexAttribParam
     {
+        /// <summary>
+        /// Gets the index.
+        /// </summary>
+        /// <value>The index.</value>
         public int Index { get; private set; }
+
+        /// <summary>
+        /// Gets the size.
+        /// </summary>
+        /// <value>The size.</value>
         public int Size { get; private set; }
+
+        /// <summary>
+        /// Gets the type.
+        /// </summary>
+        /// <value>The type.</value>
         public PointerType Type { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="FurryLana.Engine.Graphics.VertexBuffer.VertexAttribParam"/>
+        /// is normalized.
+        /// </summary>
+        /// <value><c>true</c> if normalized; otherwise, <c>false</c>.</value>
         public bool Normalized { get; private set; }
+
+        /// <summary>
+        /// Gets the stride.
+        /// </summary>
+        /// <value>The stride.</value>
         public int Stride { get; private set; }
+
+        /// <summary>
+        /// Gets the offset.
+        /// </summary>
+        /// <value>The offset.</value>
         public int Offset { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.VertexBuffer.VertexAttribParam"/> class.
+        /// </summary>
+        /// <param name="index">Index.</param>
+        /// <param name="size">Size.</param>
+        /// <param name="stride">Stride.</param>
+        /// <param name="offset">Offset.</param>
+        /// <param name="normalized">If set to <c>true</c> normalized.</param>
+        /// <param name="type">Type.</param>
         public VertexAttribParam (int index, int size, int stride, int offset, bool normalized = false,
                                   PointerType type = PointerType.Float)
         {

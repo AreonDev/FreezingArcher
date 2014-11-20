@@ -24,6 +24,9 @@ using System.Collections.Generic;
 
 namespace FurryLana.Engine
 {
+    /// <summary>
+    /// Linq extensions.
+    /// </summary>
     public static class LinqExtensions
     {
         /// <summary>

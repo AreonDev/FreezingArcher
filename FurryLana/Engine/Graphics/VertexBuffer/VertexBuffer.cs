@@ -27,17 +27,54 @@ using Pencil.Gaming.Graphics;
 
 namespace FurryLana.Engine.Graphics.VertexBuffer
 {
+    /// <summary>
+    /// Vertex buffer.
+    /// </summary>
     public class VertexBuffer<T> where T: struct
     {
+        /// <summary>
+        /// Gets the target.
+        /// </summary>
+        /// <value>The target.</value>
         public VertexBufferTarget Target { get; private set; }
+
+        /// <summary>
+        /// Gets the size.
+        /// </summary>
+        /// <value>The size.</value>
         public int Size { get; private set; }
+
+        /// <summary>
+        /// Gets the count.
+        /// </summary>
+        /// <value>The count.</value>
         public int Count { get { return lastIndex; } }
+
+        /// <summary>
+        /// Gets the usage.
+        /// </summary>
+        /// <value>The usage.</value>
         public VertexBufferType Usage { get; private set; }
+        /// <summary>
+        /// Gets the I.
+        /// </summary>
+        /// <value>The I.</value>
         public int ID { get; private set; }
         private T[] data;
         private int lastIndex;
         private bool modified = false;
+        /// <summary>
+        /// Gets the vertex format info.
+        /// </summary>
+        /// <value>The vertex format info.</value>
         public VertexFormatInfo VertexFormatInfo { get; private set; }
+        /// <summary>
+        /// Initializes a new instance of the VertexBuffer.
+        /// </summary>
+        /// <param name="usage">Usage.</param>
+        /// <param name="maxCount">Max count.</param>
+        /// <param name="vertexInfo">Vertex info.</param>
+        /// <param name="target">Target.</param>
         public VertexBuffer(VertexBufferType usage, int maxCount, VertexFormatInfo vertexInfo, VertexBufferTarget target = VertexBufferTarget.DataBuffer)
         {
             this.Target = target;
@@ -49,6 +86,11 @@ namespace FurryLana.Engine.Graphics.VertexBuffer
         }
         #region IGraphicsResource Member
         private bool dataLoaded = false;
+        /// <summary>
+        /// Loads the data.
+        /// </summary>
+        /// <returns>The data.</returns>
+        /// <param name="d">D.</param>
         public int LoadData(IEnumerable<T> d)
         {
             if (Usage == VertexBufferType.Static && dataLoaded) throw new InvalidOperationException("Data is already loaded.");
@@ -64,6 +106,9 @@ namespace FurryLana.Engine.Graphics.VertexBuffer
                 return start;
             }
         }
+        /// <summary>
+        /// Bind this instance.
+        /// </summary>
         public void Bind()
         {
             GL.BindBuffer((BufferTarget)Target, ID);
@@ -76,6 +121,9 @@ namespace FurryLana.Engine.Graphics.VertexBuffer
                 }
             }
         }
+        /// <summary>
+        /// Load this instance.
+        /// </summary>
         public void Load()
         {
             if (ID == -1)
@@ -96,6 +144,9 @@ namespace FurryLana.Engine.Graphics.VertexBuffer
             //if (Usage == VertexBufferType.Static) data = null;
             Loaded = true;
         }
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
         public void Destroy()
         {
             if (ID != -1)
@@ -106,6 +157,10 @@ namespace FurryLana.Engine.Graphics.VertexBuffer
             }
             Loaded = false;
         }
+        /// <summary>
+        /// Gets a value indicating whether this VertexBuffer is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; private set; }
         #endregion
     }

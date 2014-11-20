@@ -25,12 +25,37 @@ using FurryLana.Engine.Texture.Interfaces;
 
 namespace FurryLana.Engine.Renderer.Interfaces
 {
+    /// <summary>
+    /// Framebuffer interface.
+    /// </summary>
     public interface IFramebuffer : IResource
     {
+        /// <summary>
+        /// Gets or sets the texture.
+        /// </summary>
+        /// <value>The texture.</value>
         ITexture Texture { get; set; }
+
+        /// <summary>
+        /// Gets or sets the width.
+        /// </summary>
+        /// <value>The width.</value>
         int Width { get; set; }
+
+        /// <summary>
+        /// Gets or sets the height.
+        /// </summary>
+        /// <value>The height.</value>
         int Height { get; set; }
+
+        /// <summary>
+        /// Begin this instance.
+        /// </summary>
         void Begin ();
+
+        /// <summary>
+        /// End this instance.
+        /// </summary>
         void End ();
     }
 }

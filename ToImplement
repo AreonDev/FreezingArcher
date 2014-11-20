@@ -27,16 +27,16 @@
   * this should be done in the near future
 * DONE [#A] IMaterial implementation [Paul]
   * should be trivial
-* TODO [#A] IModel implementation [Fin]
+* DONE [#A] IModel implementation [Fin]
   * nearly done - vao/vbo/shader integration missing
 * DONE [#A] IModelManager implementation [Fin]
   * integrate assimp and implement load functions
   * load from xml missing as we do net have a xml format
-* TODO [#B] IFramebuffer implementation [Fin]
+* DONE [#B] IFramebuffer implementation [Fin]
   * for now we just use direct opengl API via Pencil.Gaming
     later on we should use the IRenderer to implement this
   * implementation may be used from FreezingArcher
-* TODO [#B] IScopedFramebuffer implementation [Fin]
+* DONE [#B] IScopedFramebuffer implementation [Fin]
   * implementation may be used from FreezingArcher
 * DONE [#A] IShaderProgram [Fin]
   * for now we just use direct opengl API via Pencil.Gaming

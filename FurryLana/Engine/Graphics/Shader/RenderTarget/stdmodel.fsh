@@ -1,11 +1,13 @@
-#version 130
+#version 330
 
-in vec4 inPosition;
-in vec3 inCoord;
+uniform sampler2D DiffuseTexture;
+
+in vec4 Position;
+in vec3 Texcoord;
 
 out vec4 DiffuseColor;
 
 void main ()
 {
-  DiffuseColor = inPosition;
+  DiffuseColor = Position;
 }

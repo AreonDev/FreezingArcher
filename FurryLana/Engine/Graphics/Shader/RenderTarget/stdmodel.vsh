@@ -1,22 +1,25 @@
-#version 130
+#version 330
 
-uniform mat4 ProjMatrix;
-uniform mat4 ViewMatrix;
-uniform mat4 ModelMatrix;
+layout (std140) uniform objects
+{
+  mat4 ProjMatrix;
+  mat4 ViewMatrix;
+  mat4 ModelMatrix;
+};
 
-in vec3 inPosition;
-in vec3 inCoord;
+layout (location = 0) in vec3 inPosition;
+layout (location = 1) in vec3 inTexcoord;
 
-out vec4 outPosition;
-out vec3 outCoord;
+out vec4 Position;
+out vec3 Texcoord;
 
 void main ()
 {
   mat4 ModelViewProjMatrix = ViewMatrix * ModelMatrix * ProjMatrix;
 
-  vec4 outPosition = vec4 (inPosition, 1.0);
+  Position = vec4 (inPosition, 1.0);
 
-  outCoord = inCoord;
+  Texcoord = inTexcoord;
 
-  gl_Position = ModelViewProjMatrix * outPosition;
+  gl_Position = ModelViewProjMatrix * Position;
 }

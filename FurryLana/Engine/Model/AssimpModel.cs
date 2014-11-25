@@ -29,6 +29,7 @@ using Pencil.Gaming.MathUtils;
 using FurryLana.Engine.Graphics.Shader;
 using FurryLana.Engine.Graphics.VertexBuffer;
 using FurryLana.Engine.Model.Interfaces;
+using Pencil.Gaming.Graphics;
 
 namespace FurryLana.Engine.Model
 {
@@ -64,10 +65,10 @@ namespace FurryLana.Engine.Model
 
         VertexFormatInfo       vfi; // vertex format info
         Vector3D[]             vrt; // vertices
-        //byte[]                 idx; // indices
-        //VertexBuffer<Vector3D> vbo; // vertex buffer object
-        //VertexBuffer<byte>     ibo; // index buffer object
-        //VertexArrayObject      vao; // vertex array object
+        int[]                  idx; // indices
+        VertexBuffer<Vector3D> vbo; // vertex buffer object
+        VertexBuffer<int>      ibo; // index buffer object
+        VertexArrayObject      vao; // vertex array object
         Shader                 vsh; // vertex shader
         Shader                 fsh; // fragment shader
         ShaderProgram          shp; // shader program
@@ -109,7 +110,7 @@ namespace FurryLana.Engine.Model
                 {
                     throw new Exception ("Unknown error during loading file \"" + location + "\" via Assimp!", e);
                 }
-                
+
                 if (model == null)
                 {
                     throw new Exception ("Unknown error during loading file \"" + location + "\" via Assimp!");
@@ -135,8 +136,10 @@ namespace FurryLana.Engine.Model
         {
             Loaded = false;
 
-            vsh = new Shader (ShaderType.VertexShader, "Graphics/Shader/RenderTarget/stdmodel.vsh");
-            fsh = new Shader (ShaderType.FragmentShader, "Graphics/Shader/RenderTarget/stdmodel.fsh");
+            vsh = new Shader (FurryLana.Engine.Graphics.Shader.ShaderType.VertexShader,
+                              "Graphics/Shader/RenderTarget/stdmodel.vsh");
+            fsh = new Shader (FurryLana.Engine.Graphics.Shader.ShaderType.FragmentShader,
+                              "Graphics/Shader/RenderTarget/stdmodel.fsh");
 
             shp = new ShaderProgram (vsh, fsh);
 
@@ -147,17 +150,45 @@ namespace FurryLana.Engine.Model
             shp["ViewMatrix"] = Matrix.LookAt (new Vector3 (0f, 0f, 0f),
                                                new Vector3 (0f, 0f, 0f),
                                                new Vector3 (0f, 1f, 0f));
+	    shp["ModelMatrix"] = Matrix.Identity;
 
             vfi = new VertexFormatInfo ();
+
             vfi.VertexParams = new VertexAttribParam[]
             {
                 new VertexAttribParam (0, 3, 3 * sizeof (float), 0)
             };
 
-            vrt = model.Meshes.Select (j => j.Vertices).JoinSequence ().ToArray ();
+            List<Vector3D> lvrt = new List<Vector3D> ();
+            List<int> lidx = new List<int> ();
 
-            foreach (var v in vrt)
-                Console.WriteLine ("X: {0}, Y: {1}, Z: {2}", v.X, v.Y, v.Z);
+            model.Meshes.ForEach (m => {
+                lvrt.AddRange (m.Vertices);
+                lidx.AddRange (m.GetIndices ());
+            });
+
+            vrt = lvrt.ToArray ();
+            idx = lidx.ToArray ();
+
+	    vbo = new VertexBuffer<Vector3D> (VertexBufferType.Static,
+					      vrt.Length,
+					      vfi,
+					      VertexBufferTarget.DataBuffer);
+
+	    ibo = new VertexBuffer<int> (VertexBufferType.Static,
+                                         idx.Length,
+                                         new VertexFormatInfo (),
+                                         VertexBufferTarget.IndiceBuffer);
+
+	    vao = new VertexArrayObject ();
+
+	    vbo.LoadData (vrt);
+	    ibo.LoadData (idx);
+	    vbo.Load ();
+	    ibo.Load ();
+	    vao.Load ();
+	    vao.AttachVBO (vbo);
+	    vao.AttachVBO (ibo);
 
             Loaded = true;
         }
@@ -210,9 +241,7 @@ namespace FurryLana.Engine.Model
         /// </summary>
         /// <param name="deltaTime">Time delta.</param>
         public void FrameSyncedUpdate (float deltaTime)
-        {
-            throw new NotImplementedException ();
-        }
+        {}
 
         #endregion
 
@@ -234,7 +263,16 @@ namespace FurryLana.Engine.Model
         /// Draw this instance.
         /// </summary>
         public void Draw ()
-        {}
+        {
+	    if (!Loaded)
+		return;
+
+	    using (var shader = shp.Use ())
+	    {
+		vao.Bind ();
+		GL.DrawElements (BeginMode.Triangles, idx.Length, DrawElementsType.UnsignedInt, 0);
+	    }
+	}
 
         #endregion
 

@@ -47,7 +47,7 @@ namespace FurryLana.Engine.Graphics
         public void Init ()
         {
             Loaded = false;
-            model = new AssimpModel ("Model/Data/Stone.obj");
+            model = new AssimpModel ("Model/Data/Stone.fbx");
             model.Init ();
             NeedsLoad ((Action) this.Load, null);
         }
@@ -153,7 +153,9 @@ namespace FurryLana.Engine.Graphics
         public void Draw ()
         {
             if (model != null && model.Loaded)
+            {
                 model.Draw ();
+            }
         }
 
         #endregion

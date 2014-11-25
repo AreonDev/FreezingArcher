@@ -44,7 +44,8 @@ namespace FurryLana.Engine.Graphics.Shader
         /// <param name="source">Source.</param>
         public Shader(ShaderType type, string source)
         {
-            this.source = Process(source);
+            var content = File.ReadAllText (source, Encoding.UTF8);
+            this.source = Process(content);
             this.type = type;
             Loaded = false;
         }
@@ -63,14 +64,6 @@ namespace FurryLana.Engine.Graphics.Shader
             }
             return source;
         }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.Shader.Shader"/> class.
-        /// </summary>
-        /// <param name="type">Type.</param>
-        /// <param name="f">F.</param>
-        public Shader(ShaderType type, FileInfo f)
-            : this(type, File.ReadAllText(f.FullName, Encoding.UTF8))
-        { }
         private int shader_id;
         /// <summary>
         /// Gets the I.

@@ -47,7 +47,7 @@ namespace FurryLana.Engine.Graphics
         public void Init ()
         {
             Loaded = false;
-            model = new AssimpModel ("Model/Data/Stone.fbx");
+            model = new AssimpModel ("Model/Data/Stone.obj");
             model.Init ();
             NeedsLoad ((Action) this.Load, null);
         }

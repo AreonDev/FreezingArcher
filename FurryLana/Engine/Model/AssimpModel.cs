@@ -147,7 +147,7 @@ namespace FurryLana.Engine.Model
             shp.Link ();
 
             shp["ProjMatrix"] = Matrix.CreatePerspectiveFieldOfView (1f, 16f/9f, 0.1f, 200f);
-            shp["ViewMatrix"] = Matrix.LookAt (new Vector3 (0f, 0f, 0f),
+            shp["ViewMatrix"] = Matrix.LookAt (new Vector3 (0f, 1f, 0f),
                                                new Vector3 (0f, 0f, 0f),
                                                new Vector3 (0f, 1f, 0f));
 	    shp["ModelMatrix"] = Matrix.Identity;

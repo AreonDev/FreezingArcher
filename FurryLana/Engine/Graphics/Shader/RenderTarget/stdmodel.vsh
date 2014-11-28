@@ -15,11 +15,11 @@ out vec3 Texcoord;
 
 void main ()
 {
-  mat4 ModelViewProjMatrix = ViewMatrix * ModelMatrix * ProjMatrix;
+  //mat4 ModelViewProjMatrix = ProjMatrix * ModelMatrix * ViewMatrix;
 
   Position = vec4 (inPosition, 1.0);
 
   Texcoord = inTexcoord;
 
-  gl_Position = ModelViewProjMatrix * Position;
+  gl_Position = Position;
 }

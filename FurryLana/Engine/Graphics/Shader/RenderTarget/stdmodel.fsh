@@ -9,5 +9,5 @@ out vec4 DiffuseColor;
 
 void main ()
 {
-  DiffuseColor = Position;
+  DiffuseColor = vec4 (1,1,1,1);
 }

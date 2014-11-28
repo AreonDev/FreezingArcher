@@ -25,6 +25,10 @@ using FurryLana.Engine.Graphics.Interfaces;
 using FurryLana.Engine.Model.Interfaces;
 using FurryLana.Engine.Model;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Pencil.Gaming.Graphics;
+using Pencil.Gaming.MathUtils;
+using FurryLana.Engine.Graphics.Shader;
 
 namespace FurryLana.Engine.Graphics
 {
@@ -152,10 +156,49 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         public void Draw ()
         {
+            Vector3[] triangle = new Vector3[3];
+            triangle[0].X = -1.0f;
+            triangle[0].Y = -1.0f;
+            triangle[1].X = 3.0f;
+            triangle[1].Y =-1.0f;
+            triangle[2].X = -1.0f;
+            triangle[2].Y = 3.0f;
+
+            Shader.Shader vsh = new Shader.Shader (FurryLana.Engine.Graphics.Shader.ShaderType.VertexShader,
+                                                   "Graphics/Shader/RenderTarget/stdmodel.vsh");
+            Shader.Shader fsh = new Shader.Shader (FurryLana.Engine.Graphics.Shader.ShaderType.FragmentShader,
+                                                   "Graphics/Shader/RenderTarget/stdmodel.fsh");
+            
+            ShaderProgram shp = new ShaderProgram (vsh, fsh);
+            
+            shp.Load ();
+            shp.Link ();
+
+            IntPtr trptr = Marshal.AllocHGlobal (sizeof (float) * 3 * triangle.Length);
+            float[] trf = new float[triangle.Length * 3];
+            for (int i = 0; i < triangle.Length; i++)
+            {
+                trf[i*3] = triangle[i].X;
+                trf[i*3+1] = triangle[i].Y;
+                trf[i*3+2] = triangle[i].Z;
+            }
+            Marshal.Copy (trf, 0, trptr, trf.Length);
+
+
+            using (var foo = shp.Use ())
+            {
+                int buf = GL.GenBuffer ();
+                GL.BindBuffer (BufferTarget.ArrayBuffer, buf);
+                GL.BufferData (BufferTarget.ArrayBuffer, new IntPtr (triangle.Length * sizeof (float) * 3), trptr, BufferUsageHint.StaticDraw);
+
+                GL.DrawArrays (BeginMode.Triangles, 0, triangle.Length);
+            }
+
+            /*
             if (model != null && model.Loaded)
             {
                 model.Draw ();
-            }
+            }*/
         }
 
         #endregion

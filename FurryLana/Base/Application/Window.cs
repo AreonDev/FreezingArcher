@@ -49,10 +49,10 @@ namespace FurryLana.Base.Application
 	    MFullscreenSize = fullscreenSize;
 	    MTitle = title;
 	    Resource = resource;
-        Initer = new JobExecuter();
-        Initer.InsertJobs (Resource.GetInitJobs (new List<Action>()));
-        Loader = new JobExecuter();
-        Loader.InsertJobs (Resource.GetLoadJobs (new List<Action>(), new EventHandler (Loader.NeedsReexecHandler)));
+            Initer = new JobExecuter();
+            Initer.InsertJobs (Resource.GetInitJobs (new List<Action>()));
+            Loader = new JobExecuter();
+            Loader.InsertJobs (Resource.GetLoadJobs (new List<Action>(), new EventHandler (Loader.NeedsReexecHandler)));
         }
 
         #region IResource implementation
@@ -215,6 +215,9 @@ namespace FurryLana.Base.Application
             {
                 float deltaTime = (float) Glfw.GetTime ();
                 Glfw.SetTime (0.0);
+
+                GL.Disable (EnableCap.DepthTest);
+                GL.CullFace (CullFaceMode.FrontAndBack);
 
                 GL.ClearColor (Color4.DodgerBlue);
                 GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);

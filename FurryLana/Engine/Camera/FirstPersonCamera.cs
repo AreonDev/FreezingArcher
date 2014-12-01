@@ -223,9 +223,7 @@ namespace FurryLana.Engine.Camera
         /// This method is called when the camera manager switches to this subject.
         /// </summary>
         public void Enable()
-        {
-            throw new NotImplementedException();
-        }
+        {}
 
         /// <summary>
         /// This method is called when the camera manager switches from this subject to another one.

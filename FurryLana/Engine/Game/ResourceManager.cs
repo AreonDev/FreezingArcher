@@ -53,11 +53,7 @@ namespace FurryLana.Engine.Game
         /// multi threaded.
         /// </summary>
         public void Init()
-        {
-            TextureManager.Init();
-            ModelManager.Init();
-            InputManager.Init();
-        }
+        {}
 
         /// <summary>
         /// Gets the initialize jobs.
@@ -66,6 +62,9 @@ namespace FurryLana.Engine.Game
         public List<Action> GetInitJobs(List<Action> list)
         {
             list.Add(Init);
+            list = TextureManager.GetLoadJobs (list);
+            list = ModelManager.GetLoadJobs (list);
+            list = InputManager.GetLoadJobs (list);
             return list;
         }
 
@@ -74,10 +73,6 @@ namespace FurryLana.Engine.Game
         /// </summary>
         public void Load()
         {
-            Loaded = false;
-            TextureManager.Load();
-            ModelManager.Load();
-            InputManager.Load();
             Loaded = true;
         }
 
@@ -90,6 +85,9 @@ namespace FurryLana.Engine.Game
         {
             list.Add(Load);
             NeedsLoad = reloader;
+            list = TextureManager.GetLoadJobs (list, reloader);
+            list = ModelManager.GetLoadJobs (list, reloader);
+            list = InputManager.GetLoadJobs (list, reloader);
             return list;
         }
 

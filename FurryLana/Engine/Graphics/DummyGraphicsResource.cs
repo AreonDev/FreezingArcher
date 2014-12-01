@@ -51,8 +51,6 @@ namespace FurryLana.Engine.Graphics
         public void Init ()
         {
             Loaded = false;
-            model = new AssimpModel ("Model/Data/Stone.obj");
-            model.Init ();
             NeedsLoad ((Action) this.Load, null);
         }
 
@@ -64,6 +62,8 @@ namespace FurryLana.Engine.Graphics
         public List<Action> GetInitJobs (List<Action> list)
         {
             list.Add (Init);
+            model = new AssimpModel ("Model/Data/Stone.obj");
+            list = model.GetInitJobs (list);
             return list;
         }
 
@@ -72,8 +72,6 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         public void Load ()
         {
-            Loaded = false;
-            model.Load ();
             Loaded = true;
         }
 
@@ -87,6 +85,7 @@ namespace FurryLana.Engine.Graphics
         {
             list.Add (Load);
             NeedsLoad = reloader;
+            list = model.GetLoadJobs (list, reloader);
             return list;
         }
 

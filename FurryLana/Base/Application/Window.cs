@@ -130,6 +130,7 @@ namespace FurryLana.Base.Application
         /// </summary>
         public void Destroy ()
         {
+            Resource.Destroy ();
             Glfw.DestroyWindow (Win);
             Glfw.DestroyWindow (Ful);
             Glfw.Terminate ();

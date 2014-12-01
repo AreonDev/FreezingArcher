@@ -156,10 +156,6 @@ namespace FurryLana.Base.Application
                 }
             };
 
-            Window.Init ();
-            //InputManager.Init ();
-            //GameManager.Init ();
-
             if (NeedsLoad != null)
                 NeedsLoad ((Action) this.Load, null);
         }
@@ -172,6 +168,9 @@ namespace FurryLana.Base.Application
         public List<Action> GetInitJobs (List<Action> list)
         {
             list.Add (Init);
+            list = Window.GetInitJobs (list);
+            //list = GameManager.GetInitJobs (list);
+            list = ResourceManager.GetInitJobs (list);
             return list;
         }
 
@@ -180,10 +179,6 @@ namespace FurryLana.Base.Application
         /// </summary>
         public void Load ()
         {
-            Loaded = false;
-            Window.Load ();
-            //InputManager.Load ();
-            //GameManager.Load ();
             Loaded = true;
         }
 
@@ -196,6 +191,9 @@ namespace FurryLana.Base.Application
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);
+            list = Window.GetLoadJobs (list, reloader);
+            //list = GameManager.GetLoadJobs (list, reloader);
+            list = ResourceManager.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }
@@ -212,7 +210,7 @@ namespace FurryLana.Base.Application
         {
             Loaded = false;
             //GameManager.Destroy ();
-            //InputManager.Destroy ();
+            ResourceManager.Destroy ();
             Window.Destroy ();
             Console.SetCursorPosition (0, origRow + 17);
         }

@@ -115,6 +115,8 @@
     <Compile Include="Graphics\Shader\ShaderType.cs" />
     <Compile Include="Graphics\Shader\Shader.cs" />
     <Compile Include="LinqExtensions.cs" />
+    <Compile Include="Map\Tile.cs" />
+    <Compile Include="Map\TiledMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

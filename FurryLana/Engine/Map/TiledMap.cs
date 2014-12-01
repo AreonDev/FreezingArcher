@@ -1,5 +1,5 @@
 //
-//  IMap.cs
+//  TiledMap.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,20 +20,26 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FurryLana.Engine.Model.Interfaces;
+using System;
+using FurryLana.Engine.Map.Interfaces;
 
-namespace FurryLana.Engine.Map.Interfaces
+namespace FurryLana.Engine.Map
 {
-    /// <summary>
-    /// Map interface.
-    /// </summary>
-    public interface IMap
+    public class TiledMap : IMap
     {
-        /// <summary>
-        /// Gets the model.
-        /// </summary>
-        /// <value>The model.</value>
-        IModel Model { get; }
+        public TiledMap ()
+        {
+        }
 
+        #region IMap implementation
+
+        public FurryLana.Engine.Model.Interfaces.IModel Model {
+            get {
+                throw new NotImplementedException ();
+            }
+        }
+
+        #endregion
     }
 }
+

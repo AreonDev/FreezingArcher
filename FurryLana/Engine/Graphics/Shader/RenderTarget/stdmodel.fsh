@@ -3,7 +3,7 @@
 uniform sampler2D DiffuseTexture;
 
 in vec4 Position;
-in vec3 Texcoord;
+//in vec3 Texcoord;
 
 out vec4 DiffuseColor;
 

@@ -156,13 +156,13 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         public void Draw ()
         {
-            Vector3[] triangle = new Vector3[3];
+            Vector4[] triangle = new Vector4[3];
             triangle[0].X = -1.0f;
             triangle[0].Y = -1.0f;
-            triangle[1].X = 3.0f;
+            triangle[1].X = 1.0f;
             triangle[1].Y =-1.0f;
             triangle[2].X = -1.0f;
-            triangle[2].Y = 3.0f;
+            triangle[2].Y = 1.0f;
 
             Shader.Shader vsh = new Shader.Shader (FurryLana.Engine.Graphics.Shader.ShaderType.VertexShader,
                                                    "Graphics/Shader/RenderTarget/stdmodel.vsh");
@@ -174,24 +174,23 @@ namespace FurryLana.Engine.Graphics
             shp.Load ();
             shp.Link ();
 
-            IntPtr trptr = Marshal.AllocHGlobal (sizeof (float) * 3 * triangle.Length);
-            float[] trf = new float[triangle.Length * 3];
-            for (int i = 0; i < triangle.Length; i++)
-            {
-                trf[i*3] = triangle[i].X;
-                trf[i*3+1] = triangle[i].Y;
-                trf[i*3+2] = triangle[i].Z;
-            }
-            Marshal.Copy (trf, 0, trptr, trf.Length);
-
-
             using (var foo = shp.Use ())
             {
-                int buf = GL.GenBuffer ();
-                GL.BindBuffer (BufferTarget.ArrayBuffer, buf);
-                GL.BufferData (BufferTarget.ArrayBuffer, new IntPtr (triangle.Length * sizeof (float) * 3), trptr, BufferUsageHint.StaticDraw);
+                int vaoID = GL.GenVertexArray ();
+                GL.BindVertexArray (vaoID);
 
-                GL.DrawArrays (BeginMode.Triangles, 0, triangle.Length);
+                int vboID = GL.GenBuffer ();
+                GL.BindBuffer (BufferTarget.ArrayBuffer, vboID);
+
+                //GL.BufferData (BufferTarget.ArrayBuffer, new IntPtr (triangle.Length * sizeof (float) * 3), trptr, BufferUsageHint.StaticDraw);
+                GL.BufferData<Vector4> (BufferTarget.ArrayBuffer, new IntPtr (Marshal.SizeOf(typeof(Vector4))), triangle, BufferUsageHint.StaticDraw);
+
+                GL.EnableVertexAttribArray (0);
+                GL.VertexAttribPointer (0, 4, VertexAttribPointerType.Float);
+
+                GL.BindVertexArray(vaoID);
+
+                GL.DrawArrays (BeginMode.Triangles, 0, 3);
             }
 
             /*

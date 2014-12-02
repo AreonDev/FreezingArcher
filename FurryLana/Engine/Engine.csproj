@@ -117,6 +117,8 @@
     <Compile Include="LinqExtensions.cs" />
     <Compile Include="Map\Tile.cs" />
     <Compile Include="Map\TiledMap.cs" />
+    <Compile Include="Map\Sky.cs" />
+    <Compile Include="Graphics\AbstractGraphicsResource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

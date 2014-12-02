@@ -1,11 +1,11 @@
-﻿using FurryLana.Engine.Game.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using FurryLana.Engine.Game.Interfaces;
 using FurryLana.Engine.Input.Interfaces;
 using FurryLana.Engine.Model;
 using FurryLana.Engine.Model.Interfaces;
 using FurryLana.Engine.Texture;
 using FurryLana.Engine.Texture.Interfaces;
-using System;
-using System.Collections.Generic;
 
 namespace FurryLana.Engine.Game
 {
@@ -62,9 +62,9 @@ namespace FurryLana.Engine.Game
         public List<Action> GetInitJobs(List<Action> list)
         {
             list.Add(Init);
-            list = TextureManager.GetLoadJobs (list);
-            list = ModelManager.GetLoadJobs (list);
-            list = InputManager.GetLoadJobs (list);
+            list = TextureManager.GetInitJobs (list);
+            list = ModelManager.GetInitJobs (list);
+            //list = InputManager.GetInitJobs (list);
             return list;
         }
 
@@ -87,7 +87,7 @@ namespace FurryLana.Engine.Game
             NeedsLoad = reloader;
             list = TextureManager.GetLoadJobs (list, reloader);
             list = ModelManager.GetLoadJobs (list, reloader);
-            list = InputManager.GetLoadJobs (list, reloader);
+            //list = InputManager.GetLoadJobs (list, reloader);
             return list;
         }
 
@@ -102,7 +102,7 @@ namespace FurryLana.Engine.Game
         {
             TextureManager.Destroy();
             ModelManager.Destroy();
-            InputManager.Destroy();
+            //InputManager.Destroy();
         }
 
         /// <summary>

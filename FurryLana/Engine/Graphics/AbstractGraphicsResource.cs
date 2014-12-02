@@ -1,5 +1,5 @@
 //
-//  Tile.cs
+//  AbstractGraphicsResource.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -22,24 +22,12 @@
 //
 using System;
 using FurryLana.Engine.Graphics.Interfaces;
-using FurryLana.Engine.Model.Interfaces;
 using System.Collections.Generic;
 
-namespace FurryLana.Engine.Map
+namespace FurryLana.Engine.Graphics
 {
-    public class Tile : IGraphicsResource
+    public abstract class AbstractGraphicsResource : IGraphicsResource
     {
-        public Tile (TiledMap map, IModel model, bool walkable)
-        {
-            this.Model = model;
-            this.Walkable = walkable;
-            this.Map = map;
-        }
-
-        public IModel Model { get; set; }
-        public bool Walkable { get; set; }
-        public TiledMap Map { get; set; }
-
         #region IResource implementation
 
         public void Init ()
@@ -48,27 +36,21 @@ namespace FurryLana.Engine.Map
         public List<Action> GetInitJobs (List<Action> list)
         {
             list.Add (Init);
-            list = Model.GetInitJobs (list);
             return list;
         }
 
         public void Load ()
-        {
-            Loaded = true;
-        }
+        {}
 
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);
-            list = Model.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }
 
         public void Destroy ()
-        {
-            Model.Destroy ();
-        }
+        {}
 
         public bool Loaded { get; protected set; }
 
@@ -79,27 +61,21 @@ namespace FurryLana.Engine.Map
         #region IFrameSyncedUpdate implementation
 
         public void FrameSyncedUpdate (float deltaTime)
-        {
-            Model.FrameSyncedUpdate (deltaTime);
-        }
+        {}
 
         #endregion
 
         #region IUpdate implementation
 
         public void Update (int deltaTime)
-        {
-            Model.Update (deltaTime);
-        }
+        {}
 
         #endregion
 
         #region IDrawable implementation
 
         public void Draw ()
-        {
-            Model.Draw ();
-        }
+        {}
 
         #endregion
     }

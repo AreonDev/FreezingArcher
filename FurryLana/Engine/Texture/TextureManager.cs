@@ -118,7 +118,10 @@ namespace FurryLana.Engine.Texture
         /// </summary>
         public void Init()
         {
-           textures = new List<ITexture>();
+            textures = new List<ITexture>();
+            textures.ForEach ((t) => {
+                t.Init ();
+            });
         }
 
         /// <summary>
@@ -129,9 +132,6 @@ namespace FurryLana.Engine.Texture
         public List<Action> GetInitJobs (List<Action> list)
         {
             list.Add (Init);
-            textures.ForEach ((t) => {
-                list = t.GetInitJobs (list);
-            });
             return list;
         }
 
@@ -140,6 +140,10 @@ namespace FurryLana.Engine.Texture
         /// </summary>
         public void Load()
         {
+            textures.ForEach ((t) => {
+                t.Load ();
+                t.NeedsLoad = this.NeedsLoad;
+            });
             Loaded = true;
         }
 
@@ -153,9 +157,6 @@ namespace FurryLana.Engine.Texture
         {
             list.Add (Load);
             NeedsLoad = reloader;
-            textures.ForEach ((t) => {
-                list = t.GetLoadJobs (list, reloader);
-            });
             return list;
         }
 

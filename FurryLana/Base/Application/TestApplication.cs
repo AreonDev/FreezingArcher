@@ -29,6 +29,7 @@ using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
 using FurryLana.Base.Application.Interfaces;
 using System.Collections.Generic;
+using FurryLana.Engine.Game;
 
 namespace FurryLana.Base.Application
 {
@@ -76,7 +77,7 @@ namespace FurryLana.Base.Application
         public void Init ()
         {
             Loaded = false;
-            //InputManager = new InputManager ();TODO
+            ResourceManager = new ResourceManager ();
             //GameManager = new GameManager ();TODO
 
             Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080),
@@ -156,8 +157,15 @@ namespace FurryLana.Base.Application
                 }
             };
 
-            if (NeedsLoad != null)
-                NeedsLoad ((Action) this.Load, null);
+            Initer = new JobExecuter();
+            Initer.InsertJobs (GetInitJobs (new List<Action>()));
+            Loader = new JobExecuter();
+            Loader.InsertJobs (GetLoadJobs (new List<Action>(), new EventHandler (Loader.NeedsReexecHandler)));
+            Window.Init ();
+            Initer.ExecJobsParallel (Environment.ProcessorCount);
+
+            //if (NeedsLoad != null)
+            //    NeedsLoad ((Action) this.Load, null);
         }
 
         /// <summary>
@@ -167,7 +175,6 @@ namespace FurryLana.Base.Application
         /// <param name="list">List.</param>
         public List<Action> GetInitJobs (List<Action> list)
         {
-            list.Add (Init);
             list = Window.GetInitJobs (list);
             //list = GameManager.GetInitJobs (list);
             list = ResourceManager.GetInitJobs (list);
@@ -179,6 +186,9 @@ namespace FurryLana.Base.Application
         /// </summary>
         public void Load ()
         {
+            Loaded = false;
+            Window.Load ();
+            Loader.ExecJobsSequential ();
             Loaded = true;
         }
 
@@ -190,7 +200,6 @@ namespace FurryLana.Base.Application
         /// <param name="reloader">The NeedLoad event handler.</param>
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
-            list.Add (Load);
             list = Window.GetLoadJobs (list, reloader);
             //list = GameManager.GetLoadJobs (list, reloader);
             list = ResourceManager.GetLoadJobs (list, reloader);
@@ -235,6 +244,16 @@ namespace FurryLana.Base.Application
         /// The original command line row.
         /// </summary>
         protected int origRow;
+        
+        /// <summary>
+        /// The loader.
+        /// </summary>
+        protected JobExecuter Loader;
+        
+        /// <summary>
+        /// The initer.
+        /// </summary>
+        protected JobExecuter Initer;
 
         /// <summary>
         /// Creates the event table.

@@ -22,24 +22,27 @@
 //
 using System;
 using FurryLana.Engine.Map.Interfaces;
+using FurryLana.Engine.Model.Interfaces;
+using Pencil.Gaming.MathUtils;
 
 namespace FurryLana.Engine.Map
 {
     public class TiledMap : IMap
     {
-        public TiledMap ()
+        public TiledMap (IModel model)
         {
+            this.Model = model;
         }
 
         #region IMap implementation
 
-        public FurryLana.Engine.Model.Interfaces.IModel Model {
-            get {
-                throw new NotImplementedException ();
-            }
-        }
+        public IModel Model { get; set; }
 
         #endregion
+
+        public Sky Sky { get; set; }
+        public Vector2i Size { get; set; }
+        public float TileSize { get; set; }
     }
 }
 

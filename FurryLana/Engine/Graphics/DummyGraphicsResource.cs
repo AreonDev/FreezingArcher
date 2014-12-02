@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
 using FurryLana.Engine.Graphics.Shader;
+using Pencil.Gaming;
 
 namespace FurryLana.Engine.Graphics
 {
@@ -51,8 +52,8 @@ namespace FurryLana.Engine.Graphics
         public void Init ()
         {
             Loaded = false;
-            model = new AssimpModel ("Model/Data/Stone.obj");
-            model.Init ();
+            //model = new AssimpModel ("Model/Data/Stone.obj");
+            //model.Init ();
             NeedsLoad ((Action) this.Load, null);
         }
 
@@ -73,7 +74,8 @@ namespace FurryLana.Engine.Graphics
         public void Load ()
         {
             Loaded = false;
-            model.Load ();
+            //model.Load ();
+            FinDreieck.Init ();
             Loaded = true;
         }
 
@@ -101,7 +103,7 @@ namespace FurryLana.Engine.Graphics
         public void Destroy ()
         {
             Loaded = false;
-            model.Destroy ();
+            //model.Destroy ();
         }
 
         /// <summary>
@@ -156,6 +158,8 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         public void Draw ()
         {
+            FinDreieck.Update ();
+            /*
             Vector4[] triangle = new Vector4[3];
             triangle[0].X = -1.0f;
             triangle[0].Y = -1.0f;
@@ -191,7 +195,7 @@ namespace FurryLana.Engine.Graphics
                 GL.BindVertexArray(vaoID);
 
                 GL.DrawArrays (BeginMode.Triangles, 0, 3);
-            }
+            }*/
 
             /*
             if (model != null && model.Loaded)
@@ -201,5 +205,190 @@ namespace FurryLana.Engine.Graphics
         }
 
         #endregion
+    }
+
+    class FinDreieck
+    {
+        private static GlfwWindowPtr bla_window;
+        
+        private static int vertex_array_buffer = 0;
+        private static int vertex_buffer_id = 0;
+        private static float[] vertex_data = 
+        {
+            -1.0f, -1.0f, 0.0f,
+            1.0f, -1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f
+        };
+        
+        private static uint program_id = 0;
+        private const string VertexShader_Path = "VertexShader.vs";
+        private const string PixelShader_Path = "PixelShader.fs";
+
+        public static void Init ()
+        {
+            InitVertexBufferFoo();
+            program_id = LoadShaders();
+        }
+        
+        public static void foomain(string[] bla)
+        {
+            #region Initialize
+            try
+            {
+                if (!Glfw.Init())
+                {
+                    Console.WriteLine("Failed to initialize Glfw!");
+                    Glfw.Terminate();
+                }
+            }catch
+            {
+                Console.WriteLine("Failed to initialize Glfw!");
+                Glfw.Terminate();
+            }
+            
+            try
+            {
+                Glfw.WindowHint(WindowHint.ContextVersionMajor, 4);
+                Glfw.WindowHint(WindowHint.ContextVersionMinor, 0);
+                Glfw.WindowHint(WindowHint.OpenGLDebugContext, 1);
+                
+                bla_window = Glfw.CreateWindow(500, 500, "Bla Window!", GlfwMonitorPtr.Null, GlfwWindowPtr.Null);
+                
+                Glfw.MakeContextCurrent(bla_window);
+                
+                Glfw.SetWindowSizeCallback(bla_window, WindowResize);
+                
+                Glfw.SetTime(0.0);
+            }
+            catch 
+            {
+                Console.WriteLine("Failed to initialize Rest...");
+                Glfw.DestroyWindow(bla_window);
+                Glfw.Terminate();
+            }
+            #endregion
+            
+            InitVertexBufferFoo();
+            program_id = LoadShaders();
+            
+            while(!Glfw.WindowShouldClose(bla_window))
+            {
+                Glfw.PollEvents();
+                
+                Update();
+            }
+            
+            Glfw.DestroyWindow(bla_window);
+            Glfw.Terminate();
+        }
+        
+        private static void InitVertexBufferFoo()
+        {
+            vertex_array_buffer = GL.GenVertexArray();
+            
+            GL.BindVertexArray(vertex_array_buffer);
+            
+            vertex_buffer_id = GL.GenBuffer();
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vertex_buffer_id);
+            
+            int size = 3 * 3 * sizeof(float);
+            
+            GL.BufferData<float>(BufferTarget.ArrayBuffer, (IntPtr)size, vertex_data, BufferUsageHint.StaticDraw);
+        }
+        
+        private static uint LoadShaders()
+        {
+            uint VertexShaderID = GL.CreateShader(Pencil.Gaming.Graphics.ShaderType.VertexShader);
+            uint PixelShaderID = GL.CreateShader(Pencil.Gaming.Graphics.ShaderType.FragmentShader);
+            
+            string vertex_text = System.IO.File.ReadAllText(FinDreieck.VertexShader_Path);
+            string pixel_text = System.IO.File.ReadAllText(FinDreieck.PixelShader_Path);
+            
+            GL.ShaderSource(VertexShaderID, vertex_text);
+            GL.CompileShader(VertexShaderID);
+            
+            string info = "";
+            GL.GetShaderInfoLog((int)VertexShaderID, out info);
+            Console.WriteLine("Messages: " + info);
+            
+            GL.ShaderSource(PixelShaderID, pixel_text);
+            GL.CompileShader(PixelShaderID);
+            
+            GL.GetShaderInfoLog((int)PixelShaderID, out info);
+            Console.WriteLine("Messages: " + info);
+            
+            uint Program = GL.CreateProgram();
+            
+            GL.AttachShader(Program, VertexShaderID);
+            GL.AttachShader(Program, PixelShaderID);
+            GL.LinkProgram(Program);
+            
+            GL.GetProgramInfoLog((int)Program, out info);
+            Console.WriteLine("Messages: " + info);
+            
+            GL.DeleteShader(VertexShaderID);
+            GL.DeleteShader(PixelShaderID);
+            
+            GL.ShaderSource(PixelShaderID, pixel_text);
+            
+            return Program;
+        }
+        
+        public static void Update()
+        {
+            GL.ClearColor(0.2f, 0.1f, 1.0f, 1.0f);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+            
+            ErrorCode ec = GL.GetError();
+            if (ec != ErrorCode.NoError)
+                Console.WriteLine("Error: " + ec.ToString());
+            
+            GL.UseProgram(program_id);
+            
+            ec = GL.GetError();
+            if (ec != ErrorCode.NoError)
+                Console.WriteLine("Error: " + ec.ToString());
+            
+            GL.BindVertexArray(vertex_buffer_id);
+            
+            GL.EnableVertexAttribArray(0);
+            
+            ec = GL.GetError();
+            if (ec != ErrorCode.NoError)
+                Console.WriteLine("Error: " + ec.ToString());
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vertex_buffer_id);
+            
+            ec = GL.GetError();
+            if (ec != ErrorCode.NoError)
+                Console.WriteLine("Error: " + ec.ToString());
+            
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
+            
+            ec = GL.GetError();
+            if (ec != ErrorCode.NoError)
+                Console.WriteLine("Error: " + ec.ToString());
+            
+            GL.DrawArrays(BeginMode.Triangles, 0, 3);
+            
+            ec = GL.GetError();
+            if (ec != ErrorCode.NoError)
+                Console.WriteLine("Error: " + ec.ToString());
+            
+            GL.DisableVertexAttribArray(0);
+            
+            ec = GL.GetError();
+            if (ec != ErrorCode.NoError)
+                Console.WriteLine("Error: " + ec.ToString());
+            
+            //Glfw.SwapBuffers(bla_window);
+            //System.Threading.Thread.Sleep(50);
+        }
+        
+        private static void WindowResize(GlfwWindowPtr window, int width, int height)
+        {
+            GL.Viewport(0, 0, width, height);
+        }
     }
 }

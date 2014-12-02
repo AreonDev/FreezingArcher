@@ -122,7 +122,7 @@ namespace FurryLana.Base.Application
         {
             Resource.Destroy ();
             Glfw.DestroyWindow (Win);
-            Glfw.DestroyWindow (Ful);
+            //Glfw.DestroyWindow (Ful);
             Glfw.Terminate ();
         }
 
@@ -156,18 +156,18 @@ namespace FurryLana.Base.Application
         /// </summary>
         public void Show ()
         {
-            if (Fullscreen)
-            {
-                Glfw.HideWindow (Win);
-                Glfw.ShowWindow (Ful);
-                Glfw.MakeContextCurrent (Ful);
-            }
-            else
-            {
-                Glfw.HideWindow (Ful);
+            //if (Fullscreen)
+            //{
+            //    Glfw.HideWindow (Win);
+            //    Glfw.ShowWindow (Ful);
+            //    Glfw.MakeContextCurrent (Ful);
+            //}
+            //else
+            //{
+                //Glfw.HideWindow (Ful);
                 Glfw.ShowWindow (Win);
                 Glfw.MakeContextCurrent (Win);
-            }
+            //}
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace FurryLana.Base.Application
         public void Hide ()
         {
             Glfw.HideWindow (Win);
-            Glfw.HideWindow (Ful);
+            //Glfw.HideWindow (Ful);
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace FurryLana.Base.Application
         public void Minimize ()
         {
             Glfw.IconifyWindow (Win);
-            Glfw.IconifyWindow (Ful);
+            //Glfw.IconifyWindow (Ful);
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace FurryLana.Base.Application
         public void Restore ()
         {
             Glfw.RestoreWindow (Win);
-            Glfw.RestoreWindow (Ful);
+            //Glfw.RestoreWindow (Ful);
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace FurryLana.Base.Application
         /// </summary>
         public void Run ()
         {
-            while (!Glfw.WindowShouldClose (Win) && !Glfw.WindowShouldClose (Ful))
+            while (!Glfw.WindowShouldClose (Win)/* && !Glfw.WindowShouldClose (Ful)*/)
             {
                 float deltaTime = (float) Glfw.GetTime ();
                 Glfw.SetTime (0.0);
@@ -216,18 +216,18 @@ namespace FurryLana.Base.Application
                 Resource.FrameSyncedUpdate (deltaTime);
                 Resource.Draw ();
 
-                if (Fullscreen)
-                    Glfw.SwapBuffers (Ful);
-                else
-                    Glfw.SwapBuffers (Win);
+                //if (Fullscreen)
+                //    Glfw.SwapBuffers (Ful);
+                //else
+                Glfw.SwapBuffers (Win);
 
                 Glfw.PollEvents ();
 
-                if (SwapWindow)
-                {
-                    Show ();
-                    SwapWindow = false;
-                }
+                //if (SwapWindow)
+                //{
+                //    Show ();
+                //    SwapWindow = false;
+                //}
 
                 Thread.Sleep (17);
             }
@@ -254,18 +254,18 @@ namespace FurryLana.Base.Application
         /// Gets or sets resolution in fullscreen mode.
         /// </summary>
         /// <value>The resolution.</value>
-        public Vector2i FullscreenSize
-	{
-            get
-	    {
-                return MFullscreenSize;
-            }
-            set
-	    {
-                MFullscreenSize = value;
-                Glfw.SetWindowSize (Ful, value.X, value.Y);
-            }
-        }
+        //public Vector2i FullscreenSize
+	//{
+        //    get
+	//    {
+        //        return MFullscreenSize;
+        //    }
+        //    set
+	//    {
+        //        MFullscreenSize = value;
+        //        //Glfw.SetWindowSize (Ful, value.X, value.Y);
+        //    }
+        //}
 
         /// <summary>
         /// Gets or sets the window title.
@@ -281,7 +281,7 @@ namespace FurryLana.Base.Application
 	    {
                 MTitle = value;
 		Glfw.SetWindowTitle (Win, value);
-                Glfw.SetWindowTitle (Ful, value);
+                //Glfw.SetWindowTitle (Ful, value);
             }
         }
 
@@ -297,8 +297,8 @@ namespace FurryLana.Base.Application
             }
             set
 	    {
-                if (MFullscreen != value)
-		    SwapWindow = true;
+                //if (MFullscreen != value)
+		//    SwapWindow = true;
 		MFullscreen = value;
             }
         }
@@ -410,7 +410,7 @@ namespace FurryLana.Base.Application
         /// <summary>
         /// The fullscreen window.
         /// </summary>
-        protected GlfwWindowPtr Ful;
+        //protected GlfwWindowPtr Ful;
 
         /// <summary>
         /// Creates the window.
@@ -419,47 +419,48 @@ namespace FurryLana.Base.Application
         {
             Glfw.WindowHint (WindowHint.ContextVersionMajor, 3);
             Glfw.WindowHint (WindowHint.ContextVersionMinor, 3);
+            Glfw.WindowHint (WindowHint.OpenGLDebugContext, 1);
 
             Win = Glfw.CreateWindow (WindowedSize.X, WindowedSize.Y, Title,
                                      GlfwMonitorPtr.Null, GlfwWindowPtr.Null);
 
-            Ful = Glfw.CreateWindow (FullscreenSize.X, FullscreenSize.Y, Title,
-                                     Glfw.GetPrimaryMonitor (), Win);
+            //Ful = Glfw.CreateWindow (FullscreenSize.X, FullscreenSize.Y, Title,
+            //                         Glfw.GetPrimaryMonitor (), Win);
 
-            if (Fullscreen)
+/*            if (Fullscreen)
                 Glfw.MakeContextCurrent (Ful);
-            else
-                Glfw.MakeContextCurrent (Win);
+            else*/
+            Glfw.MakeContextCurrent (Win);
 
             Glfw.SetCursorPosCallback     (Win, MouseMove);
-            Glfw.SetCursorPosCallback     (Ful, MouseMove);
+            //Glfw.SetCursorPosCallback     (Ful, MouseMove);
 
             Glfw.SetCursorEnterCallback   (Win, MouseOver);
-            Glfw.SetCursorEnterCallback   (Ful, MouseOver);
+            //Glfw.SetCursorEnterCallback   (Ful, MouseOver);
 
             Glfw.SetMouseButtonCallback   (Win, MouseButton);
-            Glfw.SetMouseButtonCallback   (Ful, MouseButton);
+            //Glfw.SetMouseButtonCallback   (Ful, MouseButton);
 
             Glfw.SetScrollCallback        (Win, MouseScroll);
-            Glfw.SetScrollCallback        (Ful, MouseScroll);
+            //Glfw.SetScrollCallback        (Ful, MouseScroll);
 
             Glfw.SetKeyCallback           (Win, KeyAction);
-            Glfw.SetKeyCallback           (Ful, KeyAction);
+            //Glfw.SetKeyCallback           (Ful, KeyAction);
 
             Glfw.SetWindowCloseCallback   (Win, WindowClose);
-            Glfw.SetWindowCloseCallback   (Ful, WindowClose);
+            //Glfw.SetWindowCloseCallback   (Ful, WindowClose);
 
             Glfw.SetWindowFocusCallback   (Win, WindowFocus);
-            Glfw.SetWindowFocusCallback   (Ful, WindowFocus);
+            //Glfw.SetWindowFocusCallback   (Ful, WindowFocus);
 
             Glfw.SetWindowIconifyCallback (Win, WindowMinimize);
-            Glfw.SetWindowIconifyCallback (Ful, WindowMinimize);
+            //Glfw.SetWindowIconifyCallback (Ful, WindowMinimize);
 
             Glfw.SetWindowPosCallback     (Win, WindowMove);
-            Glfw.SetWindowPosCallback     (Ful, WindowMove);
+            //Glfw.SetWindowPosCallback     (Ful, WindowMove);
 
             Glfw.SetWindowSizeCallback    (Win, WindowResize);
-            Glfw.SetWindowSizeCallback    (Ful, WindowResize);
+            //Glfw.SetWindowSizeCallback    (Ful, WindowResize);
 
             Glfw.SetErrorCallback         (WindowError);
         }

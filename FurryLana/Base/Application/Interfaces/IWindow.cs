@@ -41,7 +41,7 @@ namespace FurryLana.Base.Application.Interfaces
         /// Gets or sets resolution in fullscreen mode.
         /// </summary>
         /// <value>The resolution.</value>
-        Vector2i             FullscreenSize { get; set; }
+        //Vector2i             FullscreenSize { get; set; }
 
         /// <summary>
         /// Gets or sets the window title.

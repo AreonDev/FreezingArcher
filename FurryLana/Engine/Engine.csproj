@@ -56,6 +56,11 @@
     <Compile Include="Camera\Interfaces\ICamera.cs" />
     <Compile Include="Camera\Interfaces\ICameraManageable.cs" />
     <Compile Include="Camera\Interfaces\ICameraManager.cs" />
+    <Compile Include="Entity\Floor.cs" />
+    <Compile Include="Entity\Interfaces\BoundingBox.cs" />
+    <Compile Include="Entity\SnakeBody.cs" />
+    <Compile Include="Entity\SnakeHead.cs" />
+    <Compile Include="Entity\Wall.cs" />
     <Compile Include="Game\Interfaces\IGame.cs" />
     <Compile Include="Game\Interfaces\IGameManager.cs" />
     <Compile Include="Game\ResourceManager.cs" />
@@ -160,10 +165,5 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Graphics\VertexBuffer\" />
-    <Folder Include="Graphics\Shader\" />
-    <Folder Include="Graphics\Shader\RenderTarget\" />
-    <Folder Include="Model\Data\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

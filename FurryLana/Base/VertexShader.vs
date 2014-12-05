@@ -1,9 +1,20 @@
 ﻿#version 330 core
 
-layout(location = 0) in vec3 vertexPosition;
+//layout (std140) uniform objects
+//{
+uniform mat4 ProjMatrix;
+uniform mat4 ViewMatrix;
+uniform mat4 ModelMatrix;
+//};
 
-void main()
+layout(location = 0) in vec4 inPosition;
+out vec3 Position;
+
+void main ()
 {
-	gl_Position.xyz = vertexPosition;
-	gl_Position.w = 1.0f;
+  mat4 ModelViewProjMatrix = ProjMatrix * ModelMatrix * ViewMatrix;
+
+  Position = (ModelViewProjMatrix * inPosition).xyz;
+
+  gl_Position = vec4 (Position, 1.0f);
 }

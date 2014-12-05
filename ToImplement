@@ -4,7 +4,7 @@
   * Spectator Camera
 * TODO [#B] ICameraManager implementation [Paul]
   * Camera manager may be used from Freezing Archer
-* TODO [#C] IEntity implementation [Martin]
+* DONE [#C] IEntity implementation [Martin]
   * BaseEntity class
   * PhysicalEntity class derived from BaseEntity
 * TODO [#B] IGame implementation [Paul]
@@ -17,13 +17,13 @@
   * simple manager of ILevel
 * DONE [#A] IResourceManager (should it be done by the renderer?) [Paul]
   * wrapper around IInputManager, ITextureManager and IModelManager
-* TODO [#C] IInputManager implementation (and design?) [?]
+* DONE [#C] IInputManager implementation (and design?) [?]
   * does the input manager manage enough?
   * input will be pushed in from renderer/window
 * TODO [#C] Input enum - do we really need this? [?]
   * if we need it someone should add all necessary keys in a sensful order :D
   * maybe use unicode-utf8 instead (?)
-* TODO [#B] Design a map interface - the currently used one is way too simple [Fin]
+* DONE [#B] Design a map interface - the currently used one is way too simple [Fin]
   * this should be done in the near future
 * DONE [#A] IMaterial implementation [Paul]
   * should be trivial

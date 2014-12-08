@@ -253,11 +253,6 @@ namespace FurryLana.Engine.Graphics.Shader
             foreach (var item in unatt)
                 if (!item.Loaded) item.Load();
             Attach(unatt);
-            BindAttribLocation(0, "inPosition");
-            BindAttribLocation(1, "inNormal");
-            BindAttribLocation(2, "inCoord");
-            BindAttribLocation(3, "inTangent");
-            BindAttribLocation(4, "inBitangent");
             Loaded = true;
         }
         /// <summary>

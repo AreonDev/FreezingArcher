@@ -223,16 +223,18 @@ namespace FurryLana.Engine.Graphics
             1.0f, -1.0f, 0.0f,
             0.0f, 1.0f, 0.0f
         };
-        
-        private static uint program_id = 0;
-        private const string VertexShader_Path = "VertexShader.vs";
-        private const string PixelShader_Path = "PixelShader.fs";
+
+        private static Shader.ShaderProgram program_id;
+        private const string VertexShader_Path = "Graphics/Shader/RenderTarget/stdmodel.vsh";
+        private const string PixelShader_Path =  "Graphics/Shader/RenderTarget/stdmodel.fsh";
         Matrix ProjMatrix = Matrix.CreatePerspectiveFieldOfView (1, 16f / 9, 0.1f, 200);
         Matrix ViewMatrix = Matrix.LookAt (0,1,1,
                                         0,0,0,
                                         0,1,0);
         Matrix ModelMatrix = Matrix.Identity;
-
+        VertexBuffer.VertexBuffer<Vector4> vbo;
+        VertexBuffer.VertexBuffer<int> ibo;
+        VertexBuffer.VertexArrayObject vao;
         public void Init ()
         {
             InitVertexBufferFoo();
@@ -293,17 +295,27 @@ namespace FurryLana.Engine.Graphics
         
         private void InitVertexBufferFoo()
         {
-            vertex_array_buffer = GL.GenVertexArray();
-            
-            GL.BindVertexArray(vertex_array_buffer);
-            
-            vertex_buffer_id = GL.GenBuffer();
-            
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vertex_buffer_id);
 
-            GL.Utils.LoadModel ("Model/Data/cube.obj", out vrt, out norm, out crds, out idx);
+            GL.Utils.LoadModel("Model/Data/cube.obj", out vrt, out norm, out crds, out idx);
 
-            GL.BufferData<Vector4>(BufferTarget.ArrayBuffer, (IntPtr) (sizeof (float) * 4 * vrt.Length), vrt, BufferUsageHint.StaticDraw);
+            vbo = new VertexBuffer.VertexBuffer<Vector4>(VertexBuffer.VertexBufferType.Static, vrt.Length, new VertexBuffer.VertexFormatInfo { VertexParams = new VertexBuffer.VertexAttribParam[] { new VertexBuffer.VertexAttribParam(0, 4, 16, 0) } }, VertexBuffer.VertexBufferTarget.DataBuffer);
+
+            ibo = new VertexBuffer.VertexBuffer<int>(VertexBuffer.VertexBufferType.Static, idx.Length, new VertexBuffer.VertexFormatInfo(), VertexBuffer.VertexBufferTarget.IndiceBuffer);
+
+            vbo.LoadData(vrt);
+            vbo.Load();
+            ibo.LoadData(idx);
+            ibo.Load();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+            vao = new VertexBuffer.VertexArrayObject();
+            vao.Load();
+
+            vao.AttachVBO(vbo);
+            vao.AttachVBO(ibo);
+
+            VertexBuffer.VertexArrayObject.UnbindVAO();
+
         }
 
         int[] idx;
@@ -311,59 +323,17 @@ namespace FurryLana.Engine.Graphics
         Vector2[] crds;
         Vector3[] norm;
         
-        private uint LoadShaders()
+        private Shader.ShaderProgram LoadShaders()
         {
-            uint VertexShaderID = GL.CreateShader(Pencil.Gaming.Graphics.ShaderType.VertexShader);
-            uint PixelShaderID = GL.CreateShader(Pencil.Gaming.Graphics.ShaderType.FragmentShader);
-            
-            string vertex_text = System.IO.File.ReadAllText(FinDreieck.VertexShader_Path);
-            string pixel_text = System.IO.File.ReadAllText(FinDreieck.PixelShader_Path);
+            var sf = new Shader.Shader(Shader.ShaderType.VertexShader, FinDreieck.VertexShader_Path);
+            var frag = new Shader.Shader(Shader.ShaderType.FragmentShader, FinDreieck.PixelShader_Path);
 
-            GL.ShaderSource(VertexShaderID, vertex_text);
-            GL.CompileShader(VertexShaderID);
-            
-            string info = "";
-            GL.GetShaderInfoLog((int)VertexShaderID, out info);
-            Console.WriteLine("Messages: " + info);
-            
-            GL.ShaderSource(PixelShaderID, pixel_text);
-            GL.CompileShader(PixelShaderID);
-            
-            GL.GetShaderInfoLog((int)PixelShaderID, out info);
-            Console.WriteLine("Messages: " + info);
-            
-            uint Program = GL.CreateProgram();
-            
-            GL.AttachShader(Program, VertexShaderID);
-            GL.AttachShader(Program, PixelShaderID);
-
-            GL.BindAttribLocation (Program, 0, "ProjMatrix");
-            GL.BindAttribLocation (Program, 1, "ViewMatrix");
-            GL.BindAttribLocation (Program, 2, "ModelMatrix");
-
-            ErrorCode ec = GL.GetError();
-            if (ec != ErrorCode.NoError)
-                Console.WriteLine("Error: " + ec.ToString());
-
-            GL.UniformMatrix4 (0, false, ref ProjMatrix );//FIXME
-            GL.UniformMatrix4 (1, false, ref ViewMatrix );//FIXME
-            GL.UniformMatrix4 (2, false, ref ModelMatrix);//FIXME
-
-            ec = GL.GetError();
-            if (ec != ErrorCode.NoError)
-                Console.WriteLine("Error: " + ec);
-
-            GL.LinkProgram(Program);
-            
-            GL.GetProgramInfoLog((int)Program, out info);
-            Console.WriteLine("Messages: " + info);
-            
-            GL.DeleteShader(VertexShaderID);
-            GL.DeleteShader(PixelShaderID);
-            
-            GL.ShaderSource(PixelShaderID, pixel_text);
-            
-            return Program;
+            var shaderProg = new Shader.ShaderProgram(sf, frag);
+            shaderProg.Load();
+            shaderProg["ProjMatrix"] = ProjMatrix;
+            shaderProg["ModelMatrix"] = ModelMatrix;
+            shaderProg["ViewMatrix"] = ViewMatrix;
+            return shaderProg;
         }
         
         public void Update()
@@ -372,51 +342,13 @@ namespace FurryLana.Engine.Graphics
             GL.CullFace (CullFaceMode.FrontAndBack);
             GL.ClearColor(0.2f, 0.1f, 1.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
-            
-            ErrorCode ec = GL.GetError();
-            if (ec != ErrorCode.NoError)
-                Console.WriteLine("Error: " + ec.ToString());
-            
-            GL.UseProgram(program_id);
-            
-            ec = GL.GetError();
-            if (ec != ErrorCode.NoError)
-                Console.WriteLine("Error: " + ec.ToString());
-            
-            GL.BindVertexArray(vertex_buffer_id);
-            
-            GL.EnableVertexAttribArray(0);
-            
-            ec = GL.GetError();
-            if (ec != ErrorCode.NoError)
-                Console.WriteLine("Error: " + ec.ToString());
-            
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vertex_buffer_id);
-            
-            ec = GL.GetError();
-            if (ec != ErrorCode.NoError)
-                Console.WriteLine("Error: " + ec.ToString());
-            
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 4, 0);
-            
-            ec = GL.GetError();
-            if (ec != ErrorCode.NoError)
-                Console.WriteLine("Error: " + ec.ToString());
-            
-            GL.DrawElements<int> (BeginMode.Triangles, idx.Length, DrawElementsType.UnsignedInt, idx);
-            
-            ec = GL.GetError();
-            if (ec != ErrorCode.NoError)
-                Console.WriteLine("Error: " + ec.ToString());
-            
-            GL.DisableVertexAttribArray(0);
-            
-            ec = GL.GetError();
-            if (ec != ErrorCode.NoError)
-                Console.WriteLine("Error: " + ec.ToString());
-            
-            //Glfw.SwapBuffers(bla_window);
-            //System.Threading.Thread.Sleep(50);
+
+
+            vao.Bind(); /* Bind VBO,IBO, etc */
+            using (var hnd = program_id.Use()) { 
+            GL.DrawElements(BeginMode.Triangles, idx.Length, DrawElementsType.UnsignedInt, 0);
+            VertexBuffer.VertexArrayObject.UnbindVAO(); /* Unbind VBO/IBO */
+            }
         }
         
         private static void WindowResize(GlfwWindowPtr window, int width, int height)

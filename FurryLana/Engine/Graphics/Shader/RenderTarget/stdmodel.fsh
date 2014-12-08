@@ -1,4 +1,4 @@
-#version 330
+#version 330 core
 
 uniform sampler2D DiffuseTexture;
 
@@ -9,5 +9,5 @@ out vec4 DiffuseColor;
 
 void main ()
 {
-  DiffuseColor = vec4 (1,1,1,1);
+  DiffuseColor = Position;
 }

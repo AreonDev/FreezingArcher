@@ -41,5 +41,7 @@ namespace FurryLana.Engine.Entity.Interfaces
         /// </summary>
         /// <value>The model.</value>
         IModel Model { get; }
+
+        BoundingBox BBox { get; set; }
     }
 }

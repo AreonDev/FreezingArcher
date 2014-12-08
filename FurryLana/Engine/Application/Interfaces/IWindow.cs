@@ -24,7 +24,7 @@ using Pencil.Gaming;
 using Pencil.Gaming.MathUtils;
 using FurryLana.Engine.Graphics.Interfaces;
 
-namespace FurryLana.Base.Application.Interfaces
+namespace FurryLana.Engine.Application.Interfaces
 {
     /// <summary>
     /// Window interface.

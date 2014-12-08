@@ -26,10 +26,10 @@ using FurryLana.Engine.Graphics.Interfaces;
 using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
-using FurryLana.Base.Application.Interfaces;
+using FurryLana.Engine.Application.Interfaces;
 using System.Collections.Generic;
 
-namespace FurryLana.Base.Application
+namespace FurryLana.Engine.Application
 {
     /// <summary>
     /// Window.

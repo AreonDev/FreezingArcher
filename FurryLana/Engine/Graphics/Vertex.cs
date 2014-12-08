@@ -1,5 +1,5 @@
 //
-//  Main.cs
+//  Vertex.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,26 +20,23 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FurryLana.Engine.Application.Interfaces;
-using FurryLana.Engine.Application;
+using System.Runtime.InteropServices;
+using Pencil.Gaming.MathUtils;
 
-namespace FurryLana.Game
+namespace FurryLana.Engine.Graphics
 {
-    /// <summary>
-    /// FurryLana static main class.
-    /// </summary>
-    public class FurryLana
+    [StructLayout (LayoutKind.Sequential)]
+    public struct Vertex
     {
-        /// <summary>
-        /// The entry point of the program, where the program control starts and ends.
-        /// </summary>
-        /// <param name="args">The command-line arguments.</param>
-        public static void Main (string[] args)
+        public Vertex (Vector4 position, Vector3 normal, Vector2 texCoord)
         {
-            Application.Instance.Init ();
-            Application.Instance.Load ();
-            Application.Instance.Run ();
-            Application.Instance.Destroy ();
+            Position = position;
+            Normal = normal;
+            TexCoord = texCoord;
         }
+
+        public Vector4 Position;
+        public Vector3 Normal;
+        public Vector2 TexCoord;
     }
 }

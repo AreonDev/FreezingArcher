@@ -10,7 +10,6 @@
     <RootNamespace>FurryLana.Game</RootNamespace>
     <AssemblyName>FurryLana</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -65,10 +64,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\Base\Base.csproj">
-      <Project>{F05A6D55-8FA2-4F0E-B330-AD52305DA877}</Project>
-      <Name>Base</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Engine\Engine.csproj">
       <Project>{E430674D-98AB-474A-BC42-A6DDE78623C7}</Project>
       <Name>Engine</Name>

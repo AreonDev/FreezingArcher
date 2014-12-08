@@ -21,16 +21,8 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
-using System.Linq;
-using FurryLana.Engine.Graphics.Interfaces;
-using FurryLana.Engine.Model.Interfaces;
-using FurryLana.Engine.Model;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Pencil.Gaming.Graphics;
-using Pencil.Gaming.MathUtils;
-using FurryLana.Engine.Graphics.Shader;
-using Pencil.Gaming;
+using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Graphics
 {
@@ -39,10 +31,14 @@ namespace FurryLana.Engine.Graphics
     /// </summary>
     public class DummyGraphicsResource : IGraphicsResource
     {
-        /// <summary>
-        /// The model.
-        /// </summary>
-        protected IModel model;
+        public DummyGraphicsResource ()
+        {
+            go = new GraphicsObject ("Graphics/Shader/RenderTarget/stdmodel.fsh",
+                                     "Graphics/Shader/RenderTarget/stdmodel.vsh",
+                                     "Model/Data/cube.obj", new string[0]);
+        }
+
+        GraphicsObject go;
 
         #region IResource implementation
 
@@ -53,13 +49,8 @@ namespace FurryLana.Engine.Graphics
         public void Init ()
         {
             Loaded = false;
-            //model = new AssimpModel ("Model/Data/Stone.obj");
-            //model.Init ();
-            t = new FinDreieck ();
             NeedsLoad ((Action) this.Load, null);
         }
-
-        FinDreieck t;
 
         /// <summary>
         /// Gets the init jobs.
@@ -69,6 +60,7 @@ namespace FurryLana.Engine.Graphics
         public List<Action> GetInitJobs (List<Action> list)
         {
             list.Add (Init);
+            list = go.GetInitJobs (list);
             return list;
         }
 
@@ -77,9 +69,6 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         public void Load ()
         {
-            Loaded = false;
-            //model.Load ();
-            t.Init ();
             Loaded = true;
         }
 
@@ -93,6 +82,7 @@ namespace FurryLana.Engine.Graphics
         {
             list.Add (Load);
             NeedsLoad = reloader;
+            list = go.GetLoadJobs (list, reloader);
             return list;
         }
 
@@ -107,7 +97,7 @@ namespace FurryLana.Engine.Graphics
         public void Destroy ()
         {
             Loaded = false;
-            //model.Destroy ();
+            go.Destroy ();
         }
 
         /// <summary>
@@ -134,8 +124,7 @@ namespace FurryLana.Engine.Graphics
         /// <param name="deltaTime">Time delta.</param>
         public void FrameSyncedUpdate (float deltaTime)
         {
-            if (model != null && model.Loaded)
-                model.FrameSyncedUpdate (deltaTime);
+            go.FrameSyncedUpdate (deltaTime);
         }
 
         #endregion
@@ -149,8 +138,7 @@ namespace FurryLana.Engine.Graphics
         /// <param name="deltaTime">Time delta in miliseconds.</param>
         public void Update (int deltaTime)
         {
-            if (model != null && model.Loaded)
-                model.Update (deltaTime);
+            go.Update (deltaTime);
         }
 
         #endregion
@@ -162,198 +150,9 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         public void Draw ()
         {
-            t.Update ();
-            /*
-            Vector4[] triangle = new Vector4[3];
-            triangle[0].X = -1.0f;
-            triangle[0].Y = -1.0f;
-            triangle[1].X = 1.0f;
-            triangle[1].Y =-1.0f;
-            triangle[2].X = -1.0f;
-            triangle[2].Y = 1.0f;
-
-            Shader.Shader vsh = new Shader.Shader (FurryLana.Engine.Graphics.Shader.ShaderType.VertexShader,
-                                                   "Graphics/Shader/RenderTarget/stdmodel.vsh");
-            Shader.Shader fsh = new Shader.Shader (FurryLana.Engine.Graphics.Shader.ShaderType.FragmentShader,
-                                                   "Graphics/Shader/RenderTarget/stdmodel.fsh");
-            
-            ShaderProgram shp = new ShaderProgram (vsh, fsh);
-            
-            shp.Load ();
-            shp.Link ();
-
-            using (var foo = shp.Use ())
-            {
-                int vaoID = GL.GenVertexArray ();
-                GL.BindVertexArray (vaoID);
-
-                int vboID = GL.GenBuffer ();
-                GL.BindBuffer (BufferTarget.ArrayBuffer, vboID);
-
-                //GL.BufferData (BufferTarget.ArrayBuffer, new IntPtr (triangle.Length * sizeof (float) * 3), trptr, BufferUsageHint.StaticDraw);
-                GL.BufferData<Vector4> (BufferTarget.ArrayBuffer, new IntPtr (Marshal.SizeOf(typeof(Vector4))), triangle, BufferUsageHint.StaticDraw);
-
-                GL.EnableVertexAttribArray (0);
-                GL.VertexAttribPointer (0, 4, VertexAttribPointerType.Float);
-
-                GL.BindVertexArray(vaoID);
-
-                GL.DrawArrays (BeginMode.Triangles, 0, 3);
-            }*/
-
-            /*
-            if (model != null && model.Loaded)
-            {
-                model.Draw ();
-            }*/
+            go.Draw ();
         }
 
         #endregion
-    }
-
-    class FinDreieck
-    {
-        private static GlfwWindowPtr bla_window;
-        
-        private static int vertex_array_buffer = 0;
-        private static int vertex_buffer_id = 0;
-        private static float[] vertex_data = 
-        {
-            -1.0f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f
-        };
-
-        private static Shader.ShaderProgram program_id;
-        private const string VertexShader_Path = "Graphics/Shader/RenderTarget/stdmodel.vsh";
-        private const string PixelShader_Path =  "Graphics/Shader/RenderTarget/stdmodel.fsh";
-        Matrix ProjMatrix = Matrix.CreatePerspectiveFieldOfView (1, 16f / 9, 0.1f, 200);
-        Matrix ViewMatrix = Matrix.LookAt (0,1,1,
-                                        0,0,0,
-                                        0,1,0);
-        Matrix ModelMatrix = Matrix.Identity;
-        VertexBuffer.VertexBuffer<Vector4> vbo;
-        VertexBuffer.VertexBuffer<int> ibo;
-        VertexBuffer.VertexArrayObject vao;
-        public void Init ()
-        {
-            InitVertexBufferFoo();
-            program_id = LoadShaders();
-        }
-        
-        public void foomain(string[] bla)
-        {
-            #region Initialize
-            try
-            {
-                if (!Glfw.Init())
-                {
-                    Console.WriteLine("Failed to initialize Glfw!");
-                    Glfw.Terminate();
-                }
-            }catch
-            {
-                Console.WriteLine("Failed to initialize Glfw!");
-                Glfw.Terminate();
-            }
-            
-            try
-            {
-                Glfw.WindowHint(WindowHint.ContextVersionMajor, 4);
-                Glfw.WindowHint(WindowHint.ContextVersionMinor, 0);
-                Glfw.WindowHint(WindowHint.OpenGLDebugContext, 1);
-                
-                bla_window = Glfw.CreateWindow(500, 500, "Bla Window!", GlfwMonitorPtr.Null, GlfwWindowPtr.Null);
-                
-                Glfw.MakeContextCurrent(bla_window);
-                
-                Glfw.SetWindowSizeCallback(bla_window, WindowResize);
-                
-                Glfw.SetTime(0.0);
-            }
-            catch 
-            {
-                Console.WriteLine("Failed to initialize Rest...");
-                Glfw.DestroyWindow(bla_window);
-                Glfw.Terminate();
-            }
-            #endregion
-            
-            InitVertexBufferFoo();
-            program_id = LoadShaders();
-            
-            while(!Glfw.WindowShouldClose(bla_window))
-            {
-                Glfw.PollEvents();
-                
-                Update();
-            }
-            
-            Glfw.DestroyWindow(bla_window);
-            Glfw.Terminate();
-        }
-        
-        private void InitVertexBufferFoo()
-        {
-
-            GL.Utils.LoadModel("Model/Data/cube.obj", out vrt, out norm, out crds, out idx);
-
-            vbo = new VertexBuffer.VertexBuffer<Vector4>(VertexBuffer.VertexBufferType.Static, vrt.Length, new VertexBuffer.VertexFormatInfo { VertexParams = new VertexBuffer.VertexAttribParam[] { new VertexBuffer.VertexAttribParam(0, 4, 16, 0) } }, VertexBuffer.VertexBufferTarget.DataBuffer);
-
-            ibo = new VertexBuffer.VertexBuffer<int>(VertexBuffer.VertexBufferType.Static, idx.Length, new VertexBuffer.VertexFormatInfo(), VertexBuffer.VertexBufferTarget.IndiceBuffer);
-
-            vbo.LoadData(vrt);
-            vbo.Load();
-            ibo.LoadData(idx);
-            ibo.Load();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-            vao = new VertexBuffer.VertexArrayObject();
-            vao.Load();
-
-            vao.AttachVBO(vbo);
-            vao.AttachVBO(ibo);
-
-            VertexBuffer.VertexArrayObject.UnbindVAO();
-
-        }
-
-        int[] idx;
-        Vector4[] vrt;
-        Vector2[] crds;
-        Vector3[] norm;
-        
-        private Shader.ShaderProgram LoadShaders()
-        {
-            var sf = new Shader.Shader(Shader.ShaderType.VertexShader, FinDreieck.VertexShader_Path);
-            var frag = new Shader.Shader(Shader.ShaderType.FragmentShader, FinDreieck.PixelShader_Path);
-
-            var shaderProg = new Shader.ShaderProgram(sf, frag);
-            shaderProg.Load();
-            shaderProg["ProjMatrix"] = ProjMatrix;
-            shaderProg["ModelMatrix"] = ModelMatrix;
-            shaderProg["ViewMatrix"] = ViewMatrix;
-            return shaderProg;
-        }
-        
-        public void Update()
-        {
-            GL.Enable (EnableCap.DepthTest);
-            GL.CullFace (CullFaceMode.FrontAndBack);
-            GL.ClearColor(0.2f, 0.1f, 1.0f, 1.0f);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-
-
-            vao.Bind(); /* Bind VBO,IBO, etc */
-            using (var hnd = program_id.Use()) { 
-            GL.DrawElements(BeginMode.Triangles, idx.Length, DrawElementsType.UnsignedInt, 0);
-            VertexBuffer.VertexArrayObject.UnbindVAO(); /* Unbind VBO/IBO */
-            }
-        }
-        
-        private static void WindowResize(GlfwWindowPtr window, int width, int height)
-        {
-            GL.Viewport(0, 0, width, height);
-        }
     }
 }

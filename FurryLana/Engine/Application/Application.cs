@@ -27,17 +27,19 @@ using FurryLana.Engine.Input.Interfaces;
 using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
-using FurryLana.Base.Application.Interfaces;
+using FurryLana.Engine.Application.Interfaces;
 using System.Collections.Generic;
 using FurryLana.Engine.Game;
 
-namespace FurryLana.Base.Application
+namespace FurryLana.Engine.Application
 {
     /// <summary>
     /// Test application.
     /// </summary>
-    public class TestApplication : IApplication
+    public class Application : IApplication
     {
+        public static IApplication Instance = new Application ();
+
         #region IApplication implementation
 
         /// <summary>

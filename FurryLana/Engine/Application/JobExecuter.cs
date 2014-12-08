@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FurryLana.Base.Application
+namespace FurryLana.Engine.Application
 {
     /// <summary>
     /// Job executer.

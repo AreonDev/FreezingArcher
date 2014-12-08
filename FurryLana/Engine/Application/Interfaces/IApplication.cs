@@ -24,7 +24,7 @@ using FurryLana.Engine.Game.Interfaces;
 using FurryLana.Engine.Input.Interfaces;
 using FurryLana.Engine.Graphics.Interfaces;
 
-namespace FurryLana.Base.Application.Interfaces
+namespace FurryLana.Engine.Application.Interfaces
 {
     /// <summary>
     /// Application interface.

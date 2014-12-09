@@ -20,11 +20,12 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-//#define Vertex
+#define Vertex
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
 using FurryLana.Engine.Graphics.Interfaces;
@@ -32,7 +33,6 @@ using FurryLana.Engine.Graphics.Shader;
 using FurryLana.Engine.Graphics.VertexBuffer;
 using FurryLana.Engine.Texture.Interfaces;
 using ShaderType = FurryLana.Engine.Graphics.Shader.ShaderType;
-using System.Runtime.InteropServices;
 
 namespace FurryLana.Engine.Graphics
 {
@@ -110,26 +110,80 @@ namespace FurryLana.Engine.Graphics
 
         public GraphicsObject (ShaderProgram shader, string modelPath, string[] texturePaths)
         {
-
+            Vertex[] vertices;
+            int[] indices;
+            LoadModel (modelPath, out vertices, out indices);
+            
+            ITexture[] textures = LoadTextures (texturePaths);
+            
+            Create (shader, vertices, indices, textures);
         }
 
-        public GraphicsObject (string fragmentShader, string vertexShader, string modelPath, string[] texturePaths)
+        public GraphicsObject (string fragmentShader, string vertexShader, Vertex[] vertices, int[] indices,
+                               string[] texturePaths)
+        {
+            ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
+                                                      new Shader.Shader (ShaderType.VertexShader, vertexShader));
+
+            ITexture[] textures = LoadTextures (texturePaths);
+            
+            Create (shader, vertices, indices, textures);
+        }
+
+        public GraphicsObject (string fragmentShader, string vertexShader, string modelPath, ITexture[] textures)
+        {
+            ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
+                                                      new Shader.Shader (ShaderType.VertexShader, vertexShader));
+            
+            Vertex[] vertices;
+            int[] indices;
+            LoadModel (modelPath, out vertices, out indices);
+
+            Create (shader, vertices, indices, textures);
+        }
+
+        public GraphicsObject (ShaderProgram shader, Vertex[] vertices, int[] indices, string[] texturePaths)
+        {
+            ITexture[] textures = LoadTextures (texturePaths);
+            
+            Create (shader, vertices, indices, textures);
+        }
+
+        public GraphicsObject (string fragmentShader, string vertexShader, Vertex[] vertices, int[] indices, ITexture[] textures)
+        {
+            ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
+                                                      new Shader.Shader (ShaderType.VertexShader, vertexShader));
+
+            Create (shader, vertices, indices, textures);
+        }
+
+        public GraphicsObject (ShaderProgram shader, string modelPath, ITexture[] textures)
         {
             Vertex[] vertices;
             int[] indices;
             LoadModel (modelPath, out vertices, out indices);
 
+            Create (shader, vertices, indices, textures);
+        }
+
+        public GraphicsObject (string fragmentShader, string vertexShader, string modelPath, string[] texturePaths)
+        {
             ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
                                                       new Shader.Shader (ShaderType.VertexShader, vertexShader));
+            
+            Vertex[] vertices;
+            int[] indices;
+            LoadModel (modelPath, out vertices, out indices);
 
             ITexture[] textures = LoadTextures (texturePaths);
 
             Create (shader, vertices, indices, textures);
         }
 
-        public ShaderProgram     Shader   { get; set; }
-        public VertexArrayObject VAO      { get; set; }
-        public ITexture[]        Textures { get; set; }
+        public ShaderProgram     Shader         { get; set; }
+        public VertexArrayObject VAO            { get; set; }
+        public ITexture[]        Textures       { get; set; }
+        public Vector3           LightDirection { get; set; }
 
 #if Vertex
         protected VertexBuffer<Vertex> VBO;
@@ -148,6 +202,9 @@ namespace FurryLana.Engine.Graphics
         public void Init ()
         {
             Loaded = false;
+            foreach (var t in Textures)
+                t.Init ();
+            LightDirection = new Vector3 (0.6f, 0.6f, -0.6f);
         }
 
         public List<Action> GetInitJobs (List<Action> list)
@@ -170,6 +227,12 @@ namespace FurryLana.Engine.Graphics
             Shader["ProjMatrix"] = ProjMatrix;
             Shader["ViewMatrix"] = ViewMatrix;
             Shader["ModelMatrix"] = ModelMatrix;
+            Shader["Ambient"] = 0.2f;
+            Shader["LightDirection"] = LightDirection;
+            Shader["DiffuseTexture"] = GL.GenSampler ();
+
+            foreach (var t in Textures)
+                t.Load ();
 
             Loaded = true;
         }
@@ -217,6 +280,9 @@ namespace FurryLana.Engine.Graphics
 
         public void Draw ()
         {
+            if (Textures.Length == 1)
+                Textures[0].Bind ();
+
             VAO.Bind ();
             using (var handle = Shader.Use ())
             {

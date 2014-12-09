@@ -35,7 +35,7 @@ namespace FurryLana.Engine.Graphics
         {
             go = new GraphicsObject ("Graphics/Shader/RenderTarget/stdmodel.fsh",
                                      "Graphics/Shader/RenderTarget/stdmodel.vsh",
-                                     "Model/Data/cube.obj", new string[0]);
+                                     "Model/Data/cube.obj", new string[] {"Texture/Data/Ground_Tex.png"});
         }
 
         GraphicsObject go;

@@ -242,6 +242,9 @@
     <None Include="lib64\libglfw.dylib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Texture\Data\Ground_Tex.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Math\Math.csproj">
@@ -258,5 +261,8 @@
     <Content Include="lib64\Assimp64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Texture\Data\" />
   </ItemGroup>
 </Project>

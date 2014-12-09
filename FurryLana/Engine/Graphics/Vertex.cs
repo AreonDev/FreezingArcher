@@ -20,23 +20,54 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+#define BASE_TYPES
+using System;
 using System.Runtime.InteropServices;
 using Pencil.Gaming.MathUtils;
 
 namespace FurryLana.Engine.Graphics
 {
+    [Serializable]
     [StructLayout (LayoutKind.Sequential)]
     public struct Vertex
     {
         public Vertex (Vector4 position, Vector3 normal, Vector2 texCoord)
         {
+#if BASE_TYPES
+            PositionX = position.X;
+            PositionY = position.Y;
+            PositionZ = position.Z;
+            PositionW = position.W;
+
+            NormalX = normal.X;
+            NormalY = normal.Y;
+            NormalZ = normal.Z;
+
+            TexCoordX = texCoord.X;
+            TexCoordY = texCoord.Y;
+#else
             Position = position;
             Normal = normal;
             TexCoord = texCoord;
+#endif
         }
 
+#if BASE_TYPES
+        public float PositionX;
+        public float PositionY;
+        public float PositionZ;
+        public float PositionW;
+
+        public float NormalX;
+        public float NormalY;
+        public float NormalZ;
+
+        public float TexCoordX;
+        public float TexCoordY;
+#else
         public Vector4 Position;
         public Vector3 Normal;
         public Vector2 TexCoord;
+#endif
     }
 }

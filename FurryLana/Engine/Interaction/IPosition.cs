@@ -32,6 +32,6 @@ namespace FurryLana.Engine.Interaction
         /// <summary>
         /// Position in space
         /// </summary>
-        Vector3 Position { get; }
+        Vector3 Position { get; set; }
     }
 }

@@ -33,12 +33,12 @@ namespace FurryLana.Engine.Graphics
     {
         public DummyGraphicsResource ()
         {
-            go = new GraphicsObject ("Graphics/Shader/RenderTarget/stdmodel.fsh",
+            GraphicsObject = new GraphicsObject ("Graphics/Shader/RenderTarget/stdmodel.fsh",
                                      "Graphics/Shader/RenderTarget/stdmodel.vsh",
-                                     "Model/Data/cube.obj", new string[] {"Texture/Data/Ground_Tex.png"});
+                                     "Model/Data/Stone.obj", new string[] {"Model/Data/Stone1.tif"});
         }
 
-        GraphicsObject go;
+        GraphicsObject GraphicsObject;
 
         #region IResource implementation
 
@@ -60,7 +60,7 @@ namespace FurryLana.Engine.Graphics
         public List<Action> GetInitJobs (List<Action> list)
         {
             list.Add (Init);
-            list = go.GetInitJobs (list);
+            list = GraphicsObject.GetInitJobs (list);
             return list;
         }
 
@@ -82,7 +82,7 @@ namespace FurryLana.Engine.Graphics
         {
             list.Add (Load);
             NeedsLoad = reloader;
-            list = go.GetLoadJobs (list, reloader);
+            list = GraphicsObject.GetLoadJobs (list, reloader);
             return list;
         }
 
@@ -97,7 +97,7 @@ namespace FurryLana.Engine.Graphics
         public void Destroy ()
         {
             Loaded = false;
-            go.Destroy ();
+            GraphicsObject.Destroy ();
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace FurryLana.Engine.Graphics
         /// <param name="deltaTime">Time delta.</param>
         public void FrameSyncedUpdate (float deltaTime)
         {
-            go.FrameSyncedUpdate (deltaTime);
+            GraphicsObject.FrameSyncedUpdate (deltaTime);
         }
 
         #endregion
@@ -136,9 +136,9 @@ namespace FurryLana.Engine.Graphics
         /// The updaterate might differ from the framerate.
         /// </summary>
         /// <param name="deltaTime">Time delta in miliseconds.</param>
-        public void Update (int deltaTime)
+        public void Update (UpdateDescription desc)
         {
-            go.Update (deltaTime);
+            GraphicsObject.Update (desc);
         }
 
         #endregion
@@ -150,7 +150,7 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         public void Draw ()
         {
-            go.Draw ();
+            GraphicsObject.Draw ();
         }
 
         #endregion

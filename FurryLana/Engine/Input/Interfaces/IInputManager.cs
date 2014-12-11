@@ -20,21 +20,56 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System;
 using FurryLana.Engine.Graphics.Interfaces;
+using Pencil.Gaming;
+using FurryLana.Engine.Graphics;
 
 namespace FurryLana.Engine.Input.Interfaces
 {
     /// <summary>
     /// Input manager interface.
     /// </summary>
-    public interface IInputManager : IResource
+    public interface IInputManager
     {
         /// <summary>
-        /// Registers for input.
+        /// Handles the keyboard input.
         /// </summary>
-        /// <param name="desc">Input description.</param>
+        /// <param name="window">Window.</param>
+        /// <param name="key">Key.</param>
+        /// <param name="scancode">Scancode.</param>
         /// <param name="action">Action.</param>
-        void RegisterForInput (IInputDescription desc, Action action);
+        /// <param name="mods">Mods.</param>
+        void HandleKeyboardInput (GlfwWindowPtr window, Key key, int scancode, KeyAction action, KeyModifiers mods);
+
+        /// <summary>
+        /// Handles the mouse button.
+        /// </summary>
+        /// <param name="window">Window.</param>
+        /// <param name="button">Button.</param>
+        /// <param name="action">Action.</param>
+        void HandleMouseButton (GlfwWindowPtr window, MouseButton button, KeyAction action);
+
+        /// <summary>
+        /// Handles the mouse move.
+        /// </summary>
+        /// <param name="window">Window.</param>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
+        void HandleMouseMove (GlfwWindowPtr window, double x, double y);
+
+        /// <summary>
+        /// Handles the mouse scroll.
+        /// </summary>
+        /// <param name="window">Window.</param>
+        /// <param name="xoffs">Xoffs.</param>
+        /// <param name="yoffs">Yoffs.</param>
+        void HandleMouseScroll (GlfwWindowPtr window, double xoffs, double yoffs);
+
+        /// <summary>
+        /// Generates the update description.
+        /// </summary>
+        /// <returns>The update description.</returns>
+        /// <param name="deltaTime">Delta time.</param>
+        UpdateDescription GenerateUpdateDescription (float deltaTime);
     }
 }

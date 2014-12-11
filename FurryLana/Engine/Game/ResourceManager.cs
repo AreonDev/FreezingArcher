@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FurryLana.Engine.Game.Interfaces;
+using FurryLana.Engine.Input;
 using FurryLana.Engine.Input.Interfaces;
 using FurryLana.Engine.Model;
 using FurryLana.Engine.Model.Interfaces;
@@ -19,7 +20,7 @@ namespace FurryLana.Engine.Game
         /// Initializes a new instance of the <see cref="ResourceManager"/> class.
         /// </summary>
         public ResourceManager() {
-//            InputManager = new InputManager();
+            InputManager = new InputManager();
             TextureManager = new TextureManager();
             ModelManager = new AssimpModelManager();
         }
@@ -64,7 +65,6 @@ namespace FurryLana.Engine.Game
             list.Add(Init);
             list = TextureManager.GetInitJobs (list);
             list = ModelManager.GetInitJobs (list);
-            //list = InputManager.GetInitJobs (list);
             return list;
         }
 
@@ -87,7 +87,6 @@ namespace FurryLana.Engine.Game
             NeedsLoad = reloader;
             list = TextureManager.GetLoadJobs (list, reloader);
             list = ModelManager.GetLoadJobs (list, reloader);
-            //list = InputManager.GetLoadJobs (list, reloader);
             return list;
         }
 
@@ -102,7 +101,6 @@ namespace FurryLana.Engine.Game
         {
             TextureManager.Destroy();
             ModelManager.Destroy();
-            //InputManager.Destroy();
         }
 
         /// <summary>

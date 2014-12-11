@@ -67,7 +67,7 @@ namespace FurryLana.Engine.Graphics
 
         #region IUpdate implementation
 
-        public void Update (int deltaTime)
+        public void Update (UpdateDescription desc)
         {}
 
         #endregion

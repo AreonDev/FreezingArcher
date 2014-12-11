@@ -101,12 +101,6 @@ namespace FurryLana.Engine.Camera.Interfaces
         ICameraManager ActiveGroup { get; set; }
 
         /// <summary>
-        /// Get a list of manageable objects inside the camera manager
-        /// </summary>
-        /// <value>The items.</value>
-        List<ICameraManageable> Items { get; }
-
-        /// <summary>
         /// Get the internal active camera (only use this if you are a camera manager).
         /// </summary>
         /// <value>The internal active camera.</value>

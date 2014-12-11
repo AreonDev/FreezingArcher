@@ -28,6 +28,7 @@ using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
 using FurryLana.Engine.Application.Interfaces;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FurryLana.Engine.Application
 {
@@ -141,6 +142,8 @@ namespace FurryLana.Engine.Application
 
         #endregion
 
+        TaskFactory TaskFactory = new TaskFactory ();
+
         #region IWindow implementation
 
         /// <summary>
@@ -207,11 +210,15 @@ namespace FurryLana.Engine.Application
                 float deltaTime = (float) Glfw.GetTime ();
                 Glfw.SetTime (0.0);
 
-                GL.Disable (EnableCap.DepthTest);
+                GL.Enable (EnableCap.DepthTest);
                 GL.CullFace (CullFaceMode.FrontAndBack);
 
                 GL.ClearColor (Color4.DodgerBlue);
                 GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                TaskFactory.StartNew (
+                    () => Resource.Update (Application.Instance.ResourceManager.
+                                       InputManager.GenerateUpdateDescription (deltaTime)));
 
                 Resource.FrameSyncedUpdate (deltaTime);
                 Resource.Draw ();

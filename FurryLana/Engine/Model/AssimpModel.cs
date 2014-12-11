@@ -30,6 +30,7 @@ using FurryLana.Engine.Graphics.Shader;
 using FurryLana.Engine.Graphics.VertexBuffer;
 using FurryLana.Engine.Model.Interfaces;
 using Pencil.Gaming.Graphics;
+using FurryLana.Engine.Graphics;
 
 namespace FurryLana.Engine.Model
 {
@@ -252,7 +253,7 @@ namespace FurryLana.Engine.Model
         /// The updaterate might differ from the framerate.
         /// </summary>
         /// <param name="deltaTime">Time delta in miliseconds.</param>
-        public void Update (int deltaTime)
+        public void Update (UpdateDescription desc)
         {}
 
         #endregion

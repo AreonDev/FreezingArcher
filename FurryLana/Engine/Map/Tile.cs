@@ -24,6 +24,7 @@ using System;
 using FurryLana.Engine.Graphics.Interfaces;
 using FurryLana.Engine.Model.Interfaces;
 using System.Collections.Generic;
+using FurryLana.Engine.Graphics;
 
 namespace FurryLana.Engine.Map
 {
@@ -87,9 +88,9 @@ namespace FurryLana.Engine.Map
 
         #region IUpdate implementation
 
-        public void Update (int deltaTime)
+        public void Update (UpdateDescription desc)
         {
-            Model.Update (deltaTime);
+            Model.Update (desc);
         }
 
         #endregion

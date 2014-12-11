@@ -20,13 +20,14 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Camera.Interfaces
 {
     /// <summary>
     /// Camera manageable interface.
     /// </summary>
-    public interface ICameraManageable : IManageable
+    public interface ICameraManageable : IManageable, IResource
     {
         /// <summary>
         /// This method is called when the camera manager switches to this subject.

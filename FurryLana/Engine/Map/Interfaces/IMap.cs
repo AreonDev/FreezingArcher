@@ -21,19 +21,13 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FurryLana.Engine.Model.Interfaces;
+using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Map.Interfaces
 {
     /// <summary>
     /// Map interface.
     /// </summary>
-    public interface IMap
-    {
-        /// <summary>
-        /// Gets the model.
-        /// </summary>
-        /// <value>The model.</value>
-        IModel Model { get; }
-
-    }
+    public interface IMap : IGraphicsResource
+    {}
 }

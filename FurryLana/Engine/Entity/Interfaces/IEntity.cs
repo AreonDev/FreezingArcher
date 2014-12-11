@@ -29,7 +29,7 @@ namespace FurryLana.Engine.Entity.Interfaces
     /// <summary>
     /// Entity interface.
     /// </summary>
-    public interface IEntity : IGraphicsResource, IPosition, IRotation, IManageable
+    public interface IEntity : IGraphicsResource, IPosition, IRotation, IManageable, ISmoothedPosition
     {
         /// <summary>
         /// Gets the ID.
@@ -43,5 +43,7 @@ namespace FurryLana.Engine.Entity.Interfaces
         IModel Model { get; }
 
         BoundingBox BBox { get; set; }
+
+        float Height { get; set; }
     }
 }

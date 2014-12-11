@@ -57,5 +57,11 @@ namespace FurryLana.Engine.Game.Interfaces
         /// </summary>
         /// <value>The projection matrix.</value>
         Matrix         ProjectionMatrix { get; set; }
+
+        /// <summary>
+        /// Gets or sets the projection description.
+        /// </summary>
+        /// <value>The projection description.</value>
+        ProjectionDescription ProjectionDescription { get; set; }
     }
 }

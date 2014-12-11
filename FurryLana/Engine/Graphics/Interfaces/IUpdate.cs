@@ -33,6 +33,6 @@ namespace FurryLana.Engine.Graphics.Interfaces
         /// The updaterate might differ from the framerate.
         /// </summary>
         /// <param name="deltaTime">Time delta in miliseconds.</param>
-        void Update (int deltaTime);
+        void Update (UpdateDescription desc);
     }
 }

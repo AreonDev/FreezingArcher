@@ -68,6 +68,9 @@ namespace FurryLana.Engine.Graphics
             IBO.LoadData (indices);
             VAO = new VertexArrayObject ();
 
+            if (textures.Length > 32)
+                throw new IndexOutOfRangeException ("You must not bind more than 32 textures to one graphics object!");
+
             Textures = textures;
         }
 
@@ -76,7 +79,7 @@ namespace FurryLana.Engine.Graphics
             Vector4[] vrt;
             Vector3[] norm;
             Vector2[] texcoord;
-            GL.Utils.LoadModel (modelPath, out vrt, out norm, out texcoord, out indices);
+            GL.Utils.LoadModel (modelPath, out vrt, out norm, out texcoord, out indices, false);
 
             if (norm.Length == 0 && texcoord.Length == 0)
                 vertices = Enumerable.Select (vrt, (v, i) => new Vertex (v, new Vector3 (0, 0, 0), new Vector2 (0, 0)))
@@ -97,7 +100,7 @@ namespace FurryLana.Engine.Graphics
             foreach (var path in texturePaths)
             {
                 Engine.Application.Application.Instance.ResourceManager.TextureManager.LoadFromLocation (path);
-                Textures[i++] = (Engine.Application.Application.Instance.ResourceManager.TextureManager.GetByName (path));
+                textures[i++] = Engine.Application.Application.Instance.ResourceManager.TextureManager.GetByName (path);
             }
 
             return textures;
@@ -105,79 +108,95 @@ namespace FurryLana.Engine.Graphics
 
         public GraphicsObject (ShaderProgram shader, Vertex[] vertices, int[] indices, ITexture[] textures)
         {
-            Create (shader, vertices, indices, textures);
+            DoLoad = () => {
+                Create (shader, vertices, indices, textures);
+            };
         }
 
         public GraphicsObject (ShaderProgram shader, string modelPath, string[] texturePaths)
         {
-            Vertex[] vertices;
-            int[] indices;
-            LoadModel (modelPath, out vertices, out indices);
-            
-            ITexture[] textures = LoadTextures (texturePaths);
-            
-            Create (shader, vertices, indices, textures);
+            DoLoad = () => {
+                Vertex[] vertices;
+                int[] indices;
+                LoadModel (modelPath, out vertices, out indices);
+
+                ITexture[] textures = LoadTextures (texturePaths);
+
+                Create (shader, vertices, indices, textures);
+            };
         }
 
         public GraphicsObject (string fragmentShader, string vertexShader, Vertex[] vertices, int[] indices,
                                string[] texturePaths)
         {
-            ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
-                                                      new Shader.Shader (ShaderType.VertexShader, vertexShader));
+            DoLoad = () => {
+                ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
+                                                          new Shader.Shader (ShaderType.VertexShader, vertexShader));
 
-            ITexture[] textures = LoadTextures (texturePaths);
-            
-            Create (shader, vertices, indices, textures);
+                ITexture[] textures = LoadTextures (texturePaths);
+
+                Create (shader, vertices, indices, textures);
+            };
         }
 
         public GraphicsObject (string fragmentShader, string vertexShader, string modelPath, ITexture[] textures)
         {
-            ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
-                                                      new Shader.Shader (ShaderType.VertexShader, vertexShader));
-            
-            Vertex[] vertices;
-            int[] indices;
-            LoadModel (modelPath, out vertices, out indices);
+            DoLoad = () => {
+                ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
+                                                          new Shader.Shader (ShaderType.VertexShader, vertexShader));
 
-            Create (shader, vertices, indices, textures);
+                Vertex[] vertices;
+                int[] indices;
+                LoadModel (modelPath, out vertices, out indices);
+
+                Create (shader, vertices, indices, textures);
+            };
         }
 
         public GraphicsObject (ShaderProgram shader, Vertex[] vertices, int[] indices, string[] texturePaths)
         {
-            ITexture[] textures = LoadTextures (texturePaths);
-            
-            Create (shader, vertices, indices, textures);
+            DoLoad = () => {
+                ITexture[] textures = LoadTextures (texturePaths);
+
+                Create (shader, vertices, indices, textures);
+            };
         }
 
         public GraphicsObject (string fragmentShader, string vertexShader, Vertex[] vertices, int[] indices, ITexture[] textures)
         {
-            ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
-                                                      new Shader.Shader (ShaderType.VertexShader, vertexShader));
+            DoLoad = () => {
+                ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
+                                                          new Shader.Shader (ShaderType.VertexShader, vertexShader));
 
-            Create (shader, vertices, indices, textures);
+                Create (shader, vertices, indices, textures);
+            };
         }
 
         public GraphicsObject (ShaderProgram shader, string modelPath, ITexture[] textures)
         {
-            Vertex[] vertices;
-            int[] indices;
-            LoadModel (modelPath, out vertices, out indices);
+            DoLoad = () => {
+                Vertex[] vertices;
+                int[] indices;
+                LoadModel (modelPath, out vertices, out indices);
 
-            Create (shader, vertices, indices, textures);
+                Create (shader, vertices, indices, textures);
+            };
         }
 
         public GraphicsObject (string fragmentShader, string vertexShader, string modelPath, string[] texturePaths)
         {
-            ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
-                                                      new Shader.Shader (ShaderType.VertexShader, vertexShader));
-            
-            Vertex[] vertices;
-            int[] indices;
-            LoadModel (modelPath, out vertices, out indices);
+            DoLoad = () => {
+                ShaderProgram shader = new ShaderProgram (new Shader.Shader (ShaderType.FragmentShader, fragmentShader),
+                                                          new Shader.Shader (ShaderType.VertexShader, vertexShader));
 
-            ITexture[] textures = LoadTextures (texturePaths);
+                Vertex[] vertices;
+                int[] indices;
+                LoadModel (modelPath, out vertices, out indices);
 
-            Create (shader, vertices, indices, textures);
+                ITexture[] textures = LoadTextures (texturePaths);
+
+                Create (shader, vertices, indices, textures);
+            };
         }
 
         public ShaderProgram     Shader         { get; set; }
@@ -192,19 +211,19 @@ namespace FurryLana.Engine.Graphics
 #endif
         protected VertexBuffer<int> IBO;
         protected Matrix ProjMatrix = Matrix.CreatePerspectiveFieldOfView ((float) (System.Math.PI / 3), 16f / 9, 0.1f, 200);
-        protected Matrix ViewMatrix = Matrix.LookAt (2,2,2,
+        protected Matrix ViewMatrix = Matrix.LookAt (2,3,2,
                                                      0,0,0,
                                                      0,1,0);
         protected Matrix ModelMatrix = Matrix.Identity;
+        protected Action DoLoad;
+        public int Sampler;
 
         #region IResource implementation
 
         public void Init ()
         {
             Loaded = false;
-            foreach (var t in Textures)
-                t.Init ();
-            LightDirection = new Vector3 (0.6f, 0.6f, -0.6f);
+            LightDirection = new Vector3 (0.6f, 0.6f, 0.6f);
         }
 
         public List<Action> GetInitJobs (List<Action> list)
@@ -217,6 +236,10 @@ namespace FurryLana.Engine.Graphics
         {
             Loaded = false;
 
+            ViewMatrix *= Matrix.CreateRotationY (0.75f);
+
+            DoLoad ();
+
             VBO.Load ();
             IBO.Load ();
             VAO.AttachVBO (VBO);
@@ -224,15 +247,21 @@ namespace FurryLana.Engine.Graphics
             VAO.Load ();
             VertexArrayObject.UnbindVAO ();
             Shader.Load ();
+
+            //Sampler = GL.GenSampler ();
+            //GL.SamplerParameter (Sampler, SamplerParameter.TextureWrapS, (int) TextureWrapMode.Repeat);
+            //GL.SamplerParameter (Sampler, SamplerParameter.TextureWrapT, (int) TextureWrapMode.Repeat);
+            //GL.SamplerParameter (Sampler, SamplerParameter.TextureWrapR, (int) TextureWrapMode.Repeat);
+            //GL.SamplerParameter (Sampler, SamplerParameter.TextureMinFilter, (int) TextureMinFilter.Linear);
+            //GL.SamplerParameter (Sampler, SamplerParameter.TextureMagFilter, (int) TextureMagFilter.Linear);
+            //GL.BindSampler (0, Sampler);
+            
             Shader["ProjMatrix"] = ProjMatrix;
             Shader["ViewMatrix"] = ViewMatrix;
             Shader["ModelMatrix"] = ModelMatrix;
             Shader["Ambient"] = 0.2f;
             Shader["LightDirection"] = LightDirection;
-            Shader["DiffuseTexture"] = GL.GenSampler ();
-
-            foreach (var t in Textures)
-                t.Load ();
+            //Shader["DiffuseTexture"] = Sampler;
 
             Loaded = true;
         }
@@ -270,18 +299,67 @@ namespace FurryLana.Engine.Graphics
 
         #region IUpdate implementation
 
-        public void Update (int deltaTime)
+        public void Update (UpdateDescription desc)
         {
         }
 
         #endregion
 
+        protected string[] textureUnitNames = new string[]
+        {
+            "DiffuseTexture",
+            "AmbientTexture",
+            "NormalHeightTexture",
+            "SpecularTexture",
+            "GeneralTexture00",
+            "GeneralTexture01",
+            "GeneralTexture02",
+            "GeneralTexture03",
+            "GeneralTexture04",
+            "GeneralTexture05",
+            "GeneralTexture06",
+            "GeneralTexture07",
+            "GeneralTexture08",
+            "GeneralTexture09",
+            "GeneralTexture10",
+            "GeneralTexture11",
+            "GeneralTexture12",
+            "GeneralTexture13",
+            "GeneralTexture14",
+            "GeneralTexture15",
+            "GeneralTexture16",
+            "GeneralTexture17",
+            "GeneralTexture18",
+            "GeneralTexture19",
+            "GeneralTexture20",
+            "GeneralTexture21",
+            "GeneralTexture22",
+            "GeneralTexture23",
+            "GeneralTexture24",
+            "GeneralTexture25",
+            "GeneralTexture26",
+            "GeneralTexture27"
+        };
+
+        public string[] TextureUnitNames
+        {
+            get
+            {
+                return textureUnitNames;
+            }
+        }
+
         #region IDrawable implementation
 
         public void Draw ()
         {
-            if (Textures.Length == 1)
-                Textures[0].Bind ();
+            for (int i = 0; i < Textures.Length; i++)
+            {
+                TextureUnit unit = (TextureUnit) ((int) TextureUnit.Texture0 + i);
+                GL.ActiveTexture (unit);
+                Textures[i].Bind ();
+                Shader[TextureUnitNames[i]] = i;
+            }
 
             VAO.Bind ();
             using (var handle = Shader.Use ())
@@ -294,4 +372,3 @@ namespace FurryLana.Engine.Graphics
         #endregion
     }
 }
-

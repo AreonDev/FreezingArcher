@@ -37,58 +37,58 @@ namespace FurryLana.Engine.Texture
         /// <summary>
         /// The textures.
         /// </summary>
-        protected List<ITexture> textures;
+        protected List<ITexture> Textures = new List<ITexture> ();
 
         /// <summary>
         /// Loads textures from the specified location.
         /// </summary>
         /// <param name="location">Location.</param>
-        public void LoadFromLocation(string location)
+        public void LoadFromLocation (string location)
         {
-            Add(new Texture(new Bitmap(location), location));
+            Add (new Texture (new Bitmap (location), location));
         }
 
         /// <summary>
         /// Loads textures from xml.
         /// </summary>
         /// <param name="filepath">Path to xml file.</param>
-        public void LoadFromXMl(string filepath)
+        public void LoadFromXMl (string filepath)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException ();
         }
         /// <summary>
         /// Clear all textures from the texture manager.
         /// </summary>
-        public void Clear()
+        public void Clear ()
         {
-            textures.Clear();
+            Textures.Clear ();
         }
         /// <summary>
         /// Add the specified item.
         /// </summary>
         /// <param name="item">Item.</param>
-        public void Add(ITexture item)
+        public void Add (ITexture item)
         {
-            textures.Add(item);
-            item.Init();
+            Textures.Add (item);
+            item.Init ();
 
-            NeedsLoad(this,null);
+            NeedsLoad ((Action) Load,null);
         }
         /// <summary>
         /// Remove the specified item.
         /// </summary>
         /// <param name="item">Item.</param>
-        public void Remove(ITexture item)
+        public void Remove (ITexture item)
         {
-            textures.Remove(item);
+            Textures.Remove (item);
         }
         /// <summary>
         /// Remove by the specified name.
         /// </summary>
         /// <param name="name">Name.</param>
-        public void Remove(string name)
+        public void Remove (string name)
         {
-            textures.RemoveAll((t) => { return t.Name == name; });
+            Textures.RemoveAll ((t) => { return t.Name == name; });
         }
         /// <summary>
         /// Gets the IManageable by name.
@@ -97,9 +97,9 @@ namespace FurryLana.Engine.Texture
         /// <returns>
         /// The IManageable.
         /// </returns>
-        public ITexture GetByName(string name)
+        public ITexture GetByName (string name)
         {
-            return textures.Find((t) => { return t.Name == name; });
+            return Textures.Find ((t) => { return t.Name == name; });
         }
         /// <summary>
         /// Gets the count.
@@ -109,17 +109,16 @@ namespace FurryLana.Engine.Texture
         /// </value>
         public int Count
         {
-            get { return textures.Count; }
+            get { return Textures.Count; }
         }
 
         /// <summary>
         /// Init this resource. This method may not be called from the main thread as the initialization process is
         /// multi threaded.
         /// </summary>
-        public void Init()
+        public void Init ()
         {
-            textures = new List<ITexture>();
-            textures.ForEach ((t) => {
+            Textures.ForEach ((t) => {
                 t.Init ();
             });
         }
@@ -138,11 +137,14 @@ namespace FurryLana.Engine.Texture
         /// <summary>
         /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
         /// </summary>
-        public void Load()
+        public void Load ()
         {
-            textures.ForEach ((t) => {
-                t.Load ();
-                t.NeedsLoad = this.NeedsLoad;
+            Textures.ForEach ((t) => {
+                if (!t.Loaded)
+                {
+                    t.Load ();
+                    t.NeedsLoad = this.NeedsLoad;
+                }
             });
             Loaded = true;
         }
@@ -167,11 +169,11 @@ namespace FurryLana.Engine.Texture
         /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
         /// context.
         /// </summary>
-        public void Destroy()
+        public void Destroy ()
         {
-            textures.ForEach((t) => { t.Destroy(); });
-            textures.Clear();
-            textures = null;
+            Textures.ForEach ((t) => { t.Destroy (); });
+            Textures.Clear ();
+            Textures = null;
         }
 
         /// <summary>
@@ -196,9 +198,9 @@ namespace FurryLana.Engine.Texture
         /// <returns>
         /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator GetEnumerator()
+        public IEnumerator GetEnumerator ()
         {
-            return textures.GetEnumerator();
+            return Textures.GetEnumerator ();
         }
     }
 }

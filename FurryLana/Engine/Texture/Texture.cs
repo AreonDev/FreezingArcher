@@ -48,7 +48,6 @@ namespace FurryLana.Engine.Texture
                 throw new ArgumentException ("Texture height must not be lower than 0!", "height");
 
             Loaded = false;
-            loadBmp = false;
 
             Width = width;
             Height = height;
@@ -64,7 +63,6 @@ namespace FurryLana.Engine.Texture
         public Texture (Bitmap bmp, string name)
         {
             Loaded = false;
-            loadBmp = true;
 
             Width = bmp.Width;
             Height = bmp.Height;
@@ -79,13 +77,15 @@ namespace FurryLana.Engine.Texture
         {
             GL.BindTexture (TextureTarget.Texture2D, id);
             GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
-                             (int) TextureMinFilter.Linear);
+                             (int) TextureMinFilter.LinearMipmapLinear);
             GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
                              (int) TextureMagFilter.Linear);
             GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapS,
-                             (int) TextureWrapMode.ClampToEdge);
+                             (int) TextureWrapMode.Repeat);
             GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapT,
-                             (int) TextureWrapMode.ClampToEdge);
+                             (int) TextureWrapMode.Repeat);
+            GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapR,
+                             (int) TextureWrapMode.Repeat);
 
             GL.TexImage2D (TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
                            Width, Height, 0, Pencil.Gaming.Graphics.PixelFormat.Bgra,
@@ -116,11 +116,6 @@ namespace FurryLana.Engine.Texture
         /// The identifier.
         /// </summary>
         protected uint id;
-
-        /// <summary>
-        /// Toggle to set if bitmap should be loaded.
-        /// </summary>
-        protected bool loadBmp;
 
         /// <summary>
         /// The bitmap.
@@ -229,7 +224,7 @@ namespace FurryLana.Engine.Texture
         {
             Loaded = false;
 
-            if (loadBmp)
+            if (bmp == null)
             {
                 GL.GenTextures (1, out id);
                 UpdateTexture ();
@@ -253,19 +248,25 @@ namespace FurryLana.Engine.Texture
                 
                 bmp.UnlockBits (bmp_data);
                 
-                GL.TexParameter (TextureTarget.Texture2D,
-                                 TextureParameterName.TextureMinFilter,
-                                 (int) TextureMinFilter.NearestMipmapNearest);
-                
-                GL.TexParameter (TextureTarget.Texture2D,
-                                 TextureParameterName.TextureMagFilter,
+                GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
+                                 (int) TextureMinFilter.LinearMipmapLinear);
+                GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
                                  (int) TextureMagFilter.Linear);
-                
+                GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapS,
+                                 (int) TextureWrapMode.Repeat);
+                GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapT,
+                                 (int) TextureWrapMode.Repeat);
+                GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapR,
+                                 (int) TextureWrapMode.Repeat);
+
                 GL.GenerateMipmap (GenerateMipmapTarget.Texture2D);
                 bmp.Dispose ();
-                
+
                 bmp_data = null;
                 bmp = null;
+
+                // prevent feedback, reading and writing to the same image is a bad idea
+                GL.BindTexture (TextureTarget.Texture2D, 0);
             }
            
             Loaded = true;

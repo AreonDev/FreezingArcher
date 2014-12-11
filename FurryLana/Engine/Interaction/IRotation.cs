@@ -33,6 +33,6 @@ namespace FurryLana.Engine.Interaction
         /// Rotation along x,y,z
         /// <remarks>In rad!!!</remarks>
         /// </summary>
-        Vector3 Rotation { get; }//TODO: change Vector3 to Rotation
+        Vector3 Rotation { get; set; }//TODO: change Vector3 to Rotation
     }
 }

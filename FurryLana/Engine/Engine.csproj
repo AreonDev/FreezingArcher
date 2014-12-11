@@ -55,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Camera\FirstPersonCamera.cs" />
     <Compile Include="Camera\Interfaces\ICamera.cs" />
     <Compile Include="Camera\Interfaces\ICameraManageable.cs" />
     <Compile Include="Camera\Interfaces\ICameraManager.cs" />
@@ -76,8 +75,6 @@
     <Compile Include="Interaction\IPosition.cs" />
     <Compile Include="Interaction\IRotateable.cs" />
     <Compile Include="Interaction\IRotation.cs" />
-    <Compile Include="Interaction\IKeyboardInteractable.cs" />
-    <Compile Include="Interaction\IMouseInteractable.cs" />
     <Compile Include="Interaction\IDirectionMoveable.cs" />
     <Compile Include="Interaction\IDirectionRotateable.cs" />
     <Compile Include="Entity\Interfaces\IEntity.cs" />
@@ -89,8 +86,6 @@
     <Compile Include="Input\Interfaces\IInputManager.cs" />
     <Compile Include="Graphics\Interfaces\IResource.cs" />
     <Compile Include="Graphics\DummyGraphicsResource.cs" />
-    <Compile Include="Input\Interfaces\IInputDescription.cs" />
-    <Compile Include="Input\Interfaces\Input.cs" />
     <Compile Include="IManager.cs" />
     <Compile Include="IManageable.cs" />
     <Compile Include="Game\Interfaces\IResourceManager.cs" />
@@ -134,6 +129,21 @@
     <Compile Include="Application\Interfaces\IWindow.cs" />
     <Compile Include="Application\JobExecuter.cs" />
     <Compile Include="Application\Application.cs" />
+    <Compile Include="Graphics\Skybox.cs" />
+    <Compile Include="Texture\CubeTexture.cs" />
+    <Compile Include="Game\Game.cs" />
+    <Compile Include="Game\Level.cs" />
+    <Compile Include="Game\LevelManager.cs" />
+    <Compile Include="Game\GameManager.cs" />
+    <Compile Include="Game\ProjectionDescription.cs" />
+    <Compile Include="Camera\FirstPersonCameraPaul.cs" />
+    <Compile Include="Camera\CameraManager.cs" />
+    <Compile Include="Camera\ThirdPersonCamera.cs" />
+    <Compile Include="Input\KeyboardInput.cs" />
+    <Compile Include="Input\MouseInput.cs" />
+    <Compile Include="Graphics\UpdateDescription.cs" />
+    <Compile Include="Input\InputManager.cs" />
+    <Compile Include="Interaction\ISmoothedPosition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

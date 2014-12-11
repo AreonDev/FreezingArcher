@@ -38,7 +38,13 @@ namespace FurryLana.Engine.Application
     /// </summary>
     public class Application : IApplication
     {
-        public static IApplication Instance = new Application ();
+        public static IApplication Instance;
+
+        public Application (IGame game)
+        {
+            ResourceManager = new ResourceManager ();
+            GameManager = new GameManager (game);
+        }
 
         #region IApplication implementation
 
@@ -79,11 +85,9 @@ namespace FurryLana.Engine.Application
         public void Init ()
         {
             Loaded = false;
-            ResourceManager = new ResourceManager ();
-            //GameManager = new GameManager ();TODO
 
             Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080),
-                                 "FurryLana", new DummyGraphicsResource ()/*GameManager.RootGame*/);
+                                 GameManager.RootGame.Name, GameManager.RootGame);
             CreateTable ();
             
             Window.WindowResize = (GlfwWindowPtr window, int width, int height) => {
@@ -127,6 +131,8 @@ namespace FurryLana.Engine.Application
                 WriteAt (63, 5, "         ");
                 WriteAt (63, 5, action.ToString ());
             };
+
+            Window.MouseButton += ResourceManager.InputManager.HandleMouseButton;
             
             Window.MouseMove = (GlfwWindowPtr window, double x, double y) => {
                 WriteAt (34, 5, "       ");
@@ -134,6 +140,8 @@ namespace FurryLana.Engine.Application
                 WriteAt (42, 5, "       ");
                 WriteAt (42, 5, string.Format ("{0:f}", y));
             };
+
+            Window.MouseMove += ResourceManager.InputManager.HandleMouseMove;
             
             Window.MouseOver = (GlfwWindowPtr window, bool enter) => {
                 WriteAt (58, 13, "              ");
@@ -146,6 +154,8 @@ namespace FurryLana.Engine.Application
                 WriteAt (32, 13, "       ");
                 WriteAt (32, 13, string.Format ("{0:f}", yoffs));
             };
+
+            Window.MouseScroll += ResourceManager.InputManager.HandleMouseScroll;
             
             Window.KeyAction = (GlfwWindowPtr window, Key key, int scancode, KeyAction action, KeyModifiers mods) => {
                 WriteAt (1, 13, "             ");
@@ -158,6 +168,8 @@ namespace FurryLana.Engine.Application
                     Window.ToggleFullscreen ();
                 }
             };
+
+            Window.KeyAction += ResourceManager.InputManager.HandleKeyboardInput;
 
             Initer = new JobExecuter();
             Initer.InsertJobs (GetInitJobs (new List<Action>()));
@@ -178,7 +190,7 @@ namespace FurryLana.Engine.Application
         public List<Action> GetInitJobs (List<Action> list)
         {
             list = Window.GetInitJobs (list);
-            //list = GameManager.GetInitJobs (list);
+            list = GameManager.GetInitJobs (list);
             list = ResourceManager.GetInitJobs (list);
             return list;
         }
@@ -203,7 +215,7 @@ namespace FurryLana.Engine.Application
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list = Window.GetLoadJobs (list, reloader);
-            //list = GameManager.GetLoadJobs (list, reloader);
+            list = GameManager.GetLoadJobs (list, reloader);
             list = ResourceManager.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
@@ -220,7 +232,7 @@ namespace FurryLana.Engine.Application
         public void Destroy ()
         {
             Loaded = false;
-            //GameManager.Destroy ();
+            GameManager.Destroy ();
             ResourceManager.Destroy ();
             Window.Destroy ();
             Console.SetCursorPosition (0, origRow + 17);

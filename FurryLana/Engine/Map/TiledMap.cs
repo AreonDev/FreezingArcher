@@ -21,23 +21,71 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Collections.Generic;
 using FurryLana.Engine.Map.Interfaces;
 using FurryLana.Engine.Model.Interfaces;
 using Pencil.Gaming.MathUtils;
+using FurryLana.Engine.Graphics;
 
 namespace FurryLana.Engine.Map
 {
     public class TiledMap : IMap
     {
-        public TiledMap (IModel model)
+        public TiledMap (float tileSize, Vector2i size)
         {
-            this.Model = model;
+            TileSize = tileSize;
+            Size = size;
         }
 
-        #region IMap implementation
+        #region IResource implementation
+        public void Init ()
+        {}
 
-        public IModel Model { get; set; }
+        public List<Action> GetInitJobs (List<Action> list)
+        {
+            Sky.GetInitJobs (list);
+            return list;
+        }
 
+        public void Load ()
+        {}
+
+        public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
+        {
+            Sky.GetLoadJobs (list, reloader);
+            NeedsLoad = reloader;
+            return list;
+        }
+
+        public void Destroy ()
+        {
+            Sky.Destroy ();
+        }
+
+        public bool Loaded { get; protected set; }
+
+        public EventHandler NeedsLoad { get; set; }
+        #endregion
+
+        #region IFrameSyncedUpdate implementation
+        public void FrameSyncedUpdate (float deltaTime)
+        {
+            Sky.FrameSyncedUpdate (deltaTime);
+        }
+        #endregion
+
+        #region IUpdate implementation
+        public void Update (UpdateDescription desc)
+        {
+            Sky.Update (desc);
+        }
+        #endregion
+
+        #region IDrawable implementation
+        public void Draw ()
+        {
+            Sky.Draw ();
+        }
         #endregion
 
         public Sky Sky { get; set; }

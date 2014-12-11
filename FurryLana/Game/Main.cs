@@ -20,8 +20,14 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FurryLana.Engine.Application.Interfaces;
 using FurryLana.Engine.Application;
+using FurryLana.Engine.Entity;
+using FurryLana.Engine.Entity.Interfaces;
+using FurryLana.Engine.Game;
+using FurryLana.Engine.Game.Interfaces;
+using FurryLana.Engine.Map;
+using FurryLana.Engine.Map.Interfaces;
+using Pencil.Gaming.MathUtils;
 
 namespace FurryLana.Game
 {
@@ -36,6 +42,12 @@ namespace FurryLana.Game
         /// <param name="args">The command-line arguments.</param>
         public static void Main (string[] args)
         {
+            IGame game = new global::FurryLana.Engine.Game.Game ("FurryLana");
+            IMap map = new TiledMap (5f, new Vector2i (10, 10));
+            IEntity entity = new Floor ();
+            game.LevelManager.Add (new Level ("Introduction", map, new ProjectionDescription ()));
+            game.LevelManager.GetByName ("Introduction").Entities.Add (entity);
+            Application.Instance = new Application (game);
             Application.Instance.Init ();
             Application.Instance.Load ();
             Application.Instance.Run ();

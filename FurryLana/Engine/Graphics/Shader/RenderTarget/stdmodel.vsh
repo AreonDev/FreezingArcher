@@ -18,7 +18,7 @@ void main ()
   
     Position = ProjViewModelMatrix * inPosition;
     Normal = inNormal;
-    TexCoord = inTexCoord;
+    TexCoord = vec2 (-inTexCoord.x, inTexCoord.y);
   
     gl_Position = Position;
 }

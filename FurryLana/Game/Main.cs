@@ -44,7 +44,7 @@ namespace FurryLana.Game
         {
             IGame game = new global::FurryLana.Engine.Game.Game ("FurryLana");
             IMap map = new TiledMap (5f, new Vector2i (10, 10));
-            IEntity entity = new Floor ();
+            IEntity entity = new SnakeBody ();
             game.LevelManager.Add (new Level ("Introduction", map, new ProjectionDescription ()));
             game.LevelManager.GetByName ("Introduction").Entities.Add (entity);
             Application.Instance = new Application (game);

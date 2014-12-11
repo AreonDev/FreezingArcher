@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FurryLana.Engine.Entity
 {
-    class SnakeBody : IEntity
+    public class SnakeBody : IEntity
     {
 
         public int ID
@@ -22,10 +22,6 @@ namespace FurryLana.Engine.Entity
         public void Draw()
         {
          
-        }
-
-        public void Update(int deltaTime)
-        {
         }
 
         public void FrameSyncedUpdate(float deltaTime)
@@ -75,15 +71,9 @@ namespace FurryLana.Engine.Entity
             }
         }
 
-        public Pencil.Gaming.MathUtils.Vector3 Position
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Pencil.Gaming.MathUtils.Vector3 Position { get; set; }
 
-        public Pencil.Gaming.MathUtils.Vector3 Rotation
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Pencil.Gaming.MathUtils.Vector3 Rotation { get; set; }
 
         public string Name
         {
@@ -96,5 +86,40 @@ namespace FurryLana.Engine.Entity
                 throw new NotImplementedException();
             }
         }
+
+        #region IUpdate implementation
+
+        public void Update (FurryLana.Engine.Graphics.UpdateDescription desc)
+        {
+            throw new NotImplementedException ();
+        }
+
+        #endregion
+
+        #region IEntity implementation
+
+        public float Height {
+            get {
+                throw new NotImplementedException ();
+            }
+            set {
+                throw new NotImplementedException ();
+            }
+        }
+
+        #endregion
+
+        #region ISmoothedPosition implementation
+
+        public Pencil.Gaming.MathUtils.Vector3 SmoothedPosition {
+            get {
+                throw new NotImplementedException ();
+            }
+            set {
+                throw new NotImplementedException ();
+            }
+        }
+
+        #endregion
     }
 }

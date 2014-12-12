@@ -42,16 +42,8 @@ namespace FurryLana.Engine.Game
             Map = map;
             Entities = new List<IEntity> ();
             ProjectionDescription = projDesc;
-            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (ProjectionDescription.FieldOfView,
-                                                                    (float) Engine.Application.Application.Instance.Window.WindowedSize.X /
-                                                                    Engine.Application.Application.Instance.Window.WindowedSize.Y,
-                                                                    ProjectionDescription.ZNear, ProjectionDescription.ZFar);
-            Engine.Application.Application.Instance.Window.WindowResize +=
-            (GlfwWindowPtr window, int width, int height) => {
-                ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (
-				       ProjectionDescription.FieldOfView, (float) width / height,
-                                       ProjectionDescription.ZNear, ProjectionDescription.ZFar);
-            };
+            UpdateProjectionMatrix (Engine.Application.Application.Instance.Window.WindowedSize.X,
+                                    Engine.Application.Application.Instance.Window.WindowedSize.Y);
             Loaded = true;
         }
 
@@ -140,6 +132,13 @@ namespace FurryLana.Engine.Game
         public Matrix ProjectionMatrix { get; set; }
 
         public ProjectionDescription ProjectionDescription { get; set; }
+
+        public void UpdateProjectionMatrix (int width, int height)
+        {
+            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (
+                ProjectionDescription.FieldOfView, (float) width / height,
+                ProjectionDescription.ZNear, ProjectionDescription.ZFar);
+        }
 
         #endregion
 

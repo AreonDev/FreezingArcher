@@ -55,10 +55,8 @@ namespace FurryLana.Engine.Application
                 WriteAt (1, 5, width.ToString ());
                 WriteAt (9, 5, "        ");
                 WriteAt (9, 5, height.ToString ());
-            };
-
-            Window.FramebufferSize = (GlfwWindowPtr window, int width, int height) => {
                 GL.Viewport (0, 0, width, height);
+                GameManager.CurrentGame.LevelManager.CurrentLevel.UpdateProjectionMatrix (width, height);
             };
             
             Window.WindowMove = (GlfwWindowPtr window, int x, int y) => {

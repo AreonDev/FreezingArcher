@@ -382,12 +382,6 @@ namespace FurryLana.Engine.Application
         /// <value>The handlers.</value>
         public GlfwErrorFun         WindowError    { get; set; }
 
-        /// <summary>
-        /// Gets or sets the framebuffer size handler.
-        /// </summary>
-        /// <value>The framebuffer size handler.</value>
-        public GlfwFramebufferSizeFun FramebufferSize { get; set; }
-
         #endregion
 
         /// <summary>

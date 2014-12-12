@@ -33,5 +33,23 @@ namespace FurryLana.Engine.Game.Interfaces
         /// </summary>
         /// <value>The root game.</value>
         IGame RootGame { get; }
+
+        /// <summary>
+        /// Gets the current game.
+        /// </summary>
+        /// <value>The current game.</value>
+        IGame CurrentGame { get; }
+
+        /// <summary>
+        /// Sets the current game.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        void SetCurrentGame (string name);
+
+        /// <summary>
+        /// Sets the current game.
+        /// </summary>
+        /// <param name="game">Game.</param>
+        void SetCurrentGame (IGame game);
     }
 }

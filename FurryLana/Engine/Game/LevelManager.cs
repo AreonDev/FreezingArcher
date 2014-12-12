@@ -38,11 +38,33 @@ namespace FurryLana.Engine.Game
 
         protected List<ILevel> Levels;
 
+        #region ILevelManager implementation
+
+        public ILevel CurrentLevel { get; protected set; }
+
+        public void SetCurrentLevel (string name)
+        {
+            CurrentLevel = Levels.Find (l => l.Name == name);
+        }
+
+        public void SetCurrentLevel (ILevel level)
+        {
+            CurrentLevel = level;
+        }
+
+        #endregion
+
         #region IManager implementation
 
         public void Add (ILevel item)
         {
             Levels.Add (item);
+
+            if (Levels.Count == 1)
+            {
+                Add (item);
+                SetCurrentLevel (item);
+            }
         }
 
         public void Remove (ILevel item)

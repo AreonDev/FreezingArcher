@@ -37,12 +37,14 @@ namespace FurryLana.Engine.Input
             Mouse = new List<MouseInput> ();
             MouseMovement = Vector2.Zero;
             MouseScroll = Vector2.Zero;
+            OldMousePosition = Vector2.Zero;
         }
 
         protected List<KeyboardInput> Keys;
         protected List<MouseInput> Mouse;
         protected Vector2 MouseMovement;
         protected Vector2 MouseScroll;
+        protected Vector2 OldMousePosition;
 
         #region IInputManager implementation
 
@@ -59,7 +61,8 @@ namespace FurryLana.Engine.Input
 
         public void HandleMouseMove (GlfwWindowPtr window, double x, double y)
         {
-            MouseMovement += new Vector2 ((float) x, (float) y);
+            MouseMovement += new Vector2 ((float) x - OldMousePosition.X, (float) y - OldMousePosition.Y);
+            OldMousePosition = new Vector2 ((float) x, (float) y);
         }
 
         public void HandleMouseScroll (GlfwWindowPtr window, double xoffs, double yoffs)

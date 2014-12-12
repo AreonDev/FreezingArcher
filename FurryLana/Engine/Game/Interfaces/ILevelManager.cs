@@ -28,5 +28,23 @@ namespace FurryLana.Engine.Game.Interfaces
     /// Level manager interface.
     /// </summary>
     public interface ILevelManager : IGraphicsResource, IManager<ILevel>
-    {}
+    {
+        /// <summary>
+        /// Gets the current level.
+        /// </summary>
+        /// <value>The current level.</value>
+        ILevel CurrentLevel { get; }
+
+        /// <summary>
+        /// Sets the current level.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        void SetCurrentLevel (string name);
+
+        /// <summary>
+        /// Sets the current level.
+        /// </summary>
+        /// <param name="level">Level.</param>
+        void SetCurrentLevel (ILevel level);
+    }
 }

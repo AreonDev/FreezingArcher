@@ -210,10 +210,6 @@ namespace FurryLana.Engine.Graphics
         protected VertexBuffer<Vector4> VBO;
 #endif
         protected VertexBuffer<int> IBO;
-        protected Matrix ProjMatrix = Matrix.CreatePerspectiveFieldOfView ((float) (System.Math.PI / 3), 16f / 9, 0.1f, 200);
-        protected Matrix ViewMatrix = Matrix.LookAt (2,3,2,
-                                                     0,0,0,
-                                                     0,1,0);
         protected Matrix ModelMatrix = Matrix.Identity;
         protected Action DoLoad;
         public int Sampler;
@@ -236,8 +232,6 @@ namespace FurryLana.Engine.Graphics
         {
             Loaded = false;
 
-            ViewMatrix *= Matrix.CreateRotationY (0.75f);
-
             DoLoad ();
 
             VBO.Load ();
@@ -255,9 +249,7 @@ namespace FurryLana.Engine.Graphics
             //GL.SamplerParameter (Sampler, SamplerParameter.TextureMinFilter, (int) TextureMinFilter.Linear);
             //GL.SamplerParameter (Sampler, SamplerParameter.TextureMagFilter, (int) TextureMagFilter.Linear);
             //GL.BindSampler (0, Sampler);
-            
-            Shader["ProjMatrix"] = ProjMatrix;
-            Shader["ViewMatrix"] = ViewMatrix;
+
             Shader["ModelMatrix"] = ModelMatrix;
             Shader["Ambient"] = 0.2f;
             Shader["LightDirection"] = LightDirection;
@@ -291,8 +283,10 @@ namespace FurryLana.Engine.Graphics
 
         public void FrameSyncedUpdate (float deltaTime)
         {
-            ViewMatrix *= Matrix.CreateRotationY (-0.2f * deltaTime);
-            Shader["ViewMatrix"] = ViewMatrix;
+            Shader["ViewMatrix"] = Engine.Application.Application.Instance.GameManager.CurrentGame
+                .LevelManager.CurrentLevel.CameraManager.ActiveCamera.ViewMatrix;
+            Shader["ProjMatrix"] = Engine.Application.Application.Instance.GameManager.CurrentGame
+                .LevelManager.CurrentLevel.ProjectionMatrix;
         }
 
         #endregion

@@ -27,6 +27,7 @@ using Pencil.Gaming.MathUtils;
 using FurryLana.Engine.Interaction;
 using FurryLana.Engine.Entity.Interfaces;
 using FurryLana.Engine.Graphics;
+using FurryLana.Math;
 
 namespace FurryLana.Engine.Camera
 {
@@ -60,22 +61,18 @@ namespace FurryLana.Engine.Camera
 
         public void Enable ()
         {
-            //throw new NotImplementedException ();
+            Rotation = new Vector3 (Rotation.X, BoundTo.Rotation.Y, Rotation.Z);
         }
 
         public void Disable ()
-        {
-            //throw new NotImplementedException ();
-        }
+        {}
 
         #endregion
 
         #region IResource implementation
 
         public void Init ()
-        {
-            //throw new NotImplementedException ();
-        }
+        {}
 
         public List<Action> GetInitJobs (List<Action> list)
         {
@@ -83,9 +80,7 @@ namespace FurryLana.Engine.Camera
         }
 
         public void Load ()
-        {
-            //throw new NotImplementedException ();
-        }
+        {}
 
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
@@ -94,9 +89,7 @@ namespace FurryLana.Engine.Camera
         }
 
         public void Destroy ()
-        {
-            //throw new NotImplementedException ();
-        }
+        {}
 
         public bool Loaded { get; protected set; }
 
@@ -108,7 +101,7 @@ namespace FurryLana.Engine.Camera
 
         public void FrameSyncedUpdate (float deltaTime)
         {   
-            float smoothing = deltaTime * 0.5f;
+            float smoothing = deltaTime * 2f;
             smoothing = smoothing.Clamp (0f, 1f);
             
             // smooth zooming
@@ -119,8 +112,7 @@ namespace FurryLana.Engine.Camera
             
             // smooth the rotation
             Vector3 rdiff = Rotation - lastRotation;
-            Vector3 rot = new Vector3 (Rotation);
-            rot = lastRotation + rdiff * smoothing;
+            Vector3 rot = lastRotation + rdiff * smoothing;
             lastRotation = new Vector3 (rot);
             
             Matrix rotMat = Matrix.CreateRotationX (rot.X);
@@ -146,19 +138,33 @@ namespace FurryLana.Engine.Camera
 
         #endregion
 
+        protected bool firstMouse = true;
+
         #region IUpdate implementation
 
         public void Update (UpdateDescription desc)
-        {}
+        {
+            // prevent mouse jump on first frame
+            if (!firstMouse)
+            {
+                RotTo (new Vector3 (Rotation.X - Deg2Rad (-desc.MouseMovement.Y * desc.DeltaTime * MouseSpeed * 10),
+                                    Rotation.Y - Deg2Rad (desc.MouseMovement.X * desc.DeltaTime * MouseSpeed * 10),
+                                    Rotation.Z), AngleEnum.Radian);
+                //if (rotCharacter)
+                //    Character.Rotation.Y -= Deg2Rad (e.XDelta * elapsedTime * MouseSpeed);
+            }
+            else
+                firstMouse = false;
+
+            Radius += desc.MouseScroll.Y * ZoomSpeed * desc.DeltaTime * 15f;
+        }
 
         #endregion
 
         #region IDrawable implementation
 
         public void Draw ()
-        {
-            //throw new NotImplementedException ();
-        }
+        {}
 
         #endregion
 
@@ -180,11 +186,49 @@ namespace FurryLana.Engine.Camera
 
         #endregion
 
+        protected float Deg2Rad (float deg)
+        {
+            const float degToRad = (float) System.Math.PI / 180.0f;
+            return deg * degToRad;
+        }
+
+        protected float Rad2Deg (float rad)
+        {
+            const float radToDeg = 180.0f / (float)System.Math.PI;
+            return rad * radToDeg;
+        }
+
         #region IRotateable implementation
 
-        public void RotTo (Vector3 rotation, FurryLana.Math.AngleEnum angle = (FurryLana.Math.AngleEnum)0)
+        public void RotTo (Vector3 rotation, AngleEnum angle = AngleEnum.Degree)
         {
-            //throw new NotImplementedException ();
+            double oldRotX = Rotation.X;
+            if (angle == AngleEnum.Degree)
+            {
+                float x = Rotation.X;
+                float y = Rotation.Y;
+                float z = Rotation.Z;
+                Rotation = new Vector3 (Deg2Rad (x), Deg2Rad (y), Deg2Rad (z));
+            }
+            else
+            {
+                Rotation = rotation;
+            }
+            
+            // clamp cam
+            float PiOver2 = (float) System.Math.PI / 2;
+            float ThreePiOver2 = (float) System.Math.PI + PiOver2;
+            float TwoPi = (float) System.Math.PI * 2;
+            float d = 0.000001f;
+            
+            //FIXME
+            float offs = ((int) (Rotation.X / TwoPi)) * TwoPi;
+            while (Rotation.X - offs < 0)
+                offs -= TwoPi;
+
+            float rx = Rotation.X - offs < ThreePiOver2 + d && oldRotX - offs > ThreePiOver2 ? offs + ThreePiOver2 + d : Rotation.X;
+            rx = Rotation.X - offs > PiOver2 - d && oldRotX - offs < PiOver2 ? offs + PiOver2 - d : Rotation.X;
+            Rotation = new Vector3 (rx, Rotation.Y, Rotation.Z);
         }
 
         #endregion

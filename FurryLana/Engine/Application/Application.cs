@@ -89,18 +89,16 @@ namespace FurryLana.Engine.Application
                 WriteAt (50, 5, button.ToString ());
                 WriteAt (63, 5, "         ");
                 WriteAt (63, 5, action.ToString ());
+                ResourceManager.InputManager.HandleMouseButton (window, button, action);
             };
-            
-            Window.MouseButton += ResourceManager.InputManager.HandleMouseButton;
-            
+
             Window.MouseMove = (GlfwWindowPtr window, double x, double y) => {
                 WriteAt (34, 5, "       ");
                 WriteAt (34, 5, string.Format ("{0:f}", x));
                 WriteAt (42, 5, "       ");
                 WriteAt (42, 5, string.Format ("{0:f}", y));
+                ResourceManager.InputManager.HandleMouseMove (window, x, y);
             };
-            
-            Window.MouseMove += ResourceManager.InputManager.HandleMouseMove;
             
             Window.MouseOver = (GlfwWindowPtr window, bool enter) => {
                 WriteAt (58, 13, "              ");
@@ -112,9 +110,8 @@ namespace FurryLana.Engine.Application
                 WriteAt (24, 13, string.Format ("{0:f}", xoffs));
                 WriteAt (32, 13, "       ");
                 WriteAt (32, 13, string.Format ("{0:f}", yoffs));
+                ResourceManager.InputManager.HandleMouseScroll (window, xoffs, yoffs);
             };
-            
-            Window.MouseScroll += ResourceManager.InputManager.HandleMouseScroll;
             
             Window.KeyAction = (GlfwWindowPtr window, Key key, int scancode, KeyAction action, KeyModifiers mods) => {
                 WriteAt (1, 13, "             ");
@@ -126,9 +123,9 @@ namespace FurryLana.Engine.Application
                 {
                     Window.ToggleFullscreen ();
                 }
+
+                ResourceManager.InputManager.HandleKeyboardInput (window, key, scancode, action, mods);
             };
-            
-            Window.KeyAction += ResourceManager.InputManager.HandleKeyboardInput;
         }
 
         #region IApplication implementation

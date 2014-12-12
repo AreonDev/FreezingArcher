@@ -51,7 +51,7 @@ namespace FurryLana.Game
             IEntity entity = new SnakeBody ();
             ICameraManager level1CameraManager = new CameraManager ("IntroCams", new ThirdPersonCamera ("thirdPerson",
                                                                                                         entity,
-                                                                                                        1, 1, 1));
+                                                                                                        15, 1f, 1));
             game.LevelManager.Add (new Level ("Introduction", map, level1CameraManager, new ProjectionDescription ()));
             game.LevelManager.GetByName ("Introduction").Entities.Add (entity);
 

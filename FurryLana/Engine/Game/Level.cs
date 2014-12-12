@@ -42,10 +42,10 @@ namespace FurryLana.Engine.Game
             Map = map;
             Entities = new List<IEntity> ();
             ProjectionDescription = projDesc;
-            Matrix.CreatePerspectiveFieldOfView (ProjectionDescription.FieldOfView,
-                                                 (float) Engine.Application.Application.Instance.Window.WindowedSize.X /
-                                                 Engine.Application.Application.Instance.Window.WindowedSize.Y,
-                                                 ProjectionDescription.ZNear, ProjectionDescription.ZFar);
+            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (ProjectionDescription.FieldOfView,
+                                                                    (float) Engine.Application.Application.Instance.Window.WindowedSize.X /
+                                                                    Engine.Application.Application.Instance.Window.WindowedSize.Y,
+                                                                    ProjectionDescription.ZNear, ProjectionDescription.ZFar);
             Engine.Application.Application.Instance.Window.WindowResize +=
             (GlfwWindowPtr window, int width, int height) => {
                 ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (

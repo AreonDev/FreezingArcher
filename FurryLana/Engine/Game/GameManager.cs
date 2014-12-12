@@ -33,6 +33,7 @@ namespace FurryLana.Engine.Game
         {
             Games = new List<IGame> ();
             RootGame = rootGame;
+            SetCurrentGame (rootGame);
             Games.Add (rootGame);
             Loaded = true;
         }
@@ -117,6 +118,18 @@ namespace FurryLana.Engine.Game
         #region IGameManager implementation
 
         public IGame RootGame { get; protected set; }
+
+        public IGame CurrentGame { get; protected set; }
+
+        public void SetCurrentGame (string name)
+        {
+            CurrentGame = Games.Find (g => g.Name == name);
+        }
+
+        public void SetCurrentGame (IGame game)
+        {
+            CurrentGame = game;
+        }
 
         #endregion
     }

@@ -129,6 +129,12 @@ namespace FurryLana.Engine.Application.Interfaces
         GlfwErrorFun         WindowError    { get; set; }
 
         /// <summary>
+        /// Gets or sets the framebuffer size handler.
+        /// </summary>
+        /// <value>The framebuffer size handler.</value>
+        GlfwFramebufferSizeFun FramebufferSize { get; set; }
+
+        /// <summary>
         /// Toggles the fullscreen.
         /// </summary>
         void ToggleFullscreen ();

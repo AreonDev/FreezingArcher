@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Linq;
 using FurryLana.Engine.Game.Interfaces;
 using FurryLana.Engine.Graphics;
 using FurryLana.Engine.Input.Interfaces;
@@ -54,6 +55,9 @@ namespace FurryLana.Engine.Application
                 WriteAt (1, 5, width.ToString ());
                 WriteAt (9, 5, "        ");
                 WriteAt (9, 5, height.ToString ());
+            };
+
+            Window.FramebufferSize = (GlfwWindowPtr window, int width, int height) => {
                 GL.Viewport (0, 0, width, height);
             };
             

@@ -35,10 +35,10 @@ namespace FurryLana.Engine.Game
 {
     public class Level : ILevel
     {
-        public Level (string name, IMap map, ProjectionDescription projDesc)
+        public Level (string name, IMap map, ICameraManager cameraManager,ProjectionDescription projDesc)
         {
             Name = name;
-            CameraManager = new CameraManager ("IntroCams", /*new ThirdPersonCamera ()*/ null);
+            CameraManager = cameraManager;
             Map = map;
             Entities = new List<IEntity> ();
             ProjectionDescription = projDesc;
@@ -48,8 +48,9 @@ namespace FurryLana.Engine.Game
                                                  ProjectionDescription.ZNear, ProjectionDescription.ZFar);
             Engine.Application.Application.Instance.Window.WindowResize +=
             (GlfwWindowPtr window, int width, int height) => {
-                Matrix.CreatePerspectiveFieldOfView (ProjectionDescription.FieldOfView, (float) width / height,
-                                                     ProjectionDescription.ZNear, ProjectionDescription.ZFar);
+                ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (
+				       ProjectionDescription.FieldOfView, (float) width / height,
+                                       ProjectionDescription.ZNear, ProjectionDescription.ZFar);
             };
             Loaded = true;
         }
@@ -63,7 +64,8 @@ namespace FurryLana.Engine.Game
         {
             CameraManager.GetInitJobs (list);
             Map.GetInitJobs (list);
-            Entities.ForEach (e => e.GetInitJobs (list));
+            foreach (var e in Entities)
+                list = e.GetInitJobs (list);
             return list;
         }
 
@@ -74,7 +76,8 @@ namespace FurryLana.Engine.Game
         {
             CameraManager.GetLoadJobs (list, reloader);
             Map.GetLoadJobs (list, reloader);
-            Entities.ForEach (e => e.GetLoadJobs (list, reloader));
+            foreach (var e in Entities)
+                e.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }
@@ -147,4 +150,3 @@ namespace FurryLana.Engine.Game
         #endregion
     }
 }
-

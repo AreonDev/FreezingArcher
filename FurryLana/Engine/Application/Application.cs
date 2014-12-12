@@ -44,47 +44,6 @@ namespace FurryLana.Engine.Application
         {
             ResourceManager = new ResourceManager ();
             GameManager = new GameManager (game);
-        }
-
-        #region IApplication implementation
-
-        /// <summary>
-        /// Run this instance.
-        /// </summary>
-        public void Run ()
-        {
-            Window.Run ();
-        }
-
-        /// <summary>
-        /// Gets the game manager.
-        /// </summary>
-        /// <value>The game manager.</value>
-        public IGameManager  GameManager        { get; protected set; }
-
-        /// <summary>
-        /// Gets the window.
-        /// </summary>
-        /// <value>The window.</value>
-        public IWindow       Window             { get; protected set; }
-
-        /// <summary>
-        /// Gets the resource manager.
-        /// </summary>
-        /// <value>The resource manager.</value>
-        public IResourceManager ResourceManager { get; protected set; }
-
-        #endregion
-
-        #region IResource implementation
-
-        /// <summary>
-        /// Init this resource. This method may not be called from the main thread as the initialization process is
-        /// multi threaded.
-        /// </summary>
-        public void Init ()
-        {
-            Loaded = false;
 
             Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080),
                                  GameManager.RootGame.Name, GameManager.RootGame);
@@ -131,7 +90,7 @@ namespace FurryLana.Engine.Application
                 WriteAt (63, 5, "         ");
                 WriteAt (63, 5, action.ToString ());
             };
-
+            
             Window.MouseButton += ResourceManager.InputManager.HandleMouseButton;
             
             Window.MouseMove = (GlfwWindowPtr window, double x, double y) => {
@@ -140,7 +99,7 @@ namespace FurryLana.Engine.Application
                 WriteAt (42, 5, "       ");
                 WriteAt (42, 5, string.Format ("{0:f}", y));
             };
-
+            
             Window.MouseMove += ResourceManager.InputManager.HandleMouseMove;
             
             Window.MouseOver = (GlfwWindowPtr window, bool enter) => {
@@ -154,7 +113,7 @@ namespace FurryLana.Engine.Application
                 WriteAt (32, 13, "       ");
                 WriteAt (32, 13, string.Format ("{0:f}", yoffs));
             };
-
+            
             Window.MouseScroll += ResourceManager.InputManager.HandleMouseScroll;
             
             Window.KeyAction = (GlfwWindowPtr window, Key key, int scancode, KeyAction action, KeyModifiers mods) => {
@@ -168,8 +127,49 @@ namespace FurryLana.Engine.Application
                     Window.ToggleFullscreen ();
                 }
             };
-
+            
             Window.KeyAction += ResourceManager.InputManager.HandleKeyboardInput;
+        }
+
+        #region IApplication implementation
+
+        /// <summary>
+        /// Run this instance.
+        /// </summary>
+        public void Run ()
+        {
+            Window.Run ();
+        }
+
+        /// <summary>
+        /// Gets the game manager.
+        /// </summary>
+        /// <value>The game manager.</value>
+        public IGameManager  GameManager        { get; protected set; }
+
+        /// <summary>
+        /// Gets the window.
+        /// </summary>
+        /// <value>The window.</value>
+        public IWindow       Window             { get; protected set; }
+
+        /// <summary>
+        /// Gets the resource manager.
+        /// </summary>
+        /// <value>The resource manager.</value>
+        public IResourceManager ResourceManager { get; protected set; }
+
+        #endregion
+
+        #region IResource implementation
+
+        /// <summary>
+        /// Init this resource. This method may not be called from the main thread as the initialization process is
+        /// multi threaded.
+        /// </summary>
+        public void Init ()
+        {
+            Loaded = false;
 
             Initer = new JobExecuter();
             Initer.InsertJobs (GetInitJobs (new List<Action>()));

@@ -31,6 +31,14 @@ namespace FurryLana.Engine.Input
 {
     public class InputManager : IInputManager
     {
+        public InputManager ()
+        {
+            Keys = new List<KeyboardInput> ();
+            Mouse = new List<MouseInput> ();
+            MouseMovement = Vector2.Zero;
+            MouseScroll = Vector2.Zero;
+        }
+
         protected List<KeyboardInput> Keys;
         protected List<MouseInput> Mouse;
         protected Vector2 MouseMovement;

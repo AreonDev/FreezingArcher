@@ -60,12 +60,12 @@ namespace FurryLana.Engine.Camera
 
         public void Enable ()
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
         }
 
         public void Disable ()
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
         }
 
         #endregion
@@ -74,27 +74,28 @@ namespace FurryLana.Engine.Camera
 
         public void Init ()
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
         }
 
         public List<Action> GetInitJobs (List<Action> list)
         {
-            throw new NotImplementedException ();
+            return list;
         }
 
         public void Load ()
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
         }
 
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
-            throw new NotImplementedException ();
+            NeedsLoad = reloader;
+            return list;
         }
 
         public void Destroy ()
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
         }
 
         public bool Loaded { get; protected set; }
@@ -156,7 +157,7 @@ namespace FurryLana.Engine.Camera
 
         public void Draw ()
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
         }
 
         #endregion
@@ -183,21 +184,14 @@ namespace FurryLana.Engine.Camera
 
         public void RotTo (Vector3 rotation, FurryLana.Math.AngleEnum angle = (FurryLana.Math.AngleEnum)0)
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
         }
 
         #endregion
 
         #region IRotation implementation
 
-        public Vector3 Rotation {
-            get {
-                throw new NotImplementedException ();
-            }
-            set {
-                throw new NotImplementedException ();
-            }
-        }
+        public Vector3 Rotation { get; set; }
 
         #endregion
     }

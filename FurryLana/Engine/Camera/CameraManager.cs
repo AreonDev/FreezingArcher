@@ -218,7 +218,17 @@ namespace FurryLana.Engine.Camera
                 ActiveGroup.Prev ();
         }
 
-        public ICamera ActiveCamera { get; set; }
+        public ICamera ActiveCamera
+        {
+            get
+            {
+                return GetActive ();
+            }
+            set
+            {
+                SetActive (value);
+            }
+        }
 
         public ICameraManager ActiveGroup { get; set; }
 
@@ -300,7 +310,8 @@ namespace FurryLana.Engine.Camera
 
         public List<Action> GetInitJobs (List<Action> list)
         {
-            Cameras.ForEach (c => c.GetInitJobs (list));
+            foreach (var c in Cameras)
+                list = c.GetInitJobs (list);
             return list;
         }
 
@@ -309,7 +320,8 @@ namespace FurryLana.Engine.Camera
 
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
-            Cameras.ForEach (c => c.GetLoadJobs (list, reloader));
+            foreach (var c in Cameras)
+                list = c.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }

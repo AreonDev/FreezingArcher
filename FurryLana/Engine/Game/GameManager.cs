@@ -87,7 +87,8 @@ namespace FurryLana.Engine.Game
 
         public List<Action> GetInitJobs (List<Action> list)
         {
-            Games.ForEach (g => g.GetInitJobs (list));
+            foreach (var g in Games)
+                list = g.GetInitJobs (list);
             return list;
         }
 
@@ -96,7 +97,8 @@ namespace FurryLana.Engine.Game
 
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
-            Games.ForEach (g => g.GetLoadJobs (list, reloader));
+            foreach (var g in Games)
+                list = g.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }

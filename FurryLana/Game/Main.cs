@@ -28,6 +28,8 @@ using FurryLana.Engine.Game.Interfaces;
 using FurryLana.Engine.Map;
 using FurryLana.Engine.Map.Interfaces;
 using Pencil.Gaming.MathUtils;
+using FurryLana.Engine.Camera.Interfaces;
+using FurryLana.Engine.Camera;
 
 namespace FurryLana.Game
 {
@@ -43,11 +45,16 @@ namespace FurryLana.Game
         public static void Main (string[] args)
         {
             IGame game = new global::FurryLana.Engine.Game.Game ("FurryLana");
+            Application.Instance = new Application (game);
+
             IMap map = new TiledMap (5f, new Vector2i (10, 10));
             IEntity entity = new SnakeBody ();
-            game.LevelManager.Add (new Level ("Introduction", map, new ProjectionDescription ()));
+            ICameraManager level1CameraManager = new CameraManager ("IntroCams", new ThirdPersonCamera ("thirdPerson",
+                                                                                                        entity,
+                                                                                                        1, 1, 1));
+            game.LevelManager.Add (new Level ("Introduction", map, level1CameraManager, new ProjectionDescription ()));
             game.LevelManager.GetByName ("Introduction").Entities.Add (entity);
-            Application.Instance = new Application (game);
+
             Application.Instance.Init ();
             Application.Instance.Load ();
             Application.Instance.Run ();

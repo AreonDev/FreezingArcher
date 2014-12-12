@@ -35,6 +35,7 @@ namespace FurryLana.Engine.Map
         {
             TileSize = tileSize;
             Size = size;
+            Sky = new Sky ();
         }
 
         #region IResource implementation

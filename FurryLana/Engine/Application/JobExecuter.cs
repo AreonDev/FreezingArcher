@@ -44,7 +44,19 @@ namespace FurryLana.Engine.Application
         /// Gets or sets the jobs.
         /// </summary>
         /// <value>The jobs.</value>
-        public List<Action> Jobs { get; protected set; }
+        public List<Action> Jobs
+        {
+            get
+            {
+                return jobs;
+            }
+            protected set
+            {
+                jobs = value;
+            }
+        }
+
+        protected List<Action> jobs;
 
         /// <summary>
         /// Inserts the job.

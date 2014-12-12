@@ -44,19 +44,12 @@ namespace FurryLana.Engine.Application
         /// Gets or sets the jobs.
         /// </summary>
         /// <value>The jobs.</value>
-        public List<Action> Jobs
-        {
-            get
-            {
-                return jobs;
-            }
-            protected set
-            {
-                jobs = value;
-            }
-        }
+        public List<Action> Jobs { get; set; }
 
-        protected List<Action> jobs;
+        /// <summary>
+        /// The currently active jobs
+        /// </summary>
+        protected List<Action> currentJobs;
 
         /// <summary>
         /// Inserts the job.
@@ -64,8 +57,7 @@ namespace FurryLana.Engine.Application
         /// <param name="job">Job.</param>
         public void InsertJob (Action job)
         {
-            lock (Jobs)
-                Jobs.Add (job);
+            Jobs.Add (job);
         }
 
         /// <summary>
@@ -74,8 +66,7 @@ namespace FurryLana.Engine.Application
         /// <param name="jobs">Jobs.</param>
         public void InsertJobs (List<Action> jobs)
         {
-            lock (Jobs)
-                Jobs.AddRange (jobs);
+            Jobs.AddRange (jobs);
         }
 
         /// <summary>
@@ -84,8 +75,7 @@ namespace FurryLana.Engine.Application
         /// <param name="jobs">Jobs.</param>
         public void InsertJobs (Action[] jobs)
         {
-            lock (Jobs)
-                Jobs.AddRange (jobs);
+            Jobs.AddRange (jobs);
         }
 
         /// <summary>
@@ -94,11 +84,15 @@ namespace FurryLana.Engine.Application
         /// <param name="load">Load.</param>
         public void ExecJobsParallel (int load)
         {
+            currentJobs = new List<Action> (Jobs);
+            Jobs.Clear ();
+
             ParallelOptions ops = new ParallelOptions ();
             ops.MaxDegreeOfParallelism = load;
-            lock (Jobs)
-                Parallel.Invoke (ops, Jobs.ToArray ());
-            Jobs.Clear ();
+
+            Parallel.Invoke (ops, currentJobs.ToArray ());
+            currentJobs.Clear ();
+            currentJobs = null;
         }
 
         /// <summary>
@@ -106,9 +100,12 @@ namespace FurryLana.Engine.Application
         /// </summary>
         public void ExecJobsSequential ()
         {
-            lock (Jobs)
-                Jobs.ForEach (a => a ());
+            currentJobs = new List<Action> (Jobs);
             Jobs.Clear ();
+
+            currentJobs.ForEach (a => a ());
+            currentJobs.Clear ();
+            currentJobs = null;
         }
 
         /// <summary>
@@ -123,8 +120,7 @@ namespace FurryLana.Engine.Application
             if (act == null)
                 throw new ArgumentException ("Action should be of type Action!");
 
-            lock (Jobs)
-                Jobs.Add (act);
+            Jobs.Add (act);
         }
     }
 }

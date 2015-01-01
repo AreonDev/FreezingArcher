@@ -21,16 +21,16 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
-using System.Linq;
-using FurryLana.Engine.Game.Interfaces;
-using FurryLana.Engine.Graphics;
-using FurryLana.Engine.Input.Interfaces;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
 using FurryLana.Engine.Application.Interfaces;
-using System.Collections.Generic;
 using FurryLana.Engine.Game;
+using FurryLana.Engine.Game.Interfaces;
+using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Application
 {
@@ -39,15 +39,22 @@ namespace FurryLana.Engine.Application
     /// </summary>
     public class Application : IApplication
     {
+        /// <summary>
+        /// The global application instance.
+        /// </summary>
         public static IApplication Instance;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Application.Application"/> class.
+        /// </summary>
+        /// <param name="game">The initial root game.</param>
         public Application (IGame game)
         {
             ResourceManager = new ResourceManager ();
             GameManager = new GameManager (game);
+            Resource = game;
 
-            Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080),
-                                 GameManager.RootGame.Name, GameManager.RootGame);
+            Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080), GameManager.RootGame.Name);
             CreateTable ();
             
             Window.WindowResize = (GlfwWindowPtr window, int width, int height) => {
@@ -130,6 +137,11 @@ namespace FurryLana.Engine.Application
             };
         }
 
+        /// <summary>
+        /// A TaskFactory to provide an update threading manager.
+        /// </summary>
+        protected TaskFactory TaskFactory = new TaskFactory ();
+
         #region IApplication implementation
 
         /// <summary>
@@ -137,20 +149,53 @@ namespace FurryLana.Engine.Application
         /// </summary>
         public void Run ()
         {
-            Window.Run ();
+            int counter = 0;
+            while (!Window.ShouldClose ())
+            {
+                double deltaTime = Window.GetDeltaTime ();
+                
+                GL.Enable (EnableCap.DepthTest);
+                GL.CullFace (CullFaceMode.FrontAndBack);
+                
+                GL.ClearColor (Color4.DodgerBlue);
+                GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+                if (counter > 4)
+                {
+                    TaskFactory.StartNew (
+                        () => Resource.Update (Application.Instance.ResourceManager.
+                                           InputManager.GenerateUpdateDescription ((float) deltaTime)));
+                    counter = 0;
+                }
+                counter++;
+                
+                Resource.FrameSyncedUpdate ((float) deltaTime);
+                Resource.Draw ();
+                
+                Window.SwapBuffers ();
+                Window.PollEvents ();
+                
+                Thread.Sleep (16);
+            }
         }
 
         /// <summary>
         /// Gets the game manager.
         /// </summary>
         /// <value>The game manager.</value>
-        public IGameManager  GameManager        { get; protected set; }
+        public IGameManager GameManager { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the binded resource.
+        /// </summary>
+        /// <value>The resource.</value>
+        public IGraphicsResource Resource { get; set; }
 
         /// <summary>
         /// Gets the window.
         /// </summary>
         /// <value>The window.</value>
-        public IWindow       Window             { get; protected set; }
+        public IWindow Window { get; protected set; }
 
         /// <summary>
         /// Gets the resource manager.
@@ -176,9 +221,6 @@ namespace FurryLana.Engine.Application
             Loader.InsertJobs (GetLoadJobs (new List<Action>(), new EventHandler (Loader.NeedsReexecHandler)));
             Window.Init ();
             Initer.ExecJobsParallel (Environment.ProcessorCount);
-
-            //if (NeedsLoad != null)
-            //    NeedsLoad ((Action) this.Load, null);
         }
 
         /// <summary>
@@ -191,6 +233,7 @@ namespace FurryLana.Engine.Application
             list = Window.GetInitJobs (list);
             list = GameManager.GetInitJobs (list);
             list = ResourceManager.GetInitJobs (list);
+            list = Resource.GetInitJobs (list);
             return list;
         }
 
@@ -216,6 +259,7 @@ namespace FurryLana.Engine.Application
             list = Window.GetLoadJobs (list, reloader);
             list = GameManager.GetLoadJobs (list, reloader);
             list = ResourceManager.GetLoadJobs (list, reloader);
+            list = Resource.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }
@@ -233,6 +277,7 @@ namespace FurryLana.Engine.Application
             Loaded = false;
             GameManager.Destroy ();
             ResourceManager.Destroy ();
+            Resource.Destroy ();
             Window.Destroy ();
             Console.SetCursorPosition (0, origRow + 17);
         }

@@ -72,7 +72,8 @@ namespace FurryLana.Engine.Input
 
         public UpdateDescription GenerateUpdateDescription (float deltaTime)
         {
-            UpdateDescription ud = new UpdateDescription (Keys, Mouse, MouseMovement, MouseScroll, deltaTime);
+            UpdateDescription ud = new UpdateDescription (new List<KeyboardInput> (Keys), new List<MouseInput> (Mouse),
+                                                          MouseMovement, MouseScroll, deltaTime);
             Keys.Clear ();
             Mouse.Clear ();
             MouseMovement = Vector2.Zero;

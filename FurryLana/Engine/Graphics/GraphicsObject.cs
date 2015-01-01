@@ -32,11 +32,12 @@ using FurryLana.Engine.Graphics.Interfaces;
 using FurryLana.Engine.Graphics.Shader;
 using FurryLana.Engine.Graphics.VertexBuffer;
 using FurryLana.Engine.Texture.Interfaces;
+using FurryLana.Engine.Interaction;
 using ShaderType = FurryLana.Engine.Graphics.Shader.ShaderType;
 
 namespace FurryLana.Engine.Graphics
 {
-    public class GraphicsObject : IGraphicsResource
+    public class GraphicsObject : IGraphicsResource, IPosition, IRotation
     {
         void Create (ShaderProgram shader, Vertex[] vertices, int[] indices, ITexture[] textures)
         {
@@ -210,9 +211,20 @@ namespace FurryLana.Engine.Graphics
         protected VertexBuffer<Vector4> VBO;
 #endif
         protected VertexBuffer<int> IBO;
-        protected Matrix ModelMatrix = Matrix.Identity;
         protected Action DoLoad;
         public int Sampler;
+
+        #region IPosition implementation
+
+        public Vector3 Position { get; set; }
+
+        #endregion
+
+        #region IRotation implementation
+
+        public Vector3 Rotation { get; set; }
+
+        #endregion
 
         #region IResource implementation
 
@@ -250,7 +262,6 @@ namespace FurryLana.Engine.Graphics
             //GL.SamplerParameter (Sampler, SamplerParameter.TextureMagFilter, (int) TextureMagFilter.Linear);
             //GL.BindSampler (0, Sampler);
 
-            Shader["ModelMatrix"] = ModelMatrix;
             Shader["Ambient"] = 0.2f;
             Shader["LightDirection"] = LightDirection;
             //Shader["DiffuseTexture"] = Sampler;
@@ -287,6 +298,7 @@ namespace FurryLana.Engine.Graphics
                 .LevelManager.CurrentLevel.CameraManager.ActiveCamera.ViewMatrix;
             Shader["ProjMatrix"] = Engine.Application.Application.Instance.GameManager.CurrentGame
                 .LevelManager.CurrentLevel.ProjectionMatrix;
+            Shader["ModelMatrix"] = Matrix.CreateTranslation (Position);
         }
 
         #endregion

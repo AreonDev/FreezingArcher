@@ -21,7 +21,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FurryLana.Engine.Game.Interfaces;
-using FurryLana.Engine.Input.Interfaces;
 using FurryLana.Engine.Graphics.Interfaces;
 
 namespace FurryLana.Engine.Application.Interfaces
@@ -48,6 +47,12 @@ namespace FurryLana.Engine.Application.Interfaces
         /// </summary>
         /// <value>The resource manager.</value>
         IResourceManager ResourceManager { get; }
+
+        /// <summary>
+        /// Gets or sets the binded resource.
+        /// </summary>
+        /// <value>The resource.</value>
+        IGraphicsResource Resource { get; set; }
 
         /// <summary>
         /// Run this instance.

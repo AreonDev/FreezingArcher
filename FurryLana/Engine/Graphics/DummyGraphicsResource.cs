@@ -23,6 +23,8 @@
 using System;
 using System.Collections.Generic;
 using FurryLana.Engine.Graphics.Interfaces;
+using FurryLana.Engine.Input;
+using Pencil.Gaming.MathUtils;
 
 namespace FurryLana.Engine.Graphics
 {
@@ -36,9 +38,13 @@ namespace FurryLana.Engine.Graphics
             GraphicsObject = new GraphicsObject ("Graphics/Shader/RenderTarget/stdmodel.fsh",
                                      "Graphics/Shader/RenderTarget/stdmodel.vsh",
                                      "Model/Data/Stone.obj", new string[] {"Model/Data/Stone1.tif"});
+            GraphicsObject2 = new GraphicsObject ("Graphics/Shader/RenderTarget/stdmodel.fsh",
+                                                  "Graphics/Shader/RenderTarget/stdmodel.vsh",
+                                                  "Model/Data/Stone.obj", new string[] {"Model/Data/Stone1.tif"});
         }
 
         GraphicsObject GraphicsObject;
+        GraphicsObject GraphicsObject2;
 
         #region IResource implementation
 
@@ -61,6 +67,7 @@ namespace FurryLana.Engine.Graphics
         {
             list.Add (Init);
             list = GraphicsObject.GetInitJobs (list);
+            list = GraphicsObject2.GetInitJobs (list); 
             return list;
         }
 
@@ -83,6 +90,7 @@ namespace FurryLana.Engine.Graphics
             list.Add (Load);
             NeedsLoad = reloader;
             list = GraphicsObject.GetLoadJobs (list, reloader);
+            list = GraphicsObject2.GetLoadJobs (list, reloader);
             return list;
         }
 
@@ -98,6 +106,7 @@ namespace FurryLana.Engine.Graphics
         {
             Loaded = false;
             GraphicsObject.Destroy ();
+            GraphicsObject2.Destroy ();
         }
 
         /// <summary>
@@ -125,6 +134,7 @@ namespace FurryLana.Engine.Graphics
         public void FrameSyncedUpdate (float deltaTime)
         {
             GraphicsObject.FrameSyncedUpdate (deltaTime);
+            GraphicsObject2.FrameSyncedUpdate (deltaTime);
         }
 
         #endregion
@@ -139,6 +149,31 @@ namespace FurryLana.Engine.Graphics
         public void Update (UpdateDescription desc)
         {
             GraphicsObject.Update (desc);
+            GraphicsObject2.Update (desc);
+            foreach (var k in desc.Keys)
+            {
+                if (k.Action == Pencil.Gaming.KeyAction.Repeat || k.Action == Pencil.Gaming.KeyAction.Press)
+                {
+                    float x = 0, y = 0;
+                    if (k.Key == Pencil.Gaming.Key.W)
+                        x += 0.1f;
+                    if (k.Key == Pencil.Gaming.Key.A)
+                        y += 0.1f;
+                    if (k.Key == Pencil.Gaming.Key.S)
+                        x -= 0.1f;
+                    if (k.Key == Pencil.Gaming.Key.D)
+                        y -= 0.1f;
+
+                    if (k.Modifier == Pencil.Gaming.KeyModifiers.Shift)
+                    {
+                        x *= 2;
+                        y *= 2;
+                    }
+                    GraphicsObject2.Position = new Vector3 (GraphicsObject2.Position.X + x,
+                                                            GraphicsObject2.Position.Y,
+                                                            GraphicsObject2.Position.Z + y);
+                }
+            }
         }
 
         #endregion
@@ -151,6 +186,7 @@ namespace FurryLana.Engine.Graphics
         public void Draw ()
         {
             GraphicsObject.Draw ();
+            GraphicsObject2.Draw ();
         }
 
         #endregion

@@ -42,8 +42,8 @@ namespace FurryLana.Engine.Game
             Map = map;
             Entities = new List<IEntity> ();
             ProjectionDescription = projDesc;
-            UpdateProjectionMatrix (Engine.Application.Application.Instance.Window.WindowedSize.X,
-                                    Engine.Application.Application.Instance.Window.WindowedSize.Y);
+            UpdateProjectionMatrix (Engine.Application.Application.Instance.Window.Size.X,
+                                    Engine.Application.Application.Instance.Window.Size.Y);
             Loaded = true;
         }
 

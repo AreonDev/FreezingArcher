@@ -35,74 +35,68 @@ namespace FurryLana.Engine.Application.Interfaces
         /// Gets or sets the size of the window in windowed mode.
         /// </summary>
         /// <value>The size.</value>
-        Vector2i             WindowedSize   { get; set; }
+        Vector2i Size { get; set; }
 
         /// <summary>
-        /// Gets or sets resolution in fullscreen mode.
+        /// Gets or sets the resolution of the framebuffer.
         /// </summary>
-        /// <value>The resolution.</value>
-        //Vector2i             FullscreenSize { get; set; }
+        /// <value>The framebuffer resolution.</value>
+        Vector2i Resolution { get; set; }
 
         /// <summary>
         /// Gets or sets the window title.
         /// </summary>
         /// <value>The title.</value>
-        string               Title          { get; set; }
-
-        /// <summary>
-        /// Gets or sets the binded resource.
-        /// </summary>
-        /// <value>The resource.</value>
-        IGraphicsResource    Resource       { get; set; }
+        string Title { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this
         /// <see cref="FurryLana.Base.Application.Interfaces.IWindow"/> is fullscreen.
         /// </summary>
         /// <value><c>true</c> if fullscreen; otherwise, <c>false</c>.</value>
-        bool                 Fullscreen     { get; set; }
+        bool Fullscreen { get; set; }
 
         /// <summary>
         /// Gets or sets the mouse move handlers.
         /// </summary>
         /// <value>The handlers.</value>
-        GlfwCursorPosFun     MouseMove      { get; set; }
+        GlfwCursorPosFun MouseMove { get; set; }
 
         /// <summary>
         /// Gets or sets the mouse over handlers.
         /// </summary>
         /// <value>The handlers.</value>
-        GlfwCursorEnterFun   MouseOver      { get; set; }
+        GlfwCursorEnterFun MouseOver { get; set; }
 
         /// <summary>
         /// Gets or sets the mouse button handlers.
         /// </summary>
         /// <value>The handlers.</value>
-        GlfwMouseButtonFun   MouseButton    { get; set; }
+        GlfwMouseButtonFun MouseButton { get; set; }
 
         /// <summary>
         /// Gets or sets the mouse scroll handlers.
         /// </summary>
         /// <value>The handlers.</value>
-        GlfwScrollFun        MouseScroll    { get; set; }
+        GlfwScrollFun MouseScroll { get; set; }
 
         /// <summary>
         /// Gets or sets the key action handlers.
         /// </summary>
         /// <value>The handlers.</value>
-        GlfwKeyFun           KeyAction      { get; set; }
+        GlfwKeyFun KeyAction { get; set; }
 
         /// <summary>
         /// Gets or sets the window close handlers.
         /// </summary>
         /// <value>The handlers.</value>
-        GlfwWindowCloseFun   WindowClose    { get; set; }
+        GlfwWindowCloseFun WindowClose { get; set; }
 
         /// <summary>
         /// Gets or sets the window focus handlers.
         /// </summary>
         /// <value>The handlers.</value>
-        GlfwWindowFocusFun   WindowFocus    { get; set; }
+        GlfwWindowFocusFun WindowFocus { get; set; }
 
         /// <summary>
         /// Gets or sets the window minimize handlers.
@@ -114,19 +108,19 @@ namespace FurryLana.Engine.Application.Interfaces
         /// Gets or sets the window move handlers.
         /// </summary>
         /// <value>The handlers.</value>
-        GlfwWindowPosFun     WindowMove     { get; set; }
+        GlfwWindowPosFun WindowMove { get; set; }
 
         /// <summary>
         /// Gets or sets the window resize handlers.
         /// </summary>
         /// <value>The handlers.</value>
-        GlfwWindowSizeFun    WindowResize   { get; set; }
+        GlfwWindowSizeFun WindowResize { get; set; }
 
         /// <summary>
         /// Gets or sets the window error handlers.
         /// </summary>
         /// <value>The handlers.</value>
-        GlfwErrorFun         WindowError    { get; set; }
+        GlfwErrorFun WindowError { get; set; }
 
         /// <summary>
         /// Toggles the fullscreen.
@@ -154,8 +148,52 @@ namespace FurryLana.Engine.Application.Interfaces
         void Restore ();
 
         /// <summary>
-        /// Run this instance.
+        /// Indicating whether the window should close or not.
         /// </summary>
-        void Run ();
+        /// <returns><c>true</c>, if the window should close, <c>false</c> otherwise.</returns>
+        bool ShouldClose ();
+
+        /// <summary>
+        /// Gets the time passed by since the last call of this function.
+        /// </summary>
+        /// <returns>The delta time.</returns>
+        double GetDeltaTime ();
+
+        /// <summary>
+        /// Swaps the front and back buffers.
+        /// </summary>
+        void SwapBuffers ();
+
+        /// <summary>
+        /// Polls the events from the window manager.
+        /// </summary>
+        void PollEvents ();
+
+        /// <summary>
+        /// Captures the mouse pointer.
+        /// </summary>
+        void CaptureMouse ();
+
+        /// <summary>
+        /// Releases the mouse pointer.
+        /// </summary>
+        void ReleaseMouse ();
+
+        /// <summary>
+        /// Hides the mouse pointer.
+        /// </summary>
+        void HideMouse ();
+
+        /// <summary>
+        /// Shows the mouse pointer.
+        /// </summary>
+        void ShowMouse ();
+
+        /// <summary>
+        /// Sets the mouse position.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
+        void SetMousePosition (double x, double y);
     }
 }

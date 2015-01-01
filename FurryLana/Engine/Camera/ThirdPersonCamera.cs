@@ -101,7 +101,7 @@ namespace FurryLana.Engine.Camera
 
         public void FrameSyncedUpdate (float deltaTime)
         {   
-            float smoothing = deltaTime * 2f;
+            float smoothing = deltaTime * 10f;
             smoothing = smoothing.Clamp (0f, 1f);
             
             // smooth zooming
@@ -147,7 +147,7 @@ namespace FurryLana.Engine.Camera
             // prevent mouse jump on first frame
             if (!firstMouse)
             {
-                RotTo (new Vector3 (Rotation.X - Deg2Rad (-desc.MouseMovement.Y * desc.DeltaTime * MouseSpeed * 10),
+                RotTo (new Vector3 (Rotation.X - Deg2Rad (desc.MouseMovement.Y * desc.DeltaTime * MouseSpeed * 10),
                                     Rotation.Y - Deg2Rad (desc.MouseMovement.X * desc.DeltaTime * MouseSpeed * 10),
                                     Rotation.Z), AngleEnum.Radian);
                 //if (rotCharacter)

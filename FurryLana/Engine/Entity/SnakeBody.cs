@@ -14,8 +14,8 @@ namespace FurryLana.Engine.Entity
             Position = Vector3.Zero;
             Rotation = Vector3.Zero;
             SmoothedPosition = Vector3.Zero;
-            Height = 1;
-            Name = "foo";
+            Height = 0.5f;
+            Name = "SnakeBody";
             stone = new DummyGraphicsResource ();
         }
 

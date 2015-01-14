@@ -32,6 +32,8 @@ namespace FurryLana.Engine.Input
             Action = action;
         }
 
+        //TODO:::!!!!! UNFUGGG!!!!!!!!!!!!
+
         public MouseButton Button { get; set; }
         public KeyAction Action { get; set; }
     }

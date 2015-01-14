@@ -35,8 +35,9 @@ namespace FurryLana.Engine.Input
             Modifier = modifier;
         }
 
+        //TODO::: HIIIIER ZUGRIFFSRECHTE BEARBEITEN
         public Key Key { get; set; }
-        public int Scancode { get; set; }
+        public int Scancode { get;  set; }
         public KeyAction Action { get; set; }
         public KeyModifiers Modifier { get; set; }
     }

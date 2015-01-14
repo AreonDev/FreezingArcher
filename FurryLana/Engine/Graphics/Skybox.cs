@@ -40,14 +40,14 @@ namespace FurryLana.Engine.Graphics
         {
             Vector4[] verts = new Vector4[]
             {
-                new Vector4 (-size,  size,  size, size),
-                new Vector4 ( size,  size,  size, size),
-                new Vector4 ( size,  size, -size, size),
-                new Vector4 (-size,  size, -size, size),
-                new Vector4 (-size, -size,  size, size),
-                new Vector4 ( size, -size,  size, size),
-                new Vector4 ( size, -size, -size, size),
-                new Vector4 (-size, -size, -size, size)
+                new Vector4 (-size,  size,  size, 1),
+                new Vector4 ( size,  size,  size, 1),
+                new Vector4 ( size,  size, -size, 1),
+                new Vector4 (-size,  size, -size, 1),
+                new Vector4 (-size, -size,  size, 1),
+                new Vector4 ( size, -size,  size, 1),
+                new Vector4 ( size, -size, -size, 1),
+                new Vector4 (-size, -size, -size, 1)
             };
 
             Vertex[] vertices = new Vertex[verts.Length];

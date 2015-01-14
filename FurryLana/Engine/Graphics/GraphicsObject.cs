@@ -200,8 +200,8 @@ namespace FurryLana.Engine.Graphics
             };
         }
 
-        public ShaderProgram     Shader         { get; set; }
-        public VertexArrayObject VAO            { get; set; }
+        public ShaderProgram     Shader         { get; protected set; }
+        public VertexArrayObject VAO            { get; protected set; }
         public ITexture[]        Textures       { get; set; }
         public Vector3           LightDirection { get; set; }
 
@@ -291,6 +291,8 @@ namespace FurryLana.Engine.Graphics
         #endregion
 
         #region IFrameSyncedUpdate implementation
+
+        //TODO: Update really needed??????? FUCK YOU!
 
         public void FrameSyncedUpdate (float deltaTime)
         {

@@ -163,6 +163,7 @@ namespace FurryLana.Engine.Entity
         public void Update (UpdateDescription desc)
         {
             stone.Update (desc);
+            stone.Position = Position;
         }
 
         #endregion

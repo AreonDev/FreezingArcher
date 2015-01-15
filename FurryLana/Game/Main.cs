@@ -49,10 +49,13 @@ namespace FurryLana.Game
 
             IMap map = new TiledMap (5f, new Vector2i (10, 10));
             IEntity entity = new SnakeBody ();
+            IEntity entity2 = new SnakeBody ();
+            entity2.Position = new Vector3 (3, 1, 2);
             ICameraManager level1CameraManager =
                 new CameraManager ("IntroCams", new ThirdPersonCamera ("thirdPerson", entity, 15, 1, 2));
             game.LevelManager.Add (new Level ("Introduction", map, level1CameraManager, new ProjectionDescription ()));
             game.LevelManager.GetByName ("Introduction").Entities.Add (entity);
+            game.LevelManager.GetByName ("Introduction").Entities.Add (entity2);
 
             Application.Instance.Init ();
             Application.Instance.Load ();

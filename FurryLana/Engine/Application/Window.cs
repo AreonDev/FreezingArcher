@@ -36,12 +36,11 @@ namespace FurryLana.Engine.Application
     public class Window : IWindow
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FurryLana.Base.Application.Window"/> class.
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Application.Window"/> class.
         /// </summary>
-        /// <param name="windowedSize">Windowed size.</param>
-        /// <param name="fullscreenSize">Fullscreen size.</param>
+        /// <param name="size">Windowed size.</param>
+        /// <param name="resolution">Resolution of the framebuffer.</param>
         /// <param name="title">Title.</param>
-        /// <param name="resource">Resource.</param>
         public Window (Vector2i size, Vector2i resolution, string title)
         {
 	    MSize = size;
@@ -123,7 +122,7 @@ namespace FurryLana.Engine.Application
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="FurryLana.Base.Application.Window"/> is loaded.
+        /// Gets or sets a value indicating whether this <see cref="FurryLana.Engine.Application.Window"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }
@@ -222,7 +221,7 @@ namespace FurryLana.Engine.Application
         /// </summary>
         public void CaptureMouse ()
         {
-            CursorMode |= CursorMode.CursorCaptured;
+            CursorMode = CursorMode.CursorCaptured | CursorMode.CursorHidden;
             Glfw.SetInputMode (Win, InputMode.CursorMode, CursorMode);
         }
 
@@ -231,25 +230,7 @@ namespace FurryLana.Engine.Application
         /// </summary>
         public void ReleaseMouse ()
         {
-            CursorMode &= ~CursorMode.CursorCaptured;
-            Glfw.SetInputMode (Win, InputMode.CursorMode, CursorMode);
-        }
-
-        /// <summary>
-        /// Hides the mouse pointer.
-        /// </summary>
-        public void HideMouse ()
-        {
-            CursorMode |= CursorMode.CursorHidden;
-            Glfw.SetInputMode (Win, InputMode.CursorMode, CursorMode);
-        }
-
-        /// <summary>
-        /// Shows the mouse pointer.
-        /// </summary>
-        public void ShowMouse ()
-        {
-            CursorMode &= ~CursorMode.CursorHidden;
+            CursorMode = CursorMode.CursorNormal;
             Glfw.SetInputMode (Win, InputMode.CursorMode, CursorMode);
         }
 
@@ -261,6 +242,16 @@ namespace FurryLana.Engine.Application
         public void SetMousePosition (double x, double y)
         {
             Glfw.SetCursorPos (Win, x, y);
+        }
+
+        /// <summary>
+        /// Determines whether the mouse is captured.
+        /// </summary>
+        /// <returns>true</returns>
+        /// <c>false</c>
+        public bool IsMouseCaptured ()
+        {
+            return CursorMode == CursorMode.CursorCaptured;
         }
 
         /// <summary>
@@ -314,7 +305,7 @@ namespace FurryLana.Engine.Application
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="FurryLana.Base.Application.Window"/> is fullscreen.
+        /// Gets or sets a value indicating whether this <see cref="FurryLana.Engine.Application.Window"/> is fullscreen.
         /// </summary>
         /// <value><c>true</c> if fullscreen; otherwise, <c>false</c>.</value>
         public bool Fullscreen
@@ -462,7 +453,6 @@ namespace FurryLana.Engine.Application
             Glfw.SetErrorCallback         (WindowError);
 
             CursorMode = 0;
-            HideMouse ();
             CaptureMouse ();
         }
     }

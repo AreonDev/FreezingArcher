@@ -32,7 +32,7 @@ namespace FurryLana.Engine.Graphics.Interfaces
         /// This update is called in an extra thread which does not have a valid gl context.
         /// The updaterate might differ from the framerate.
         /// </summary>
-        /// <param name="deltaTime">Time delta in miliseconds.</param>
+        /// <param name="desc">Update description.</param>
         void Update (UpdateDescription desc);
     }
 }

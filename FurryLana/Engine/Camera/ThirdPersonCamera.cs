@@ -144,6 +144,9 @@ namespace FurryLana.Engine.Camera
 
         public void Update (UpdateDescription desc)
         {
+            if (!Application.Application.Instance.Window.IsMouseCaptured ())
+                return;
+
             // prevent mouse jump on first frame
             if (!firstMouse)
             {

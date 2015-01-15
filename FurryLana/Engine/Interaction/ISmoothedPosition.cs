@@ -24,8 +24,15 @@ using Pencil.Gaming.MathUtils;
 
 namespace FurryLana.Engine.Interaction
 {
+    /// <summary>
+    /// Smoothed position interface.
+    /// </summary>
     public interface ISmoothedPosition
     {
+        /// <summary>
+        /// Gets or sets the smoothed position.
+        /// </summary>
+        /// <value>The smoothed position.</value>
         Vector3 SmoothedPosition { get; set; }
     }
 }

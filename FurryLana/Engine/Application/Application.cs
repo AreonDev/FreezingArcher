@@ -133,6 +133,14 @@ namespace FurryLana.Engine.Application
                     Window.ToggleFullscreen ();
                 }
 
+                if (key == Key.Escape && action == KeyAction.Release)
+                {
+                    if (Window.IsMouseCaptured ())
+                        Window.ReleaseMouse ();
+                    else
+                        Window.CaptureMouse ();
+                }
+
                 ResourceManager.InputManager.HandleKeyboardInput (window, key, scancode, action, mods);
             };
         }
@@ -284,7 +292,7 @@ namespace FurryLana.Engine.Application
 
         /// <summary>
         /// Gets or sets a value indicating whether this
-        /// <see cref="FurryLana.Base.Application.TestApplication"/> is loaded.
+        /// <see cref="FurryLana.Engine.Application.Application"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }

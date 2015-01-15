@@ -33,6 +33,9 @@ namespace FurryLana.Engine.Graphics
     /// </summary>
     public class DummyGraphicsResource : IGraphicsResource
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.DummyGraphicsResource"/> class.
+        /// </summary>
         public DummyGraphicsResource ()
         {
             GraphicsObject = new GraphicsObject ("Graphics/Shader/RenderTarget/stdmodel.fsh",
@@ -145,7 +148,7 @@ namespace FurryLana.Engine.Graphics
         /// This update is called in an extra thread which does not have a valid gl context.
         /// The updaterate might differ from the framerate.
         /// </summary>
-        /// <param name="deltaTime">Time delta in miliseconds.</param>
+        /// <param name="desc">Update description.</param>
         public void Update (UpdateDescription desc)
         {
             GraphicsObject.Update (desc);

@@ -57,7 +57,12 @@ namespace FurryLana.Engine.Texture
         /// <summary>
         /// Initializes a new instance of the <see cref="FurryLana.Engine.Texture.Texture"/> class.
         /// </summary>
-        /// <param name="bmp">Bmp.</param>
+        /// <param name="xPos">Positive X texture.</param>
+        /// <param name="yPos">Positive Y texture.</param>
+        /// <param name="zPos">Positive Z texture.</param>
+        /// <param name="xNeg">Negative X texture.</param>
+        /// <param name="yNeg">Negative Y texture.</param>
+        /// <param name="zNeg">Negative Z texture.</param>
         /// <param name="name">Name.</param>
         public CubeTexture (Bitmap xPos, Bitmap xNeg,
                             Bitmap yPos, Bitmap yNeg,

@@ -116,7 +116,7 @@ namespace FurryLana.Engine.Camera
         /// This update is called in an extra thread which does not have a valid gl context.
         /// The updaterate might differ from the framerate.
         /// </summary>
-        /// <param name="deltaTime">Time delta in miliseconds.</param>
+        /// <param name="desc">Update description.</param>
         public void Update(UpdateDescription desc)
         {
         }
@@ -151,10 +151,11 @@ namespace FurryLana.Engine.Camera
             LastUpdate = (int)deltaTime;
 
             Position = new Vector3(Position.X,Position.Y,Position.Z);
-            float magicSmoothing = (0.2f) * elapsedTime * 0.5f;
-            Vector3 rotationdiff = Rotation -lastRotation;
-            Vector3 rot = new Vector3(Rotation);
-            rot = lastRotation + rotationdiff * magicSmoothing;
+            //values assigned but never used FIXME @Paul
+            //float magicSmoothing = (0.2f) * elapsedTime * 0.5f;
+            //Vector3 rotationdiff = Rotation -lastRotation;
+            //Vector3 rot = new Vector3(Rotation);
+            //rot = lastRotation + rotationdiff * magicSmoothing;
 
             float sinx = (float)System.Math.Sin(Position.X);
             float siny = (float)System.Math.Sin(Position.Y);

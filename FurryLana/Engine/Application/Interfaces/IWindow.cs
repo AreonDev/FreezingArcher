@@ -51,7 +51,7 @@ namespace FurryLana.Engine.Application.Interfaces
 
         /// <summary>
         /// Gets or sets a value indicating whether this
-        /// <see cref="FurryLana.Base.Application.Interfaces.IWindow"/> is fullscreen.
+        /// <see cref="FurryLana.Engine.Application.Interfaces.IWindow"/> is fullscreen.
         /// </summary>
         /// <value><c>true</c> if fullscreen; otherwise, <c>false</c>.</value>
         bool Fullscreen { get; set; }
@@ -180,14 +180,10 @@ namespace FurryLana.Engine.Application.Interfaces
         void ReleaseMouse ();
 
         /// <summary>
-        /// Hides the mouse pointer.
+        /// Determines whether the mouse is captured.
         /// </summary>
-        void HideMouse ();
-
-        /// <summary>
-        /// Shows the mouse pointer.
-        /// </summary>
-        void ShowMouse ();
+        /// <returns><c>true</c> if the mouse is captured; otherwise, <c>false</c>.</returns>
+        bool IsMouseCaptured ();
 
         /// <summary>
         /// Sets the mouse position.

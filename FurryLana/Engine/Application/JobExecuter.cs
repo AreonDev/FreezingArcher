@@ -33,7 +33,7 @@ namespace FurryLana.Engine.Application
     public class JobExecuter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FurryLana.Base.Application.JobExecuter"/> class.
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Application.JobExecuter"/> class.
         /// </summary>
         public JobExecuter ()
         {

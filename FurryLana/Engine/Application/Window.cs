@@ -122,6 +122,14 @@ namespace FurryLana.Engine.Application
         }
 
         /// <summary>
+        /// Close this window.
+        /// </summary>
+        public void Close ()
+        {
+            Glfw.SetWindowShouldClose (Win, true);
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating whether this <see cref="FurryLana.Engine.Application.Window"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>

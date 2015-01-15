@@ -141,6 +141,9 @@ namespace FurryLana.Engine.Application
                         Window.CaptureMouse ();
                 }
 
+                if (key == Key.F4 && action == KeyAction.Release && mods == KeyModifiers.Alt)
+                    Window.Close ();
+
                 ResourceManager.InputManager.HandleKeyboardInput (window, key, scancode, action, mods);
             };
         }

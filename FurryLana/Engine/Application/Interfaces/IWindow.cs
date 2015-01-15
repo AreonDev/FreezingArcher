@@ -186,6 +186,11 @@ namespace FurryLana.Engine.Application.Interfaces
         bool IsMouseCaptured ();
 
         /// <summary>
+        /// Close this window.
+        /// </summary>
+        void Close ();
+
+        /// <summary>
         /// Sets the mouse position.
         /// </summary>
         /// <param name="x">The x coordinate.</param>

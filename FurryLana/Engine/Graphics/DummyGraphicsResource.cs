@@ -32,7 +32,7 @@ namespace FurryLana.Engine.Graphics
     /// <summary>
     /// Dummy graphics resource.
     /// </summary>
-    public class DummyGraphicsResource : IGraphicsResource, IPosition
+    public class DummyGraphicsResource : IGraphicsResource, IPosition, IRotation
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.DummyGraphicsResource"/> class.
@@ -156,7 +156,9 @@ namespace FurryLana.Engine.Graphics
             GraphicsObject.Update (desc);
             GraphicsObject2.Update (desc);
             GraphicsObject.Position = Position;
+            GraphicsObject.Rotation = Rotation;
             GraphicsObject2.Position = Position;
+            GraphicsObject2.Rotation = Rotation;
             foreach (var k in desc.Keys)
             {
                 if (k.Action == Pencil.Gaming.KeyAction.Repeat || k.Action == Pencil.Gaming.KeyAction.Press)
@@ -205,6 +207,16 @@ namespace FurryLana.Engine.Graphics
         /// </summary>
         /// <value>The position.</value>
         public Vector3 Position { get; set; }
+
+        #endregion
+
+        #region IRotation implementation
+
+        /// <summary>
+        /// Gets or sets the rotation.
+        /// </summary>
+        /// <value>The rotation.</value>
+        public Vector3 Rotation { get; set; }
 
         #endregion
     }

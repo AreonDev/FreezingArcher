@@ -164,6 +164,7 @@ namespace FurryLana.Engine.Entity
         {
             stone.Update (desc);
             stone.Position = Position;
+            stone.Rotation = Rotation;
         }
 
         #endregion

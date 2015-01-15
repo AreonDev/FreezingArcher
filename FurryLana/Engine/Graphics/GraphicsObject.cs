@@ -436,7 +436,10 @@ namespace FurryLana.Engine.Graphics
                 .LevelManager.CurrentLevel.CameraManager.ActiveCamera.ViewMatrix;
             Shader["ProjMatrix"] = Engine.Application.Application.Instance.GameManager.CurrentGame
                 .LevelManager.CurrentLevel.ProjectionMatrix;
-            Shader["ModelMatrix"] = Matrix.CreateTranslation (Position);
+            Shader["ModelMatrix"] = Matrix.CreateTranslation (Position) *
+                Matrix.CreateRotationX (Rotation.X) *
+                Matrix.CreateRotationY (Rotation.Y) *
+                Matrix.CreateRotationZ (Rotation.Z);
         }
 
         #endregion

@@ -27,8 +27,19 @@ using Pencil.Gaming.MathUtils;
 
 namespace FurryLana.Engine.Graphics
 {
+    /// <summary>
+    /// Update description.
+    /// </summary>
     public class UpdateDescription
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.UpdateDescription"/> class.
+        /// </summary>
+        /// <param name="keys">Keys.</param>
+        /// <param name="mouse">Mouse.</param>
+        /// <param name="mouseMovement">Mouse movement.</param>
+        /// <param name="mouseScroll">Mouse scroll.</param>
+        /// <param name="deltaTime">Delta time.</param>
         public UpdateDescription (List<KeyboardInput> keys, List<MouseInput> mouse,
                                   Vector2 mouseMovement, Vector2 mouseScroll, float deltaTime)
         {
@@ -39,10 +50,34 @@ namespace FurryLana.Engine.Graphics
             DeltaTime = deltaTime;
         }
 
+        /// <summary>
+        /// Gets or sets the keys.
+        /// </summary>
+        /// <value>The keys.</value>
         public List<KeyboardInput> Keys { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the mouse.
+        /// </summary>
+        /// <value>The mouse.</value>
         public List<MouseInput> Mouse { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the mouse movement.
+        /// </summary>
+        /// <value>The mouse movement.</value>
         public Vector2 MouseMovement { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the mouse scroll.
+        /// </summary>
+        /// <value>The mouse scroll.</value>
         public Vector2 MouseScroll { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the delta time.
+        /// </summary>
+        /// <value>The delta time.</value>
         public float DeltaTime { get; protected set; }
     }
 }

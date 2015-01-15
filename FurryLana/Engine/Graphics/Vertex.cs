@@ -27,10 +27,19 @@ using Pencil.Gaming.MathUtils;
 
 namespace FurryLana.Engine.Graphics
 {
+    /// <summary>
+    /// Vertex.
+    /// </summary>
     [Serializable]
     [StructLayout (LayoutKind.Sequential)]
     public struct Vertex
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.Vertex"/> struct.
+        /// </summary>
+        /// <param name="position">Position.</param>
+        /// <param name="normal">Normal.</param>
+        /// <param name="texCoord">Tex coordinate.</param>
         public Vertex (Vector4 position, Vector3 normal, Vector2 texCoord)
         {
 #if BASE_TYPES
@@ -53,16 +62,43 @@ namespace FurryLana.Engine.Graphics
         }
 
 #if BASE_TYPES
+        /// <summary>
+        /// The position x.
+        /// </summary>
         public float PositionX;
+        /// <summary>
+        /// The position y.
+        /// </summary>
         public float PositionY;
+        /// <summary>
+        /// The position z.
+        /// </summary>
         public float PositionZ;
+        /// <summary>
+        /// The position w.
+        /// </summary>
         public float PositionW;
 
+        /// <summary>
+        /// The normal x.
+        /// </summary>
         public float NormalX;
+        /// <summary>
+        /// The normal y.
+        /// </summary>
         public float NormalY;
+        /// <summary>
+        /// The normal z.
+        /// </summary>
         public float NormalZ;
 
+        /// <summary>
+        /// The tex coordinate x.
+        /// </summary>
         public float TexCoordX;
+        /// <summary>
+        /// The tex coordinate y.
+        /// </summary>
         public float TexCoordY;
 #else
         public Vector4 Position;

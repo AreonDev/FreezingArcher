@@ -95,6 +95,9 @@ namespace FurryLana.Engine.Texture
             CubeBitmap[5] = zNeg;
         }
 
+        /// <summary>
+        /// Updates the textures.
+        /// </summary>
         protected void UpdateTextures ()
         {
             GL.GenTextures (1, out id);

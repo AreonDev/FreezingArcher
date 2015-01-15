@@ -25,8 +25,18 @@ using Pencil.Gaming;
 
 namespace FurryLana.Engine.Input
 {
+    /// <summary>
+    /// Keyboard input.
+    /// </summary>
     public class KeyboardInput
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Input.KeyboardInput"/> class.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <param name="scancode">Scancode.</param>
+        /// <param name="action">Action.</param>
+        /// <param name="modifier">Modifier.</param>
         public KeyboardInput (Key key, int scancode, KeyAction action, KeyModifiers modifier)
         {
             Key = key;
@@ -35,10 +45,25 @@ namespace FurryLana.Engine.Input
             Modifier = modifier;
         }
 
-        //TODO::: HIIIIER ZUGRIFFSRECHTE BEARBEITEN
-        public Key Key { get; set; }
-        public int Scancode { get;  set; }
-        public KeyAction Action { get; set; }
-        public KeyModifiers Modifier { get; set; }
+        /// <summary>
+        /// Gets or sets the key.
+        /// </summary>
+        /// <value>The key.</value>
+        public Key Key { get; internal set; }
+        /// <summary>
+        /// Gets or sets the scancode.
+        /// </summary>
+        /// <value>The scancode.</value>
+        public int Scancode { get;  internal set; }
+        /// <summary>
+        /// Gets or sets the action.
+        /// </summary>
+        /// <value>The action.</value>
+        public KeyAction Action { get; internal set; }
+        /// <summary>
+        /// Gets or sets the modifier.
+        /// </summary>
+        /// <value>The modifier.</value>
+        public KeyModifiers Modifier { get; internal set; }
     }
 }

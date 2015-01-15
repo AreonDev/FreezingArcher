@@ -29,8 +29,14 @@ using FurryLana.Engine.Input.Interfaces;
 
 namespace FurryLana.Engine.Input
 {
+    /// <summary>
+    /// Input manager.
+    /// </summary>
     public class InputManager : IInputManager
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Input.InputManager"/> class.
+        /// </summary>
         public InputManager ()
         {
             Keys = new List<KeyboardInput> ();
@@ -40,36 +46,86 @@ namespace FurryLana.Engine.Input
             OldMousePosition = Vector2.Zero;
         }
 
+        /// <summary>
+        /// The keys.
+        /// </summary>
         protected List<KeyboardInput> Keys;
+
+        /// <summary>
+        /// The mouse button inputs.
+        /// </summary>
         protected List<MouseInput> Mouse;
+
+        /// <summary>
+        /// The mouse movement.
+        /// </summary>
         protected Vector2 MouseMovement;
+
+        /// <summary>
+        /// The mouse scroll.
+        /// </summary>
         protected Vector2 MouseScroll;
+
+        /// <summary>
+        /// The old mouse position.
+        /// </summary>
         protected Vector2 OldMousePosition;
 
         #region IInputManager implementation
 
+        /// <summary>
+        /// Handles the keyboard input.
+        /// </summary>
+        /// <param name="window">Window.</param>
+        /// <param name="key">Key.</param>
+        /// <param name="scancode">Scancode.</param>
+        /// <param name="action">Action.</param>
+        /// <param name="modifier">Modifier.</param>
         public void HandleKeyboardInput (GlfwWindowPtr window, Key key, int scancode,
                                          KeyAction action, KeyModifiers modifier)
         {
             Keys.Add (new KeyboardInput (key, scancode, action, modifier));
         }
 
+        /// <summary>
+        /// Handles the mouse button.
+        /// </summary>
+        /// <param name="window">Window.</param>
+        /// <param name="button">Button.</param>
+        /// <param name="action">Action.</param>
         public void HandleMouseButton (GlfwWindowPtr window, MouseButton button, KeyAction action)
         {
             Mouse.Add (new MouseInput (button, action));
         }
 
+        /// <summary>
+        /// Handles the mouse move.
+        /// </summary>
+        /// <param name="window">Window.</param>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
         public void HandleMouseMove (GlfwWindowPtr window, double x, double y)
         {
             MouseMovement += new Vector2 ((float) x - OldMousePosition.X, (float) y - OldMousePosition.Y);
             OldMousePosition = new Vector2 ((float) x, (float) y);
         }
 
+        /// <summary>
+        /// Handles the mouse scroll.
+        /// </summary>
+        /// <param name="window">Window.</param>
+        /// <param name="xoffs">Xoffs.</param>
+        /// <param name="yoffs">Yoffs.</param>
         public void HandleMouseScroll (GlfwWindowPtr window, double xoffs, double yoffs)
         {
             MouseScroll += new Vector2 ((float) xoffs, (float) yoffs);
         }
 
+        /// <summary>
+        /// Generates the update description.
+        /// </summary>
+        /// <returns>The update description.</returns>
+        /// <param name="deltaTime">Delta time.</param>
         public UpdateDescription GenerateUpdateDescription (float deltaTime)
         {
             UpdateDescription ud = new UpdateDescription (new List<KeyboardInput> (Keys), new List<MouseInput> (Mouse),

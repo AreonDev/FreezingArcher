@@ -24,18 +24,33 @@ using Pencil.Gaming;
 
 namespace FurryLana.Engine.Input
 {
+    /// <summary>
+    /// Mouse input.
+    /// </summary>
     public class MouseInput
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Input.MouseInput"/> class.
+        /// </summary>
+        /// <param name="button">Button.</param>
+        /// <param name="action">Action.</param>
         public MouseInput (MouseButton button, KeyAction action)
         {
             Button = button;
             Action = action;
         }
 
-        //TODO:::!!!!! UNFUGGG!!!!!!!!!!!!
+        /// <summary>
+        /// Gets or sets the button.
+        /// </summary>
+        /// <value>The button.</value>
+        public MouseButton Button { get; internal set; }
 
-        public MouseButton Button { get; set; }
-        public KeyAction Action { get; set; }
+        /// <summary>
+        /// Gets or sets the action.
+        /// </summary>
+        /// <value>The action.</value>
+        public KeyAction Action { get; internal set; }
     }
 }
 

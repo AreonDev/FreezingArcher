@@ -28,8 +28,16 @@ using FurryLana.Engine.Graphics;
 
 namespace FurryLana.Engine.Camera
 {
+    /// <summary>
+    /// Camera manager.
+    /// </summary>
     public class CameraManager : ICameraManager
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Camera.CameraManager"/> class.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="initial">Initial.</param>
         public CameraManager (string name, ICameraManageable initial)
         {
             this.Name = name;
@@ -49,10 +57,17 @@ namespace FurryLana.Engine.Camera
             Loaded = true;
         }
 
+        /// <summary>
+        /// The cameras.
+        /// </summary>
         protected List<ICameraManageable> Cameras;
 
         #region ICameraManager implementation
 
+        /// <summary>
+        /// Get the active camera
+        /// </summary>
+        /// <returns>The camera.</returns>
         public ICamera GetActive ()
         {
             if (ActiveGroup.Name == this.Name)
@@ -61,11 +76,19 @@ namespace FurryLana.Engine.Camera
                 return ActiveGroup.GetActive ();
         }
 
+        /// <summary>
+        /// Get the active camera group.
+        /// </summary>
+        /// <returns>The active group.</returns>
         public ICameraManager GetActiveGroup ()
         {
             return ActiveGroup;
         }
 
+        /// <summary>
+        /// Set the active camera.
+        /// </summary>
+        /// <param name="name">The camera name.</param>
         public void SetActive (string name)
         {
             if (name == null)
@@ -88,6 +111,10 @@ namespace FurryLana.Engine.Camera
             }
         }
 
+        /// <summary>
+        /// Set the active camera.
+        /// </summary>
+        /// <param name="camera">Camera.</param>
         public void SetActive (ICamera camera)
         {
             if (camera == null)
@@ -96,6 +123,10 @@ namespace FurryLana.Engine.Camera
             SetActive (camera.Name);
         }
 
+        /// <summary>
+        /// Set the active camera and set a new group if necessary.
+        /// </summary>
+        /// <param name="name">The camera name.</param>
         public void SetActiveRecursive (string name)
         {
             if (name == null)
@@ -119,6 +150,10 @@ namespace FurryLana.Engine.Camera
             }
         }
 
+        /// <summary>
+        /// Set the active camera and set a new group if necessary.
+        /// </summary>
+        /// <param name="camera">Camera.</param>
         public void SetActiveRecursive (ICamera camera)
         {
             if (camera == null)
@@ -127,6 +162,10 @@ namespace FurryLana.Engine.Camera
             SetActiveRecursive (camera.Name);
         }
 
+        /// <summary>
+        /// Set the active camera group.
+        /// </summary>
+        /// <param name="name">Name.</param>
         public void SetGroup (string name)
         {
             if (name == null)
@@ -167,6 +206,10 @@ namespace FurryLana.Engine.Camera
             }
         }
 
+        /// <summary>
+        /// Set the active camera group.
+        /// </summary>
+        /// <param name="group">The group.</param>
         public void SetGroup (ICameraManager group)
         {
             if (group == null)
@@ -174,6 +217,9 @@ namespace FurryLana.Engine.Camera
             SetGroup (group.Name);
         }
 
+        /// <summary>
+        /// Set ActiveCamera to the next camera in the collection
+        /// </summary>
         public void Next ()
         {
             if (ActiveGroup.Name == this.Name)
@@ -196,6 +242,9 @@ namespace FurryLana.Engine.Camera
                 ActiveGroup.Next ();
         }
 
+        /// <summary>
+        /// Set ActiveCamera to the previous camera in the collection
+        /// </summary>
         public void Prev ()
         {
             if (ActiveGroup.Name == this.Name)
@@ -218,6 +267,10 @@ namespace FurryLana.Engine.Camera
                 ActiveGroup.Prev ();
         }
 
+        /// <summary>
+        /// Get or set the currently active camera.
+        /// </summary>
+        /// <value>The camera.</value>
         public ICamera ActiveCamera
         {
             get
@@ -230,14 +283,26 @@ namespace FurryLana.Engine.Camera
             }
         }
 
+        /// <summary>
+        /// Get or set the active camera group.
+        /// </summary>
+        /// <value>The active group.</value>
         public ICameraManager ActiveGroup { get; set; }
 
+        /// <summary>
+        /// Get the internal active camera (only use this if you are a camera manager).
+        /// </summary>
+        /// <value>The internal active camera.</value>
         public ICamera activeCamInternal { get; protected set; }
 
         #endregion
 
         #region IManager implementation
 
+        /// <summary>
+        /// Add the specified item.
+        /// </summary>
+        /// <param name="camera">Camera.</param>
         public void Add (ICameraManageable camera)
         {
             if (camera == null)
@@ -248,6 +313,10 @@ namespace FurryLana.Engine.Camera
             Count++;
         }
 
+        /// <summary>
+        /// Remove the specified item.
+        /// </summary>
+        /// <param name="name">Name.</param>
         public void Remove (string name)
         {
             if (name == null)
@@ -264,6 +333,10 @@ namespace FurryLana.Engine.Camera
             });
         }
 
+        /// <summary>
+        /// Remove the specified item.
+        /// </summary>
+        /// <param name="camera">Camera.</param>
         public void Remove (ICameraManageable camera)
         {
             if (camera == null)
@@ -271,17 +344,30 @@ namespace FurryLana.Engine.Camera
             Remove (camera.Name);
         }
 
+        /// <summary>
+        /// Gets the IManageable by name.
+        /// </summary>
+        /// <returns>The IManageable.</returns>
+        /// <param name="name">Name.</param>
         public ICameraManageable GetByName (string name)
         {
             return Cameras.Find (c => c.Name == name);
         }
 
+        /// <summary>
+        /// Gets the count.
+        /// </summary>
+        /// <value>The count.</value>
         public int Count { get; protected set; }
 
         #endregion
 
         #region IEnumerable implementation
 
+        /// <summary>
+        /// Gets the enumerator.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
         public IEnumerator GetEnumerator ()
         {
             return Cameras.GetEnumerator ();
@@ -291,11 +377,17 @@ namespace FurryLana.Engine.Camera
 
         #region ICameraManageable implementation
 
+        /// <summary>
+        /// This method is called when the camera manager switches to this subject.
+        /// </summary>
         public void Enable ()
         {
             ActiveCamera.Enable ();
         }
 
+        /// <summary>
+        /// This method is called when the camera manager switches from this subject to another one.
+        /// </summary>
         public void Disable ()
         {
             ActiveCamera.Disable ();
@@ -305,9 +397,18 @@ namespace FurryLana.Engine.Camera
 
         #region IResource implementation
 
+        /// <summary>
+        /// Init this resource. This method may not be called from the main thread as the initialization process is
+        /// multi threaded.
+        /// </summary>
         public void Init ()
         {}
 
+        /// <summary>
+        /// Gets the init jobs.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
         public List<Action> GetInitJobs (List<Action> list)
         {
             foreach (var c in Cameras)
@@ -315,9 +416,18 @@ namespace FurryLana.Engine.Camera
             return list;
         }
 
+        /// <summary>
+        /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
+        /// </summary>
         public void Load ()
         {}
 
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        /// <param name="reloader">Reloader.</param>
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             foreach (var c in Cameras)
@@ -326,19 +436,40 @@ namespace FurryLana.Engine.Camera
             return list;
         }
 
+        /// <summary>
+        /// Destroy this resource.
+        /// 
+        /// Why not IDisposable:
+        /// IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
+        /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+        /// context.
+        /// </summary>
         public void Destroy ()
         {
             Cameras.ForEach (c => c.Destroy ());
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="FurryLana.Engine.Camera.CameraManager"/> is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }
 
+        /// <summary>
+        /// Fire this event when you need the Load function to be called.
+        /// For example after init or when new resources needs to be loaded.
+        /// </summary>
+        /// <value>NeedsLoad handlers.</value>
         public EventHandler NeedsLoad { get; set; }
 
         #endregion
 
         #region IFrameSyncedUpdate implementation
 
+        /// <summary>
+        /// This update is called before every frame draw inside a gl context.
+        /// </summary>
+        /// <param name="deltaTime">Time delta.</param>
         public void FrameSyncedUpdate (float deltaTime)
         {
             ActiveCamera.FrameSyncedUpdate (deltaTime);
@@ -348,6 +479,11 @@ namespace FurryLana.Engine.Camera
 
         #region IUpdate implementation
 
+        /// <summary>
+        /// This update is called in an extra thread which does not have a valid gl context.
+        /// The updaterate might differ from the framerate.
+        /// </summary>
+        /// <param name="desc">Update description.</param>
         public void Update (UpdateDescription desc)
         {
             ActiveCamera.Update (desc);
@@ -357,6 +493,9 @@ namespace FurryLana.Engine.Camera
 
         #region IDrawable implementation
 
+        /// <summary>
+        /// Draw this instance.
+        /// </summary>
         public void Draw ()
         {
             ActiveCamera.Draw ();
@@ -366,6 +505,10 @@ namespace FurryLana.Engine.Camera
 
         #region IManageable implementation
 
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
         public string Name { get; set; }
 
         #endregion

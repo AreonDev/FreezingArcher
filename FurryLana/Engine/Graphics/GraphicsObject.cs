@@ -37,6 +37,9 @@ using ShaderType = FurryLana.Engine.Graphics.Shader.ShaderType;
 
 namespace FurryLana.Engine.Graphics
 {
+    /// <summary>
+    /// Graphics object.
+    /// </summary>
     public class GraphicsObject : IGraphicsResource, IPosition, IRotation
     {
         void Create (ShaderProgram shader, Vertex[] vertices, int[] indices, ITexture[] textures)
@@ -107,6 +110,13 @@ namespace FurryLana.Engine.Graphics
             return textures;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.GraphicsObject"/> class.
+        /// </summary>
+        /// <param name="shader">Shader.</param>
+        /// <param name="vertices">Vertices.</param>
+        /// <param name="indices">Indices.</param>
+        /// <param name="textures">Textures.</param>
         public GraphicsObject (ShaderProgram shader, Vertex[] vertices, int[] indices, ITexture[] textures)
         {
             DoLoad = () => {
@@ -114,6 +124,12 @@ namespace FurryLana.Engine.Graphics
             };
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.GraphicsObject"/> class.
+        /// </summary>
+        /// <param name="shader">Shader.</param>
+        /// <param name="modelPath">Model path.</param>
+        /// <param name="texturePaths">Texture paths.</param>
         public GraphicsObject (ShaderProgram shader, string modelPath, string[] texturePaths)
         {
             DoLoad = () => {
@@ -127,6 +143,14 @@ namespace FurryLana.Engine.Graphics
             };
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.GraphicsObject"/> class.
+        /// </summary>
+        /// <param name="fragmentShader">Fragment shader.</param>
+        /// <param name="vertexShader">Vertex shader.</param>
+        /// <param name="vertices">Vertices.</param>
+        /// <param name="indices">Indices.</param>
+        /// <param name="texturePaths">Texture paths.</param>
         public GraphicsObject (string fragmentShader, string vertexShader, Vertex[] vertices, int[] indices,
                                string[] texturePaths)
         {
@@ -140,6 +164,13 @@ namespace FurryLana.Engine.Graphics
             };
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.GraphicsObject"/> class.
+        /// </summary>
+        /// <param name="fragmentShader">Fragment shader.</param>
+        /// <param name="vertexShader">Vertex shader.</param>
+        /// <param name="modelPath">Model path.</param>
+        /// <param name="textures">Textures.</param>
         public GraphicsObject (string fragmentShader, string vertexShader, string modelPath, ITexture[] textures)
         {
             DoLoad = () => {
@@ -154,6 +185,13 @@ namespace FurryLana.Engine.Graphics
             };
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.GraphicsObject"/> class.
+        /// </summary>
+        /// <param name="shader">Shader.</param>
+        /// <param name="vertices">Vertices.</param>
+        /// <param name="indices">Indices.</param>
+        /// <param name="texturePaths">Texture paths.</param>
         public GraphicsObject (ShaderProgram shader, Vertex[] vertices, int[] indices, string[] texturePaths)
         {
             DoLoad = () => {
@@ -163,6 +201,14 @@ namespace FurryLana.Engine.Graphics
             };
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.GraphicsObject"/> class.
+        /// </summary>
+        /// <param name="fragmentShader">Fragment shader.</param>
+        /// <param name="vertexShader">Vertex shader.</param>
+        /// <param name="vertices">Vertices.</param>
+        /// <param name="indices">Indices.</param>
+        /// <param name="textures">Textures.</param>
         public GraphicsObject (string fragmentShader, string vertexShader, Vertex[] vertices, int[] indices, ITexture[] textures)
         {
             DoLoad = () => {
@@ -173,6 +219,12 @@ namespace FurryLana.Engine.Graphics
             };
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.GraphicsObject"/> class.
+        /// </summary>
+        /// <param name="shader">Shader.</param>
+        /// <param name="modelPath">Model path.</param>
+        /// <param name="textures">Textures.</param>
         public GraphicsObject (ShaderProgram shader, string modelPath, ITexture[] textures)
         {
             DoLoad = () => {
@@ -184,6 +236,13 @@ namespace FurryLana.Engine.Graphics
             };
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FurryLana.Engine.Graphics.GraphicsObject"/> class.
+        /// </summary>
+        /// <param name="fragmentShader">Fragment shader.</param>
+        /// <param name="vertexShader">Vertex shader.</param>
+        /// <param name="modelPath">Model path.</param>
+        /// <param name="texturePaths">Texture paths.</param>
         public GraphicsObject (string fragmentShader, string vertexShader, string modelPath, string[] texturePaths)
         {
             DoLoad = () => {
@@ -200,46 +259,96 @@ namespace FurryLana.Engine.Graphics
             };
         }
 
+        /// <summary>
+        /// Gets or sets the shader.
+        /// </summary>
+        /// <value>The shader.</value>
         public ShaderProgram     Shader         { get; protected set; }
+        /// <summary>
+        /// Gets or sets the VA.
+        /// </summary>
+        /// <value>The VA.</value>
         public VertexArrayObject VAO            { get; protected set; }
+        /// <summary>
+        /// Gets or sets the textures.
+        /// </summary>
+        /// <value>The textures.</value>
         public ITexture[]        Textures       { get; set; }
+        /// <summary>
+        /// Gets or sets the light direction.
+        /// </summary>
+        /// <value>The light direction.</value>
         public Vector3           LightDirection { get; set; }
 
 #if Vertex
+        /// <summary>
+        /// The vertex buffer object.
+        /// </summary>
         protected VertexBuffer<Vertex> VBO;
 #else
         protected VertexBuffer<Vector4> VBO;
 #endif
+        /// <summary>
+        /// The index buffer object.
+        /// </summary>
         protected VertexBuffer<int> IBO;
+
+        /// <summary>
+        /// The do load action.
+        /// </summary>
         protected Action DoLoad;
+
+        /// <summary>
+        /// The sampler.
+        /// </summary>
         public int Sampler;
 
         #region IPosition implementation
 
+        /// <summary>
+        /// Position in space
+        /// </summary>
+        /// <value>The position.</value>
         public Vector3 Position { get; set; }
 
         #endregion
 
         #region IRotation implementation
 
+        /// <summary>
+        /// Gets or sets the rotation.
+        /// </summary>
+        /// <value>The rotation.</value>
         public Vector3 Rotation { get; set; }
 
         #endregion
 
         #region IResource implementation
 
+        /// <summary>
+        /// Init this resource. This method may not be called from the main thread as the initialization process is
+        /// multi threaded.
+        /// </summary>
         public void Init ()
         {
             Loaded = false;
             LightDirection = new Vector3 (0.6f, 0.6f, 0.6f);
         }
 
+        /// <summary>
+        /// Gets the init jobs.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
         public List<Action> GetInitJobs (List<Action> list)
         {
             list.Add (Init);
             return list;
         }
 
+        /// <summary>
+        /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
+        /// </summary>
         public void Load ()
         {
             Loaded = false;
@@ -269,6 +378,12 @@ namespace FurryLana.Engine.Graphics
             Loaded = true;
         }
 
+        /// <summary>
+        /// Gets the load jobs.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        /// <param name="reloader">Reloader.</param>
         public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
         {
             list.Add (Load);
@@ -276,6 +391,14 @@ namespace FurryLana.Engine.Graphics
             return list;
         }
 
+        /// <summary>
+        /// Destroy this resource.
+        /// 
+        /// Why not IDisposable:
+        /// IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
+        /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+        /// context.
+        /// </summary>
         public void Destroy ()
         {
             VAO.Destroy ();
@@ -284,8 +407,17 @@ namespace FurryLana.Engine.Graphics
             Shader.Destroy ();
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="FurryLana.Engine.Graphics.GraphicsObject"/> is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }
 
+        /// <summary>
+        /// Fire this event when you need the Load function to be called.
+        /// For example after init or when new resources needs to be loaded.
+        /// </summary>
+        /// <value>NeedsLoad handlers.</value>
         public EventHandler NeedsLoad { get; set; }
 
         #endregion
@@ -294,6 +426,10 @@ namespace FurryLana.Engine.Graphics
 
         //TODO: Update really needed??????? FUCK YOU!
 
+        /// <summary>
+        /// This update is called before every frame draw inside a gl context.
+        /// </summary>
+        /// <param name="deltaTime">Time delta.</param>
         public void FrameSyncedUpdate (float deltaTime)
         {
             Shader["ViewMatrix"] = Engine.Application.Application.Instance.GameManager.CurrentGame
@@ -307,12 +443,20 @@ namespace FurryLana.Engine.Graphics
 
         #region IUpdate implementation
 
+        /// <summary>
+        /// This update is called in an extra thread which does not have a valid gl context.
+        /// The updaterate might differ from the framerate.
+        /// </summary>
+        /// <param name="desc">Update description.</param>
         public void Update (UpdateDescription desc)
         {
         }
 
         #endregion
 
+        /// <summary>
+        /// The texture unit names for shader texture samplers.
+        /// </summary>
         protected string[] textureUnitNames = new string[]
         {
             "DiffuseTexture",
@@ -349,6 +493,10 @@ namespace FurryLana.Engine.Graphics
             "GeneralTexture27"
         };
 
+        /// <summary>
+        /// Gets the texture unit names.
+        /// </summary>
+        /// <value>The texture unit names.</value>
         public string[] TextureUnitNames
         {
             get
@@ -359,6 +507,9 @@ namespace FurryLana.Engine.Graphics
 
         #region IDrawable implementation
 
+        /// <summary>
+        /// Draw this instance.
+        /// </summary>
         public void Draw ()
         {
             for (int i = 0; i < Textures.Length; i++)

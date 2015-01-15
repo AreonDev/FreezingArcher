@@ -133,7 +133,7 @@ namespace FurryLana.Engine.Application
                     Window.ToggleFullscreen ();
                 }
 
-                if (key == Key.Escape && action == KeyAction.Release)
+                if (key == Key.F6 && action == KeyAction.Release)
                 {
                     if (Window.IsMouseCaptured ())
                         Window.ReleaseMouse ();
@@ -141,7 +141,7 @@ namespace FurryLana.Engine.Application
                         Window.CaptureMouse ();
                 }
 
-                if (key == Key.F4 && action == KeyAction.Release && mods == KeyModifiers.Alt)
+                if (key == Key.Escape && action == KeyAction.Release)
                     Window.Close ();
 
                 ResourceManager.InputManager.HandleKeyboardInput (window, key, scancode, action, mods);

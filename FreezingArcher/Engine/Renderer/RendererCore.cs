@@ -9,7 +9,7 @@ namespace FreezingArcher.Renderer
 {
     class RendererCore
     {
-        public void Draw()
+        public static void Draw()
         {
             //TODO
             throw new NotImplementedException();

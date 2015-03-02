@@ -38,7 +38,7 @@ namespace FreezingArcher.Core.Interfaces
         /// Gets the window.
         /// </summary>
         /// <value>The window.</value>
-        IWindow Window { get; }
+        Window Window { get; }
 
         // <summary>
         // Gets the resource manager.

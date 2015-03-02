@@ -25,39 +25,36 @@ using System.Collections.Generic;
 
 namespace FreezingArcher.Core.Interfaces
 {
+    // TODO
+    // statt Action eine Struktur mit unmananged function ptr (schneller)
+    // Init rauswerfen
+    // per Interface zwischen Resource und GLResource unterscheiden (nur noch eine Load Methode je interface)
+
+    delegate void Handler ();
+
     /// <summary>
     /// Resource interface.
     /// </summary>
     public interface IResource
     {
         /// <summary>
-        /// Init this resource. This method may not be called from the main thread as the initialization process is
+        /// Gets the init jobs. The init jobs may not be called from the main thread as the initialization process is
         /// multi threaded.
-        /// </summary>
-        void Init ();
-
-        /// <summary>
-        /// Gets the init jobs.
         /// </summary>
         /// <returns>The init jobs.</returns>
         List<Action> GetInitJobs (List<Action> list);
-        
-        /// <summary>
-        /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
-        /// </summary>
-        void Load ();
 
         /// <summary>
-        /// Gets the load jobs.
+        /// Gets the load jobs. The load jobs will be executed sequentially in the gl thread.
         /// </summary>
         /// <returns>The load jobs.</returns>
-        List<Action> GetLoadJobs (List<Action> list, EventHandler reloader);
+        List<Action> GetLoadJobs (List<Action> list, Handler reloader);
         
         /// <summary>
         /// Destroy this resource.
         /// 
         /// Why not IDisposable:
-        /// IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
+        /// IDisposable is called from within the garbage collector context so we do not have a valid gl context there.
         /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
         /// context.
         /// </summary>
@@ -71,10 +68,9 @@ namespace FreezingArcher.Core.Interfaces
         bool Loaded { get; }
 
         /// <summary>
-        /// Fire this event when you need the Load function to be called.
+        /// Fire this event when you need the binded load function to be called.
         /// For example after init or when new resources needs to be loaded.
         /// </summary>
-        /// <value>NeedsLoad handlers.</value>
-        EventHandler NeedsLoad { get; set; }
+        event Handler NeedsLoad;
     }
 }

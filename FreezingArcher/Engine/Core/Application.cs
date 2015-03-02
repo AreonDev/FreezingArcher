@@ -52,78 +52,104 @@ namespace FreezingArcher.Core
 
             Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080),
                 /* GameManager.RootGame.Name FIXME */ name);
+
+            #if DEBUG
             CreateTable ();
+            #endif
             
             Window.WindowResize = (GlfwWindowPtr window, int width, int height) => {
+                #if DEBUG
                 WriteAt (1, 5, "       ");
                 WriteAt (1, 5, width.ToString ());
                 WriteAt (9, 5, "        ");
                 WriteAt (9, 5, height.ToString ());
+                #endif
+
                 GL.Viewport (0, 0, width, height);
                 //GameManager.CurrentGame.LevelManager.CurrentLevel.UpdateProjectionMatrix (width, height);FIXME
             };
             
             Window.WindowMove = (GlfwWindowPtr window, int x, int y) => {
+                #if DEBUG
                 WriteAt (18, 5, "       ");
                 WriteAt (18, 5, x.ToString ());
                 WriteAt (26, 5, "       ");
                 WriteAt (26, 5, y.ToString ());
+                #endif
             };
             
             Window.WindowClose = (GlfwWindowPtr window) => {
+                #if DEBUG
                 WriteAt (17, 15, "                                                       ");
                 WriteAt (17, 15, " WindowClose fired");
+                #endif
             };
             
             Window.WindowFocus = (GlfwWindowPtr window, bool focus) => {
+                #if DEBUG
                 WriteAt (58, 9, "              ");
                 WriteAt (58, 9, focus.ToString ());
+                #endif
             };
             
             Window.WindowMinimize = (GlfwWindowPtr window, bool minimized) => {
+                #if DEBUG
                 WriteAt (58, 11, "              ");
                 WriteAt (58, 11, minimized.ToString ());
+                #endif
             };
             
             Window.WindowError = (GlfwError error, string desc) => {
+                #if DEBUG
                 WriteAt (17, 15, "                                                       ");
                 WriteAt (17, 15, "WindowError: " + error + " - " + desc);
+                #endif
             };
             
             Window.MouseButton = (GlfwWindowPtr window, MouseButton button, KeyAction action) => {
+                #if DEBUG
                 WriteAt (50, 5, "            ");
                 WriteAt (50, 5, button.ToString ());
                 WriteAt (63, 5, "         ");
                 WriteAt (63, 5, action.ToString ());
+                #endif
                 //ResourceManager.InputManager.HandleMouseButton (window, button, action); FIXME
             };
 
             Window.MouseMove = (GlfwWindowPtr window, double x, double y) => {
+                #if DEBUG
                 WriteAt (34, 5, "       ");
                 WriteAt (34, 5, string.Format ("{0:f}", x));
                 WriteAt (42, 5, "       ");
                 WriteAt (42, 5, string.Format ("{0:f}", y));
+                #endif
                 //ResourceManager.InputManager.HandleMouseMove (window, x, y); FIXME
             };
             
             Window.MouseOver = (GlfwWindowPtr window, bool enter) => {
+                #if DEBUG
                 WriteAt (58, 13, "              ");
                 WriteAt (58, 13, enter.ToString ());
+                #endif
             };
             
             Window.MouseScroll = (GlfwWindowPtr window, double xoffs, double yoffs) => {
+                #if DEBUG
                 WriteAt (24, 13, "       ");
                 WriteAt (24, 13, string.Format ("{0:f}", xoffs));
                 WriteAt (32, 13, "       ");
                 WriteAt (32, 13, string.Format ("{0:f}", yoffs));
+                #endif
                 //ResourceManager.InputManager.HandleMouseScroll (window, xoffs, yoffs); FIXME
             };
             
             Window.KeyAction = (GlfwWindowPtr window, Key key, int scancode, KeyAction action, KeyModifiers mods) => {
+                #if DEBUG
                 WriteAt (1, 13, "             ");
                 WriteAt (1, 13, key.ToString ());
                 WriteAt (15, 13, "        ");
                 WriteAt (15, 13, action.ToString ());
+                #endif
                 
                 if (key == Key.F16 && action == KeyAction.Release)// F11 - dafuq?
                 {
@@ -204,7 +230,7 @@ namespace FreezingArcher.Core
         /// Gets the window.
         /// </summary>
         /// <value>The window.</value>
-        public IWindow Window { get; protected set; }
+        public Window Window { get; protected set; }
 
         // <summary>
         // Gets the resource manager.
@@ -263,7 +289,7 @@ namespace FreezingArcher.Core
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
         /// <param name="reloader">The NeedLoad event handler.</param>
-        public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
+        public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
             list = Window.GetLoadJobs (list, reloader);
             //list = GameManager.GetLoadJobs (list, reloader);FIXME
@@ -302,8 +328,7 @@ namespace FreezingArcher.Core
         /// Fire this event when you need the Load function to be called.
         /// For example after init or when new resources needs to be loaded.
         /// </summary>
-        /// <value>NeedsLoad handlers.</value>
-        public EventHandler NeedsLoad { get; set; }
+        public event Handler NeedsLoad;
 
         #endregion
 
@@ -322,6 +347,7 @@ namespace FreezingArcher.Core
         /// </summary>
         protected JobExecuter Initer;
 
+        #if DEBUG
         /// <summary>
         /// Creates the event table.
         /// </summary>
@@ -361,5 +387,6 @@ namespace FreezingArcher.Core
             Console.SetCursorPosition (x, origRow + y);
             Console.Write (s);
         }
+        #endif
     }
 }

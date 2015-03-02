@@ -20,7 +20,6 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-#define DEBUG
 #define LINUX_INTEL_COMPATIBLE
 
 using System;
@@ -34,7 +33,7 @@ namespace FreezingArcher.Core
     /// <summary>
     /// Window.
     /// </summary>
-    public class Window : IWindow
+    public class Window : IResource
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.Window"/> class.
@@ -52,10 +51,10 @@ namespace FreezingArcher.Core
         #region IResource implementation
 
         /// <summary>
-        /// Init this resource. This method may not be called from the main thread as the initialization process is
+        /// Init this window. This method may not be called from the main thread as the initialization process is
         /// multi threaded.
         /// </summary>
-        public void Init ()
+        protected void Init ()
         {
             try
             {
@@ -69,7 +68,8 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// Gets the init jobs.
+        /// Gets the init jobs. The init jobs may not be called from the main thread as the initialization process is
+        /// multi threaded.
         /// </summary>
         /// <returns>The init jobs.</returns>
         /// <param name="list">List.</param>
@@ -79,9 +79,9 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
+        /// Load this window.
         /// </summary>
-        public void Load ()
+        protected void Load ()
         {
             try
             {
@@ -97,12 +97,12 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// Gets the load jobs.
+        /// Gets the load jobs. The load jobs will be executed sequentially in the gl thread.
         /// </summary>
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
-        /// <param name="reloader">The NeedLoad event handler.</param>
-        public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
+        /// <param name="reloader">Reloader.</param>
+        public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
             NeedsLoad = reloader;
             return list;
@@ -123,29 +123,20 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// Close this window.
-        /// </summary>
-        public void Close ()
-        {
-            Glfw.SetWindowShouldClose (Win, true);
-        }
-
-        /// <summary>
         /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Core.Window"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }
-        
+
         /// <summary>
-        /// Fire this event when you need the Load function to be called.
+        /// Fire this event when you need the binded load function to be called.
         /// For example after init or when new resources needs to be loaded.
         /// </summary>
-        /// <value>NeedsLoad handlers.</value>
-        public EventHandler NeedsLoad { get; set; }
+        public event Handler NeedsLoad;
 
         #endregion
 
-        #region IWindow implementation
+        #region Window implementation
 
         /// <summary>
         /// Toggles the fullscreen mode.
@@ -261,6 +252,14 @@ namespace FreezingArcher.Core
         public bool IsMouseCaptured ()
         {
             return CursorMode == CursorMode.CursorCaptured;
+        }
+
+        /// <summary>
+        /// Close this window.
+        /// </summary>
+        public void Close ()
+        {
+            Glfw.SetWindowShouldClose (Win, true);
         }
 
         /// <summary>

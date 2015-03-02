@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +9,12 @@ namespace FreezingArcher.Renderer
 {
     class RendererCore
     {
+        public void Draw()
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
         public static void Clear(Color4 color)
         {
             GL.ClearColor(color);

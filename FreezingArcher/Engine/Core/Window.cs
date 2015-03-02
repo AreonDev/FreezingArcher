@@ -22,6 +22,7 @@
 //
 #define DEBUG
 #define LINUX_INTEL_COMPATIBLE
+
 using System;
 using Pencil.Gaming;
 using Pencil.Gaming.MathUtils;

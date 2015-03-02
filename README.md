@@ -1,9 +1,8 @@
-FurryLana
+FreezingArcher
 =========
-A 3D snake game
+A 3D game engine (framework)
 
 About the name
 --------------
 It was a name suggestion from github.
 
-WILLY WAS HERE XP

@@ -65,7 +65,7 @@ namespace FreezingArcher.Core
                 WriteAt (9, 5, height.ToString ());
                 #endif
 
-                GL.Viewport (0, 0, width, height);
+                GL.Viewport (0, 0, width, height); //FIXME
                 //GameManager.CurrentGame.LevelManager.CurrentLevel.UpdateProjectionMatrix (width, height);FIXME
             };
             

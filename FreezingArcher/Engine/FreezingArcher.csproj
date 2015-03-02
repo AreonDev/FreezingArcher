@@ -91,6 +91,12 @@
     <Compile Include="Core\Interfaces\IManager.cs" />
     <Compile Include="Core\Interfaces\IResource.cs" />
     <Compile Include="Core\LinqExtensions.cs" />
+    <Compile Include="Renderer\RendererCore.cs" />
+    <Compile Include="Renderer\GraphicsResource.cs" />
+    <Compile Include="Renderer\GraphicsResourceManager.cs" />
+    <Compile Include="Renderer\Shader.cs" />
+    <Compile Include="Renderer\ShaderProgram.cs" />
+    <Compile Include="Renderer\Texture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

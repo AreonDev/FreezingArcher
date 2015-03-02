@@ -2,7 +2,7 @@
 //  TestApplication.cs
 //
 //  Author:
-//       Fin Christensen <christensen.fin@gmail.com>
+//       Hans Jürgen Beklopptenburg <beklopptenburg.hans-juergen@gmail.com>
 //
 //  Copyright (c) 2014 Fin Christensen
 //

@@ -9,6 +9,12 @@ namespace FreezingArcher.Renderer
 {
     class RendererCore
     {
+        public static void Clear(Color4 color)
+        {
+            GL.ClearColor(color);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+        }
+
         public static void WindowResize(int width, int height)
         {
             GL.Viewport(0, 0, width, height);

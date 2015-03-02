@@ -101,6 +101,10 @@
     <Compile Include="Input\MouseInput.cs" />
     <Compile Include="Input\UpdateDescription.cs" />
     <Compile Include="Renderer\VertexBuffer.cs" />
+    <Compile Include="Content\Game.cs" />
+    <Compile Include="Content\Level.cs" />
+    <Compile Include="Content\LevelManager.cs" />
+    <Compile Include="Core\Interfaces\IUpdate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -208,4 +212,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Content\" />
+  </ItemGroup>
 </Project>

@@ -75,6 +75,7 @@ namespace FreezingArcher.Core
         /// <param name="list">List.</param>
         public List<Action> GetInitJobs (List<Action> list)
         {
+            list.Add (Init);
             return list;
         }
 
@@ -104,6 +105,7 @@ namespace FreezingArcher.Core
         /// <param name="reloader">Reloader.</param>
         public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
+            list.Add (Load);
             NeedsLoad = reloader;
             return list;
         }

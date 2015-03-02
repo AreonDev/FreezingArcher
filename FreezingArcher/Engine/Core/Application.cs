@@ -18,7 +18,8 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USFreezingArcherm;
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -33,25 +34,21 @@ namespace FreezingArcher.Core
     /// <summary>
     /// Test application.
     /// </summary>
-    public class Application : IApplication
+    public class Application
     {
         /// <summary>
         /// The global application instance.
         /// </summary>
-        public static IApplication Instance;
+        public static Application Instance;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.Application"/> class.
         /// </summary>
         // / <param name="game">The initial root game.</param>
-        public Application (/* pass ressource here? */string name)
+        public Application (string name)
         {
-            //ResourceManager = new ResourceManager ();FIXME
-            //GameManager = new GameManager (game);FIXME
-            //Resource = game;FIXME
-
-            Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080),
-                /* GameManager.RootGame.Name FIXME */ name);
+            // read from settings FIXME
+            Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080), name);
 
             #if DEBUG
             CreateTable ();
@@ -214,29 +211,11 @@ namespace FreezingArcher.Core
             }
         }
 
-        // <summary>
-        // Gets the game manager.
-        // </summary>
-        // <value>The game manager.</value>
-        //public IGameManager GameManager { get; protected set; }FIXME
-
-        // <summary>
-        // Gets or sets the binded resource.
-        // </summary>
-        // <value>The resource.</value>
-        //public IGraphicsResource Resource { get; set; }FIXME
-
         /// <summary>
         /// Gets the window.
         /// </summary>
         /// <value>The window.</value>
         public Window Window { get; protected set; }
-
-        // <summary>
-        // Gets the resource manager.
-        // </summary>
-        // <value>The resource manager.</value>
-        //public IResourceManager ResourceManager { get; protected set; }FIXME
 
         #endregion
 
@@ -253,8 +232,7 @@ namespace FreezingArcher.Core
             Initer = new JobExecuter();
             Initer.InsertJobs (GetInitJobs (new List<Action>()));
             Loader = new JobExecuter();
-            Loader.InsertJobs (GetLoadJobs (new List<Action>(), new EventHandler (Loader.NeedsReexecHandler)));
-            Window.Init ();
+            Loader.InsertJobs (GetLoadJobs (new List<Action>(), Loader.NeedsReexecHandler));
             Initer.ExecJobsParallel (Environment.ProcessorCount);
         }
 
@@ -266,9 +244,6 @@ namespace FreezingArcher.Core
         public List<Action> GetInitJobs (List<Action> list)
         {
             list = Window.GetInitJobs (list);
-            //list = GameManager.GetInitJobs (list);FIXME
-            //list = ResourceManager.GetInitJobs (list);FIXME
-            //list = Resource.GetInitJobs (list);FIXME
             return list;
         }
 
@@ -278,7 +253,6 @@ namespace FreezingArcher.Core
         public void Load ()
         {
             Loaded = false;
-            Window.Load ();
             Loader.ExecJobsSequential ();
             Loaded = true;
         }
@@ -292,9 +266,6 @@ namespace FreezingArcher.Core
         public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
             list = Window.GetLoadJobs (list, reloader);
-            //list = GameManager.GetLoadJobs (list, reloader);FIXME
-            //list = ResourceManager.GetLoadJobs (list, reloader);FIXME
-            //list = Resource.GetLoadJobs (list, reloader);FIXME
             NeedsLoad = reloader;
             return list;
         }
@@ -310,11 +281,11 @@ namespace FreezingArcher.Core
         public void Destroy ()
         {
             Loaded = false;
-            //GameManager.Destroy ();FIXME
-            //ResourceManager.Destroy ();FIXME
-            //Resource.Destroy ();FIXME
             Window.Destroy ();
+
+            #if DEBUG
             Console.SetCursorPosition (0, origRow + 17);
+            #endif
         }
 
         /// <summary>

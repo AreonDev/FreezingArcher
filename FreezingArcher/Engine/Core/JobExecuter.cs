@@ -113,15 +113,9 @@ namespace FreezingArcher.Core
         /// Handler for a NeedsReexec event or delegate.
         /// </summary>
         /// <param name="action">Action.</param>
-        /// <param name="args">Arguments.</param>
-        public void NeedsReexecHandler (object action, EventArgs args)
+        public void NeedsReexecHandler (Action action)
         {
-            Action act = action as Action;
-
-            if (act == null)
-                throw new ArgumentException ("Action should be of type Action!");
-
-            Jobs.Add (act);
+            Jobs.Add (action);
         }
     }
 }

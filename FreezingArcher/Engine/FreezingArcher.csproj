@@ -84,13 +84,16 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Core\Window.cs" />
-    <Compile Include="Core\Interfaces\IApplication.cs" />
     <Compile Include="Core\JobExecuter.cs" />
     <Compile Include="Core\Application.cs" />
     <Compile Include="Core\Interfaces\IManageable.cs" />
     <Compile Include="Core\Interfaces\IManager.cs" />
     <Compile Include="Core\Interfaces\IResource.cs" />
     <Compile Include="Core\LinqExtensions.cs" />
+    <Compile Include="Input\InputManager.cs" />
+    <Compile Include="Input\KeyboardInput.cs" />
+    <Compile Include="Input\MouseInput.cs" />
+    <Compile Include="Input\UpdateDescription.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -196,5 +199,8 @@
     <Content Include="lib64\Assimp64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Input\" />
   </ItemGroup>
 </Project>

@@ -30,7 +30,7 @@ namespace FreezingArcher.Core.Interfaces
     // Init rauswerfen
     // per Interface zwischen Resource und GLResource unterscheiden (nur noch eine Load Methode je interface)
 
-    delegate void Handler ();
+    public delegate void Handler (Action action);
 
     /// <summary>
     /// Resource interface.

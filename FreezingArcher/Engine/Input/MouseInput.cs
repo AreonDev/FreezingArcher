@@ -1,5 +1,5 @@
 //
-//  IApplication.cs
+//  MouseInput.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,41 +20,37 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using Pencil.Gaming;
 
-namespace FreezingArcher.Core.Interfaces
+namespace FreezingArcher.Input
 {
     /// <summary>
-    /// Application interface.
+    /// Mouse input.
     /// </summary>
-    public interface IApplication : IResource
+    public class MouseInput
     {
-        // <summary>
-        // Gets the game manager.
-        // </summary>
-        // <value>The game manager.</value>
-        //IGameManager GameManager { get; }FIXME
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Input.MouseInput"/> class.
+        /// </summary>
+        /// <param name="button">Button.</param>
+        /// <param name="action">Action.</param>
+        public MouseInput (MouseButton button, KeyAction action)
+        {
+            Button = button;
+            Action = action;
+        }
 
         /// <summary>
-        /// Gets the window.
+        /// Gets or sets the button.
         /// </summary>
-        /// <value>The window.</value>
-        Window Window { get; }
-
-        // <summary>
-        // Gets the resource manager.
-        // </summary>
-        // <value>The resource manager.</value>
-        //IResourceManager ResourceManager { get; }FIXME
-
-        // <summary>
-        // Gets or sets the binded resource.
-        // </summary>
-        // <value>The resource.</value>
-        //IGraphicsResource Resource { get; set; }FIXME
+        /// <value>The button.</value>
+        public MouseButton Button { get; internal set; }
 
         /// <summary>
-        /// Run this instance.
+        /// Gets or sets the action.
         /// </summary>
-        void Run ();
+        /// <value>The action.</value>
+        public KeyAction Action { get; internal set; }
     }
 }
+

@@ -178,6 +178,11 @@ namespace FreezingArcher.Core
 
         #region IApplication implementation
 
+        private void TestThread()
+        {
+
+        }
+
         /// <summary>
         /// Run this instance.
         /// </summary>

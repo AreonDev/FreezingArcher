@@ -29,6 +29,7 @@ using FreezingArcher.Input;
 using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Core
 {
@@ -50,6 +51,7 @@ namespace FreezingArcher.Core
         {
             // read from settings FIXME
             Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080), name);
+            Game = new Game (name);
 
             #if DEBUG
             CreateTable ();
@@ -176,13 +178,6 @@ namespace FreezingArcher.Core
         /// </summary>
         protected TaskFactory TaskFactory = new TaskFactory ();
 
-        #region IApplication implementation
-
-        private void TestThread()
-        {
-
-        }
-
         /// <summary>
         /// Run this instance.
         /// </summary>
@@ -206,8 +201,8 @@ namespace FreezingArcher.Core
                 counter++; FUCKING FIX THIS - THIS IS BROKEN BY DESIGN!!!!!1111elf WHAT THE FUUUUUCK! FIXME
                 */
 
-                /*Resource.FrameSyncedUpdate ((float) deltaTime);FIXME*/
-                //Renderer.RendererCore.
+                Game.FrameSyncedUpdate (deltaTime);
+                Renderer.RendererCore.Draw ();
 
                 Window.SwapBuffers ();
                 Window.PollEvents ();
@@ -222,7 +217,11 @@ namespace FreezingArcher.Core
         /// <value>The window.</value>
         public Window Window { get; protected set; }
 
-        #endregion
+        /// <summary>
+        /// Gets or sets the game.
+        /// </summary>
+        /// <value>The game.</value>
+        public Game Game { get; protected set; }
 
         #region IResource implementation
 
@@ -250,6 +249,7 @@ namespace FreezingArcher.Core
         public List<Action> GetInitJobs (List<Action> list)
         {
             list = Window.GetInitJobs (list);
+            list = Game.GetInitJobs (list);
             return list;
         }
 
@@ -272,6 +272,7 @@ namespace FreezingArcher.Core
         public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
             list = Window.GetLoadJobs (list, reloader);
+            list = Game.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }
@@ -309,10 +310,12 @@ namespace FreezingArcher.Core
 
         #endregion
 
+        #if DEBUG
         /// <summary>
         /// The original command line row.
         /// </summary>
         protected int origRow;
+        #endif
         
         /// <summary>
         /// The loader.

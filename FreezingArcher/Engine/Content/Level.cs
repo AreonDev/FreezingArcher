@@ -22,6 +22,7 @@
 //
 using System;
 using System.Collections.Generic;
+using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Input;
 
 namespace FreezingArcher.Content
@@ -59,7 +60,7 @@ namespace FreezingArcher.Content
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
         /// <param name="reloader">Reloader.</param>
-        public List<Action> GetLoadJobs (List<Action> list, EventHandler reloader)
+        public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
             NeedsLoad = reloader;
             return list;
@@ -86,8 +87,7 @@ namespace FreezingArcher.Content
         /// Fire this event when you need the Load function to be called.
         /// For example after init or when new resources needs to be loaded.
         /// </summary>
-        /// <value>NeedsLoad handlers.</value>
-        public EventHandler NeedsLoad { get; set; }
+        public event Handler NeedsLoad;
 
         #endregion
 

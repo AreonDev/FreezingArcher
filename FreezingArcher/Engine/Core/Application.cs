@@ -200,10 +200,10 @@ namespace FreezingArcher.Core
                 }
                 counter++; FUCKING FIX THIS - THIS IS BROKEN BY DESIGN!!!!!1111elf WHAT THE FUUUUUCK! FIXME
                 */
-                
-                /*Resource.FrameSyncedUpdate ((float) deltaTime);
-                Resource.Draw ();FIXME*/
-                
+
+                /*Resource.FrameSyncedUpdate ((float) deltaTime);FIXME*/
+                //Renderer.RendererCore.
+
                 Window.SwapBuffers ();
                 Window.PollEvents ();
                 
@@ -249,7 +249,7 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
+        /// Load this resource. This method will be called from the main thread within a valid gl context.
         /// </summary>
         public void Load ()
         {

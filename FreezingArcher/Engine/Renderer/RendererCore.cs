@@ -12,7 +12,7 @@ namespace FreezingArcher.Renderer
         public static void Draw()
         {
             //TODO
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public static void Clear(Color4 color)

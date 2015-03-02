@@ -90,6 +90,12 @@
     <Compile Include="Core\Interfaces\IManager.cs" />
     <Compile Include="Core\Interfaces\IResource.cs" />
     <Compile Include="Core\LinqExtensions.cs" />
+    <Compile Include="Renderer\RendererCore.cs" />
+    <Compile Include="Renderer\GraphicsResource.cs" />
+    <Compile Include="Renderer\GraphicsResourceManager.cs" />
+    <Compile Include="Renderer\Shader.cs" />
+    <Compile Include="Renderer\ShaderProgram.cs" />
+    <Compile Include="Renderer\Texture.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\KeyboardInput.cs" />
     <Compile Include="Input\MouseInput.cs" />

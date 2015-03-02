@@ -2,7 +2,7 @@
 //  TestApplication.cs
 //
 //  Author:
-//       Fin Christensen <christensen.fin@gmail.com>
+//       Hans Jürgen Beklopptenburg <beklopptenburg.hans-juergen@gmail.com>
 //
 //  Copyright (c) 2014 Fin Christensen
 //
@@ -62,7 +62,7 @@ namespace FreezingArcher.Core
                 WriteAt (9, 5, height.ToString ());
                 #endif
 
-                GL.Viewport (0, 0, width, height);
+                GL.Viewport (0, 0, width, height); //FIXME
                 //GameManager.CurrentGame.LevelManager.CurrentLevel.UpdateProjectionMatrix (width, height);FIXME
             };
             

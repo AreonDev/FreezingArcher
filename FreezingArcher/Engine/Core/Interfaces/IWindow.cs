@@ -23,7 +23,7 @@
 using Pencil.Gaming;
 using Pencil.Gaming.MathUtils;
 
-namespace FreezingArcher.Application.Interfaces
+namespace FreezingArcher.Core.Interfaces
 {
     /// <summary>
     /// Window interface.
@@ -50,7 +50,7 @@ namespace FreezingArcher.Application.Interfaces
 
         /// <summary>
         /// Gets or sets a value indicating whether this
-        /// <see cref="FreezingArcher.Application.Interfaces.IWindow"/> is fullscreen.
+        /// <see cref="FreezingArcher.Core.Interfaces.IWindow"/> is fullscreen.
         /// </summary>
         /// <value><c>true</c> if fullscreen; otherwise, <c>false</c>.</value>
         bool Fullscreen { get; set; }

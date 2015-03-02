@@ -20,9 +20,9 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FreezingArcher.Application;
+using FreezingArcher.Core;
 
-namespace FurryLana.Game
+namespace FreezingArcher.Game
 {
     /// <summary>
     /// FurryLana static main class.
@@ -35,7 +35,7 @@ namespace FurryLana.Game
         /// <param name="args">The command-line arguments.</param>
         public static void Main (string[] args)
         {
-            Application.Instance = new Application ("FurryLana");
+            Application.Instance = new Application ("FreezingArcher");
 
             Application.Instance.Init ();
             Application.Instance.Load ();

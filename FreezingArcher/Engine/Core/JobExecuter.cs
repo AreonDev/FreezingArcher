@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FreezingArcher.Application
+namespace FreezingArcher.Core
 {
     /// <summary>
     /// Job executer.
@@ -32,7 +32,7 @@ namespace FreezingArcher.Application
     public class JobExecuter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Application.JobExecuter"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Core.JobExecuter"/> class.
         /// </summary>
         public JobExecuter ()
         {

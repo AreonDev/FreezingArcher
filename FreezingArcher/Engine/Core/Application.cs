@@ -19,16 +19,16 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USFreezingArcherm;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using FreezingArcher.Core.Interfaces;
 using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
-using FreezingArcher.Application.Interfaces;
-using System;
 
-namespace FreezingArcher.Application
+namespace FreezingArcher.Core
 {
     /// <summary>
     /// Test application.
@@ -41,7 +41,7 @@ namespace FreezingArcher.Application
         public static IApplication Instance;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Application.Application"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Core.Application"/> class.
         /// </summary>
         // / <param name="game">The initial root game.</param>
         public Application (/* pass ressource here? */string name)
@@ -157,7 +157,7 @@ namespace FreezingArcher.Application
         /// </summary>
         public void Run ()
         {
-            int counter = 0;
+            //int counter = 0;FIXME
             while (!Window.ShouldClose ())
             {
                 double deltaTime = Window.GetDeltaTime ();
@@ -188,16 +188,16 @@ namespace FreezingArcher.Application
             }
         }
 
-        /// <summary>
-        /// Gets the game manager.
-        /// </summary>
-        /// <value>The game manager.</value>
+        // <summary>
+        // Gets the game manager.
+        // </summary>
+        // <value>The game manager.</value>
         //public IGameManager GameManager { get; protected set; }FIXME
 
-        /// <summary>
-        /// Gets or sets the binded resource.
-        /// </summary>
-        /// <value>The resource.</value>
+        // <summary>
+        // Gets or sets the binded resource.
+        // </summary>
+        // <value>The resource.</value>
         //public IGraphicsResource Resource { get; set; }FIXME
 
         /// <summary>
@@ -206,10 +206,10 @@ namespace FreezingArcher.Application
         /// <value>The window.</value>
         public IWindow Window { get; protected set; }
 
-        /// <summary>
-        /// Gets the resource manager.
-        /// </summary>
-        /// <value>The resource manager.</value>
+        // <summary>
+        // Gets the resource manager.
+        // </summary>
+        // <value>The resource manager.</value>
         //public IResourceManager ResourceManager { get; protected set; }FIXME
 
         #endregion
@@ -293,7 +293,7 @@ namespace FreezingArcher.Application
 
         /// <summary>
         /// Gets or sets a value indicating whether this
-        /// <see cref="FreezingArcher.Application.Application"/> is loaded.
+        /// <see cref="FreezingArcher.Core.Application"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }

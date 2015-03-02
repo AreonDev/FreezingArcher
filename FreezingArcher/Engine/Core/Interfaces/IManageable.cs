@@ -1,5 +1,5 @@
 //
-//  IApplication.cs
+//  IManageable.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,42 +20,18 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FreezingArcher;
 
-namespace FreezingArcher.Application.Interfaces
+namespace FreezingArcher.Core.Interfaces
 {
     /// <summary>
-    /// Application interface.
+    /// Manageable interface.
     /// </summary>
-    public interface IApplication : IResource
+    public interface IManageable
     {
         /// <summary>
-        /// Gets the game manager.
+        /// Gets or sets the name.
         /// </summary>
-        /// <value>The game manager.</value>
-        //IGameManager GameManager { get; }FIXME
-
-        /// <summary>
-        /// Gets the window.
-        /// </summary>
-        /// <value>The window.</value>
-        IWindow Window { get; }
-
-        /// <summary>
-        /// Gets the resource manager.
-        /// </summary>
-        /// <value>The resource manager.</value>
-        //IResourceManager ResourceManager { get; }FIXME
-
-        /// <summary>
-        /// Gets or sets the binded resource.
-        /// </summary>
-        /// <value>The resource.</value>
-        //IGraphicsResource Resource { get; set; }FIXME
-
-        /// <summary>
-        /// Run this instance.
-        /// </summary>
-        void Run ();
+        /// <value>The name.</value>
+        string Name { get; set; }
     }
 }

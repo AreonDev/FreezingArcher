@@ -23,7 +23,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FreezingArcher
+namespace FreezingArcher.Core.Interfaces
 {
     /// <summary>
     /// Resource interface.
@@ -65,7 +65,7 @@ namespace FreezingArcher
         
         /// <summary>
         /// Gets a value indicating whether this
-        /// <see cref="FreezingArcher.Graphics.Interfaces.IResource"/> is loaded.
+        /// <see cref="FreezingArcher.Core.Interfaces.IResource"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         bool Loaded { get; }

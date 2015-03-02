@@ -22,7 +22,7 @@
 //
 using System.Collections;
 
-namespace FreezingArcher
+namespace FreezingArcher.Core.Interfaces
 {
     /// <summary>
     /// Manager interface.

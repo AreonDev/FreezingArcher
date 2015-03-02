@@ -25,10 +25,10 @@
 using System;
 using Pencil.Gaming;
 using Pencil.Gaming.MathUtils;
-using FreezingArcher.Application.Interfaces;
+using FreezingArcher.Core.Interfaces;
 using System.Collections.Generic;
 
-namespace FreezingArcher.Application
+namespace FreezingArcher.Core
 {
     /// <summary>
     /// Window.
@@ -36,7 +36,7 @@ namespace FreezingArcher.Application
     public class Window : IWindow
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Application.Window"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Core.Window"/> class.
         /// </summary>
         /// <param name="size">Windowed size.</param>
         /// <param name="resolution">Resolution of the framebuffer.</param>
@@ -130,7 +130,7 @@ namespace FreezingArcher.Application
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Application.Window"/> is loaded.
+        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Core.Window"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }
@@ -313,7 +313,7 @@ namespace FreezingArcher.Application
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Application.Window"/> is fullscreen.
+        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Core.Window"/> is fullscreen.
         /// </summary>
         /// <value><c>true</c> if fullscreen; otherwise, <c>false</c>.</value>
         public bool Fullscreen

@@ -22,7 +22,7 @@
 //
 using System.Collections.Generic;
 
-namespace FreezingArcher
+namespace FreezingArcher.Core
 {
     /// <summary>
     /// Linq extensions.

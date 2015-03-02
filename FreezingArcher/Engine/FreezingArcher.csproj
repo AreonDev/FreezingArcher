@@ -83,15 +83,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="IManager.cs" />
-    <Compile Include="IManageable.cs" />
-    <Compile Include="LinqExtensions.cs" />
-    <Compile Include="Application\Window.cs" />
-    <Compile Include="Application\Interfaces\IApplication.cs" />
-    <Compile Include="Application\Interfaces\IWindow.cs" />
-    <Compile Include="Application\JobExecuter.cs" />
-    <Compile Include="Application\Application.cs" />
-    <Compile Include="IResource.cs" />
+    <Compile Include="Core\Window.cs" />
+    <Compile Include="Core\Interfaces\IApplication.cs" />
+    <Compile Include="Core\Interfaces\IWindow.cs" />
+    <Compile Include="Core\JobExecuter.cs" />
+    <Compile Include="Core\Application.cs" />
+    <Compile Include="Core\Interfaces\IManageable.cs" />
+    <Compile Include="Core\Interfaces\IManager.cs" />
+    <Compile Include="Core\Interfaces\IResource.cs" />
+    <Compile Include="Core\LinqExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

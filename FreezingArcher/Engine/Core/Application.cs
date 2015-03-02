@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FreezingArcher.Core.Interfaces;
+using FreezingArcher.Input;
 using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
@@ -62,8 +63,7 @@ namespace FreezingArcher.Core
                 WriteAt (9, 5, height.ToString ());
                 #endif
 
-                GL.Viewport (0, 0, width, height); //FIXME
-                //GameManager.CurrentGame.LevelManager.CurrentLevel.UpdateProjectionMatrix (width, height);FIXME
+                Renderer.RendererCore.WindowResize (width, height);
             };
             
             Window.WindowMove = (GlfwWindowPtr window, int x, int y) => {
@@ -110,7 +110,8 @@ namespace FreezingArcher.Core
                 WriteAt (63, 5, "         ");
                 WriteAt (63, 5, action.ToString ());
                 #endif
-                //ResourceManager.InputManager.HandleMouseButton (window, button, action); FIXME
+
+                InputManager.HandleMouseButton (window, button, action);
             };
 
             Window.MouseMove = (GlfwWindowPtr window, double x, double y) => {
@@ -120,7 +121,8 @@ namespace FreezingArcher.Core
                 WriteAt (42, 5, "       ");
                 WriteAt (42, 5, string.Format ("{0:f}", y));
                 #endif
-                //ResourceManager.InputManager.HandleMouseMove (window, x, y); FIXME
+
+                InputManager.HandleMouseMove (window, x, y);
             };
             
             Window.MouseOver = (GlfwWindowPtr window, bool enter) => {
@@ -137,7 +139,8 @@ namespace FreezingArcher.Core
                 WriteAt (32, 13, "       ");
                 WriteAt (32, 13, string.Format ("{0:f}", yoffs));
                 #endif
-                //ResourceManager.InputManager.HandleMouseScroll (window, xoffs, yoffs); FIXME
+
+                InputManager.HandleMouseScroll (window, xoffs, yoffs);
             };
             
             Window.KeyAction = (GlfwWindowPtr window, Key key, int scancode, KeyAction action, KeyModifiers mods) => {
@@ -164,7 +167,7 @@ namespace FreezingArcher.Core
                 if (key == Key.Escape && action == KeyAction.Release)
                     Window.Close ();
 
-                //ResourceManager.InputManager.HandleKeyboardInput (window, key, scancode, action, mods); FIXME
+                InputManager.HandleKeyboardInput (window, key, scancode, action, mods);
             };
         }
 
@@ -184,9 +187,6 @@ namespace FreezingArcher.Core
             while (!Window.ShouldClose ())
             {
                 double deltaTime = Window.GetDeltaTime ();
-                
-                GL.Enable (EnableCap.DepthTest);
-                GL.CullFace (CullFaceMode.FrontAndBack);
                 
                 GL.ClearColor (Color4.DodgerBlue);
                 GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -229,9 +229,10 @@ namespace FreezingArcher.Core
         {
             Loaded = false;
 
-            Initer = new JobExecuter();
+            InputManager = new InputManager ();
+            Initer = new JobExecuter ();
             Initer.InsertJobs (GetInitJobs (new List<Action>()));
-            Loader = new JobExecuter();
+            Loader = new JobExecuter ();
             Loader.InsertJobs (GetLoadJobs (new List<Action>(), Loader.NeedsReexecHandler));
             Initer.ExecJobsParallel (Environment.ProcessorCount);
         }
@@ -317,6 +318,11 @@ namespace FreezingArcher.Core
         /// The initer.
         /// </summary>
         protected JobExecuter Initer;
+
+        /// <summary>
+        /// The input manager.
+        /// </summary>
+        protected InputManager InputManager;
 
         #if DEBUG
         /// <summary>

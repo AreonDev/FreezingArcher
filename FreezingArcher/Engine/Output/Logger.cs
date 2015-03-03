@@ -103,11 +103,11 @@ namespace FreezingArcher.Output
             if (!Log.isEarly) return;
             
             Log.Dispose();
-            Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Debug, false);
+            Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Severe, false);
         }
         static Logger()
         {
-            Log = new Logger(new FileInfo("early.log"), LogLevel.Fine, false){isEarly = true,};
+            Log = new Logger(new FileInfo("early.log"), LogLevel.Severe, false){isEarly = true,};
         }
         private bool isEarly = false;
         /// <summary>The module name</summary>

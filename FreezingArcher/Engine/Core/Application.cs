@@ -89,6 +89,8 @@ namespace FreezingArcher.Core
         // / <param name="game">The initial root game.</param>
         public Application (string name)
         {
+            Output.Logger.Initialize (name);
+
             // read from settings FIXME
             Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080), name);
             Game = new Game (name);
@@ -331,6 +333,8 @@ namespace FreezingArcher.Core
             #if DEBUG
             Console.SetCursorPosition (0, origRow + 17);
             #endif
+
+            Output.Logger.Log.Dispose ();
         }
 
         /// <summary>

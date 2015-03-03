@@ -35,12 +35,7 @@ namespace FreezingArcher.Game
         /// <param name="args">The command-line arguments.</param>
         public static void Main (string[] args)
         {
-            Application.Instance = new Application ("FreezingArcher");
-
-            Application.Instance.Init ();
-            Application.Instance.Load ();
-            Application.Instance.Run ();
-            Application.Instance.Destroy ();
+            Application.Create ("FreezingArcher");
         }
     }
 }

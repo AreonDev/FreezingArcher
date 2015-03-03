@@ -105,6 +105,29 @@
     <Compile Include="Content\Level.cs" />
     <Compile Include="Content\LevelManager.cs" />
     <Compile Include="Core\Interfaces\IUpdate.cs" />
+    <Compile Include="Settings\ArrayValue.cs" />
+    <Compile Include="Settings\ConfigParser.cs" />
+    <Compile Include="Settings\FloatValue.cs" />
+    <Compile Include="Settings\Group.cs" />
+    <Compile Include="Settings\IntegerValue.cs" />
+    <Compile Include="Settings\Property.cs" />
+    <Compile Include="Settings\PropertyTypes.cs" />
+    <Compile Include="Settings\ReferencedValue.cs" />
+    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Settings\SettingsManager.cs" />
+    <Compile Include="Settings\SettingsRegistry.cs" />
+    <Compile Include="Settings\StringValue.cs" />
+    <Compile Include="Settings\Interfaces\ICfgString.cs" />
+    <Compile Include="Settings\Interfaces\IComment.cs" />
+    <Compile Include="Settings\Interfaces\IGroup.cs" />
+    <Compile Include="Settings\Interfaces\IProperty.cs" />
+    <Compile Include="Settings\Interfaces\ISettings.cs" />
+    <Compile Include="Settings\Interfaces\ISettingsChangedEvent.cs" />
+    <Compile Include="Settings\Interfaces\ISettingsManager.cs" />
+    <Compile Include="Settings\Interfaces\ISettingsRoot.cs" />
+    <Compile Include="Settings\Interfaces\IValue.cs" />
+    <Compile Include="Settings\Interfaces\SettingsChangedEventArgs.cs" />
+    <Compile Include="Settings\Interfaces\TIValue.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -214,5 +237,6 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="Content\" />
+    <Folder Include="Settings\" />
   </ItemGroup>
 </Project>

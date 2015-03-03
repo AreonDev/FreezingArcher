@@ -44,6 +44,46 @@ namespace FreezingArcher.Core
         public static Application Instance;
 
         /// <summary>
+        /// Create an application with the specified name. THIS IS GLOBAL - DO NOT USE MORE THAN ONCE!
+        /// This should be the last call of your main method. Only run in main thread!
+        /// </summary>
+        /// <param name="name">Name.</param>
+        public static void Create (string name)
+        {
+            Instance = new Application (name);
+            Instance.Init ();
+            Instance.Load ();
+            Instance.Run ();
+            Instance.Destroy ();
+        }
+
+        /// <summary>
+        /// Create an application with the specified name.
+        /// This should be the last call of your main method. Only run in main thread!
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="application">The created application.</param>
+        public static void Create (string name, out Application application)
+        {
+            application = CreateApp (name);
+        }
+
+        /// <summary>
+        /// Create an application with the specified name.
+        /// This should be the last call of your main method. Only run in main thread!
+        /// </summary>
+        /// <param name="name">Name.</param>
+        public static Application CreateApp (string name)
+        {
+            Application app = new Application (name);
+            app.Init ();
+            app.Load ();
+            app.Run ();
+            app.Destroy ();
+            return app;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.Application"/> class.
         /// </summary>
         // / <param name="game">The initial root game.</param>
@@ -183,13 +223,11 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Run ()
         {
-            //int counter = 0;FIXME
             while (!Window.ShouldClose ())
             {
                 double deltaTime = Window.GetDeltaTime ();
                 
-                GL.ClearColor (Color4.DodgerBlue);
-                GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+                Renderer.RendererCore.Clear (Color4.DodgerBlue);
 
                 /*if (counter > 4)
                 {

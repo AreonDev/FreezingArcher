@@ -31,7 +31,7 @@ namespace FreezingArcher.Content
     /// <summary>
     /// Level manager.
     /// </summary>
-    public class LevelManager
+    public class LevelManager : IManager<Level>, IResource, IUpdate
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.LevelManager"/> class.
@@ -46,8 +46,6 @@ namespace FreezingArcher.Content
         /// The levels.
         /// </summary>
         protected List<Level> Levels;
-
-        #region ILevelManager implementation
 
         /// <summary>
         /// Gets the current level.
@@ -72,8 +70,6 @@ namespace FreezingArcher.Content
         {
             CurrentLevel = level;
         }
-
-        #endregion
 
         #region IManager implementation
 
@@ -121,6 +117,18 @@ namespace FreezingArcher.Content
         }
 
         /// <summary>
+        /// Gets the <see cref="FreezingArcher.Content.LevelManager"/> with the specified name.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        public Level this[string name]
+        {
+            get
+            {
+                return GetByName (name);
+            }
+        }
+
+        /// <summary>
         /// Gets the count.
         /// </summary>
         /// <value>The count.</value>
@@ -150,13 +158,6 @@ namespace FreezingArcher.Content
         #region IResource implementation
 
         /// <summary>
-        /// Init this resource. This method may not be called from the main thread as the initialization process is
-        /// multi threaded.
-        /// </summary>
-        public void Init ()
-        {}
-
-        /// <summary>
         /// Gets the init jobs.
         /// </summary>
         /// <returns>The init jobs.</returns>
@@ -167,12 +168,6 @@ namespace FreezingArcher.Content
                 list = l.GetInitJobs (list);
             return list;
         }
-
-        /// <summary>
-        /// Load this resource. This method *should* be called from an extra loading thread with a shared gl context.
-        /// </summary>
-        public void Load ()
-        {}
 
         /// <summary>
         /// Gets the load jobs.
@@ -239,4 +234,3 @@ namespace FreezingArcher.Content
         #endregion
     }
 }
-

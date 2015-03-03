@@ -68,8 +68,6 @@ namespace FreezingArcher.Input
         /// </summary>
         protected Vector2 OldMousePosition;
 
-        #region IInputManager implementation
-
         /// <summary>
         /// Handles the keyboard input.
         /// </summary>
@@ -133,7 +131,5 @@ namespace FreezingArcher.Input
             MouseScroll = Vector2.Zero;
             return ud;
         }
-
-        #endregion
     }
 }

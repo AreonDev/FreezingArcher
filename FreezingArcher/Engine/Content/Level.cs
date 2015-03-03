@@ -30,7 +30,7 @@ namespace FreezingArcher.Content
     /// <summary>
     /// Level.
     /// </summary>
-    public class Level
+    public class Level : IResource, IUpdate, IManageable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.Level"/> class.

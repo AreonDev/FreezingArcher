@@ -12,7 +12,7 @@ namespace FreezingArcher.Settings
     /// </summary>
     public static class ConfigParser
     {
-        private static string loggerModuleName = "ConfigParser";
+        private const string loggerModuleName = "ConfigParser";
         private static char[] trimChars = new char[] {' ', '\t'};
         private static IGroup currentGroup = null;
 
@@ -187,10 +187,7 @@ namespace FreezingArcher.Settings
                     double d;
                     bool isFloat = double.TryParse (val, NumberStyles.Float,
                                                     CultureInfo.InvariantCulture.NumberFormat, out d);
-                    if (!isFloat)
-                        return new StringValue (val);
-                    else
-                        return new FloatValue (d);
+                    return !isFloat ? new StringValue (val) as IValue: new FloatValue (d);
                 }
                 else
                     return new IntegerValue (i);

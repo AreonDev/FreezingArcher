@@ -15,10 +15,7 @@ namespace FreezingArcher.Settings
         /// <param name="arr">The list of <see cref="FreezingArcher.Settings.Interfaces.IValue"/>.</param>
         public ArrayValue (List<IValue> arr)
         {
-            if (arr == null)
-                Value = new List<IValue> ();
-            else
-                Value = arr;
+            Value = arr ?? new List<IValue> ();
         }
 
         #region IValue implementation
@@ -108,4 +105,3 @@ namespace FreezingArcher.Settings
         }
     }
 }
-

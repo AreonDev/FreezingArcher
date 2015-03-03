@@ -73,7 +73,7 @@ namespace FreezingArcher.Settings
         {
             Settings.Remove (settings);
             if (SettingsChanged != null)
-                SettingsChanged (this, new SettingsChangedEventArgs () {Settings = settings});
+                SettingsChanged (this, new SettingsChangedEventArgs {Settings = settings});
         }
 
         public void Remove (string url)

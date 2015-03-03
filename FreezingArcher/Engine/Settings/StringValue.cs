@@ -13,10 +13,7 @@ namespace FreezingArcher.Settings
         /// <param name="val">The string hold by this value.</param>
         public StringValue (string val)
         {
-            if (val == null)
-                Value = "";
-            else
-                Value = val;
+            Value = val ?? "";
         }
 
         #region IValue implementation
@@ -34,7 +31,7 @@ namespace FreezingArcher.Settings
             set {
                 val = value;
                 if (RootSettings != null && RootSettings.SettingsChanged != null)
-                    RootSettings.SettingsChanged (this, new SettingsChangedEventArgs () { Settings = RootSettings });
+                    RootSettings.SettingsChanged (this, new SettingsChangedEventArgs { Settings = RootSettings });
             }
         }
 

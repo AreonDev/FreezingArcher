@@ -20,12 +20,7 @@ namespace FreezingArcher.Settings
         {
             URL = url;
             Groups = new List<IGroup> ();
-
-            if (comments == null)
-                Comments = new List<string> ();
-            else
-                Comments = comments;
-
+            Comments = comments ?? new List<string> ();
             Load ();
         }
 
@@ -35,7 +30,7 @@ namespace FreezingArcher.Settings
         {
             if (loaded)
             {
-                StreamWriter outfile = new StreamWriter (url == null ? URL : url);
+                StreamWriter outfile = new StreamWriter (url ?? URL);
                 outfile.Write (CfgString);
                 outfile.Close ();
             }

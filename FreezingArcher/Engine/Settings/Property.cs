@@ -19,16 +19,8 @@ namespace FreezingArcher.Settings
         {
             Name = name;
             Value = value;
-
-            if (comments == null)
-                Comments = new List<string> ();
-            else
-                Comments = comments;
-
-            if (linecomment == null)
-                LineComment = "";
-            else
-                LineComment = linecomment;
+            Comments = comments ?? new List<string> ();
+            LineComment = linecomment ?? "";
         }
 
         #region IProperty implementation
@@ -90,4 +82,3 @@ namespace FreezingArcher.Settings
         #endregion
     }
 }
-

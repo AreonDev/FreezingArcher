@@ -16,11 +16,7 @@ namespace FreezingArcher.Settings
         /// <param name="group">The group containing this values.</param>
         public ReferencedValue (string referenceName, IValue value, IGroup group)
         {
-            if (value == null)
-                Value = new StringValue (referenceName);
-            else
-                Value = value;
-
+            Value = value ?? new StringValue (referenceName);
             ReferenceName = referenceName;
 
             if (group == null)

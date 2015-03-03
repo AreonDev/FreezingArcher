@@ -13,7 +13,7 @@ namespace FreezingArcher.Settings
         static SettingsRegistry ()
         {}
 
-        static Dictionary<string, Dictionary<string, RegistryEntry>> Registry =
+        static readonly Dictionary<string, Dictionary<string, RegistryEntry>> Registry =
             new Dictionary<string, Dictionary<string, RegistryEntry>> ();
 
         /// <summary>
@@ -66,9 +66,9 @@ namespace FreezingArcher.Settings
         /// <param name="property">Property.</param>
         public static void Remove (string group, string property)
         {
-            if (group == null || group.Length == 0)
+            if (string.IsNullOrEmpty (group))
                 return;
-            if (property == null || property.Length == 0)
+            if (string.IsNullOrEmpty (property))
                 return;
 
             Registry[group].Remove (property);
@@ -104,10 +104,7 @@ namespace FreezingArcher.Settings
         public RegistryEntry (PropertyTypes.Types type, List<object> validValues = null)
         {
             Type = type;
-            if (validValues != null)
-                ValidValues = validValues;
-            else
-                ValidValues = new List<object> ();
+            ValidValues = validValues ?? new List<object> ();
         }
 
         public PropertyTypes.Types Type { get; set; }

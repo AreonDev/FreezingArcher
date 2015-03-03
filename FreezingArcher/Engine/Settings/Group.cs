@@ -10,7 +10,7 @@ namespace FreezingArcher.Settings
     public class Group : IGroup
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Base.Settings.Group"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Settings.Group"/> class.
         /// </summary>
         /// <param name="name">The group name.</param>
         /// <param name="properties">The properties hold by this group.</param>
@@ -18,15 +18,8 @@ namespace FreezingArcher.Settings
         public Group (string name, List<IProperty> properties = null, List<string> comments = null)
         {
             Name = name;
-            if (properties == null)
-                Properties = new List<IProperty> ();
-            else
-                Properties = properties;
-
-            if (comments == null)
-                Comments = new List<string> ();
-            else
-                Comments = comments;
+            Properties = properties ?? new List<IProperty> ();
+            Comments = comments ?? new List<string> ();
 
             foreach (IProperty p in Properties)
                 p.RootSettings = RootSettings;

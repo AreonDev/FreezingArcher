@@ -128,6 +128,18 @@
     <Compile Include="Settings\Interfaces\IValue.cs" />
     <Compile Include="Settings\Interfaces\SettingsChangedEventArgs.cs" />
     <Compile Include="Settings\Interfaces\TIValue.cs" />
+    <Compile Include="Messaging\GenerateContentMessage.cs" />
+    <Compile Include="Messaging\MessageEvent.cs" />
+    <Compile Include="Messaging\MessageID.cs" />
+    <Compile Include="Messaging\MessageManager.cs" />
+    <Compile Include="Messaging\RegisterGraphicsResourceMessage.cs" />
+    <Compile Include="Output\CachedFileWriter.cs" />
+    <Compile Include="Output\ConsoleExtension.cs" />
+    <Compile Include="Output\LogLevel.cs" />
+    <Compile Include="Output\Logger.cs" />
+    <Compile Include="Messaging\Interfaces\IMessage.cs" />
+    <Compile Include="Messaging\Interfaces\IMessageConsumer.cs" />
+    <Compile Include="Messaging\Interfaces\IMessageCreator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -238,5 +250,8 @@
   <ItemGroup>
     <Folder Include="Content\" />
     <Folder Include="Settings\" />
+    <Folder Include="Messaging\" />
+    <Folder Include="Output\" />
+    <Folder Include="Messaging\Interfaces\" />
   </ItemGroup>
 </Project>

@@ -132,7 +132,6 @@
     <Compile Include="Messaging\MessageEvent.cs" />
     <Compile Include="Messaging\MessageID.cs" />
     <Compile Include="Messaging\MessageManager.cs" />
-    <Compile Include="Messaging\RegisterGraphicsResourceMessage.cs" />
     <Compile Include="Output\CachedFileWriter.cs" />
     <Compile Include="Output\ConsoleExtension.cs" />
     <Compile Include="Output\LogLevel.cs" />

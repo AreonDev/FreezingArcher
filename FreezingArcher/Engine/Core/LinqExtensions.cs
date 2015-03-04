@@ -89,6 +89,10 @@ namespace FreezingArcher.Core
             return d > min && d < max;
         }
 
+        /// <summary>
+        /// Get absolute value of a double.
+        /// </summary>
+        /// <param name="d">Double.</param>
         public static double Abs(this double d)
         {
             return d < 0 ? -d : d;

@@ -87,10 +87,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\Math\Math.csproj">
-      <Project>{DFD52B9F-EB73-4A71-94F5-01F95237C339}</Project>
-      <Name>Math</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
       <Project>{E430674D-98AB-474A-BC42-A6DDE78623C7}</Project>
       <Name>FreezingArcher</Name>

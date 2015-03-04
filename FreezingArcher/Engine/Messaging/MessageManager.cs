@@ -1,20 +1,46 @@
+//
+//  MessageManager.cs
+//
+//  Author:
+//       Martin Koppehel <martin.koppehel@st.ovgu.de>
+//       Willy Failla <>
+//
+//  Copyright (c) 2015 Fin Christensen
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using FreezingArcher.Core;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Messaging
 {
     /// <summary>
     /// Class for passing messages from IMessageProducers to IMessageConsumers
     /// A n-to-m relationship can be modeled.
-    /// <remarks>>
-    /// SCHEIß DOKUMENTATION - Fin hat mich dazu gezwungen!!!
-    /// </remarks>
     /// </summary>
     public class MessageManager
     {
+        /// <summary>
+        /// The name of the class.
+        /// </summary>
+        public static readonly string ClassName = "MessageManager";
+
         readonly Dictionary<int, List<IMessageConsumer>> messageList = new Dictionary<int, List<IMessageConsumer>> ();
         Thread messageThread = null;
         bool run = false;
@@ -26,6 +52,7 @@ namespace FreezingArcher.Messaging
         /// </summary>
         public MessageManager ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating new message manager");
             messageThread = new Thread (FlushQueue);
             mc = new Queue<IMessage> (2000);
         }
@@ -36,6 +63,7 @@ namespace FreezingArcher.Messaging
         /// <param name="m">Message Consumer to register</param>
         public void RegisterMessageConsumer (IMessageConsumer m)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Registering new message consumer");
             m.ValidMessages.ForEach (i =>
             {
                 List<IMessageConsumer> tmp = null;
@@ -55,6 +83,7 @@ namespace FreezingArcher.Messaging
         /// <param name="m">Message Consumer to unregister</param>
         public void UnregisterMessageConsumer (IMessageConsumer m)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Removing message consumer");
             m.ValidMessages.ForEach (i =>
             {
                 List<IMessageConsumer> tmp = null;
@@ -69,6 +98,7 @@ namespace FreezingArcher.Messaging
         /// <param name="c">Message Creator to add</param>
         public void AddMessageCreator (IMessageCreator c)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Adding message creator");
             c.MessageCreated += HandleMessageCreated;
         }
 
@@ -84,6 +114,7 @@ namespace FreezingArcher.Messaging
         /// </summary>
         public void StartProcessing ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Starting processing messages ...");
             if (run)
                 return;
             run = true;
@@ -95,6 +126,7 @@ namespace FreezingArcher.Messaging
         /// </summary>
         public void StopProcessing ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Stopping processing messages ...");
             if (!run)
                 return;
             run = false;
@@ -107,6 +139,7 @@ namespace FreezingArcher.Messaging
         /// <param name="time">Time.</param>
         public void PauseProcessing (int time)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Pausing processing messages ...");
             //MessageThread.Sleep (Time);TODO
             throw new NotImplementedException ();
         }

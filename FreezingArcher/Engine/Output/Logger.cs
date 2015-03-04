@@ -97,7 +97,16 @@ namespace FreezingArcher.Output
     /// </summary>
     public class Logger
     {
+        /// <summary>
+        /// Global logger instance.
+        /// </summary>
+        /// <value>The log.</value>
         public static Logger Log { get; private set; }
+
+        /// <summary>
+        /// Initialize a global logger with the specified logfile.
+        /// </summary>
+        /// <param name="logfile">Logfile.</param>
         public static void Initialize(string logfile)
         {
             if (!Log.isEarly) return;

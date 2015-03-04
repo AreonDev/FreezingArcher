@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Input;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -33,11 +34,17 @@ namespace FreezingArcher.Content
     public class Level : IResource, IUpdate, IManageable
     {
         /// <summary>
+        /// The name of the class.
+        /// </summary>
+        public static readonly string ClassName = "Level_";
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.Level"/> class.
         /// </summary>
         /// <param name="name">Unique name.</param>
         public Level (string name)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new level '{0}'", name);
             Name = name;
             Loaded = true;
         }
@@ -75,7 +82,9 @@ namespace FreezingArcher.Content
         /// context.
         /// </summary>
         public void Destroy ()
-        {}
+        {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Destroying level '{0}'", Name);
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Content.Level"/> is loaded.

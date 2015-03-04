@@ -116,7 +116,12 @@
     <Compile Include="Messaging\Interfaces\IMessage.cs" />
     <Compile Include="Messaging\Interfaces\IMessageConsumer.cs" />
     <Compile Include="Messaging\Interfaces\IMessageCreator.cs" />
-    <Compile Include="Settings\IniConfig.cs" />
+    <Compile Include="Core\Pair.cs" />
+    <Compile Include="Configuration\IniConfig.cs" />
+    <Compile Include="Configuration\ConfigManager.cs" />
+    <Compile Include="Configuration\ConfigFile.cs" />
+    <Compile Include="Configuration\Value.cs" />
+    <Compile Include="Configuration\ValueType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -126,7 +131,7 @@
         <Policies>
           <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
           <TextStylePolicy inheritsSet="null" scope="text/x-csharp" />
-          <CSharpFormattingPolicy AnonymousMethodBraceStyle="NextLine" StatementBraceStyle="NextLine" ElseNewLinePlacement="NewLine" ElseIfNewLinePlacement="NewLine" CatchNewLinePlacement="NewLine" FinallyNewLinePlacement="NewLine" BeforeIndexerDeclarationBracket="False" AfterDelegateDeclarationParameterComma="True" inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
+          <CSharpFormattingPolicy AnonymousMethodBraceStyle="NextLine" PropertyBraceStyle="NextLine" PropertyGetBraceStyle="NextLine" PropertySetBraceStyle="NextLine" StatementBraceStyle="NextLine" ElseNewLinePlacement="NewLine" ElseIfNewLinePlacement="NewLine" CatchNewLinePlacement="NewLine" FinallyNewLinePlacement="NewLine" BeforeIndexerDeclarationBracket="False" AfterDelegateDeclarationParameterComma="True" inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
           <TextStylePolicy FileWidth="120" TabWidth="8" inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/plain" />
         </Policies>
       </Properties>
@@ -207,12 +212,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Math\Math.csproj">
-      <Project>{DFD52B9F-EB73-4A71-94F5-01F95237C339}</Project>
-      <Name>Math</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
@@ -226,9 +225,9 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="Content\" />
-    <Folder Include="Settings\" />
     <Folder Include="Messaging\" />
     <Folder Include="Output\" />
     <Folder Include="Messaging\Interfaces\" />
+    <Folder Include="Configuration\" />
   </ItemGroup>
 </Project>

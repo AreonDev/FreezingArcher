@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Input;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -34,10 +35,16 @@ namespace FreezingArcher.Content
     public class LevelManager : IManager<Level>, IResource, IUpdate
     {
         /// <summary>
+        /// The name of the class.
+        /// </summary>
+        public static readonly string ClassName = "LevelManager";
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.LevelManager"/> class.
         /// </summary>
         public LevelManager ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating new level manager");
             Levels = new List<Level> ();
             Loaded = true;
         }
@@ -59,6 +66,7 @@ namespace FreezingArcher.Content
         /// <param name="name">Name.</param>
         public void SetCurrentLevel (string name)
         {
+            Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Setting current level to '{0}'", name);
             CurrentLevel = Levels.Find (l => l.Name == name);
         }
 
@@ -68,6 +76,7 @@ namespace FreezingArcher.Content
         /// <param name="level">Level.</param>
         public void SetCurrentLevel (Level level)
         {
+            Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Setting current level to '{0}'", level.Name);
             CurrentLevel = level;
         }
 
@@ -79,6 +88,7 @@ namespace FreezingArcher.Content
         /// <param name="item">Item.</param>
         public void Add (Level item)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Adding new level '{0}' to level manager", item.Name);
             Levels.Add (item);
 
             if (Levels.Count == 1)
@@ -94,6 +104,7 @@ namespace FreezingArcher.Content
         /// <param name="item">Item.</param>
         public void Remove (Level item)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Removing level '{0}' from level manager", item.Name);
             Levels.Remove (item);
         }
 
@@ -103,7 +114,15 @@ namespace FreezingArcher.Content
         /// <param name="name">Name.</param>
         public void Remove (string name)
         {
-            Levels.RemoveAll (l => l.Name == name);
+            Levels.RemoveAll (l => {
+                if (l.Name == name)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
+                        "Removing level '{0}' from level manager", l.Name);
+                    return true;
+                }
+                return false;
+            });
         }
 
         /// <summary>
@@ -193,6 +212,7 @@ namespace FreezingArcher.Content
         /// </summary>
         public void Destroy ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Destroying level manager");
             Levels.ForEach (l => l.Destroy ());
         }
 

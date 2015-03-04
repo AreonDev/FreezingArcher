@@ -21,25 +21,25 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 
-namespace FreezingArcher.Math
+namespace FreezingArcher.Core
 {
     /// <summary>
     /// Represents a pair of 2 generic objects
     /// </summary>
-    /// <typeparam name="X">Type of A</typeparam>
-    /// <typeparam name="Y">Type of B</typeparam>
-    public class Pair<X, Y>
+    /// <typeparam name="TX">Type of A</typeparam>
+    /// <typeparam name="TY">Type of B</typeparam>
+    public class Pair<TX, TY>
     {
         /// <summary>Gets or sets the first item.</summary>
         /// <value>A.</value>
-        public X A { get; set; }
+        public TX A { get; set; }
         /// <summary>Gets or sets the second item.</summary>
         /// <value>The b.</value>
-        public Y B { get; set; }
+        public TY B { get; set; }
         /// <summary>Initializes a new instance of the <see cref="Pair{X, Y}"/> class.</summary>
         /// <param name="a">first item.</param>
         /// <param name="b">second item.</param>
-        public Pair (X a, Y b)
+        public Pair (TX a, TY b)
         {
             this.A = a;
             this.B = b;
@@ -47,8 +47,8 @@ namespace FreezingArcher.Math
         /// <summary>Initializes a new instance of the <see cref="Pair{X, Y}"/> class.</summary>
         public Pair ()
         {
-            this.A = default (X);
-            this.B = default (Y);
+            this.A = default (TX);
+            this.B = default (TY);
         }
     }
 }

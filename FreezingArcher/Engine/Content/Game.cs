@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Input;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -33,11 +34,17 @@ namespace FreezingArcher.Content
     public class Game : IResource, IManageable, IUpdate
     {
         /// <summary>
+        /// The name of the class.
+        /// </summary>
+        public static readonly string ClassName = "Game_";
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.Game"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
         public Game (string name)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new game '{0}'", name);
             Name = name;
             LevelManager = new LevelManager ();
             Loaded = true;
@@ -79,6 +86,7 @@ namespace FreezingArcher.Content
         /// </summary>
         public void Destroy ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Destroying game '{0}'", Name);
             LevelManager.Destroy ();
         }
 

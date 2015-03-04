@@ -23,6 +23,7 @@
 using System.Collections.Generic;
 using Pencil.Gaming;
 using Pencil.Gaming.MathUtils;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Input
 {
@@ -32,10 +33,16 @@ namespace FreezingArcher.Input
     public class InputManager
     {
         /// <summary>
+        /// The name of the class.
+        /// </summary>
+        public static readonly string ClassName = "InputManager";
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Input.InputManager"/> class.
         /// </summary>
         public InputManager ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating new input manager");
             Keys = new List<KeyboardInput> ();
             Mouse = new List<MouseInput> ();
             MouseMovement = Vector2.Zero;

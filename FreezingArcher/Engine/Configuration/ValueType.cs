@@ -1,10 +1,10 @@
-//
-//  AngleEnum.cs
+﻿//
+//  ValueType.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
 //
-//  Copyright (c) 2014 Fin Christensen
+//  Copyright (c) 2015 Fin Christensen
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -21,21 +21,32 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 
-namespace FreezingArcher.Math
+namespace FreezingArcher.Configuration
 {
     /// <summary>
-    /// Enum to specify a angle format
+    /// Value type enum.
     /// </summary>
-    public enum AngleEnum
+    public enum ValueType : byte
     {
         /// <summary>
-        /// Angle in degree.
+        /// Boolean value.
         /// </summary>
-        Degree,
-
+        Boolean,
         /// <summary>
-        /// Angle in radian.
+        /// Integer value.
         /// </summary>
-        Radian
+        Integer,
+        /// <summary>
+        /// Double value.
+        /// </summary>
+        Double,
+        /// <summary>
+        /// String value.
+        /// </summary>
+        String,
+        /// <summary>
+        /// Byte array value.
+        /// </summary>
+        Bytes
     }
 }

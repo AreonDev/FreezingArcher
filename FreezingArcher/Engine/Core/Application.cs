@@ -30,6 +30,8 @@ using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 using Pencil.Gaming.MathUtils;
 using FreezingArcher.Content;
+using FreezingArcher.Output;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Core
 {
@@ -38,6 +40,11 @@ namespace FreezingArcher.Core
     /// </summary>
     public class Application
     {
+        /// <summary>
+        /// The name of the class.
+        /// </summary>
+        public static readonly string ClassName = "Application_";
+
         /// <summary>
         /// The global application instance.
         /// </summary>
@@ -89,11 +96,19 @@ namespace FreezingArcher.Core
         // / <param name="game">The initial root game.</param>
         public Application (string name)
         {
-            Output.Logger.Initialize (name);
+            Logger.Initialize (name);
+
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
+
+            Configuration.ConfigManager.Initialize ();
 
             // read from settings FIXME
             Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080), name);
+            MessageManager = new MessageManager ();
             Game = new Game (name);
+            Name = name;
+            LoadAgain = false;
+            InitAgain = false;
 
             #if DEBUG
             CreateTable ();
@@ -208,6 +223,9 @@ namespace FreezingArcher.Core
                         Window.CaptureMouse ();
                 }
 
+                if (key == Key.F7 && action == KeyAction.Release)
+                    Configuration.ConfigManager.Instance.SaveAll ();
+
                 if (key == Key.Escape && action == KeyAction.Release)
                     Window.Close ();
 
@@ -225,8 +243,18 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Run ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Running application '{0}' ...", Name);
+            MessageManager.StartProcessing ();
             while (!Window.ShouldClose ())
             {
+                // reexec loader if ressources need to be loaded again
+                // TODO: check if there is enough time left to do a reloading to avoid lag spikes
+                if (LoadAgain)
+                {
+                    Loader.ExecJobsSequential ();
+                    LoadAgain = false;
+                }
+
                 double deltaTime = Window.GetDeltaTime ();
                 
                 Renderer.RendererCore.Clear (Color4.DodgerBlue);
@@ -240,6 +268,7 @@ namespace FreezingArcher.Core
                 }
                 counter++; FUCKING FIX THIS - THIS IS BROKEN BY DESIGN!!!!!1111elf WHAT THE FUUUUUCK! FIXME
                 */
+                //TODO: call initer if InitAgain set - this shall be done in the update thread and not in this thread.
 
                 Game.FrameSyncedUpdate (deltaTime);
                 Renderer.RendererCore.Draw ();
@@ -263,6 +292,18 @@ namespace FreezingArcher.Core
         /// <value>The game.</value>
         public Game Game { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
+        public string Name { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the message manager.
+        /// </summary>
+        /// <value>The message manager.</value>
+        public MessageManager MessageManager { get; protected set; }
+
         #region IResource implementation
 
         /// <summary>
@@ -273,11 +314,14 @@ namespace FreezingArcher.Core
         {
             Loaded = false;
 
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Initializing application '{0}' ...", Name);
             InputManager = new InputManager ();
             Initer = new JobExecuter ();
             Initer.InsertJobs (GetInitJobs (new List<Action>()));
+            Initer.DoReexec += () => { InitAgain = true; };
             Loader = new JobExecuter ();
             Loader.InsertJobs (GetLoadJobs (new List<Action>(), Loader.NeedsReexecHandler));
+            Loader.DoReexec += () => { LoadAgain = true; };
             Initer.ExecJobsParallel (Environment.ProcessorCount);
         }
 
@@ -299,6 +343,7 @@ namespace FreezingArcher.Core
         public void Load ()
         {
             Loaded = false;
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Loading application '{0}' ...", Name);
             Loader.ExecJobsSequential ();
             Loaded = true;
         }
@@ -327,14 +372,16 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Destroy ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Destroying application '{0}' ...", Name);
             Loaded = false;
+            MessageManager.StopProcessing ();
             Window.Destroy ();
 
             #if DEBUG
-            Console.SetCursorPosition (0, origRow + 17);
+            Console.SetCursorPosition (0, OrigRow + 17);
             #endif
 
-            Output.Logger.Log.Dispose ();
+            Logger.Log.Dispose ();
         }
 
         /// <summary>
@@ -356,18 +403,28 @@ namespace FreezingArcher.Core
         /// <summary>
         /// The original command line row.
         /// </summary>
-        protected int origRow;
+        protected int OrigRow;
         #endif
         
         /// <summary>
         /// The loader.
         /// </summary>
         protected JobExecuter Loader;
+
+        /// <summary>
+        /// Indicating whether to load again.
+        /// </summary>
+        protected bool LoadAgain;
         
         /// <summary>
         /// The initer.
         /// </summary>
         protected JobExecuter Initer;
+
+        /// <summary>
+        /// Indicating whether to initialize again.
+        /// </summary>
+        protected bool InitAgain;
 
         /// <summary>
         /// The input manager.
@@ -381,7 +438,7 @@ namespace FreezingArcher.Core
         protected void CreateTable ()
         {
             Console.Clear ();
-            origRow = Console.CursorTop;
+            OrigRow = Console.CursorTop;
             string s =
                 "+----------------+---------------+---------------+----------------------+\n" +
                     "|  WindowResize  |  WindowMove   |   MouseMove   |     MouseButton      |\n" +
@@ -411,7 +468,7 @@ namespace FreezingArcher.Core
         /// <param name="s">The string to write.</param>
         protected void WriteAt (int x, int y, string s)
         {
-            Console.SetCursorPosition (x, origRow + y);
+            Console.SetCursorPosition (x, OrigRow + y);
             Console.Write (s);
         }
         #endif

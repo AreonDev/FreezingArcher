@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Core
 {
@@ -32,10 +33,21 @@ namespace FreezingArcher.Core
     public class JobExecuter
     {
         /// <summary>
+        /// The name of the class.
+        /// </summary>
+        public static readonly string ClassName = "JobExecuter";
+
+        /// <summary>
+        /// Do reexec handler.
+        /// </summary>
+        public delegate void DoReexecHandler ();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.JobExecuter"/> class.
         /// </summary>
         public JobExecuter ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating new job executer ...");
             Jobs = new List<Action> ();
         }
 
@@ -48,7 +60,7 @@ namespace FreezingArcher.Core
         /// <summary>
         /// The currently active jobs
         /// </summary>
-        protected List<Action> currentJobs;
+        protected List<Action> CurrentJobs;
 
         /// <summary>
         /// Inserts the job.
@@ -56,6 +68,8 @@ namespace FreezingArcher.Core
         /// <param name="job">Job.</param>
         public void InsertJob (Action job)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Inserting new job '{0}' into job executer",
+                job.Method.Name);
             Jobs.Add (job);
         }
 
@@ -65,6 +79,7 @@ namespace FreezingArcher.Core
         /// <param name="jobs">Jobs.</param>
         public void InsertJobs (List<Action> jobs)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Inserting {0} new jobs into job executer", jobs.Count);
             Jobs.AddRange (jobs);
         }
 
@@ -74,6 +89,7 @@ namespace FreezingArcher.Core
         /// <param name="jobs">Jobs.</param>
         public void InsertJobs (Action[] jobs)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Inserting {0} new jobs into job executer", jobs.Length);
             Jobs.AddRange (jobs);
         }
 
@@ -83,17 +99,19 @@ namespace FreezingArcher.Core
         /// <param name="load">Load.</param>
         public void ExecJobsParallel (int load)
         {
-            currentJobs = new List<Action> (Jobs);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
+                "Executing {0} jobs parallel with an average load of {1}", Jobs.Count, load);
+            CurrentJobs = new List<Action> (Jobs);
             Jobs.Clear ();
 
             ParallelOptions ops = new ParallelOptions ();
             ops.MaxDegreeOfParallelism = load;
 
-            if (currentJobs.Count > 0)
-                Parallel.Invoke (ops, currentJobs.ToArray ());
+            if (CurrentJobs.Count > 0)
+                Parallel.Invoke (ops, CurrentJobs.ToArray ());
 
-            currentJobs.Clear ();
-            currentJobs = null;
+            CurrentJobs.Clear ();
+            CurrentJobs = null;
         }
 
         /// <summary>
@@ -101,12 +119,13 @@ namespace FreezingArcher.Core
         /// </summary>
         public void ExecJobsSequential ()
         {
-            currentJobs = new List<Action> (Jobs);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Executing {0} jobs sequentially", Jobs.Count);
+            CurrentJobs = new List<Action> (Jobs);
             Jobs.Clear ();
 
-            currentJobs.ForEach (a => a ());
-            currentJobs.Clear ();
-            currentJobs = null;
+            CurrentJobs.ForEach (a => a ());
+            CurrentJobs.Clear ();
+            CurrentJobs = null;
         }
 
         /// <summary>
@@ -115,7 +134,16 @@ namespace FreezingArcher.Core
         /// <param name="action">Action.</param>
         public void NeedsReexecHandler (Action action)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
+                "Adding new job '{0}' to job executer via the NeedsReexecHandler", action.Method.Name);
             Jobs.Add (action);
+            if (DoReexec != null)
+                DoReexec ();
         }
+
+        /// <summary>
+        /// Occurs when job executer needs to be executed again.
+        /// </summary>
+        public event DoReexecHandler DoReexec;
     }
 }

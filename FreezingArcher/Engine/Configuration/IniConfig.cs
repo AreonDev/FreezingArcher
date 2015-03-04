@@ -9,7 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace FreezingArcher.Settings
+namespace FreezingArcher.Configuration
 {
     /// <summary>
     /// Ini config class.
@@ -48,7 +48,7 @@ namespace FreezingArcher.Settings
 
 	// *** Constructor ***
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Settings.IniConfig"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Configuration.IniConfig"/> class.
         /// </summary>
         /// <param name="fileName">File name.</param>
 	public IniConfig (string fileName)
@@ -57,10 +57,11 @@ namespace FreezingArcher.Settings
 	}
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Settings.IniConfig"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Configuration.IniConfig"/> class.
         /// </summary>
         /// <param name="fileName">File name.</param>
-        /// <param name="lazy">If set to <c>true</c> lazy.</param>
+        /// <param name="lazy">If set to <c>true</c> config file be parsed on first get or set of a value,
+        /// otherwise it will be parsed immediatly.</param>
 	public IniConfig (string fileName, bool lazy)
 	{
 	    Initialize (fileName, lazy);

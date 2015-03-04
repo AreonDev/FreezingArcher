@@ -11,6 +11,9 @@ using System.Text;
 
 namespace FreezingArcher.Settings
 {
+    /// <summary>
+    /// Ini config class.
+    /// </summary>
     public class IniConfig
     {
 	#region Declarations
@@ -44,11 +47,20 @@ namespace FreezingArcher.Settings
 	#region Methods
 
 	// *** Constructor ***
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Settings.IniConfig"/> class.
+        /// </summary>
+        /// <param name="fileName">File name.</param>
 	public IniConfig (string fileName)
 	{
 	    Initialize (fileName, false);
 	}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Settings.IniConfig"/> class.
+        /// </summary>
+        /// <param name="fileName">File name.</param>
+        /// <param name="lazy">If set to <c>true</c> lazy.</param>
 	public IniConfig (string fileName, bool lazy)
 	{
 	    Initialize (fileName, lazy);

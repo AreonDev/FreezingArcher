@@ -6,6 +6,13 @@ using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Messaging
 {
+    /// <summary>
+    /// Class for passing messages from IMessageProducers to IMessageConsumers
+    /// A n-to-m relationship can be modeled.
+    /// <remarks>>
+    /// SCHEIß DOKUMENTATION - Fin hat mich dazu gezwungen!!!
+    /// </remarks>
+    /// </summary>
     public class MessageManager
     {
         readonly Dictionary<int, List<IMessageConsumer>> messageList = new Dictionary<int, List<IMessageConsumer>> ();
@@ -14,12 +21,19 @@ namespace FreezingArcher.Messaging
         //default does not work
         readonly Queue<IMessage> mc = null;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.MessageManager"/> class.
+        /// </summary>
         public MessageManager ()
         {
             messageThread = new Thread (FlushQueue);
             mc = new Queue<IMessage> (2000);
         }
 
+        /// <summary>
+        /// Registers the message consumer.
+        /// </summary>
+        /// <param name="m">Message Consumer to register</param>
         public void RegisterMessageConsumer (IMessageConsumer m)
         {
             m.ValidMessages.ForEach (i =>
@@ -35,6 +49,10 @@ namespace FreezingArcher.Messaging
             });
         }
 
+        /// <summary>
+        /// Unregisters the message consumer.
+        /// </summary>
+        /// <param name="m">Message Consumer to unregister</param>
         public void UnregisterMessageConsumer (IMessageConsumer m)
         {
             m.ValidMessages.ForEach (i =>
@@ -45,6 +63,10 @@ namespace FreezingArcher.Messaging
             });
         }
 
+        /// <summary>
+        /// Adds the message creator.
+        /// </summary>
+        /// <param name="c">Message Creator to add</param>
         public void AddMessageCreator (IMessageCreator c)
         {
             c.MessageCreated += HandleMessageCreated;
@@ -57,6 +79,9 @@ namespace FreezingArcher.Messaging
 
         }
 
+        /// <summary>
+        /// Starts the processing of messages.
+        /// </summary>
         public void StartProcessing ()
         {
             if (run)
@@ -65,6 +90,9 @@ namespace FreezingArcher.Messaging
             messageThread.Start ();
         }
 
+        /// <summary>
+        /// Stops the processing of messages.
+        /// </summary>
         public void StopProcessing ()
         {
             if (!run)
@@ -72,12 +100,19 @@ namespace FreezingArcher.Messaging
             run = false;
         }
 
+        /// <summary>
+        /// Pauses the processing.
+        /// <remarks>>Not implemented!</remarks>
+        /// </summary>
+        /// <param name="time">Time.</param>
         public void PauseProcessing (int time)
         {
             //MessageThread.Sleep (Time);TODO
             throw new NotImplementedException ();
         }
 
+        /// <param name="j">MessageManager to register object to</param>
+        /// <param name="o">Object to register</param>
         public static MessageManager operator + (MessageManager j, object o)
         {
             if (o is IMessageConsumer)
@@ -88,6 +123,9 @@ namespace FreezingArcher.Messaging
             return j;
         }
 
+        /// <summary>
+        /// Flushs the queue.
+        /// </summary>
         public void FlushQueue ()
         {
             while (run)

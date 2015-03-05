@@ -37,6 +37,8 @@ namespace FreezingArcher.Output
         public static void WriteLine (string line, ConsoleColor color)
         {
             Console.ForegroundColor = color;
+            if (line.Length > Console.BufferWidth - 4)
+                line = line.Substring (0, Console.BufferWidth - 4) + " ...";
             Console.WriteLine (line);
             Console.ForegroundColor = ConsoleColor.Black;
         }

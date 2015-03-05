@@ -20,6 +20,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+//#define DEBUG_EVENTS
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -28,7 +29,6 @@ using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Input;
 using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
-using Pencil.Gaming.MathUtils;
 using FreezingArcher.Content;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging;
@@ -115,12 +115,12 @@ namespace FreezingArcher.Core
             LoadAgain = false;
             InitAgain = false;
 
-            #if DEBUG
+            #if DEBUG_EVENTS
             CreateTable ();
             #endif
             
             Window.WindowResize = (GlfwWindowPtr window, int width, int height) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (1, 5, "       ");
                 WriteAt (1, 5, width.ToString ());
                 WriteAt (9, 5, "        ");
@@ -131,7 +131,7 @@ namespace FreezingArcher.Core
             };
             
             Window.WindowMove = (GlfwWindowPtr window, int x, int y) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (18, 5, "       ");
                 WriteAt (18, 5, x.ToString ());
                 WriteAt (26, 5, "       ");
@@ -140,35 +140,35 @@ namespace FreezingArcher.Core
             };
             
             Window.WindowClose = (GlfwWindowPtr window) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (17, 15, "                                                       ");
                 WriteAt (17, 15, " WindowClose fired");
                 #endif
             };
             
             Window.WindowFocus = (GlfwWindowPtr window, bool focus) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (58, 9, "              ");
                 WriteAt (58, 9, focus.ToString ());
                 #endif
             };
             
             Window.WindowMinimize = (GlfwWindowPtr window, bool minimized) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (58, 11, "              ");
                 WriteAt (58, 11, minimized.ToString ());
                 #endif
             };
             
             Window.WindowError = (GlfwError error, string desc) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (17, 15, "                                                       ");
                 WriteAt (17, 15, "WindowError: " + error + " - " + desc);
                 #endif
             };
             
             Window.MouseButton = (GlfwWindowPtr window, MouseButton button, KeyAction action) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (50, 5, "            ");
                 WriteAt (50, 5, button.ToString ());
                 WriteAt (63, 5, "         ");
@@ -179,7 +179,7 @@ namespace FreezingArcher.Core
             };
 
             Window.MouseMove = (GlfwWindowPtr window, double x, double y) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (34, 5, "       ");
                 WriteAt (34, 5, string.Format ("{0:f}", x));
                 WriteAt (42, 5, "       ");
@@ -190,14 +190,14 @@ namespace FreezingArcher.Core
             };
             
             Window.MouseOver = (GlfwWindowPtr window, bool enter) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (58, 13, "              ");
                 WriteAt (58, 13, enter.ToString ());
                 #endif
             };
             
             Window.MouseScroll = (GlfwWindowPtr window, double xoffs, double yoffs) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (24, 13, "       ");
                 WriteAt (24, 13, string.Format ("{0:f}", xoffs));
                 WriteAt (32, 13, "       ");
@@ -208,7 +208,7 @@ namespace FreezingArcher.Core
             };
             
             Window.KeyAction = (GlfwWindowPtr window, Key key, int scancode, KeyAction action, KeyModifiers mods) => {
-                #if DEBUG
+                #if DEBUG_EVENTS
                 WriteAt (1, 13, "             ");
                 WriteAt (1, 13, key.ToString ());
                 WriteAt (15, 13, "        ");
@@ -382,7 +382,7 @@ namespace FreezingArcher.Core
             MessageManager.StopProcessing ();
             Window.Destroy ();
 
-            #if DEBUG
+            #if DEBUG_EVENTS
             Console.SetCursorPosition (0, OrigRow + 17);
             #endif
 
@@ -404,7 +404,7 @@ namespace FreezingArcher.Core
 
         #endregion
 
-        #if DEBUG
+        #if DEBUG_EVENTS
         /// <summary>
         /// The original command line row.
         /// </summary>
@@ -436,7 +436,7 @@ namespace FreezingArcher.Core
         /// </summary>
         protected InputManager InputManager;
 
-        #if DEBUG
+        #if DEBUG_EVENTS
         /// <summary>
         /// Creates the event table.
         /// </summary>

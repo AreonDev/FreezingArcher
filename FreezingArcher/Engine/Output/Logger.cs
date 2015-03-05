@@ -112,7 +112,11 @@ namespace FreezingArcher.Output
             if (!Log.isEarly) return;
             
             Log.Dispose();
-            Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Severe, false);
+            #if DEBUG
+            Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Debug, false);
+            #else
+            Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Info, false);
+            #endif
         }
         static Logger()
         {

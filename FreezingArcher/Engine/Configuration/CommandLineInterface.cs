@@ -141,7 +141,7 @@ namespace FreezingArcher.Configuration
                 new Pair<string, object> ("Required", required),
                 new Pair<string, object> ("DefaultValue", defaultValue));
             DynamicClassBuilder.AddProperty (new Property (longName, typeof (T), attr));
-            Handlers.Add (longName, j => handler ((T) j));
+            Handlers.Add (longName, j => handler ((T[]) j));
         }
 
         /// <summary>

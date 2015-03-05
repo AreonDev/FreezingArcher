@@ -57,9 +57,10 @@ namespace FreezingArcher.Core
         /// This should be the last call of your main method. Only run in main thread!
         /// </summary>
         /// <param name="name">Name.</param>
-        public static void Create (string name)
+        /// <param name="args">Command line arguments.</param>
+        public static void Create (string name, string[] args)
         {
-            Instance = new Application (name);
+            Instance = new Application (name, args);
             Instance.Init ();
             Instance.Load ();
             Instance.Run ();
@@ -71,10 +72,11 @@ namespace FreezingArcher.Core
         /// This should be the last call of your main method. Only run in main thread!
         /// </summary>
         /// <param name="name">Name.</param>
+        /// <param name="args">Command line arguments.</param>
         /// <param name="application">The created application.</param>
-        public static void Create (string name, out Application application)
+        public static void Create (string name, string[] args, out Application application)
         {
-            application = CreateApp (name);
+            application = CreateApp (name, args);
         }
 
         /// <summary>
@@ -82,9 +84,10 @@ namespace FreezingArcher.Core
         /// This should be the last call of your main method. Only run in main thread!
         /// </summary>
         /// <param name="name">Name.</param>
-        public static Application CreateApp (string name)
+        /// <param name="args">Command line arguments.</param>
+        public static Application CreateApp (string name, string[] args)
         {
-            Application app = new Application (name);
+            Application app = new Application (name, args);
             app.Init ();
             app.Load ();
             app.Run ();
@@ -93,11 +96,24 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
+        /// Indicating whether command line interface is active or not.
+        /// </summary>
+        protected bool Cli = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.Application"/> class.
         /// </summary>
         // / <param name="game">The initial root game.</param>
-        public Application (string name)
+        public Application (string name, string[] args)
         {
+            CommandLineInterface.Instance.AddOption<string> (Console.WriteLine, 't', "test", "Test our awesome stuff.",
+                false, "hello");
+            if (!CommandLineInterface.Instance.ParseArguments (args))
+            {
+                Cli = true;
+                return;
+            }
+
             Logger.Initialize (name);
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
             MessageManager = new MessageManager ();
@@ -251,6 +267,9 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Run ()
         {
+            if (Cli)
+                return;
+
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Running application '{0}' ...", Name);
             MessageManager.StartProcessing ();
             while (!Window.ShouldClose ())
@@ -320,6 +339,9 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Init ()
         {
+            if (Cli)
+                return;
+
             Loaded = false;
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Initializing application '{0}' ...", Name);
@@ -350,6 +372,9 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Load ()
         {
+            if (Cli)
+                return;
+
             Loaded = false;
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Loading application '{0}' ...", Name);
             Loader.ExecJobsSequential ();
@@ -380,6 +405,9 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Destroy ()
         {
+            if (Cli)
+                return;
+
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Destroying application '{0}' ...", Name);
             Loaded = false;
             MessageManager.StopProcessing ();

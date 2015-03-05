@@ -35,12 +35,22 @@ namespace FreezingArcher.Configuration
     public class CommandLineInterface
     {
         /// <summary>
+        /// The global instance.
+        /// </summary>
+        public static CommandLineInterface Instance;
+
+        static CommandLineInterface ()
+        {
+            Instance = new CommandLineInterface ();
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Configuration.CommandLineInterface"/> class.
         /// </summary>
         public CommandLineInterface ()
         {
             DynamicClassBuilder = new DynamicClassBuilder ("Options");
-            Handlers = new Dictionary<string, Action<object>> ();
+            Handlers = new Dictionary<string, Pair<Action<object>, Type>> ();
         }
 
         /// <summary>
@@ -51,20 +61,28 @@ namespace FreezingArcher.Configuration
         /// <summary>
         /// The handlers.
         /// </summary>
-        protected Dictionary<string, Action<object>> Handlers;
+        protected Dictionary<string, Pair<Action<object>, Type>> Handlers;
 
-        /// <summary>
-        /// Parses the arguments from the command line.
-        /// </summary>
+        // <summary>
+        // Parses the arguments from the command line.
+        // </summary>
+        /// <returns><c>true</c>, if arguments were parsed, <c>false</c> otherwise.</returns>
         /// <param name="args">The arguments.</param>
-        public void ParseArguments (string[] args)
+        public bool ParseArguments (string[] args)
         {
             Type t = DynamicClassBuilder.CreateType ();
             object options = Activator.CreateInstance (t);
             if (Parser.Default.ParseArguments (args, options))
             {
-                // read values from options and call option handlers with parsed data.
+                foreach (var handler in Handlers)
+                {
+                    var read = typeof (Property).GetMethod ("Read");
+                    var readT = read.MakeGenericMethod (handler.Value.B);
+                    handler.Value.A.Invoke (readT.Invoke (null, new object[] {options, handler.Key}));
+                }
+                return true;
             }
+            return false;
         }
 
         /// <summary>
@@ -86,8 +104,13 @@ namespace FreezingArcher.Configuration
                 new Pair<string, object> ("Required", required),
                 new Pair<string, object> ("DefaultValue", defaultValue));
             DynamicClassBuilder.AddProperty (new Property (longName, typeof (T), attr));
-            Handlers.Add (longName, j => handler ((T) j));
+            Handlers.Add (longName, new Pair<Action<object>, Type> (j => handler ((T) j), typeof (T)));
         }
+
+        /// <summary>
+        /// The value list property.
+        /// </summary>
+        protected Property ValueListProperty;
 
         /// <summary>
         /// Sets a value list to the command line interface. (program val1 val2 val3 ...)
@@ -98,7 +121,13 @@ namespace FreezingArcher.Configuration
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
         public void SetValueList<T> (Action<T> handler, int maximumElements = -1) where T : IList
         {
-
+            FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (ValueListAttribute));
+            attr.CallConstructor (typeof (List<T>));
+            attr.AddNamedParameters (new Pair<string, object> ("MaximumElements", maximumElements));
+            if (ValueListProperty != null)
+                DynamicClassBuilder.RemoveProperty (ValueListProperty);
+            ValueListProperty = new Property ("ValueList", typeof (T), attr);
+            Handlers.Add ("ValueList", new Pair<Action<object>, Type> (j => handler ((T) j), typeof (T)));
         }
 
         /// <summary>
@@ -119,7 +148,7 @@ namespace FreezingArcher.Configuration
             attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
                 new Pair<string, object> ("Required", required));
             DynamicClassBuilder.AddProperty (new Property (longName, typeof (T), attr));
-            Handlers.Add (longName, j => handler ((T) j));
+            Handlers.Add (longName, new Pair<Action<object>, Type> (j => handler ((T) j), typeof (T)));
         }
 
         /// <summary>
@@ -140,8 +169,8 @@ namespace FreezingArcher.Configuration
             attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
                 new Pair<string, object> ("Required", required),
                 new Pair<string, object> ("DefaultValue", defaultValue));
-            DynamicClassBuilder.AddProperty (new Property (longName, typeof (T), attr));
-            Handlers.Add (longName, j => handler ((T[]) j));
+            DynamicClassBuilder.AddProperty (new Property (longName, typeof (T[]), attr));
+            Handlers.Add (longName, new Pair<Action<object>, Type> (j => handler ((T[]) j), typeof (T[])));
         }
 
         /// <summary>

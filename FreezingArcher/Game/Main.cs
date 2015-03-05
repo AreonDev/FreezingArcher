@@ -36,7 +36,7 @@ namespace FreezingArcher.Game
         /// <param name="args">The command-line arguments.</param>
         public static void Main (string[] args)
         {
-            Application.Create ("Freezing Archer");
+            Application.Create ("Freezing Archer", args);
         }
     }
 }

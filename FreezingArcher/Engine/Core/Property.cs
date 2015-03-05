@@ -80,14 +80,15 @@ namespace FreezingArcher.Core
             Type = types [0];
         }
 
-        public T Read<T>(object type)
+        public static T Read<T>(object type, string name)
         {
-            try{
-            return (T)type.GetType ().GetProperty (Name).GetGetMethod ().Invoke (type);
+            try
+            {
+                return (T)type.GetType ().GetProperty (name).GetGetMethod ().Invoke (type, null);
             }
             catch(Exception e)
             {
-                Logger.Log.AddLogEntry (LogLevel.Warning, "DynamicClass", "Error reading property: " + Name + "\n" + e);
+                Logger.Log.AddLogEntry (LogLevel.Warning, "DynamicClass", "Error reading property: " + name + "\n" + e);
                 return default(T);
             }
         }

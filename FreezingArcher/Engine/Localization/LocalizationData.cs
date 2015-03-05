@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Localization
 {
@@ -10,6 +11,11 @@ namespace FreezingArcher.Localization
     /// </summary>
     public class LocalizationData
     {
+        /// <summary>
+        /// The name of the class.
+        /// </summary>
+        public static readonly string ClassName = "LocalizationData";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Localization.LocalizationData"/> class.
         /// </summary>
@@ -35,6 +41,8 @@ namespace FreezingArcher.Localization
         /// <param name="fileinfo">Fileinfo of the localization file.</param>
         public LocalizationData (FileInfo fileinfo)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading new localization from '{0}' ...",
+                fileinfo.FullName);
             Values = new Dictionary<string, string> ();
             XElement e = XElement.Load (fileinfo.FullName);
             XAttribute a = e.Attribute ("parent");

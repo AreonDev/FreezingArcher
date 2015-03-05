@@ -23,7 +23,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 using System.Reflection;
 using FreezingArcher.Output;
 
@@ -35,22 +34,23 @@ namespace FreezingArcher.Core
     /// </summary>
     public static class ReflectionHelper
     {
-        static List<Type> loadedTypesPlugins = new List<Type>();
-        static List<Type> loadedAssembly = new List<Type>();
-        static object o = new object();
+        static List<Type> loadedTypesPlugins = new List<Type> ();
+        static List<Type> loadedAssembly = new List<Type> ();
+        static object o = new object ();
         const string mn = "ReflectionHelper";
 
-        static ReflectionHelper()
+        static ReflectionHelper ()
         {
             Refresh0 ();
             AppDomain.CurrentDomain.AssemblyLoad += 
-                (sender, args) => {
-                lock(o)
-                    loadedAssembly.AddRange(args.LoadedAssembly.GetTypes());
+                (sender, args) =>
+            {
+                lock (o)
+                    loadedAssembly.AddRange (args.LoadedAssembly.GetTypes ());
             };
         }
 
-        private static void Refresh0()
+        private static void Refresh0 ()
         {
             var appDomain = AppDomain.CurrentDomain;
             var assemblies = appDomain.GetAssemblies ();
@@ -65,6 +65,7 @@ namespace FreezingArcher.Core
             }
             Logger.Log.AddLogEntry (LogLevel.Info, mn, "Loaded {0} types in main assembly", loadedAssembly.Count);
         }
+
         /// <summary>
         /// Releases all resource used by the <see cref="FreezingArcher.Core.ReflectionHelper"/> object.
         /// </summary>
@@ -74,7 +75,7 @@ namespace FreezingArcher.Core
         /// <see cref="Dispose"/>, you must release all references to the
         /// <see cref="FreezingArcher.Core.ReflectionHelper"/> so the garbage collector can reclaim the memory that the
         /// <see cref="FreezingArcher.Core.ReflectionHelper"/> was occupying.</remarks>
-        public static void Dispose()
+        public static void Dispose ()
         {
             lock (o)
             {
@@ -87,11 +88,11 @@ namespace FreezingArcher.Core
         /// Gets the loaded types.
         /// </summary>
         /// <returns>The loaded types.</returns>
-        public static IEnumerable<Type> getLoadedTypes()
+        public static IEnumerable<Type> GetLoadedTypes ()
         {
             lock (o)
             {
-                return loadedAssembly.Concat(loadedTypesPlugins);
+                return loadedAssembly.Concat (loadedTypesPlugins);
             }
         }
 
@@ -100,7 +101,7 @@ namespace FreezingArcher.Core
         /// </summary>
         /// <returns>The derived types.</returns>
         /// <param name="t">Type to find derived types</param>
-        public static IEnumerable<Type> GetDerivedTypes(Type t)
+        public static IEnumerable<Type> GetDerivedTypes (Type t)
         {
             lock (o)
             {
@@ -113,9 +114,9 @@ namespace FreezingArcher.Core
         /// </summary>
         /// <returns>The types where the predicate matches</returns>
         /// <param name="pred">Predicate to filter</param>
-        public static IEnumerable<Type> GetTypesWhere(Predicate<Type> pred)
+        public static IEnumerable<Type> GetTypesWhere (Predicate<Type> pred)
         {
-            return loadedAssembly.Concat(loadedTypesPlugins).Where(item => pred(item));
+            return loadedAssembly.Concat (loadedTypesPlugins).Where (item => pred (item));
         }
     }
 }

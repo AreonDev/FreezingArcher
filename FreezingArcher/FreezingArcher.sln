@@ -64,7 +64,6 @@ Global
 		$5.scope = application/config+xml
 		$0.TextStylePolicy = $6
 		$6.FileWidth = 120
-		$6.TabWidth = 8
 		$6.inheritsSet = VisualStudio
 		$6.inheritsScope = text/plain
 		$6.scope = application/xml

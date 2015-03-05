@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Core;
+using FreezingArcher.Localization;
 
 namespace FreezingArcher.Game
 {
@@ -35,7 +36,7 @@ namespace FreezingArcher.Game
         /// <param name="args">The command-line arguments.</param>
         public static void Main (string[] args)
         {
-            Application.Create ("FreezingArcher");
+            Application.Create ("Freezing Archer");
         }
     }
 }

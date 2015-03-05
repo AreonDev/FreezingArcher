@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<locale parent="en_US">
+    <string name="app_name">Freezing Archer</string>
+</locale>

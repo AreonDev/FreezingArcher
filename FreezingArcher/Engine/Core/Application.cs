@@ -33,6 +33,7 @@ using FreezingArcher.Content;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging;
 using FreezingArcher.Configuration;
+using FreezingArcher.Localization;
 
 namespace FreezingArcher.Core
 {
@@ -99,6 +100,7 @@ namespace FreezingArcher.Core
         {
             Logger.Initialize (name);
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
+            Localizer.Initialize ();
             ConfigManager.Initialize ();
 
             Logger.Log.SetLogLevel ((LogLevel) ConfigManager.Instance["freezing_archer"]

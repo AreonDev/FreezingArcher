@@ -37,28 +37,32 @@ namespace FreezingArcher.Core
         /// Gets the type.
         /// </summary>
         /// <value>The type.</value>
-        public Type Type {get; private set;}
+        public Type Type { get; private set; }
+
         /// <summary>
         /// Gets the parameters.
         /// </summary>
         /// <value>The parameters.</value>
         public Dictionary<string, object> Parameters { get; private set; }
+
         private object[] constrParams;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.Attribute"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="parameters">Parameters.</param>
-        public Attribute(string name, params Pair<string, object>[] parameters)
+        public Attribute (string name, params Pair<string, object>[] parameters)
         {
-            var types = ReflectionHelper.GetTypesWhere(type => type.Name == name || type.FullName == name).ToList();
-            if(types.Count > 1 || types.Count == 0)
-                throw new Exception("Could not determine type, try to specify type explicitly");
+            var types = ReflectionHelper.GetTypesWhere (type => type.Name == name || type.FullName == name).ToList ();
+            if (types.Count > 1 || types.Count == 0)
+                throw new Exception ("Could not determine type, try to specify type explicitly");
 
-            Type = types[0];
-            Parameters = new Dictionary<string, object>(parameters.Length);
-            foreach (var item in parameters) {
-                Parameters.Add(item.A, item.B);
+            Type = types [0];
+            Parameters = new Dictionary<string, object> (parameters.Length);
+            foreach (var item in parameters)
+            {
+                Parameters.Add (item.A, item.B);
             }
         }
 
@@ -66,10 +70,10 @@ namespace FreezingArcher.Core
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.Attribute"/> class.
         /// </summary>
         /// <param name="type">Type.</param>
-        public Attribute(Type type)
+        public Attribute (Type type)
         {
             Type = type;
-            Parameters = new Dictionary<string, object>();
+            Parameters = new Dictionary<string, object> ();
         }
 
         /// <summary>
@@ -77,15 +81,16 @@ namespace FreezingArcher.Core
         /// Will search for a matching overload
         /// </summary>
         /// <param name="parameter">Parameters for the constructor</param>
-        public void CallConstructor(params object[] parameter)
+        public void CallConstructor (params object[] parameter)
         {
             constrParams = parameter;
         }
+
         /// <summary>
         /// Adds the named parameters.
         /// </summary>
         /// <param name="named">Named parameters</param>
-        public void AddNamedParameters(params Pair<string, object>[] named)
+        public void AddNamedParameters (params Pair<string, object>[] named)
         {
             foreach (var item in named)
             {
@@ -97,14 +102,14 @@ namespace FreezingArcher.Core
         /// Gets the builder.
         /// </summary>
         /// <returns>The builder.</returns>
-        public CustomAttributeBuilder GetBuilder()
+        public CustomAttributeBuilder GetBuilder ()
         {
-            var constructors = Type.GetConstructors();
+            var constructors = Type.GetConstructors ();
             // Analysis disable once UseMethodIsInstanceOfType
             var constructor = constructors.First (constr =>
             { 
                 int paramIndex = 0; 
-                return constr.GetParameters().Length == constrParams.Length && constr.GetParameters ().All (param => param.ParameterType.IsAssignableFrom (constrParams [paramIndex++].GetType ()));
+                return constr.GetParameters ().Length == constrParams.Length && constr.GetParameters ().All (param => param.ParameterType.IsAssignableFrom (constrParams [paramIndex++].GetType ()));
             });
 
             List<PropertyInfo> properties = new List<PropertyInfo> ();
@@ -116,7 +121,7 @@ namespace FreezingArcher.Core
             {
                 var property = Type.GetProperty (item.Key);
                 // Analysis disable once UseMethodIsInstanceOfType
-                if(property != null && property.PropertyType.IsAssignableFrom(item.Value.GetType()))
+                if (property != null && property.PropertyType.IsAssignableFrom (item.Value.GetType ()))
                 {
                     properties.Add (property);
                     propertyValues.Add (item.Value);
@@ -125,15 +130,14 @@ namespace FreezingArcher.Core
 
                 var field = Type.GetField (item.Key);
                 // Analysis disable once UseMethodIsInstanceOfType
-                if(field != null && field.FieldType.IsAssignableFrom(item.Value.GetType()))
+                if (field != null && field.FieldType.IsAssignableFrom (item.Value.GetType ()))
                 {
                     fields.Add (field);
                     fieldValues.Add (item.Value);
                 }
             }
-            var cab = new CustomAttributeBuilder (constructor, constrParams, properties.ToArray(), propertyValues.ToArray(), fields.ToArray(), fieldValues.ToArray());
+            var cab = new CustomAttributeBuilder (constructor, constrParams, properties.ToArray (), propertyValues.ToArray (), fields.ToArray (), fieldValues.ToArray ());
             return cab;
         }
     }
 }
-

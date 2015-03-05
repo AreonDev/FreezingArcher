@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Localization
 {
@@ -9,6 +10,11 @@ namespace FreezingArcher.Localization
     public class Localizer
     {
         /// <summary>
+        /// The name of the class.
+        /// </summary>
+        public static readonly string ClassName = "Localizer";
+
+        /// <summary>
         /// The global localizer instance.
         /// </summary>
         public static Localizer Instance;
@@ -16,8 +22,9 @@ namespace FreezingArcher.Localization
         /// <summary>
         /// Initializes the <see cref="FreezingArcher.Localization.Localizer"/> class.
         /// </summary>
-        static Localizer ()
+        public static void Initialize ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing global localizer instance ...");
             Dictionary<LocaleEnum, LocalizationData> dic = new Dictionary<LocaleEnum, LocalizationData> ();
             dic.Add (LocaleEnum.en_US, new LocalizationData ("Localization/en_US.xml"));
             dic.Add (LocaleEnum.de_DE, new LocalizationData ("Localization/de_DE.xml"));
@@ -31,6 +38,8 @@ namespace FreezingArcher.Localization
         /// <param name="initialLocale">Initial locale.</param>
         public Localizer (Dictionary<LocaleEnum, LocalizationData> locales, LocaleEnum initialLocale = LocaleEnum.en_US)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating logger instance with initial locale '{0}'",
+                initialLocale.ToString ());
             Locales = locales;
             CurrentLocale = initialLocale;
         }
@@ -52,6 +61,7 @@ namespace FreezingArcher.Localization
             }
             set
             {
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Changing locale to '{0}'", value);
                 CurLocale = value;
                 if (UpdateLocale != null)
                     UpdateLocale ();

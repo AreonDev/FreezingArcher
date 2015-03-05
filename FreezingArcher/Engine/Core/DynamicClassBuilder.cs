@@ -24,9 +24,6 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using CommandLine;
 
 namespace FreezingArcher.Core
 {
@@ -38,11 +35,12 @@ namespace FreezingArcher.Core
     {
         private readonly string className;
         private readonly List<Property> properties;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.DynamicClassBuilder"/> class.
         /// </summary>
         /// <param name="className">Class name to generate</param>
-        public DynamicClassBuilder(string className)
+        public DynamicClassBuilder (string className)
         {
             this.className = className;
             properties = new List<Property> ();
@@ -52,7 +50,7 @@ namespace FreezingArcher.Core
         /// Adds the property to the current class
         /// </summary>
         /// <param name="p">Property to add</param>
-        public void AddProperty(Property p)
+        public void AddProperty (Property p)
         {
             properties.Add (p);
         }
@@ -61,9 +59,9 @@ namespace FreezingArcher.Core
         /// Creates the type.
         /// </summary>
         /// <returns>The type.</returns>
-        public Type CreateType()
+        public Type CreateType ()
         {
-            AssemblyName asmName = new AssemblyName (Guid.NewGuid().ToString());
+            AssemblyName asmName = new AssemblyName (Guid.NewGuid ().ToString ());
             var asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (asmName, AssemblyBuilderAccess.Run);
             ModuleBuilder modBuilder = asmBuilder.DefineDynamicModule (className);
             TypeBuilder tb = modBuilder.DefineType (className);
@@ -73,42 +71,39 @@ namespace FreezingArcher.Core
             {
                 FieldBuilder fb = tb.DefineField ("_" + property.Name, property.Type, FieldAttributes.Private);
 
-                PropertyBuilder propertyBuilder = tb.DefineProperty(property.Name, PropertyAttributes.HasDefault, property.Type, null);
+                PropertyBuilder propertyBuilder = tb.DefineProperty (property.Name, PropertyAttributes.HasDefault, property.Type, null);
                 //fb.SetConstant (property.DefaultValue);
                 //doesnt work with mono - should be fixed sometimes
 
                 foreach (var attrib in property.Attributes)
-                    propertyBuilder.SetCustomAttribute (attrib.GetBuilder());
+                    propertyBuilder.SetCustomAttribute (attrib.GetBuilder ());
                 //Get Method
-                MethodBuilder getPropMthdBldr = tb.DefineMethod("get_" + property.Name, MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig, property.Type, Type.EmptyTypes);
-                ILGenerator getIl = getPropMthdBldr.GetILGenerator();
-                getIl.Emit(OpCodes.Ldarg_0);
-                getIl.Emit(OpCodes.Ldfld, fb);
-                getIl.Emit(OpCodes.Ret);
+                MethodBuilder getPropMthdBldr = tb.DefineMethod ("get_" + property.Name, MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig, property.Type, Type.EmptyTypes);
+                ILGenerator getIl = getPropMthdBldr.GetILGenerator ();
+                getIl.Emit (OpCodes.Ldarg_0);
+                getIl.Emit (OpCodes.Ldfld, fb);
+                getIl.Emit (OpCodes.Ret);
 
                 //End Get Method
 
-                MethodBuilder setPropMthdBldr = tb.DefineMethod("set_" + property.Name, MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig, null, new[] { property.Type });
-                ILGenerator setIl = setPropMthdBldr.GetILGenerator();
-                Label modifyProperty = setIl.DefineLabel();
-                Label exitSet = setIl.DefineLabel();
+                MethodBuilder setPropMthdBldr = tb.DefineMethod ("set_" + property.Name, MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig, null, new[] { property.Type });
+                ILGenerator setIl = setPropMthdBldr.GetILGenerator ();
+                Label modifyProperty = setIl.DefineLabel ();
+                Label exitSet = setIl.DefineLabel ();
 
-                setIl.MarkLabel(modifyProperty);
-                setIl.Emit(OpCodes.Ldarg_0);
-                setIl.Emit(OpCodes.Ldarg_1);
-                setIl.Emit(OpCodes.Stfld, fb);
+                setIl.MarkLabel (modifyProperty);
+                setIl.Emit (OpCodes.Ldarg_0);
+                setIl.Emit (OpCodes.Ldarg_1);
+                setIl.Emit (OpCodes.Stfld, fb);
 
-                setIl.Emit(OpCodes.Nop);
-                setIl.MarkLabel(exitSet);
-                setIl.Emit(OpCodes.Ret);
-                propertyBuilder.SetGetMethod(getPropMthdBldr);
-                propertyBuilder.SetSetMethod(setPropMthdBldr);
+                setIl.Emit (OpCodes.Nop);
+                setIl.MarkLabel (exitSet);
+                setIl.Emit (OpCodes.Ret);
+                propertyBuilder.SetGetMethod (getPropMthdBldr);
+                propertyBuilder.SetSetMethod (setPropMthdBldr);
             }
 
             return tb.CreateType ();
-        }
-            
+        }       
     }
-
 }
-

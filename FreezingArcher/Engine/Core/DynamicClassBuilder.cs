@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace FreezingArcher.Core
     {
         private readonly string className;
         private readonly List<Property> properties;
+        private readonly List<Method> methods;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.DynamicClassBuilder"/> class.
@@ -44,6 +46,7 @@ namespace FreezingArcher.Core
         {
             this.className = className;
             properties = new List<Property> ();
+            methods = new List<Method> ();
         }
 
         /// <summary>
@@ -54,6 +57,15 @@ namespace FreezingArcher.Core
         {
             properties.Add (p);
         }
+
+        public void AddMethod(Method m)
+        {
+            methods.Add (m);
+        }
+        public void RemoveMethod(Method m)
+        {
+            methods.Remove (m);
+        }
         /// <summary>
         /// Removes the property from the current class
         /// </summary>
@@ -62,6 +74,9 @@ namespace FreezingArcher.Core
         {
             properties.Remove (p);
         }
+
+        public Action<TypeBuilder> preBuildProperties  { get; set; }
+        public Action<TypeBuilder> postBuildProperties { get; set; }
 
         /// <summary>
         /// Creates the type.
@@ -74,7 +89,32 @@ namespace FreezingArcher.Core
             ModuleBuilder modBuilder = asmBuilder.DefineDynamicModule (className);
             TypeBuilder tb = modBuilder.DefineType (className);
 
+            foreach (var method in methods)
+            {
+                var mi = method.Implementation.GetMethodInfo ();
+                var methodBuilder = tb.DefineMethod (method.Name, MethodAttributes.Public, mi.ReturnType, mi.GetParameters().Skip(1).Select(j => j.ParameterType).ToArray());
+                foreach (var attrib in method.Attributes)
+                    methodBuilder.SetCustomAttribute (attrib.GetBuilder ());
+                var fieldbuilder = tb.DefineField ("m_" + method.Name, method.Implementation.GetType (), FieldAttributes.Private);
+                var generator = methodBuilder.GetILGenerator ();
+                generator.Emit (OpCodes.Nop);
+                generator.Emit (OpCodes.Ldarg_0);
+                generator.Emit (OpCodes.Ldfld, fieldbuilder);
+                generator.Emit (OpCodes.Ldarg_0); //load "this" as first parameter so we can use this class outside, you should use dynamic there
+                for(int i = 0; i < mi.GetParameters().Length; i++)
+                    generator.Emit(OpCodes.Ldarg, i);
+                generator.EmitCall(OpCodes.Callvirt, mi, null);
 
+                if(methodBuilder.ReturnType != typeof(void)) //return type
+                {
+                    generator.Emit (OpCodes.Stloc_0);
+                    generator.Emit (OpCodes.Ldloc_0);
+                }
+                generator.Emit (OpCodes.Ret);
+            }
+
+            if (preBuildProperties != null)
+                preBuildProperties (tb);
             foreach (var property in properties)
             {
                 FieldBuilder fb = tb.DefineField ("_" + property.Name, property.Type, FieldAttributes.Private);
@@ -110,7 +150,8 @@ namespace FreezingArcher.Core
                 propertyBuilder.SetGetMethod (getPropMthdBldr);
                 propertyBuilder.SetSetMethod (setPropMthdBldr);
             }
-
+            if (postBuildProperties != null)
+                postBuildProperties (tb);
             return tb.CreateType ();
         }       
     }

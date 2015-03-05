@@ -29,8 +29,6 @@ namespace FreezingArcher.Configuration
 {
     public class CommandLineOptions
     {
-        public static List<string> list = new List<string> (new string[] {"a","b","c","d"});
-
         [Option ('o', "option", Required = true, HelpText = "Example option.", DefaultValue = "1234")]
         public string Option { get; set; }
 

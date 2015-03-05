@@ -86,7 +86,7 @@ namespace FreezingArcher.Output
         public string ToString (int maxLength)
         {
 
-            string pre = "[" + LogLevel.ToString().PadRight(7) +"] ,"+Timestamp + ", [" + ModuleName.PadRight(maxLength) + "]: ";
+            string pre = "[" + LogLevel.ToString().PadRight(7) +"] "+Timestamp + " [" + ModuleName.PadRight(maxLength) + "]: ";
             Format = Format.Replace ("\n", "\n" + pre + "--> ");
             return string.Concat (pre, string.Format (Format, Param));
         }
@@ -145,7 +145,6 @@ namespace FreezingArcher.Output
             maxModNameLength = 20;
             minL = minLvl;
             t = new Thread (run);
-            Console.BackgroundColor = ConsoleColor.Gray;
             Console.Clear();
             linesToProcess = new Queue<LogLine> ();
             colors = new Dictionary<LogLevel, ConsoleColor> ();
@@ -167,7 +166,7 @@ namespace FreezingArcher.Output
         }
 
         /// <summary>
-        /// Registers a new logging module for consisten output
+        /// Registers a new logging module for consistent output
         /// </summary>
         /// <param name="moduleName">Module name.</param>
         public void RegisterLogModule(string moduleName)

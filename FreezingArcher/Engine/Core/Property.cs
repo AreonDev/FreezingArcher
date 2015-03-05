@@ -22,6 +22,7 @@
 //
 using System;
 using System.Linq;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Core
 {
@@ -77,6 +78,18 @@ namespace FreezingArcher.Core
                 throw new Exception ("Could not determine type, try to specify type explicitly");
 
             Type = types [0];
+        }
+
+        public T Read<T>(object type)
+        {
+            try{
+            return (T)type.GetType ().GetProperty (Name).GetGetMethod ().Invoke (type);
+            }
+            catch(Exception e)
+            {
+                Logger.Log.AddLogEntry (LogLevel.Warning, "DynamicClass", "Error reading property: " + Name + "\n" + e);
+                return default(T);
+            }
         }
     }
 }

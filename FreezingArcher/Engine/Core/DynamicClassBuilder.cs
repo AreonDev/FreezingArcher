@@ -54,6 +54,14 @@ namespace FreezingArcher.Core
         {
             properties.Add (p);
         }
+        /// <summary>
+        /// Removes the property from the current class
+        /// </summary>
+        /// <param name="p">property</param>
+        public void RemoveProperty(Property p)
+        {
+            properties.Remove (p);
+        }
 
         /// <summary>
         /// Creates the type.

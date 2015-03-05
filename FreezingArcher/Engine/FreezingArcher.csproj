@@ -130,6 +130,10 @@
     </Compile>
     <Compile Include="Configuration\CommandLineOptions.cs" />
     <Compile Include="Configuration\CommandLineInterface.cs" />
+    <Compile Include="Core\DynamicClassBuilder.cs" />
+    <Compile Include="Core\ReflectionHelper.cs" />
+    <Compile Include="Core\Property.cs" />
+    <Compile Include="Core\Attribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

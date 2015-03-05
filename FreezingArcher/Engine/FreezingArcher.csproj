@@ -109,7 +109,6 @@
     <Compile Include="Content\Level.cs" />
     <Compile Include="Content\LevelManager.cs" />
     <Compile Include="Core\Interfaces\IUpdate.cs" />
-    <Compile Include="Messaging\GenerateContentMessage.cs" />
     <Compile Include="Messaging\MessageEvent.cs" />
     <Compile Include="Messaging\MessageID.cs" />
     <Compile Include="Messaging\MessageManager.cs" />
@@ -137,6 +136,7 @@
     <Compile Include="Localization\LocaleEnum.cs" />
     <Compile Include="Localization\LocalizationData.cs" />
     <Compile Include="Localization\Localizer.cs" />
+    <Compile Include="Messaging\GeneralMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

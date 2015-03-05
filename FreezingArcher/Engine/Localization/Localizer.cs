@@ -1,13 +1,39 @@
+//
+//  Localizer.cs
+//
+//  Author:
+//       Fin Christensen <christensen.fin@gmail.com>
+//       Martin Koppehel <martin.koppehel@st.ovgu.de>
+//
+//  Copyright (c) 2014 Fin Christensen
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 using System;
 using System.Collections.Generic;
 using FreezingArcher.Output;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Messaging;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Localization
 {
     /// <summary>
     /// Localizer.
     /// </summary>
-    public class Localizer
+    public class Localizer : IMessageCreator
     {
         /// <summary>
         /// The name of the class.
@@ -42,6 +68,7 @@ namespace FreezingArcher.Localization
                 initialLocale.ToString ());
             Locales = locales;
             CurrentLocale = initialLocale;
+            Application.Instance.MessageManager += this;
         }
 
         /// <summary>
@@ -63,8 +90,8 @@ namespace FreezingArcher.Localization
             {
                 Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Changing locale to '{0}'", value);
                 CurLocale = value;
-                if (UpdateLocale != null)
-                    UpdateLocale ();
+                if (MessageCreated != null)
+                    MessageCreated (new GeneralMessage ((int) MessageId.UpdateLocale));
             }
         }
 
@@ -73,11 +100,6 @@ namespace FreezingArcher.Localization
         /// </summary>
         /// <value>The locales.</value>
         public Dictionary<LocaleEnum, LocalizationData> Locales { get; set; }
-
-        /// <summary>
-        /// Occurs when locale is updated.
-        /// </summary>
-        public event Action UpdateLocale;
 
         /// <summary>
         /// Gets the value for the given name.
@@ -98,5 +120,14 @@ namespace FreezingArcher.Localization
 
             return s;
         }
+
+        #region IMessageCreator implementation
+
+        /// <summary>
+        /// Occurs when a new message is created an is ready for processing
+        /// </summary>
+        public event MessageEvent MessageCreated;
+
+        #endregion
     }
 }

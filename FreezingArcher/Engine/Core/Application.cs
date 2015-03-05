@@ -100,6 +100,7 @@ namespace FreezingArcher.Core
         {
             Logger.Initialize (name);
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
+            MessageManager = new MessageManager ();
             Localizer.Initialize ();
             ConfigManager.Initialize ();
 
@@ -112,7 +113,6 @@ namespace FreezingArcher.Core
                 ParserUtils.ParseVector (
                     ConfigManager.Instance["freezing_archer"].GetString ("general", "fullscreen_resolution")),
                 name);
-            MessageManager = new MessageManager ();
             Game = new Game (name);
             Name = name;
             LoadAgain = false;
@@ -310,7 +310,7 @@ namespace FreezingArcher.Core
         /// Gets or sets the message manager.
         /// </summary>
         /// <value>The message manager.</value>
-        public MessageManager MessageManager { get; protected set; }
+        public MessageManager MessageManager { get; set; }
 
         #region IResource implementation
 

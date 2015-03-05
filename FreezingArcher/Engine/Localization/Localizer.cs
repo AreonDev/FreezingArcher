@@ -9,6 +9,22 @@ namespace FreezingArcher.Localization
     public class Localizer
     {
         /// <summary>
+        /// The global localizer instance.
+        /// </summary>
+        public static Localizer Instance;
+
+        /// <summary>
+        /// Initializes the <see cref="FreezingArcher.Localization.Localizer"/> class.
+        /// </summary>
+        static Localizer ()
+        {
+            Dictionary<LocaleEnum, LocalizationData> dic = new Dictionary<LocaleEnum, LocalizationData> ();
+            dic.Add (LocaleEnum.en_US, new LocalizationData ("Localization/en_US.xml"));
+            dic.Add (LocaleEnum.de_DE, new LocalizationData ("Localization/de_DE.xml"));
+            Instance = new Localizer (dic);
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Localization.Localizer"/> class.
         /// </summary>
         /// <param name="locales">Locales.</param>

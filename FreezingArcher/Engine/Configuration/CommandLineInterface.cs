@@ -28,8 +28,14 @@ using System.Collections;
 
 namespace FreezingArcher.Configuration
 {
+    /// <summary>
+    /// Command line interface class.
+    /// </summary>
     public class CommandLineInterface
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Configuration.CommandLineInterface"/> class.
+        /// </summary>
         public CommandLineInterface ()
         {
         }
@@ -84,9 +90,7 @@ namespace FreezingArcher.Configuration
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
         public void AddOptionList<T> (Action<T> handler, char shortName, string longName = null, char separator = ',',
             string helpText = null, bool required = false) where T : IList
-        {
-            AddOptionArray ((int[] a) => {return;}, 'a');
-        }
+        {}
 
         /// <summary>
         /// Adds an option array to the command line interface. (-e, --example val1 val2 val3 ...)

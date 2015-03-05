@@ -41,7 +41,7 @@ namespace FreezingArcher.Output
             if (Console.BufferWidth != 0 && line.Length > Console.BufferWidth - 4)
                 line = line.Substring (0, Console.BufferWidth - 4) + " ...";
             Console.WriteLine (line);
-            Console.ForegroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }

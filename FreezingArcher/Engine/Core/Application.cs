@@ -98,10 +98,11 @@ namespace FreezingArcher.Core
         public Application (string name)
         {
             Logger.Initialize (name);
-
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
-
             ConfigManager.Initialize ();
+
+            Logger.Log.SetLogLevel ((LogLevel) ConfigManager.Instance["freezing_archer"]
+                .GetInteger ("general", "loglevel"));
 
             Window = new Window (
                 ParserUtils.ParseVector (

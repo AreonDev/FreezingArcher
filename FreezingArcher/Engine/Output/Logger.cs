@@ -113,9 +113,9 @@ namespace FreezingArcher.Output
             if (Log != null) return;
 
             #if DEBUG
-            Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Debug, false);
+            Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Debug);
             #else
-            Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Info, false);
+            Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Info);
             #endif
         }
         /// <summary>The module name</summary>
@@ -222,7 +222,7 @@ namespace FreezingArcher.Output
         /// <param name="args">The arguments.</param>
         public void AddLogEntry (LogLevel level, string moduleName, string format, params object[] args)
         {
-            var x = new LogLine { LogLevel = level, ModuleName = moduleName, Format = format, Param = args, Timestamp = DateTime.Now, };
+            var x = new LogLine { LogLevel = level, ModuleName = moduleName, Format = format, Param = args, Timestamp = DateTime.Now };
             AddLogEntry (x);
         }
 

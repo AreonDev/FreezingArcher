@@ -24,6 +24,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FreezingArcher.Core;
 using FreezingArcher.Core.Interfaces;
+using FreezingArcher.Messaging;
 using FreezingArcher.Output;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
 
@@ -81,12 +82,15 @@ namespace FreezingArcher.Configuration
         /// <summary>
         /// Initialize the global instance.
         /// </summary>
-        public static void Initialize ()
+        public static void Initialize (/*MessageManager msgManager*/)
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing config manager ...");
+            //messageManager = msgManager;
             Instance = new ConfigManager ();
             Instance.Add (new ConfigFile (DefaultConfig.A, DefaultConfig.B));
         }
+
+        //static MessageManager messageManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Configuration.ConfigManager"/> class.

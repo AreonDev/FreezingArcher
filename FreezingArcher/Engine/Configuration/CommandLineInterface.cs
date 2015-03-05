@@ -21,10 +21,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
-using System.Collections;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Configuration
 {
@@ -38,9 +39,19 @@ namespace FreezingArcher.Configuration
         /// </summary>
         public CommandLineInterface ()
         {
+            DynamicClassBuilder = new DynamicClassBuilder ("Options");
+            Handlers = new Dictionary<string, Action<object>> ();
         }
 
-        object options;
+        /// <summary>
+        /// The dynamic class builder.
+        /// </summary>
+        protected DynamicClassBuilder DynamicClassBuilder;
+
+        /// <summary>
+        /// The handlers.
+        /// </summary>
+        protected Dictionary<string, Action<object>> Handlers;
 
         /// <summary>
         /// Parses the arguments from the command line.
@@ -48,6 +59,8 @@ namespace FreezingArcher.Configuration
         /// <param name="args">The arguments.</param>
         public void ParseArguments (string[] args)
         {
+            Type t = DynamicClassBuilder.CreateType ();
+            object options = Activator.CreateInstance (t);
             if (Parser.Default.ParseArguments (args, options))
             {
                 // read values from options and call option handlers with parsed data.
@@ -66,7 +79,15 @@ namespace FreezingArcher.Configuration
         /// <typeparam name="T">This type specifies of which type the parsed value will be.</typeparam>
         public void AddOption<T> (Action<T> handler, char shortName, string longName = null, string helpText = null,
             bool required = false, T defaultValue = default (T))
-        {}
+        {
+            FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionAttribute));
+            attr.CallConstructor (shortName, longName);
+            attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
+                new Pair<string, object> ("Required", required),
+                new Pair<string, object> ("DefaultValue", defaultValue));
+            DynamicClassBuilder.AddProperty (new Property (longName, typeof (T), attr));
+            Handlers.Add (longName, j => handler ((T) j));
+        }
 
         /// <summary>
         /// Sets a value list to the command line interface. (program val1 val2 val3 ...)
@@ -76,7 +97,9 @@ namespace FreezingArcher.Configuration
         /// A number of -1 allows an unlimited number of values.</param>
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
         public void SetValueList<T> (Action<T> handler, int maximumElements = -1) where T : IList
-        {}
+        {
+
+        }
 
         /// <summary>
         /// Adds an option list to the command line interface. (-e, --example val1,val2,val3...)
@@ -90,7 +113,14 @@ namespace FreezingArcher.Configuration
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
         public void AddOptionList<T> (Action<T> handler, char shortName, string longName = null, char separator = ',',
             string helpText = null, bool required = false) where T : IList
-        {}
+        {
+            FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionListAttribute));
+            attr.CallConstructor (shortName, longName, separator);
+            attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
+                new Pair<string, object> ("Required", required));
+            DynamicClassBuilder.AddProperty (new Property (longName, typeof (T), attr));
+            Handlers.Add (longName, j => handler ((T) j));
+        }
 
         /// <summary>
         /// Adds an option array to the command line interface. (-e, --example val1 val2 val3 ...)
@@ -104,7 +134,15 @@ namespace FreezingArcher.Configuration
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
         public void AddOptionArray<T> (Action<T[]> handler, char shortName, string longName = null,
             string helpText = null, bool required = false, T[] defaultValue = default (T[]))
-        {}
+        {
+            FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionArrayAttribute));
+            attr.CallConstructor (shortName, longName);
+            attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
+                new Pair<string, object> ("Required", required),
+                new Pair<string, object> ("DefaultValue", defaultValue));
+            DynamicClassBuilder.AddProperty (new Property (longName, typeof (T), attr));
+            Handlers.Add (longName, j => handler ((T) j));
+        }
 
         /// <summary>
         /// Configure help message.

@@ -23,10 +23,10 @@
 //
 using System;
 using System.Collections.Generic;
-using FreezingArcher.Output;
-using FreezingArcher.Messaging.Interfaces;
-using FreezingArcher.Messaging;
 using FreezingArcher.Core;
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Localization
 {
@@ -48,14 +48,17 @@ namespace FreezingArcher.Localization
         /// <summary>
         /// Initializes the <see cref="FreezingArcher.Localization.Localizer"/> class.
         /// </summary>
-        public static void Initialize ()
+        public static void Initialize (MessageManager msgManager)
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing global localizer instance ...");
+            messageManager = msgManager;
             Dictionary<LocaleEnum, LocalizationData> dic = new Dictionary<LocaleEnum, LocalizationData> ();
             dic.Add (LocaleEnum.en_US, new LocalizationData ("Localization/en_US.xml"));
             dic.Add (LocaleEnum.de_DE, new LocalizationData ("Localization/de_DE.xml"));
             Instance = new Localizer (dic);
         }
+
+        static MessageManager messageManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Localization.Localizer"/> class.
@@ -68,7 +71,11 @@ namespace FreezingArcher.Localization
                 initialLocale.ToString ());
             Locales = locales;
             CurrentLocale = initialLocale;
-            Application.Instance.MessageManager += this;
+
+            if (messageManager != null)
+                messageManager += this;
+            else
+                Application.Instance.MessageManager += this;
         }
 
         /// <summary>

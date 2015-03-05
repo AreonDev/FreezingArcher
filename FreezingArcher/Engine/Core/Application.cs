@@ -101,8 +101,8 @@ namespace FreezingArcher.Core
             Logger.Initialize (name);
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
             MessageManager = new MessageManager ();
-            Localizer.Initialize ();
-            ConfigManager.Initialize ();
+            Localizer.Initialize (MessageManager);
+            ConfigManager.Initialize (/*MessageManager*/);
 
             Logger.Log.SetLogLevel ((LogLevel) ConfigManager.Instance["freezing_archer"]
                 .GetInteger ("general", "loglevel"));

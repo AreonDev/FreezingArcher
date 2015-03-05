@@ -22,7 +22,7 @@
 //
 using System;
 
-namespace FreezingArcher.Core.Interfaces
+namespace FreezingArcher.Core
 {
     public class Method
     {

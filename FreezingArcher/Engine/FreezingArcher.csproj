@@ -89,7 +89,6 @@
     <Compile Include="Core\Interfaces\IManageable.cs" />
     <Compile Include="Core\Interfaces\IManager.cs" />
     <Compile Include="Core\Interfaces\IResource.cs" />
-    <Compile Include="Core\LinqExtensions.cs" />
     <Compile Include="Renderer\RendererCore.cs" />
     <Compile Include="Renderer\GraphicsResource.cs" />
     <Compile Include="Renderer\GraphicsResourceManager.cs" />
@@ -122,6 +121,8 @@
     <Compile Include="Configuration\ConfigFile.cs" />
     <Compile Include="Configuration\Value.cs" />
     <Compile Include="Configuration\ValueType.cs" />
+    <Compile Include="Core\Extensions.cs" />
+    <Compile Include="Configuration\ParserUtils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

@@ -26,8 +26,6 @@ using FreezingArcher.Core;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
-using Pencil.Gaming.MathUtils;
-using System.Text.RegularExpressions;
 
 namespace FreezingArcher.Configuration
 {
@@ -87,29 +85,6 @@ namespace FreezingArcher.Configuration
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing config manager ...");
             Instance = new ConfigManager ();
             Instance.Add (new ConfigFile (DefaultConfig.A, DefaultConfig.B));
-        }
-
-        /// <summary>
-        /// Parses a vector from a string like 1024x576.
-        /// </summary>
-        /// <returns>The vector.</returns>
-        /// <param name="val">Value.</param>
-        public static Vector2i ParseVector (string val)
-        {
-            Regex r = new Regex ("(\\d+)x(\\d+)");
-            Match m = r.Match (val);
-
-            if (m.Success)
-            {
-                int x,y;
-                int.TryParse (m.Groups[1].Value, out x);
-                int.TryParse (m.Groups[2].Value, out y);
-                return new Vector2i (x, y);
-            }
-
-            Logger.Log.AddLogEntry (LogLevel.Error, "ConfigManager#ParseVector",
-                "Could not parse a vector from string! Have you messed up your resolution config?");
-            return new Vector2i ();
         }
 
         /// <summary>

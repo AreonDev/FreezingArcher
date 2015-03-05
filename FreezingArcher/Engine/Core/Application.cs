@@ -104,9 +104,9 @@ namespace FreezingArcher.Core
             ConfigManager.Initialize ();
 
             Window = new Window (
-                ConfigManager.ParseVector (
+                ParserUtils.ParseVector (
                     ConfigManager.Instance["freezing_archer"].GetString ("general", "resolution")),
-                ConfigManager.ParseVector (
+                ParserUtils.ParseVector (
                     ConfigManager.Instance["freezing_archer"].GetString ("general", "fullscreen_resolution")),
                 name);
             MessageManager = new MessageManager ();

@@ -1,5 +1,5 @@
 //
-//  LinqExtensions.cs
+//  Extensions.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -29,7 +29,7 @@ namespace FreezingArcher.Core
     /// <summary>
     /// Linq extensions.
     /// </summary>
-    public static class LinqExtensions
+    public static class Extensions
     {
         /// <summary>
         /// Performs an action for each element in an IEnumerable

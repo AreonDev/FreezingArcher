@@ -2,7 +2,7 @@
 //  Attribute.cs
 //
 //  Author:
-//       martin <>
+//       Martin Koppehel <martin.koppehel@st.ovgu.de>
 //
 //  Copyright (c) 2015 martin
 //

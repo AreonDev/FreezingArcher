@@ -23,11 +23,12 @@
 #define LINUX_INTEL_COMPATIBLE
 
 using System;
-using Pencil.Gaming;
-using Pencil.Gaming.MathUtils;
+using System.Collections.Generic;
+using FreezingArcher.Configuration;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
-using System.Collections.Generic;
+using Pencil.Gaming;
+using Pencil.Gaming.MathUtils;
 
 namespace FreezingArcher.Core
 {
@@ -471,8 +472,13 @@ namespace FreezingArcher.Core
             Glfw.WindowHint (WindowHint.OpenGLDebugContext, 1);
 #endif
 
-            Win = Glfw.CreateWindow (Size.X, Size.Y, Title,
-                                     GlfwMonitorPtr.Null, GlfwWindowPtr.Null);
+            if (ConfigManager.Instance["freezing_archer"].GetBool ("general", "fullscreen"))
+                Win = Glfw.CreateWindow (Resolution.X, Resolution.Y, Title,
+                    Glfw.GetMonitors ()[
+                        ConfigManager.Instance["freezing_archer"].GetInteger ("general", "fullscreen_monitor")],
+                    GlfwWindowPtr.Null);
+            else
+                Win = Glfw.CreateWindow (Size.X, Size.Y, Title, GlfwMonitorPtr.Null, GlfwWindowPtr.Null);
 
             Glfw.MakeContextCurrent (Win);
 

@@ -174,6 +174,96 @@ namespace FreezingArcher.Configuration
         }
 
         /// <summary>
+        /// Gets a boolean value. CAUTION: This method will throw an exception when the requested value is not of type
+        /// bool!
+        /// </summary>
+        /// <returns>The value.</returns>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        public bool GetBool (string section, string valueName)
+        {
+            Value v = GetValue (section, valueName);
+            if (v.Type == ValueType.Boolean)
+                return v.Boolean;
+
+            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName + Name,
+                "The requested value '{0}:{1}' is not of type bool!", section, valueName);
+            throw new InvalidDataException ("The requested value is of wrong type!");
+        }
+
+        /// <summary>
+        /// Gets an integer value. CAUTION: This method will throw an exception when the requested value is not of type
+        /// int!
+        /// </summary>
+        /// <returns>The value.</returns>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        public int GetInteger (string section, string valueName)
+        {
+            Value v = GetValue (section, valueName);
+            if (v.Type == ValueType.Integer)
+                return v.Integer;
+
+            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName + Name,
+                "The requested value '{0}:{1}' is not of type int!", section, valueName);
+            throw new InvalidDataException ("The requested value is of wrong type!");
+        }
+
+        /// <summary>
+        /// Gets a double value. CAUTION: This method will throw an exception when the requested value is not of type
+        /// double!
+        /// </summary>
+        /// <returns>The value.</returns>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        public double GetDouble (string section, string valueName)
+        {
+            Value v = GetValue (section, valueName);
+            if (v.Type == ValueType.Double)
+                return v.Double;
+
+            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName + Name,
+                "The requested value '{0}:{1}' is not of type double!", section, valueName);
+            throw new InvalidDataException ("The requested value is of wrong type!");
+        }
+
+        /// <summary>
+        /// Gets a string value. CAUTION: This method will throw an exception when the requested value is not of type
+        /// string!
+        /// </summary>
+        /// <returns>The value.</returns>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        public string GetString (string section, string valueName)
+        {
+            Value v = GetValue (section, valueName);
+            if (v.Type == ValueType.String)
+                return v.String;
+
+            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName + Name,
+                "The requested value '{0}:{1}' is not of type string!", section, valueName);
+            throw new InvalidDataException ("The requested value is of wrong type!");
+        }
+
+        /// <summary>
+        /// Gets a byte array value. CAUTION: This method will throw an exception when the requested value is not of
+        /// type byte[]!
+        /// </summary>
+        /// <returns>The value.</returns>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        public byte[] GetBytes (string section, string valueName)
+        {
+            Value v = GetValue (section, valueName);
+            if (v.Type == ValueType.Bytes)
+                return v.Bytes;
+
+            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName + Name,
+                "The requested value '{0}:{1}' is not of type byte[]!", section, valueName);
+            throw new InvalidDataException ("The requested value is of wrong type!");
+        }
+
+        /// <summary>
         /// Sets the value.
         /// </summary>
         /// <returns><c>true</c>, if value was set, <c>false</c> otherwise.</returns>
@@ -241,6 +331,61 @@ namespace FreezingArcher.Configuration
                     value.Type.ToString ());
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Sets a bool value.
+        /// </summary>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        /// <param name="value">Value.</param>
+        public void SetBool (string section, string valueName, bool value)
+        {
+            SetValue (section, valueName, new Value (value));
+        }
+
+        /// <summary>
+        /// Sets an integer value.
+        /// </summary>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        /// <param name="value">Value.</param>
+        public void SetInteger (string section, string valueName, int value)
+        {
+            SetValue (section, valueName, new Value (value));
+        }
+
+        /// <summary>
+        /// Sets a double value.
+        /// </summary>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        /// <param name="value">Value.</param>
+        public void SetDouble (string section, string valueName, double value)
+        {
+            SetValue (section, valueName, new Value (value));
+        }
+
+        /// <summary>
+        /// Sets a string value.
+        /// </summary>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        /// <param name="value">Value.</param>
+        public void SetBool (string section, string valueName, string value)
+        {
+            SetValue (section, valueName, new Value (value));
+        }
+
+        /// <summary>
+        /// Sets a byte array value.
+        /// </summary>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        /// <param name="value">Value.</param>
+        public void SetBytes (string section, string valueName, byte[] value)
+        {
+            SetValue (section, valueName, new Value (value));
         }
 
         #region IManageable implementation

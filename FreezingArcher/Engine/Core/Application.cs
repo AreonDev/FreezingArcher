@@ -32,6 +32,7 @@ using Pencil.Gaming.MathUtils;
 using FreezingArcher.Content;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging;
+using FreezingArcher.Configuration;
 
 namespace FreezingArcher.Core
 {
@@ -100,10 +101,14 @@ namespace FreezingArcher.Core
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
 
-            Configuration.ConfigManager.Initialize ();
+            ConfigManager.Initialize ();
 
-            // read from settings FIXME
-            Window = new Window (new Vector2i (1024, 576), new Vector2i (1920, 1080), name);
+            Window = new Window (
+                ConfigManager.ParseVector (
+                    ConfigManager.Instance["freezing_archer"].GetString ("general", "resolution")),
+                ConfigManager.ParseVector (
+                    ConfigManager.Instance["freezing_archer"].GetString ("general", "fullscreen_resolution")),
+                name);
             MessageManager = new MessageManager ();
             Game = new Game (name);
             Name = name;
@@ -224,7 +229,7 @@ namespace FreezingArcher.Core
                 }
 
                 if (key == Key.F7 && action == KeyAction.Release)
-                    Configuration.ConfigManager.Instance.SaveAll ();
+                    ConfigManager.Instance.SaveAll ();
 
                 if (key == Key.Escape && action == KeyAction.Release)
                     Window.Close ();

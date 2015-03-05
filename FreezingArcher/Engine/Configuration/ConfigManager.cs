@@ -69,6 +69,7 @@ namespace FreezingArcher.Configuration
             general.Add ("fullscreen_resolution", new Value ("1920x1080"));
             general.Add ("fullscreen_monitor", new Value (0));
             general.Add ("fullscreen", new Value (false));
+            general.Add ("loglevel", new Value (3));
             general.Add ("mouse_speed", new Value (1.2));
         }
 

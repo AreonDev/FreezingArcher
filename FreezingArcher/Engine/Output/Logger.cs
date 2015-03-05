@@ -83,9 +83,10 @@ namespace FreezingArcher.Output
 
         /// <summary>Returns a <see cref="System.String" /> that represents this instance.</summary>
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
-        public override string ToString ()
+        public string ToString (int maxLength)
         {
-            string pre = string.Concat ("[", LogLevel, "] ", Timestamp, " [", ModuleName, "]: ");
+
+            string pre = "[" + LogLevel.ToString().PadRight(7) +"] ,"+Timestamp + ", [" + ModuleName.PadRight(maxLength) + "]: ";
             Format = Format.Replace ("\n", "\n" + pre + "--> ");
             return string.Concat (pre, string.Format (Format, Param));
         }
@@ -109,20 +110,14 @@ namespace FreezingArcher.Output
         /// <param name="logfile">Logfile.</param>
         public static void Initialize(string logfile)
         {
-            if (!Log.isEarly) return;
-            
-            Log.Dispose();
+            if (Log != null) return;
+
             #if DEBUG
             Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Debug, false);
             #else
             Log = new Logger(new FileInfo(logfile + ".log"), LogLevel.Info, false);
             #endif
         }
-        static Logger()
-        {
-            Log = new Logger(new FileInfo("early.log"), LogLevel.Severe, false){isEarly = true,};
-        }
-        private bool isEarly = false;
         /// <summary>The module name</summary>
         private const string moduleName = "Log-System";
         /// <summary>The colors</summary>
@@ -137,6 +132,9 @@ namespace FreezingArcher.Output
         private Thread t;
         /// <summary>The minimum l</summary>
         private LogLevel minL;
+        /// <summary>The maximum known moduleName length</summary>
+        private int maxModNameLength;
+
 
         /// <summary>Initializes a new instance of the <see cref="Logger"/> class.</summary>
         /// <param name="logFile">The log file.</param>
@@ -144,6 +142,7 @@ namespace FreezingArcher.Output
         /// <param name="append">if set to <c>true</c> appends to the file if exists.</param>
         public Logger (FileInfo logFile, LogLevel minLvl = LogLevel.Fine, bool append = false)
         {
+            maxModNameLength = 20;
             minL = minLvl;
             t = new Thread (run);
             Console.BackgroundColor = ConsoleColor.Gray;
@@ -167,6 +166,24 @@ namespace FreezingArcher.Output
             t.Start ();
         }
 
+        /// <summary>
+        /// Registers a new logging module for consisten output
+        /// </summary>
+        /// <param name="moduleName">Module name.</param>
+        public void RegisterLogModule(string moduleName)
+        {
+            maxModNameLength = Math.Max (maxModNameLength, moduleName.Length);
+        }
+
+        /// <summary>
+        /// Sets the log level which will be written to the file
+        /// </summary>
+        /// <param name="newLevel">New level.</param>
+        public void setLogLevel(LogLevel newLevel)
+        {
+            minL = newLevel;
+        }
+
         /// <summary>Runs this instance.</summary>
         void run ()
         {
@@ -176,7 +193,7 @@ namespace FreezingArcher.Output
                         LogLine l;
                         lock (linesToProcess)
                             l = linesToProcess.Dequeue ();
-                        string s = l.ToString ();
+                        string s = l.ToString (maxModNameLength);
                         if ((int)l.LogLevel >= (int)minL)
                             ConsoleExtension.WriteLine (s, colors [l.LogLevel]);
                         fileWriter.WriteLine (s);
@@ -213,6 +230,7 @@ namespace FreezingArcher.Output
         /// <param name="x">The line to add.</param>
         public void AddLogEntry (LogLine x)
         {
+            maxModNameLength = Math.Max (maxModNameLength, x.ModuleName.Length);
             lock (linesToProcess) {
                 linesToProcess.Enqueue (x);
             }

@@ -179,7 +179,7 @@ namespace FreezingArcher.Output
         /// Sets the log level which will be written to the file
         /// </summary>
         /// <param name="newLevel">New level.</param>
-        public void setLogLevel(LogLevel newLevel)
+        public void SetLogLevel(LogLevel newLevel)
         {
             minL = newLevel;
         }

@@ -28,8 +28,14 @@ using System.Collections;
 
 namespace FreezingArcher.Configuration
 {
+    /// <summary>
+    /// Command line interface class.
+    /// </summary>
     public class CommandLineInterface
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Configuration.CommandLineInterface"/> class.
+        /// </summary>
         public CommandLineInterface ()
         {
         }

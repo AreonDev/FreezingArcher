@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using FreezingArcher.Core;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
 
@@ -33,18 +34,8 @@ namespace FreezingArcher.Configuration
     /// <summary>
     /// Config manager class. Manages config files.
     /// </summary>
-    public class ConfigManager : IManager<ConfigFile>
+    public class ConfigManager : IManager<ConfigFile>, IMessageCreator
     {
-        /// <summary>
-        /// Item added handler.
-        /// </summary>
-        public delegate void ItemAddedHandler (ConfigFile config);
-
-        /// <summary>
-        /// Item removed handler.
-        /// </summary>
-        public delegate void ItemRemovedHandler (ConfigFile config);
-
         /// <summary>
         /// The default config of the freezing_archer.conf.
         /// </summary>
@@ -82,21 +73,20 @@ namespace FreezingArcher.Configuration
         /// <summary>
         /// Initialize the global instance.
         /// </summary>
-        public static void Initialize (/*MessageManager msgManager*/)
+        public static void Initialize (MessageManager messageManager)
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing config manager ...");
-            //messageManager = msgManager;
-            Instance = new ConfigManager ();
-            Instance.Add (new ConfigFile (DefaultConfig.A, DefaultConfig.B));
+            Instance = new ConfigManager (messageManager);
+            Instance.Add (new ConfigFile (DefaultConfig.A, DefaultConfig.B, messageManager));
         }
-
-        //static MessageManager messageManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Configuration.ConfigManager"/> class.
         /// </summary>
-        public ConfigManager ()
+        /// <param name="messageManager">Message manager.</param>
+        public ConfigManager (MessageManager messageManager)
         {
+            messageManager += this;
             ConfigFiles = new List<ConfigFile> ();
         }
 
@@ -113,16 +103,6 @@ namespace FreezingArcher.Configuration
         /// </summary>
         protected List<ConfigFile> ConfigFiles;
 
-        /// <summary>
-        /// Occurs when item is added.
-        /// </summary>
-        public event ItemAddedHandler ItemAdded;
-
-        /// <summary>
-        /// Occurs when item is removed.
-        /// </summary>
-        public event ItemRemovedHandler ItemRemoved;
-
         #region IManager implementation
 
         /// <summary>
@@ -132,8 +112,8 @@ namespace FreezingArcher.Configuration
         public void Add (ConfigFile item)
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Adding {0}.conf to config manager ...", item.Name);
-            if (ItemAdded != null)
-                ItemAdded (item);
+            if (MessageCreated != null)
+                MessageCreated (new ConfigManagerItemAddedMessage (item));
             ConfigFiles.Add (item);
         }
 
@@ -144,8 +124,8 @@ namespace FreezingArcher.Configuration
         public void Remove (ConfigFile item)
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Removing {0}.conf from config manager ...", item.Name);
-            if (ItemRemoved != null)
-                ItemRemoved (item);
+            if (MessageCreated != null)
+                MessageCreated (new ConfigManagerItemRemovedMessage (item));
             ConfigFiles.Remove (item);
         }
 
@@ -160,8 +140,8 @@ namespace FreezingArcher.Configuration
                 {
                     Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
                         "Removing {0}.conf from config manager ...", c.Name);
-                    if (ItemRemoved != null)
-                        ItemRemoved (c);
+                    if (MessageCreated != null)
+                        MessageCreated (new ConfigManagerItemRemovedMessage (c));
                     return true;
                 }
                 return false;
@@ -214,6 +194,15 @@ namespace FreezingArcher.Configuration
         {
             return ConfigFiles.GetEnumerator ();
         }
+
+        #endregion
+
+        #region IMessageCreator implementation
+
+        /// <summary>
+        /// Occurs when a new message is created an is ready for processing
+        /// </summary>
+        public event MessageEvent MessageCreated;
 
         #endregion
     }

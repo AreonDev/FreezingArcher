@@ -351,6 +351,9 @@ namespace FreezingArcher.Core
             }
             set
 	    {
+                Logger.Log.AddLogEntry (LogLevel.Warning, ClassName + Title,
+                    "Setting fullscreen state during runtime is not implemented yet!. " +
+                    "Use the commnd line option or the config file entry to enter fullscreen mode on startup!");
                 //TODO toggle fullscreen
 		MFullscreen = value;
             }

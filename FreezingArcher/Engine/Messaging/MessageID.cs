@@ -4,6 +4,7 @@
 //  Author:
 //       Martin Koppehel <martin.koppehel@st.ovgu.de>
 //       Willy Failla <>
+//       Fin Christensen <christensen.fin@gmail.com>
 //
 //  Copyright (c) 2015 Fin Christensen
 //
@@ -30,8 +31,24 @@ namespace FreezingArcher.Messaging
     public enum MessageId
     {
         /// <summary>
-        /// The update locale message id.
+        /// Occurs when the locale is updated.
         /// </summary>
-        UpdateLocale = 1
+        UpdateLocale = 1,
+        /// <summary>
+        /// Occurs when a config file value is set.
+        /// </summary>
+        ConfigFileValueSet = 2,
+        /// <summary>
+        /// Occurs when a config file is saved.
+        /// </summary>
+        ConfigFileSaved = 3,
+        /// <summary>
+        /// Occurs when an item is added to the config manager.
+        /// </summary>
+        ConfigManagerItemAdded = 4,
+        /// <summary>
+        /// Occurs when an item is removed from the config manager.
+        /// </summary>
+        ConfigManagerItemRemoved = 5
     }
 }

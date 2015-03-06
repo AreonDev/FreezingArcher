@@ -21,28 +21,20 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System.Collections.Generic;
-using FreezingArcher.Core.Interfaces;
-using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
-using FreezingArcher.Output;
 using System.IO;
+using FreezingArcher.Core.Interfaces;
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Output;
+using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
 
 namespace FreezingArcher.Configuration
 {
     /// <summary>
     /// Config file.
     /// </summary>
-    public class ConfigFile : IManageable
+    public class ConfigFile : IManageable, IMessageCreator
     {
-        /// <summary>
-        /// Config saved handler.
-        /// </summary>
-        public delegate void ConfigSavedHandler (ConfigFile config);
-
-        /// <summary>
-        /// Value set handler.
-        /// </summary>
-        public delegate void ValueSetHandler (Value value);
-
         /// <summary>
         /// The name of the class.
         /// </summary>
@@ -52,11 +44,13 @@ namespace FreezingArcher.Configuration
         /// Initializes a new instance of the <see cref="FreezingArcher.Configuration.ConfigFile"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
-        /// <param name="defaults">Defaults values</param>
-        public ConfigFile (string name, Dictionary<string, Section> defaults)
+        /// <param name="defaults">Defaults values.</param>
+        /// <param name="messageManager">Message manager.</param>
+        public ConfigFile (string name, Dictionary<string, Section> defaults, MessageManager messageManager)
         {
             Name = name;
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName + Name, "Reading {0}.conf", Name);
+            messageManager += this;
             IniConfig = new IniConfig (name + ".conf");
             Defaults = defaults;
             Overrides = new Dictionary<string, Section> ();
@@ -113,24 +107,14 @@ namespace FreezingArcher.Configuration
         protected Dictionary<string, Section> Overrides;
 
         /// <summary>
-        /// Occurs after config is saved.
-        /// </summary>
-        public event ConfigSavedHandler ConfigSaved;
-
-        /// <summary>
-        /// Occurs after a value is set.
-        /// </summary>
-        public event ValueSetHandler ValueSet;
-
-        /// <summary>
         /// Save this config to file.
         /// </summary>
         public void Save ()
         {
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName + Name, "Saving {0}.conf ...", Name);
             IniConfig.Flush ();
-            if (ConfigSaved != null)
-                ConfigSaved (this);
+            if (MessageCreated != null)
+                MessageCreated (new ConfigFileSavedMessage (this));
         }
 
         /// <summary>
@@ -340,28 +324,23 @@ namespace FreezingArcher.Configuration
             {
             case ValueType.Boolean:
                 IniConfig.SetValue (section, valueName, value.Boolean);
-                if (ValueSet != null)
-                    ValueSet (value);
+                ValueSet (value);
                 return true;
             case ValueType.Integer:
                 IniConfig.SetValue (section, valueName, value.Integer);
-                if (ValueSet != null)
-                    ValueSet (value);
+                ValueSet (value);
                 return true;
             case ValueType.Double:
                 IniConfig.SetValue (section, valueName, value.Double);
-                if (ValueSet != null)
-                    ValueSet (value);
+                ValueSet (value);
                 return true;
             case ValueType.String:
                 IniConfig.SetValue (section, valueName, value.String);
-                if (ValueSet != null)
-                    ValueSet (value);
+                ValueSet (value);
                 return true;
             case ValueType.Bytes:
                 IniConfig.SetValue (section, valueName, value.Bytes);
-                if (ValueSet != null)
-                    ValueSet (value);
+                ValueSet (value);
                 return true;
             default:
                 Logger.Log.AddLogEntry (LogLevel.Severe, ClassName + Name,
@@ -369,6 +348,12 @@ namespace FreezingArcher.Configuration
                     value.Type.ToString ());
                 return false;
             }
+        }
+
+        void ValueSet (Value value)
+        {
+            if (MessageCreated != null)
+                MessageCreated (new ConfigFileValueSetMessage (value));
         }
 
         /// <summary>
@@ -433,6 +418,15 @@ namespace FreezingArcher.Configuration
         /// </summary>
         /// <value>The name.</value>
         public string Name { get; set; }
+
+        #endregion
+
+        #region IMessageCreator implementation
+
+        /// <summary>
+        /// Occurs when a new message is created an is ready for processing
+        /// </summary>
+        public event MessageEvent MessageCreated;
 
         #endregion
     }

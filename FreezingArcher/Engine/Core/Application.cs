@@ -111,7 +111,7 @@ namespace FreezingArcher.Core
             Logger.Initialize (name);
             Logger.Log.RegisterLogModule (ClassName + name);
             MessageManager = new MessageManager ();
-            ConfigManager.Initialize (/*MessageManager*/);
+            ConfigManager.Initialize (MessageManager);
 
             CommandLineInterface.Instance.SetHelp ("Freezing Archer 3D game engine/framework", "Alpha 0.0.1",
                 "402:PaymentRequired", 2015, 'h', "help", true, true, null,

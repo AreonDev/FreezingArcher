@@ -26,6 +26,8 @@ using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
 using FreezingArcher.Core;
+using FreezingArcher.Reflection;
+using Attribute = FreezingArcher.Reflection.Attribute;
 
 namespace FreezingArcher.Configuration
 {
@@ -100,7 +102,7 @@ namespace FreezingArcher.Configuration
         public void AddOption<T> (Action<T> handler, char shortName, string longName = "", string helpText = "",
             string metaValue = "", bool required = false, T defaultValue = default (T))
         {
-            FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionAttribute));
+            Attribute attr = new Attribute (typeof (OptionAttribute));
             attr.CallConstructor (shortName, longName);
             attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
                 new Pair<string, object> ("Required", required),
@@ -125,7 +127,7 @@ namespace FreezingArcher.Configuration
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
         public void SetValueList<T> (Action<T> handler, string metaValue = "", int maximumElements = -1) where T : IList
         {
-            FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (ValueListAttribute));
+            Attribute attr = new Attribute (typeof (ValueListAttribute));
             attr.CallConstructor (typeof (List<T>));
             attr.AddNamedParameters (new Pair<string, object> ("MaximumElements", maximumElements),
                 new Pair<string, object> ("MetaValue", metaValue));
@@ -149,7 +151,7 @@ namespace FreezingArcher.Configuration
         public void AddOptionList<T> (Action<T> handler, char shortName, string longName = "", char separator = ',',
             string helpText = "", string metaValue = "", bool required = false) where T : IList
         {
-            FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionListAttribute));
+            Attribute attr = new Attribute (typeof (OptionListAttribute));
             attr.CallConstructor (shortName, longName, separator);
             attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
                 new Pair<string, object> ("Required", required),
@@ -172,7 +174,7 @@ namespace FreezingArcher.Configuration
         public void AddOptionArray<T> (Action<T[]> handler, char shortName, string longName = "",
             string helpText = "", string metaValue = "", bool required = false, T[] defaultValue = default (T[]))
         {
-            FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionArrayAttribute));
+            Attribute attr = new Attribute (typeof (OptionArrayAttribute));
             attr.CallConstructor (shortName, longName);
             attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
                 new Pair<string, object> ("Required", required),
@@ -200,7 +202,7 @@ namespace FreezingArcher.Configuration
             string longName = "help", bool additionalNewLineAfterOption = true, bool addDashesToOptions = true,
             IEnumerable<string> preOptionsLines = null, IEnumerable<string> postOptionsLines = null)
         {
-            FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (HelpOptionAttribute));
+            Attribute attr = new Attribute (typeof (HelpOptionAttribute));
             attr.CallConstructor (shortName, longName);
             var function = new Func<Object, string> ((Object instance) =>
             {

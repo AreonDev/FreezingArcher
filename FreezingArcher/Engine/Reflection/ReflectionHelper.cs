@@ -27,7 +27,7 @@ using System.Reflection;
 using FreezingArcher.Output;
 
 
-namespace FreezingArcher.Core
+namespace FreezingArcher.Reflection
 {
     /// <summary>
     /// Helper class for Reflections and Inheritance Trees
@@ -67,14 +67,14 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// Releases all resource used by the <see cref="FreezingArcher.Core.ReflectionHelper"/> object.
+        /// Releases all resource used by the <see cref="FreezingArcher.Reflection.ReflectionHelper"/> object.
         /// </summary>
         /// <remarks>Call <see cref="Dispose"/> when you are finished using the
-        /// <see cref="FreezingArcher.Core.ReflectionHelper"/>. The <see cref="Dispose"/> method leaves the
-        /// <see cref="FreezingArcher.Core.ReflectionHelper"/> in an unusable state. After calling
+        /// <see cref="FreezingArcher.Reflection.ReflectionHelper"/>. The <see cref="Dispose"/> method leaves the
+        /// <see cref="FreezingArcher.Reflection.ReflectionHelper"/> in an unusable state. After calling
         /// <see cref="Dispose"/>, you must release all references to the
-        /// <see cref="FreezingArcher.Core.ReflectionHelper"/> so the garbage collector can reclaim the memory that the
-        /// <see cref="FreezingArcher.Core.ReflectionHelper"/> was occupying.</remarks>
+        /// <see cref="FreezingArcher.Reflection.ReflectionHelper"/> so the garbage collector can reclaim the memory that the
+        /// <see cref="FreezingArcher.Reflection.ReflectionHelper"/> was occupying.</remarks>
         public static void Dispose ()
         {
             lock (o)

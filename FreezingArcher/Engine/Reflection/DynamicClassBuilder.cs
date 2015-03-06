@@ -26,7 +26,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 
-namespace FreezingArcher.Core
+namespace FreezingArcher.Reflection
 {
     /// <summary>
     /// Helper class for building dynamic classes
@@ -39,7 +39,7 @@ namespace FreezingArcher.Core
         private readonly List<Method> methods;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Core.DynamicClassBuilder"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Reflection.DynamicClassBuilder"/> class.
         /// </summary>
         /// <param name="className">Class name to generate</param>
         public DynamicClassBuilder (string className)

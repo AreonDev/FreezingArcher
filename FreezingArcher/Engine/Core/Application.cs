@@ -113,8 +113,8 @@ namespace FreezingArcher.Core
             MessageManager = new MessageManager ();
             ConfigManager.Initialize (/*MessageManager*/);
 
-            CommandLineInterface.Instance.SetHelp ("Freezing Archer", "Alpha 0.0.1", "402:PaymentRequired", 2015,
-                'h', "help", true, true, null,
+            CommandLineInterface.Instance.SetHelp ("Freezing Archer 3D game engine/framework", "Alpha 0.0.1",
+                "402:PaymentRequired", 2015, 'h', "help", true, true, null,
                 new string[] {"Authors: David Bögelsack, Fin Christensen, Willy Failla und Martin Koppehel\n"});
 
             // set fullscreen if overriden by command line.

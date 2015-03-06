@@ -128,15 +128,15 @@ namespace FreezingArcher.Input
         /// </summary>
         /// <returns>The update description.</returns>
         /// <param name="deltaTime">Delta time.</param>
-        public UpdateDescription GenerateUpdateDescription (float deltaTime)
+        public InputDescription GenerateUpdateDescription (float deltaTime)
         {
-            UpdateDescription ud = new UpdateDescription (new List<KeyboardInput> (Keys), new List<MouseInput> (Mouse),
-                                                          MouseMovement, MouseScroll, deltaTime);
+            InputDescription id = new InputDescription (new List<KeyboardInput> (Keys), new List<MouseInput> (Mouse),
+                MouseMovement, MouseScroll, deltaTime);
             Keys.Clear ();
             Mouse.Clear ();
             MouseMovement = Vector2.Zero;
             MouseScroll = Vector2.Zero;
-            return ud;
+            return id;
         }
     }
 }

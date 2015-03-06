@@ -114,7 +114,7 @@ namespace FreezingArcher.Content
         /// The updaterate might differ from the framerate.
         /// </summary>
         /// <param name="desc">Update description.</param>
-        public void Update (UpdateDescription desc)
+        public void Update (InputDescription desc)
         {}
 
         #endregion

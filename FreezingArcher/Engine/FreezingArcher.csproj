@@ -103,7 +103,6 @@
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\KeyboardInput.cs" />
     <Compile Include="Input\MouseInput.cs" />
-    <Compile Include="Input\UpdateDescription.cs" />
     <Compile Include="Renderer\VertexBuffer.cs" />
     <Compile Include="Content\Game.cs" />
     <Compile Include="Content\Level.cs" />
@@ -148,6 +147,7 @@
     <Compile Include="Messaging\WindowMinimizeMessage.cs" />
     <Compile Include="Messaging\WindowErrorMessage.cs" />
     <Compile Include="Messaging\WindowMouseOverMessage.cs" />
+    <Compile Include="Input\InputDescription.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

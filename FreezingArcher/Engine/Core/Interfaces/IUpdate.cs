@@ -40,6 +40,6 @@ namespace FreezingArcher.Core.Interfaces
         /// The updaterate might differ from the framerate.
         /// </summary>
         /// <param name="updateDescription">Update description.</param>
-        void Update (UpdateDescription updateDescription);
+        void Update (InputDescription updateDescription);
     }
 }

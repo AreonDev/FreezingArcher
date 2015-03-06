@@ -1,5 +1,5 @@
 //
-//  UpdateDescription.cs
+//  InputDescription.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -28,18 +28,18 @@ namespace FreezingArcher.Input
     /// <summary>
     /// Update description.
     /// </summary>
-    public class UpdateDescription
+    public class InputDescription
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Input.UpdateDescription"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Input.InputDescription"/> class.
         /// </summary>
         /// <param name="keys">Keys.</param>
         /// <param name="mouse">Mouse.</param>
         /// <param name="mouseMovement">Mouse movement.</param>
         /// <param name="mouseScroll">Mouse scroll.</param>
         /// <param name="deltaTime">Delta time.</param>
-        public UpdateDescription (List<KeyboardInput> keys, List<MouseInput> mouse,
-                                  Vector2 mouseMovement, Vector2 mouseScroll, float deltaTime)
+        public InputDescription (List<KeyboardInput> keys, List<MouseInput> mouse,
+            Vector2 mouseMovement, Vector2 mouseScroll, float deltaTime)
         {
             Keys = keys;
             Mouse = mouse;

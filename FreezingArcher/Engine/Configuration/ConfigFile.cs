@@ -282,6 +282,12 @@ namespace FreezingArcher.Configuration
             throw new InvalidDataException ("The requested value is of wrong type!");
         }
 
+        /// <summary>
+        /// Adds the override for the configuration.
+        /// </summary>
+        /// <param name="section">Section.</param>
+        /// <param name="valueName">Value name.</param>
+        /// <param name="value">Value.</param>
         public void AddOverride (string section, string valueName, Value value)
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Adding new override for '{0}:{1}' in {2}.conf",

@@ -22,7 +22,7 @@
 //
 using System;
 
-namespace FreezingArcher.Core
+namespace FreezingArcher.Reflection
 {
     /// <summary>
     /// Method for dynamicClassBuilder
@@ -45,7 +45,7 @@ namespace FreezingArcher.Core
         /// <value>The attributes.</value>
         public Attribute[] Attributes {get;private set;}
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Core.Method"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Reflection.Method"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="implementation">Implementation.</param>

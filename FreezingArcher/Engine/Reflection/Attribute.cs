@@ -25,8 +25,9 @@ using System.Reflection.Emit;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using FreezingArcher.Core;
 
-namespace FreezingArcher.Core
+namespace FreezingArcher.Reflection
 {
     /// <summary>
     /// Class for attributes on properties or types
@@ -48,7 +49,7 @@ namespace FreezingArcher.Core
         private object[] constrParams;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Core.Attribute"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Reflection.Attribute"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="parameters">Parameters.</param>
@@ -67,7 +68,7 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Core.Attribute"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Reflection.Attribute"/> class.
         /// </summary>
         /// <param name="type">Type.</param>
         public Attribute (Type type)

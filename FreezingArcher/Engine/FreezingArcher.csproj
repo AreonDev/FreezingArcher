@@ -129,15 +129,15 @@
     <Compile Include="Configuration\ParserUtils.cs" />
     <Compile Include="Configuration\CommandLineOptions.cs" />
     <Compile Include="Configuration\CommandLineInterface.cs" />
-    <Compile Include="Core\DynamicClassBuilder.cs" />
-    <Compile Include="Core\ReflectionHelper.cs" />
-    <Compile Include="Core\Property.cs" />
-    <Compile Include="Core\Attribute.cs" />
     <Compile Include="Localization\LocaleEnum.cs" />
     <Compile Include="Localization\LocalizationData.cs" />
     <Compile Include="Localization\Localizer.cs" />
     <Compile Include="Messaging\GeneralMessage.cs" />
-    <Compile Include="Core\Method.cs" />
+    <Compile Include="Reflection\Attribute.cs" />
+    <Compile Include="Reflection\DynamicClassBuilder.cs" />
+    <Compile Include="Reflection\Method.cs" />
+    <Compile Include="Reflection\Property.cs" />
+    <Compile Include="Reflection\ReflectionHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -256,5 +256,6 @@
     <Folder Include="Messaging\Interfaces\" />
     <Folder Include="Configuration\" />
     <Folder Include="Localization\" />
+    <Folder Include="Reflection\" />
   </ItemGroup>
 </Project>

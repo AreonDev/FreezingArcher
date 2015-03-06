@@ -24,7 +24,7 @@ using System;
 using System.Linq;
 using FreezingArcher.Output;
 
-namespace FreezingArcher.Core
+namespace FreezingArcher.Reflection
 {
     /// <summary>
     /// Property of types.
@@ -51,7 +51,7 @@ namespace FreezingArcher.Core
         public Attribute[] Attributes{ get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Core.Property"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Reflection.Property"/> class.
         /// </summary>
         /// <param name="Name">Name.</param>
         /// <param name="type">Type.</param>
@@ -64,7 +64,7 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Core.Property"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Reflection.Property"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="type">Type.</param>
@@ -80,6 +80,12 @@ namespace FreezingArcher.Core
             Type = types [0];
         }
 
+        /// <summary>
+        /// Read the property with the given name from the given object as T
+        /// </summary>
+        /// <param name="type">Object to read from</param>
+        /// <param name="name">Name of Property</param>
+        /// <typeparam name="T">Type of the property</typeparam>
         public static T Read<T>(object type, string name)
         {
             try

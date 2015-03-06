@@ -127,7 +127,6 @@
     <Compile Include="Configuration\ValueType.cs" />
     <Compile Include="Core\Extensions.cs" />
     <Compile Include="Configuration\ParserUtils.cs" />
-    <Compile Include="Configuration\CommandLineOptions.cs" />
     <Compile Include="Configuration\CommandLineInterface.cs" />
     <Compile Include="Core\DynamicClassBuilder.cs" />
     <Compile Include="Core\ReflectionHelper.cs" />

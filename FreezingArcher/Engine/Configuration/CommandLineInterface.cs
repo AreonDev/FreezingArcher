@@ -34,6 +34,8 @@ namespace FreezingArcher.Configuration
     /// </summary>
     public class CommandLineInterface
     {
+        //TODO: add meta value
+
         /// <summary>
         /// The global instance.
         /// </summary>

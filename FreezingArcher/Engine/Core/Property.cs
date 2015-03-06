@@ -53,13 +53,13 @@ namespace FreezingArcher.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.Property"/> class.
         /// </summary>
-        /// <param name="Name">Name.</param>
+        /// <param name="name">Name.</param>
         /// <param name="type">Type.</param>
-        /// <param name="Attribs">Attribs.</param>
-        public Property (string Name, Type type, params Attribute[] Attribs)
+        /// <param name="attribs">Attribs.</param>
+        public Property (string name, Type type, params Attribute[] attribs)
         {
-            this.Attributes = Attribs;
-            this.Name = Name;
+            this.Attributes = attribs;
+            this.Name = name;
             this.Type = type;
         }
 
@@ -80,6 +80,12 @@ namespace FreezingArcher.Core
             Type = types [0];
         }
 
+        /// <summary>
+        /// Read property specified by name from the specified type.
+        /// </summary>
+        /// <param name="type">Type.</param>
+        /// <param name="name">Name.</param>
+        /// <typeparam name="T">The property type.</typeparam>
         public static T Read<T>(object type, string name)
         {
             try

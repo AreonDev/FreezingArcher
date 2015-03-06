@@ -106,10 +106,12 @@ namespace FreezingArcher.Core
         // / <param name="game">The initial root game.</param>
         public Application (string name, string[] args)
         {
-            CommandLineInterface.Instance.SetHelp ("Freezing Archer", "Alpha 0.0.1",
-                "402 PaymentRequired - David Bögelsack, Fin Christensen, Martin Koppehel und Willy Failla", 2015);
-            CommandLineInterface.Instance.AddOption<string> (Console.WriteLine, 't', "test", "Test our awesome stuff.",
-                false, "hello");
+            CommandLineInterface.Instance.SetHelp ("Freezing Archer", "Alpha 0.0.1", "402:PaymentRequired", 2015,
+                'h', "help", true, true, null,
+                new string[] {"Authors: David Bögelsack, Fin Christensen, Martin Koppehel und Willy Failla\n"});
+            CommandLineInterface.Instance.AddOption<bool> (b => {if (b) Console.WriteLine ("fullscreen");},
+                'f', "fullscreen", "Set window to fullscreen.");
+            CommandLineInterface.Instance.AddOption<int> (Console.WriteLine, 'l', "loglevel", "Set loglevel.");
             if (!CommandLineInterface.Instance.ParseArguments (args))
             {
                 Cli = true;

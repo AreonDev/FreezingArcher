@@ -37,18 +37,46 @@ namespace FreezingArcher.Messaging
         /// <summary>
         /// Occurs when a config file value is set.
         /// </summary>
-        ConfigFileValueSet = 2,
+        ConfigFileValueSet = 10,
         /// <summary>
         /// Occurs when a config file is saved.
         /// </summary>
-        ConfigFileSaved = 3,
+        ConfigFileSaved,
         /// <summary>
         /// Occurs when an item is added to the config manager.
         /// </summary>
-        ConfigManagerItemAdded = 4,
+        ConfigManagerItemAdded,
         /// <summary>
         /// Occurs when an item is removed from the config manager.
         /// </summary>
-        ConfigManagerItemRemoved = 5
+        ConfigManagerItemRemoved,
+        /// <summary>
+        /// Occurs when a window is closed.
+        /// </summary>
+        WindowCloseMessage = 20,
+        /// <summary>
+        /// Occurs when a window gets an error.
+        /// </summary>
+        WindowErrorMessage,
+        /// <summary>
+        /// Occurs when a window gets focus.
+        /// </summary>
+        WindowFocusMessage,
+        /// <summary>
+        /// Occurs when a window is minimized.
+        /// </summary>
+        WindowMinimizeMessage,
+        /// <summary>
+        /// Occurs when the mouse enters or leaves the window.
+        /// </summary>
+        WindowMouseOverMessage,
+        /// <summary>
+        /// Occurs when the window is moved.
+        /// </summary>
+        WindowMoveMessage,
+        /// <summary>
+        /// Occurs when the window is resized.
+        /// </summary>
+        WindowResizeMessage
     }
 }

@@ -63,7 +63,8 @@ namespace FreezingArcher.Messaging
         /// <param name="m">Message Consumer to register</param>
         public void RegisterMessageConsumer (IMessageConsumer m)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Registering new message consumer");
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Registering new message consumer '{0}'",
+                m.GetType ().ToString ());
             m.ValidMessages.ForEach (i =>
             {
                 List<IMessageConsumer> tmp = null;
@@ -83,7 +84,8 @@ namespace FreezingArcher.Messaging
         /// <param name="m">Message Consumer to unregister</param>
         public void UnregisterMessageConsumer (IMessageConsumer m)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Removing message consumer");
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Removing message consumer '{0}'",
+                m.GetType ().ToString ());
             m.ValidMessages.ForEach (i =>
             {
                 List<IMessageConsumer> tmp = null;
@@ -98,7 +100,8 @@ namespace FreezingArcher.Messaging
         /// <param name="c">Message Creator to add</param>
         public void AddMessageCreator (IMessageCreator c)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Adding message creator");
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Adding message creator '{0}'",
+                c.GetType ().ToString ());
             c.MessageCreated += HandleMessageCreated;
         }
 

@@ -141,6 +141,13 @@
     <Compile Include="Messaging\ConfigFileValueSetMessage.cs" />
     <Compile Include="Messaging\ConfigManagerItemAddedMessage.cs" />
     <Compile Include="Messaging\ConfigManagerItemRemovedMessage.cs" />
+    <Compile Include="Messaging\WindowResizeMessage.cs" />
+    <Compile Include="Messaging\WindowMoveMessage.cs" />
+    <Compile Include="Messaging\WindowCloseMessage.cs" />
+    <Compile Include="Messaging\WindowFocusMessage.cs" />
+    <Compile Include="Messaging\WindowMinimizeMessage.cs" />
+    <Compile Include="Messaging\WindowErrorMessage.cs" />
+    <Compile Include="Messaging\WindowMouseOverMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

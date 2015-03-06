@@ -25,15 +25,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using FreezingArcher.Configuration;
+using FreezingArcher.Content;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Input;
+using FreezingArcher.Localization;
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Output;
 using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
-using FreezingArcher.Content;
-using FreezingArcher.Output;
-using FreezingArcher.Messaging;
-using FreezingArcher.Configuration;
-using FreezingArcher.Localization;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
 
 namespace FreezingArcher.Core
@@ -41,7 +42,7 @@ namespace FreezingArcher.Core
     /// <summary>
     /// Test application.
     /// </summary>
-    public class Application
+    public class Application : IMessageCreator
     {
         /// <summary>
         /// The name of the class.
@@ -111,6 +112,7 @@ namespace FreezingArcher.Core
             Logger.Initialize (name);
             Logger.Log.RegisterLogModule (ClassName + name);
             MessageManager = new MessageManager ();
+            MessageManager += this;
             ConfigManager.Initialize (MessageManager);
 
             CommandLineInterface.Instance.SetHelp ("Freezing Archer 3D game engine/framework", "Alpha 0.0.1",
@@ -186,7 +188,9 @@ namespace FreezingArcher.Core
                 WriteAt (9, 5, height.ToString ());
                 #endif
 
-                Renderer.RendererCore.WindowResize (width, height);
+                Renderer.RendererCore.WindowResize (width, height);//FIXME
+                if (MessageCreated != null)
+                    MessageCreated (new WindowResizeMessage (Window, width, height));
             };
             
             Window.WindowMove = (GlfwWindowPtr window, int x, int y) => {
@@ -196,6 +200,8 @@ namespace FreezingArcher.Core
                 WriteAt (26, 5, "       ");
                 WriteAt (26, 5, y.ToString ());
                 #endif
+                if (MessageCreated != null)
+                    MessageCreated (new WindowMoveMessage (Window, x, y));
             };
             
             Window.WindowClose = (GlfwWindowPtr window) => {
@@ -203,6 +209,8 @@ namespace FreezingArcher.Core
                 WriteAt (17, 15, "                                                       ");
                 WriteAt (17, 15, " WindowClose fired");
                 #endif
+                if (MessageCreated != null)
+                    MessageCreated (new WindowCloseMessage (Window));
             };
             
             Window.WindowFocus = (GlfwWindowPtr window, bool focus) => {
@@ -210,6 +218,10 @@ namespace FreezingArcher.Core
                 WriteAt (58, 9, "              ");
                 WriteAt (58, 9, focus.ToString ());
                 #endif
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Window '{0}' changed focus state to '{1}'",
+                    Window.Title, focus);
+                if (MessageCreated != null)
+                    MessageCreated (new WindowFocusMessage (Window, focus));
             };
             
             Window.WindowMinimize = (GlfwWindowPtr window, bool minimized) => {
@@ -217,6 +229,10 @@ namespace FreezingArcher.Core
                 WriteAt (58, 11, "              ");
                 WriteAt (58, 11, minimized.ToString ());
                 #endif
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name,
+                    "Window '{0}' changed minimized state to '{1}'", Window.Title, minimized);
+                if (MessageCreated != null)
+                    MessageCreated (new WindowMinimizeMessage (Window, minimized));
             };
             
             Window.WindowError = (GlfwError error, string desc) => {
@@ -224,6 +240,10 @@ namespace FreezingArcher.Core
                 WriteAt (17, 15, "                                                       ");
                 WriteAt (17, 15, "WindowError: " + error + " - " + desc);
                 #endif
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Window '{0}' threw an error: [{1}] {2}",
+                    Window.Title, error.ToString (), desc);
+                if (MessageCreated != null)
+                    MessageCreated (new WindowErrorMessage (Window, error.ToString (), desc));
             };
             
             Window.MouseButton = (GlfwWindowPtr window, MouseButton button, KeyAction action) => {
@@ -253,6 +273,15 @@ namespace FreezingArcher.Core
                 WriteAt (58, 13, "              ");
                 WriteAt (58, 13, enter.ToString ());
                 #endif
+                if (enter)
+                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Mouse entered window '{0}'",
+                        Window.Title);
+                else
+                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Mouse leaved window '{0}'",
+                        Window.Title);
+
+                if (MessageCreated != null)
+                    MessageCreated (new WindowMouseOverMessage (Window, enter));
             };
             
             Window.MouseScroll = (GlfwWindowPtr window, double xoffs, double yoffs) => {
@@ -547,5 +576,14 @@ namespace FreezingArcher.Core
             Console.Write (s);
         }
         #endif
+
+        #region IMessageCreator implementation
+
+        /// <summary>
+        /// Occurs when a new message is created an is ready for processing
+        /// </summary>
+        public event MessageEvent MessageCreated;
+
+        #endregion
     }
 }

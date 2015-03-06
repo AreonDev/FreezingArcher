@@ -58,10 +58,18 @@ namespace FreezingArcher.Core
             properties.Add (p);
         }
 
+        /// <summary>
+        /// Adds the method.
+        /// </summary>
+        /// <param name="m">M.</param>
         public void AddMethod(Method m)
         {
             methods.Add (m);
         }
+        /// <summary>
+        /// Removes the method.
+        /// </summary>
+        /// <param name="m">M.</param>
         public void RemoveMethod(Method m)
         {
             methods.Remove (m);
@@ -75,7 +83,15 @@ namespace FreezingArcher.Core
             properties.Remove (p);
         }
 
+        /// <summary>
+        /// Gets or sets a function which will be executed before properties are built
+        /// </summary>
+        /// <value>The pre build properties callback</value>
         public Action<TypeBuilder> preBuildProperties  { get; set; }
+        /// <summary>
+        /// Gets or sets a function which will be executed after properties are built
+        /// </summary>
+        /// <value>The post build properties callback</value>
         public Action<TypeBuilder> postBuildProperties { get; set; }
 
         /// <summary>

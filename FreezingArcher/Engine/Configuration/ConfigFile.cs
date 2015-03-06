@@ -92,6 +92,7 @@ namespace FreezingArcher.Configuration
                         }
                     }
                 }
+                Save ();
             }
         }
 

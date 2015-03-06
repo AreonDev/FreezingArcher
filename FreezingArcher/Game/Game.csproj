@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -69,7 +69,7 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <PlatformTarget>x86</PlatformTarget>
     <ConsolePause>false</ConsolePause>
-    <PostBuildEvent>move /Y *.dll* lib\ &amp;&amp; move /Y *.pdb lib\ &amp;&amp; move /Y lib\FurryLana.pdb .</PostBuildEvent>
+    <PostBuildEvent>move /Y *.dll* lib\ &amp;&amp; move /Y *.pdb lib\ &amp;&amp; move /Y *.xml lib\ &amp;&amp; move /Y lib\FurryLana.pdb . &amp;&amp; move /Y lib\FurryLana.xml .</PostBuildEvent>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
@@ -81,7 +81,7 @@
     <DocumentationFile>..\Build\Release\FurryLana.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <PlatformTarget>x86</PlatformTarget>
-    <PostBuildEvent>move /Y *.dll* lib\</PostBuildEvent>
+    <PostBuildEvent>move /Y *.dll* lib\ &amp;&amp; move /Y *.xml lib\ &amp;&amp; move /Y lib\FurryLana.xml .</PostBuildEvent>
     <ConsolePause>false</ConsolePause>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>

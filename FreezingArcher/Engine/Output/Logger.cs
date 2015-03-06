@@ -145,7 +145,6 @@ namespace FreezingArcher.Output
             maxModNameLength = 20;
             minL = minLvl;
             t = new Thread (run);
-            Console.Clear();
             linesToProcess = new Queue<LogLine> ();
             colors = new Dictionary<LogLevel, ConsoleColor> ();
             colors.Add (LogLevel.Debug, ConsoleColor.DarkCyan);

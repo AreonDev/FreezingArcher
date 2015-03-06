@@ -71,6 +71,7 @@ namespace FreezingArcher.Configuration
         public bool ParseArguments (string[] args)
         {
             Type t = DynamicClassBuilder.CreateType ();
+
             object options = Activator.CreateInstance (t);
             if (Parser.Default.ParseArguments (args, options))
             {
@@ -193,21 +194,25 @@ namespace FreezingArcher.Configuration
         {
             FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (HelpOptionAttribute));
             attr.CallConstructor (shortName, longName);
-            Method m = new Method ("GetUsage", new Func<Object, string> ((Object instance) => {
-                var help = new HelpText
-                {
+            var function = new Func<Object, string> ((Object instance) =>
+            {
+                var help = new HelpText {
                     Heading = new HeadingInfo (programName, version),
                     Copyright = new CopyrightInfo (author, year),
                     AdditionalNewLineAfterOption = additionalNewLineAfterOption,
                     AddDashesToOption = addDashesToOptions
-                };
+                };                
+                if(preOptionsLines!=null)
                 foreach (string s in preOptionsLines)
                     help.AddPreOptionsLine (s);
+                if(postOptionsLines!=null)
                 foreach (string s in postOptionsLines)
                     help.AddPostOptionsLine (s);
                 help.AddOptions (instance);
                 return help;
-            }), attr);
+            });
+            Method m = new Method ("GetUsage", function, attr);
+
             DynamicClassBuilder.AddMethod (m);
         }
     }

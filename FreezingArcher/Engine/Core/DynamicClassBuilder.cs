@@ -117,16 +117,10 @@ namespace FreezingArcher.Core
                 var generator = methodBuilder.GetILGenerator ();
                 generator.Emit (OpCodes.Nop);
                 generator.Emit (OpCodes.Ldsfld, fieldbuilder);
-                generator.Emit (OpCodes.Ldarg_0); //load "t5his" as first parameter so we can use this class outside, you should use dynamic there
-                for(int i = 0; i < mi.GetParameters().Length; i++)
+                generator.Emit (OpCodes.Ldarg_0); //load "this" as first parameter so we can use this class outside, you should use dynamic there
+                for(int i = 0; i < mi.GetParameters().Length - 1; i++)
                     generator.Emit(OpCodes.Ldarg, i);
-                generator.EmitCall(OpCodes.Callvirt, mi, null);
-
-                if(methodBuilder.ReturnType != typeof(void)) //return type
-                {
-                    generator.Emit (OpCodes.Stloc_0);
-                    generator.Emit (OpCodes.Ldloc_0);
-                }
+                generator.EmitCall(OpCodes.Callvirt, method.Implementation.GetType().GetMethod("Invoke"), null);
                 generator.Emit (OpCodes.Ret);
             }
             var initMethodBuilder = tb.DefineMethod("Init", MethodAttributes.Static | MethodAttributes.Public, typeof(void), methods.Select(j => j.Implementation.GetType()).ToArray());

@@ -85,9 +85,6 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="MPClone">
-      <HintPath>..\..\..\..\..\MPClone\MPClone\bin\Debug\MPClone.exe</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />

@@ -190,6 +190,25 @@ namespace FreezingArcher.Configuration
         public void SetHelp (string programName, string version, string author, int year, char shortName = 'h',
             string longName = "help", bool additionalNewLineAfterOption = true, bool addDashesToOptions = true,
             IEnumerable<string> preOptionsLines = null, IEnumerable<string> postOptionsLines = null)
-        {}
+        {
+            FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (HelpOptionAttribute));
+            attr.CallConstructor (shortName, longName);
+            Method m = new Method ("GetUsage", new Func<Object, string> ((Object instance) => {
+                var help = new HelpText
+                {
+                    Heading = new HeadingInfo (programName, version),
+                    Copyright = new CopyrightInfo (author, year),
+                    AdditionalNewLineAfterOption = additionalNewLineAfterOption,
+                    AddDashesToOption = addDashesToOptions
+                };
+                foreach (string s in preOptionsLines)
+                    help.AddPreOptionsLine (s);
+                foreach (string s in postOptionsLines)
+                    help.AddPostOptionsLine (s);
+                help.AddOptions (instance);
+                return help;
+            }), attr);
+            DynamicClassBuilder.AddMethod (m);
+        }
     }
 }

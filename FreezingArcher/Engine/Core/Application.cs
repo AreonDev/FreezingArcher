@@ -120,12 +120,23 @@ namespace FreezingArcher.Core
             // set fullscreen if overriden by command line.
             CommandLineInterface.Instance.AddOption<bool> (b => {
                 if (b)
-                {
-                    Section s = new Section ();
-                    s.Add ("fullscreen", new Value (true));
-                    ConfigManager.Instance["freezing_archer"].Overrides.Add ("general", s);
-                }
+                    ConfigManager.Instance["freezing_archer"].AddOverride ("general", "fullscreen", new Value (true));
             }, 'f', "fullscreen", "Set window to fullscreen. By default the value from the config file is used.");
+
+            CommandLineInterface.Instance.AddOption<int> (
+                i => ConfigManager.Instance ["freezing_archer"].AddOverride ("general", "fullscreen_monitor",
+                    new Value (i)), 'm', "fullscreen-monitor",
+                "Set the physical monitor the application should use for a fullscreen window.", "INT");
+
+            CommandLineInterface.Instance.AddOption<string> (
+                r => ConfigManager.Instance ["freezing_archer"].AddOverride ("general", "resolution", new Value (r)),
+                'r', "resolution", "Set the resolution a fullscreen window should have.", "RES", false,
+                ConfigManager.Instance["freezing_archer"].GetString ("general", "resolution"));
+
+            CommandLineInterface.Instance.AddOption<string> (
+                s => ConfigManager.Instance ["freezing_archer"].AddOverride ("general", "size", new Value (s)),
+                's', "size", "Set window size.", "SIZE", false,
+                ConfigManager.Instance ["freezing_archer"].GetString ("general", "size"));
 
             CommandLineInterface.Instance.AddOption<int> (i => {
                 if (i > 0)
@@ -136,12 +147,10 @@ namespace FreezingArcher.Core
                             "The given loglevel '{0}' is not valid. Using configuration value...", i);
                         return;
                     }
-                    Section s = new Section ();
-                    s.Add ("loglevel", new Value (i));
-                    ConfigManager.Instance["freezing_archer"].Overrides.Add ("general", s);
+                    ConfigManager.Instance["freezing_archer"].AddOverride ("general", "loglevel", new Value (i));
                 }
             }, 'l', "loglevel", "Set loglevel. If 0 or nothing is given the value from the config file is used.",
-                "LOGLEVEL");
+                "INT");
 
             if (!CommandLineInterface.Instance.ParseArguments (args))
             {
@@ -157,9 +166,9 @@ namespace FreezingArcher.Core
 
             Window = new Window (
                 ParserUtils.ParseVector (
-                    ConfigManager.Instance["freezing_archer"].GetString ("general", "resolution")),
+                    ConfigManager.Instance["freezing_archer"].GetString ("general", "size")),
                 ParserUtils.ParseVector (
-                    ConfigManager.Instance["freezing_archer"].GetString ("general", "fullscreen_resolution")),
+                    ConfigManager.Instance["freezing_archer"].GetString ("general", "resolution")),
                 name);
             Game = new Game (name);
             LoadAgain = false;

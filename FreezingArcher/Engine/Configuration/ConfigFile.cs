@@ -110,7 +110,7 @@ namespace FreezingArcher.Configuration
         /// <summary>
         /// The configuration overrides.
         /// </summary>
-        public Dictionary<string, Section> Overrides { get; protected set; }
+        protected Dictionary<string, Section> Overrides;
 
         /// <summary>
         /// Occurs after config is saved.
@@ -280,6 +280,19 @@ namespace FreezingArcher.Configuration
             Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName + Name,
                 "The requested value '{0}:{1}' is not of type byte[]!", section, valueName);
             throw new InvalidDataException ("The requested value is of wrong type!");
+        }
+
+        public void AddOverride (string section, string valueName, Value value)
+        {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Adding new override for '{0}:{1}' in {2}.conf",
+                section, valueName, Name);
+            Section s;
+            if (!Overrides.TryGetValue (section, out s))
+            {
+                s = new Section ();
+                Overrides.Add (section, s);
+            }
+            s.Add (valueName, value);
         }
 
         /// <summary>

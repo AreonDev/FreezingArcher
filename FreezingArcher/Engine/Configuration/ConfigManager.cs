@@ -66,8 +66,8 @@ namespace FreezingArcher.Configuration
             Section general = new Section ();
             DefaultConfig.B.Add ("general", general);
 
-            general.Add ("resolution", new Value ("1024x576"));
-            general.Add ("fullscreen_resolution", new Value ("1920x1080"));
+            general.Add ("size", new Value ("1024x576"));
+            general.Add ("resolution", new Value ("1920x1080"));
             general.Add ("fullscreen_monitor", new Value (0));
             general.Add ("fullscreen", new Value (false));
             general.Add ("loglevel", new Value (3));

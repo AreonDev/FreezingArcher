@@ -97,8 +97,8 @@ namespace FreezingArcher.Configuration
         /// <param name="required">If set to <c>true</c> this option is required.</param>
         /// <param name="defaultValue">The default value of this option.</param>
         /// <typeparam name="T">This type specifies of which type the parsed value will be.</typeparam>
-        public void AddOption<T> (Action<T> handler, char shortName, string longName = null, string helpText = null,
-            string metaValue = null, bool required = false, T defaultValue = default (T))
+        public void AddOption<T> (Action<T> handler, char shortName, string longName = "", string helpText = "",
+            string metaValue = "", bool required = false, T defaultValue = default (T))
         {
             FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionAttribute));
             attr.CallConstructor (shortName, longName);
@@ -123,7 +123,7 @@ namespace FreezingArcher.Configuration
         /// <param name="maximumElements">Maximum number of elements in the value list.
         /// A number of -1 allows an unlimited number of values.</param>
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
-        public void SetValueList<T> (Action<T> handler, string metaValue = null, int maximumElements = -1) where T : IList
+        public void SetValueList<T> (Action<T> handler, string metaValue = "", int maximumElements = -1) where T : IList
         {
             FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (ValueListAttribute));
             attr.CallConstructor (typeof (List<T>));
@@ -146,8 +146,8 @@ namespace FreezingArcher.Configuration
         /// <param name="metaValue">The meta value string displayed in the help message.</param>
         /// <param name="required">If set to <c>true</c> this option is required.</param>
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
-        public void AddOptionList<T> (Action<T> handler, char shortName, string longName = null, char separator = ',',
-            string helpText = null, string metaValue = null, bool required = false) where T : IList
+        public void AddOptionList<T> (Action<T> handler, char shortName, string longName = "", char separator = ',',
+            string helpText = "", string metaValue = "", bool required = false) where T : IList
         {
             FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionListAttribute));
             attr.CallConstructor (shortName, longName, separator);
@@ -169,8 +169,8 @@ namespace FreezingArcher.Configuration
         /// <param name="required">If set to <c>true</c> this option is required.</param>
         /// <param name="defaultValue">The default values of this option.</param>
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
-        public void AddOptionArray<T> (Action<T[]> handler, char shortName, string longName = null,
-            string helpText = null, string metaValue = null, bool required = false, T[] defaultValue = default (T[]))
+        public void AddOptionArray<T> (Action<T[]> handler, char shortName, string longName = "",
+            string helpText = "", string metaValue = "", bool required = false, T[] defaultValue = default (T[]))
         {
             FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionArrayAttribute));
             attr.CallConstructor (shortName, longName);
@@ -210,12 +210,15 @@ namespace FreezingArcher.Configuration
                     AdditionalNewLineAfterOption = additionalNewLineAfterOption,
                     AddDashesToOption = addDashesToOptions
                 };                
-                if(preOptionsLines!=null)
-                foreach (string s in preOptionsLines)
-                    help.AddPreOptionsLine (s);
-                if(postOptionsLines!=null)
-                foreach (string s in postOptionsLines)
-                    help.AddPostOptionsLine (s);
+
+                if (preOptionsLines != null)
+                    foreach (string s in preOptionsLines)
+                        help.AddPreOptionsLine (s);
+
+                if (postOptionsLines != null)
+                    foreach (string s in postOptionsLines)
+                        help.AddPostOptionsLine (s);
+
                 help.AddOptions (instance);
                 return help;
             });

@@ -168,7 +168,7 @@ namespace FreezingArcher.Configuration
                 {
                     Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name,
                         "Using command line override for '{0}:{1}' from {2}.conf ...", section, valueName, Name);
-                    value = ov;
+                    return ov;
                 }
             }
 

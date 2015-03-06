@@ -107,7 +107,9 @@ namespace FreezingArcher.Core
         // / <param name="game">The initial root game.</param>
         public Application (string name, string[] args)
         {
+            Name = name;
             Logger.Initialize (name);
+            Logger.Log.RegisterLogModule (ClassName + name);
             MessageManager = new MessageManager ();
             ConfigManager.Initialize (/*MessageManager*/);
 
@@ -123,9 +125,23 @@ namespace FreezingArcher.Core
                     s.Add ("fullscreen", new Value (true));
                     ConfigManager.Instance["freezing_archer"].Overrides.Add ("general", s);
                 }
-            }, 'f', "fullscreen", "Set window to fullscreen.");
+            }, 'f', "fullscreen", "Set window to fullscreen. By default the value from the config file is used.");
 
-            CommandLineInterface.Instance.AddOption<int> (Console.WriteLine, 'l', "loglevel", "Set loglevel.");
+            CommandLineInterface.Instance.AddOption<int> (i => {
+                if (i > 0)
+                {
+                    if (i > 8)
+                    {
+                        Logger.Log.AddLogEntry (LogLevel.Error, "CommandLineInterface",
+                            "The given loglevel '{0}' is not valid. Using configuration value...", i);
+                        return;
+                    }
+                    Section s = new Section ();
+                    s.Add ("loglevel", new Value (i));
+                    ConfigManager.Instance["freezing_archer"].Overrides.Add ("general", s);
+                }
+            }, 'l', "loglevel", "Set loglevel. If 0 or nothing is given the value from the config file is used.",
+                "LOGLEVEL");
 
             if (!CommandLineInterface.Instance.ParseArguments (args))
             {
@@ -133,11 +149,11 @@ namespace FreezingArcher.Core
                 return;
             }
 
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
-            Localizer.Initialize (MessageManager);
-
             Logger.Log.SetLogLevel ((LogLevel) ConfigManager.Instance["freezing_archer"]
                 .GetInteger ("general", "loglevel"));
+
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
+            Localizer.Initialize (MessageManager);
 
             Window = new Window (
                 ParserUtils.ParseVector (
@@ -146,7 +162,6 @@ namespace FreezingArcher.Core
                     ConfigManager.Instance["freezing_archer"].GetString ("general", "fullscreen_resolution")),
                 name);
             Game = new Game (name);
-            Name = name;
             LoadAgain = false;
             InitAgain = false;
 

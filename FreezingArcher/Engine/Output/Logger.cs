@@ -202,7 +202,7 @@ namespace FreezingArcher.Output
                 lock (linesToProcess) {
                     while (linesToProcess.Count > 0) {
                         var l = linesToProcess.Dequeue ();
-                        string s = l.ToString ();
+                        string s = l.ToString (maxModNameLength);
                         if ((int)l.LogLevel >= (int)minL)
                             ConsoleExtension.WriteLine (s, colors [l.LogLevel]);
                         fileWriter.WriteLine (s);

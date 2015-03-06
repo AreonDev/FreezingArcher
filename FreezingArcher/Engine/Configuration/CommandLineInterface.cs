@@ -34,8 +34,6 @@ namespace FreezingArcher.Configuration
     /// </summary>
     public class CommandLineInterface
     {
-        //TODO: add meta value
-
         /// <summary>
         /// The global instance.
         /// </summary>
@@ -95,17 +93,19 @@ namespace FreezingArcher.Configuration
         /// <param name="shortName">The short name of the option.</param>
         /// <param name="longName">The long name of the option.</param>
         /// <param name="helpText">The help text displayed in the help message.</param>
+        /// <param name="metaValue">The meta value string displayed in the help message.</param>
         /// <param name="required">If set to <c>true</c> this option is required.</param>
         /// <param name="defaultValue">The default value of this option.</param>
         /// <typeparam name="T">This type specifies of which type the parsed value will be.</typeparam>
         public void AddOption<T> (Action<T> handler, char shortName, string longName = null, string helpText = null,
-            bool required = false, T defaultValue = default (T))
+            string metaValue = null, bool required = false, T defaultValue = default (T))
         {
             FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionAttribute));
             attr.CallConstructor (shortName, longName);
             attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
                 new Pair<string, object> ("Required", required),
-                new Pair<string, object> ("DefaultValue", defaultValue));
+                new Pair<string, object> ("DefaultValue", defaultValue),
+                new Pair<string, object> ("MetaValue", metaValue));
             DynamicClassBuilder.AddProperty (new Property (longName, typeof (T), attr));
             Handlers.Add (longName, new Pair<Action<object>, Type> (j => handler ((T) j), typeof (T)));
         }
@@ -119,14 +119,16 @@ namespace FreezingArcher.Configuration
         /// Sets a value list to the command line interface. (program val1 val2 val3 ...)
         /// </summary>
         /// <param name="handler">The handler which handles the parsed values from the command line.</param>
+        /// <param name="metaValue">The meta value string displayed in the help message.</param>
         /// <param name="maximumElements">Maximum number of elements in the value list.
         /// A number of -1 allows an unlimited number of values.</param>
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
-        public void SetValueList<T> (Action<T> handler, int maximumElements = -1) where T : IList
+        public void SetValueList<T> (Action<T> handler, string metaValue = null, int maximumElements = -1) where T : IList
         {
             FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (ValueListAttribute));
             attr.CallConstructor (typeof (List<T>));
-            attr.AddNamedParameters (new Pair<string, object> ("MaximumElements", maximumElements));
+            attr.AddNamedParameters (new Pair<string, object> ("MaximumElements", maximumElements),
+                new Pair<string, object> ("MetaValue", metaValue));
             if (ValueListProperty != null)
                 DynamicClassBuilder.RemoveProperty (ValueListProperty);
             ValueListProperty = new Property ("ValueList", typeof (T), attr);
@@ -141,15 +143,17 @@ namespace FreezingArcher.Configuration
         /// <param name="longName">The long name of the option.</param>
         /// <param name="separator">The separator of the given values.</param>
         /// <param name="helpText">The help text displayed in the help message.</param>
+        /// <param name="metaValue">The meta value string displayed in the help message.</param>
         /// <param name="required">If set to <c>true</c> this option is required.</param>
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
         public void AddOptionList<T> (Action<T> handler, char shortName, string longName = null, char separator = ',',
-            string helpText = null, bool required = false) where T : IList
+            string helpText = null, string metaValue = null, bool required = false) where T : IList
         {
             FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionListAttribute));
             attr.CallConstructor (shortName, longName, separator);
             attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
-                new Pair<string, object> ("Required", required));
+                new Pair<string, object> ("Required", required),
+                new Pair<string, object> ("MetaValue", metaValue));
             DynamicClassBuilder.AddProperty (new Property (longName, typeof (T), attr));
             Handlers.Add (longName, new Pair<Action<object>, Type> (j => handler ((T) j), typeof (T)));
         }
@@ -161,17 +165,19 @@ namespace FreezingArcher.Configuration
         /// <param name="shortName">The short name of the option.</param>
         /// <param name="longName">The long name of the option.</param>
         /// <param name="helpText">The help text displayed in the help message.</param>
+        /// <param name="metaValue">The meta value string displayed in the help message.</param>
         /// <param name="required">If set to <c>true</c> this option is required.</param>
         /// <param name="defaultValue">The default values of this option.</param>
         /// <typeparam name="T">This type specifies of which type the parsed values will be.</typeparam>
         public void AddOptionArray<T> (Action<T[]> handler, char shortName, string longName = null,
-            string helpText = null, bool required = false, T[] defaultValue = default (T[]))
+            string helpText = null, string metaValue = null, bool required = false, T[] defaultValue = default (T[]))
         {
             FreezingArcher.Core.Attribute attr = new FreezingArcher.Core.Attribute (typeof (OptionArrayAttribute));
             attr.CallConstructor (shortName, longName);
             attr.AddNamedParameters (new Pair<string, object> ("HelpText", helpText),
                 new Pair<string, object> ("Required", required),
-                new Pair<string, object> ("DefaultValue", defaultValue));
+                new Pair<string, object> ("DefaultValue", defaultValue),
+                new Pair<string, object> ("MetaValue", metaValue));
             DynamicClassBuilder.AddProperty (new Property (longName, typeof (T[]), attr));
             Handlers.Add (longName, new Pair<Action<object>, Type> (j => handler ((T[]) j), typeof (T[])));
         }

@@ -131,7 +131,6 @@
     <Compile Include="Localization\LocalizationData.cs" />
     <Compile Include="Localization\Localizer.cs" />
     <Compile Include="Messaging\GeneralMessage.cs" />
-    <Compile Include="Core\Method.cs" />
     <Compile Include="Messaging\ConfigFileSavedMessage.cs" />
     <Compile Include="Messaging\ConfigFileValueSetMessage.cs" />
     <Compile Include="Messaging\ConfigManagerItemAddedMessage.cs" />

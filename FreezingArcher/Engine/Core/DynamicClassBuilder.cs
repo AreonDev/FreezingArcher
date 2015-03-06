@@ -104,18 +104,19 @@ namespace FreezingArcher.Core
             var asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (asmName, AssemblyBuilderAccess.Run);
             ModuleBuilder modBuilder = asmBuilder.DefineDynamicModule (className);
             TypeBuilder tb = modBuilder.DefineType (className);
-
+            FieldBuilder[] fields = new FieldBuilder[methods.Count];
+            int index = 0;
             foreach (var method in methods)
             {
                 var mi = method.Implementation.GetMethodInfo ();
                 var methodBuilder = tb.DefineMethod (method.Name, MethodAttributes.Public, mi.ReturnType, mi.GetParameters().Skip(1).Select(j => j.ParameterType).ToArray());
                 foreach (var attrib in method.Attributes)
                     methodBuilder.SetCustomAttribute (attrib.GetBuilder ());
-                var fieldbuilder = tb.DefineField ("m_" + method.Name, method.Implementation.GetType (), FieldAttributes.Private);
+                var fieldbuilder = tb.DefineField ("m_" + method.Name, method.Implementation.GetType (), FieldAttributes.Private | FieldAttributes.Static);
+                fields [index++] = fieldbuilder;
                 var generator = methodBuilder.GetILGenerator ();
                 generator.Emit (OpCodes.Nop);
-                generator.Emit (OpCodes.Ldarg_0);
-                generator.Emit (OpCodes.Ldfld, fieldbuilder);
+                generator.Emit (OpCodes.Ldsfld, fieldbuilder);
                 generator.Emit (OpCodes.Ldarg_0); //load "this" as first parameter so we can use this class outside, you should use dynamic there
                 for(int i = 0; i < mi.GetParameters().Length; i++)
                     generator.Emit(OpCodes.Ldarg, i);
@@ -128,6 +129,17 @@ namespace FreezingArcher.Core
                 }
                 generator.Emit (OpCodes.Ret);
             }
+            var initMethodBuilder = tb.DefineMethod("Init", MethodAttributes.Static | MethodAttributes.Public, typeof(void), methods.Select(j => j.Implementation.GetType()).ToArray());
+            var initGenerator = initMethodBuilder.GetILGenerator ();
+            initGenerator.Emit (OpCodes.Nop);
+            for(int i = 0; i < fields.Length; i++)
+            {
+                initGenerator.Emit (OpCodes.Ldarg, i);
+                initGenerator.Emit (OpCodes.Stsfld, fields [i]);
+            }
+            initGenerator.Emit (OpCodes.Ret);
+
+
 
             if (preBuildProperties != null)
                 preBuildProperties (tb);
@@ -168,7 +180,9 @@ namespace FreezingArcher.Core
             }
             if (postBuildProperties != null)
                 postBuildProperties (tb);
-            return tb.CreateType ();
+            var type = tb.CreateType ();
+            type.GetMethod ("Init", BindingFlags.Static | BindingFlags.Public).Invoke (null, methods.Select (j => j.Implementation).ToArray ());
+            return type;
         }       
     }
 }

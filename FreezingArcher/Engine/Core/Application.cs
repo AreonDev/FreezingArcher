@@ -34,6 +34,7 @@ using FreezingArcher.Output;
 using FreezingArcher.Messaging;
 using FreezingArcher.Configuration;
 using FreezingArcher.Localization;
+using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
 
 namespace FreezingArcher.Core
 {
@@ -106,23 +107,34 @@ namespace FreezingArcher.Core
         // / <param name="game">The initial root game.</param>
         public Application (string name, string[] args)
         {
+            Logger.Initialize (name);
+            MessageManager = new MessageManager ();
+            ConfigManager.Initialize (/*MessageManager*/);
+
             CommandLineInterface.Instance.SetHelp ("Freezing Archer", "Alpha 0.0.1", "402:PaymentRequired", 2015,
                 'h', "help", true, true, null,
-                new string[] {"Authors: David Bögelsack, Fin Christensen, Martin Koppehel und Willy Failla\n"});
-            CommandLineInterface.Instance.AddOption<bool> (b => {if (b) Console.WriteLine ("fullscreen");},
-                'f', "fullscreen", "Set window to fullscreen.");
+                new string[] {"Authors: David Bögelsack, Fin Christensen, Willy Failla und Martin Koppehel\n"});
+
+            // set fullscreen if overriden by command line.
+            CommandLineInterface.Instance.AddOption<bool> (b => {
+                if (b)
+                {
+                    Section s = new Section ();
+                    s.Add ("fullscreen", new Value (true));
+                    ConfigManager.Instance["freezing_archer"].Overrides.Add ("general", s);
+                }
+            }, 'f', "fullscreen", "Set window to fullscreen.");
+
             CommandLineInterface.Instance.AddOption<int> (Console.WriteLine, 'l', "loglevel", "Set loglevel.");
+
             if (!CommandLineInterface.Instance.ParseArguments (args))
             {
                 Cli = true;
                 return;
             }
 
-            Logger.Initialize (name);
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
-            MessageManager = new MessageManager ();
             Localizer.Initialize (MessageManager);
-            ConfigManager.Initialize (/*MessageManager*/);
 
             Logger.Log.SetLogLevel ((LogLevel) ConfigManager.Instance["freezing_archer"]
                 .GetInteger ("general", "loglevel"));
@@ -409,13 +421,12 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Destroy ()
         {
-            if (Cli)
-                return;
-
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Destroying application '{0}' ...", Name);
             Loaded = false;
             MessageManager.StopProcessing ();
-            Window.Destroy ();
+
+            if (!Cli)
+                Window.Destroy ();
 
             #if DEBUG_EVENTS
             Console.SetCursorPosition (0, OrigRow + 17);

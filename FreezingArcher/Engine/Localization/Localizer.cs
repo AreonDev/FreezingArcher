@@ -48,24 +48,23 @@ namespace FreezingArcher.Localization
         /// <summary>
         /// Initializes the <see cref="FreezingArcher.Localization.Localizer"/> class.
         /// </summary>
-        public static void Initialize (MessageManager msgManager)
+        public static void Initialize (MessageManager messageManager)
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing global localizer instance ...");
-            messageManager = msgManager;
             Dictionary<LocaleEnum, LocalizationData> dic = new Dictionary<LocaleEnum, LocalizationData> ();
             dic.Add (LocaleEnum.en_US, new LocalizationData ("Localization/en_US.xml"));
             dic.Add (LocaleEnum.de_DE, new LocalizationData ("Localization/de_DE.xml"));
-            Instance = new Localizer (dic);
+            Instance = new Localizer (dic, messageManager);
         }
-
-        static MessageManager messageManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Localization.Localizer"/> class.
         /// </summary>
         /// <param name="locales">Locales.</param>
+        /// <param name="messageManager">Message manager instance.</param>
         /// <param name="initialLocale">Initial locale.</param>
-        public Localizer (Dictionary<LocaleEnum, LocalizationData> locales, LocaleEnum initialLocale = LocaleEnum.en_US)
+        public Localizer (Dictionary<LocaleEnum, LocalizationData> locales, MessageManager messageManager,
+            LocaleEnum initialLocale = LocaleEnum.en_US)
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating logger instance with initial locale '{0}'",
                 initialLocale.ToString ());
@@ -74,8 +73,6 @@ namespace FreezingArcher.Localization
 
             if (messageManager != null)
                 messageManager += this;
-            else
-                Application.Instance.MessageManager += this;
         }
 
         /// <summary>

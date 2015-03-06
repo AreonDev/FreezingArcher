@@ -59,6 +59,7 @@ namespace FreezingArcher.Configuration
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName + Name, "Reading {0}.conf", Name);
             IniConfig = new IniConfig (name + ".conf");
             Defaults = defaults;
+            Overrides = new Dictionary<string, Section> ();
 
             // write default config to file if non existent
             if (!File.Exists (Name + ".conf"))
@@ -106,6 +107,11 @@ namespace FreezingArcher.Configuration
         protected Dictionary<string, Section> Defaults;
 
         /// <summary>
+        /// The configuration overrides.
+        /// </summary>
+        public Dictionary<string, Section> Overrides { get; protected set; }
+
+        /// <summary>
         /// Occurs after config is saved.
         /// </summary>
         public event ConfigSavedHandler ConfigSaved;
@@ -151,6 +157,18 @@ namespace FreezingArcher.Configuration
                 Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
                     "There is no default value registered for '{0}'!", valueName);
                 return null;
+            }
+
+            Section os; // override section
+            if (Overrides.TryGetValue (section, out os))
+            {
+                Value ov; // override value
+                if (os.TryGetValue (valueName, out ov))
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name,
+                        "Using command line override for '{0}:{1}' from {2}.conf ...", section, valueName, Name);
+                    value = ov;
+                }
             }
 
             switch (value.Type)

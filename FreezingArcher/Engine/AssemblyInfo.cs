@@ -8,7 +8,7 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("FreezingArcher")]
-[assembly: AssemblyCopyright("David Bögelsack, Fin Christensen")]
+[assembly: AssemblyCopyright("David Bögelsack, Fin Christensen, Willy Failla, Martin Koppehel")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

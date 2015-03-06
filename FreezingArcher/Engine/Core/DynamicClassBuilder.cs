@@ -117,7 +117,7 @@ namespace FreezingArcher.Core
                 var generator = methodBuilder.GetILGenerator ();
                 generator.Emit (OpCodes.Nop);
                 generator.Emit (OpCodes.Ldsfld, fieldbuilder);
-                generator.Emit (OpCodes.Ldarg_0); //load "this" as first parameter so we can use this class outside, you should use dynamic there
+                generator.Emit (OpCodes.Ldarg_0); //load "t5his" as first parameter so we can use this class outside, you should use dynamic there
                 for(int i = 0; i < mi.GetParameters().Length; i++)
                     generator.Emit(OpCodes.Ldarg, i);
                 generator.EmitCall(OpCodes.Callvirt, mi, null);

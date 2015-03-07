@@ -85,8 +85,14 @@ namespace FreezingArcher.Output
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public string ToString (int maxLength)
         {
-
             string pre = "[" + LogLevel.ToString().PadRight(7) +"] "+Timestamp + " [" + ModuleName.PadRight(maxLength) + "]: ";
+            Format = Format.Replace ("\n", "\n" + pre + "--> ");
+            return string.Concat (pre, string.Format (Format, Param));
+        }
+
+        public string ToConsoleString(int maxLength)
+        {
+            string pre = "[" + ModuleName.PadRight(maxLength) + "]: ";
             Format = Format.Replace ("\n", "\n" + pre + "--> ");
             return string.Concat (pre, string.Format (Format, Param));
         }
@@ -193,7 +199,7 @@ namespace FreezingArcher.Output
                             l = linesToProcess.Dequeue ();
                         string s = l.ToString (maxModNameLength);
                         if ((int)l.LogLevel >= (int)minL)
-                            ConsoleExtension.WriteLine (s, colors [l.LogLevel]);
+                            ConsoleExtension.WriteLine (l.ToConsoleString(maxModNameLength), colors [l.LogLevel]);
                         fileWriter.WriteLine (s);
                     }
                     Thread.Sleep (1);
@@ -204,7 +210,7 @@ namespace FreezingArcher.Output
                         var l = linesToProcess.Dequeue ();
                         string s = l.ToString (maxModNameLength);
                         if ((int)l.LogLevel >= (int)minL)
-                            ConsoleExtension.WriteLine (s, colors [l.LogLevel]);
+                            ConsoleExtension.WriteLine (l.ToConsoleString(maxModNameLength), colors [l.LogLevel]);
                         fileWriter.WriteLine (s);
                     }
                 }

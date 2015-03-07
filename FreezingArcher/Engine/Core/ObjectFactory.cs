@@ -95,8 +95,8 @@ namespace FreezingArcher.Core
                 if (!type.IsClass || type.IsAbstract)
                     continue;
 
-                TypeIdentifierAttribute tia = type.GetAttribute(false);
-                objectTypes.Add(tia.TypeID, new ObjectTypeManager(this, () => Activator.CreateInstance(type)));
+                TypeIdentifierAttribute tia = type.GetAttribute<TypeIdentifierAttribute>(false);
+                objectTypes.Add(tia.TypeID, new ObjectTypeManager(this, () => Activator.CreateInstance(type) as FAObject));
             }
         }
 

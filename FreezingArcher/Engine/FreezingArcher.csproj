@@ -151,6 +151,7 @@
     <Compile Include="Reflection\ReflectionHelper.cs" />
     <Compile Include="Core\FAObject.cs" />
     <Compile Include="Core\TypeIdentifierAttribute.cs" />
+    <Compile Include="Core\ObjectFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

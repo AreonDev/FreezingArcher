@@ -45,6 +45,22 @@ namespace FreezingArcher.Core
                 return attribs[0] as T;
             return null;
         }
+
+        /// <summary>
+        /// Gets the attribute with type T from the given type, inheritance is used
+        /// </summary>
+        /// <returns>The attribute if found, otherwise null</returns>
+        /// <param name="t">Type to read attributes from</param>
+        /// <param name="inherit">If set to <c>true</c> inherited attributes are scanned</param>
+        /// <typeparam name="T">Type of the attribute to search for</typeparam>
+        public static T GetAttribute<T>(this Type t, bool inherit) where T: Attribute
+        {
+            var attribs = t.GetCustomAttributes(typeof(T), inherit);
+            if(attribs.Length > 0)
+                return attribs[0] as T;
+            return null;
+        }
+
         /// <summary>
         /// Performs an action for each element in an IEnumerable
         /// </summary>

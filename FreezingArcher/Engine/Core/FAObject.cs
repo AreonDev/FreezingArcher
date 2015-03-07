@@ -31,14 +31,33 @@ namespace FreezingArcher.Core
     /// </summary>
     public abstract class FAObject
     {
+        private ObjectManager objectManager;
         // Game-unique identifier for objects
-        private ulong ID;
+        internal ulong ID {get; private set; }
+        internal bool Destroyed {get; private set;}
 
-        internal void Init(uint id)
+        internal void Init(ObjectManager manager, uint id)
         {
-            ID = ((ulong)this.GetAttribute<TypeIdentifierAttribute>(false).TypeID << 48) | (ulong)id;
+            this.ID = ((ulong)this.GetAttribute<TypeIdentifierAttribute>(false).TypeID << 48) | (ulong)id;
+            this.objectManager = manager;
         }
 
+        /// <summary>
+        /// Recycle this instance.
+        /// </summary>
+        public void Recycle()
+        {
+            Destroyed = false;
+        }
+
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
+        public virtual void Destroy()
+        {
+            Destroyed = true;
+            objectManager.PrepareForRecycling(this);
+        }
 
         /// <summary>
         /// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="FreezingArcher.Core.FAObject"/>.

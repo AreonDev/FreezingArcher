@@ -24,11 +24,28 @@ using System;
 
 namespace FreezingArcher.Core
 {
-    public class TypeIdentifierAttribute__
+    /// <summary>
+    /// Attribute to game-unique identify types
+    /// <remarks>>Must be set on all non-abstract classes which inherit from <see cref="FreezingArcher.Core.FAObject"/></remarks>
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+
+    public class TypeIdentifierAttribute : Attribute
     {
-        public TypeIdentifierAttribute__()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Core.TypeIdentifierAttribute"/> class.
+        /// </summary>
+        /// <param name="TypeID">Type ID.</param>
+        public TypeIdentifierAttribute(ushort TypeID)
         {
+            this.TypeID = TypeID;
         }
+
+        /// <summary>
+        /// Gets the type ID.
+        /// </summary>
+        /// <value>The type ID.</value>
+        public ushort TypeID {get; private set;}
     }
 }
 

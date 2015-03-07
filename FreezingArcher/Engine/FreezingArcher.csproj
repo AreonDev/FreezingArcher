@@ -25,6 +25,11 @@
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <DocumentationFile>..\Build\Debug\FreezingArcher.xml</DocumentationFile>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -271,5 +276,12 @@
     <Folder Include="Configuration\" />
     <Folder Include="Localization\" />
     <Folder Include="Reflection\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PostProcessor\PostProcessor.csproj">
+      <Project>{F2D91778-AD1F-4433-A451-2016B873064B}</Project>
+      <Name>PostProcessor</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
 </Project>

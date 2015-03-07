@@ -90,6 +90,8 @@ namespace FreezingArcher.Output
             return string.Concat (pre, string.Format (Format, Param));
         }
 
+        /// <summary>Returns a <see cref="System.String" /> that represents this instance.</summary>
+        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public string ToConsoleString(int maxLength)
         {
             string pre = "[" + ModuleName.PadRight(maxLength) + "]: ";

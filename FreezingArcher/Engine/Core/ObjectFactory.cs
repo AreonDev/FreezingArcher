@@ -102,7 +102,7 @@ namespace FreezingArcher.Core
 
         internal void PrepareForRecycling(FAObject fAObject)
         {
-            objectTypes[(ushort)((fAObject.ID & 0xFFFF000000000000) << 48)].PrepareForRecycling(fAObject);
+            objectTypes[(ushort)((fAObject.ID & 0xFFFF000000000000) >> 48)].PrepareForRecycling(fAObject);
         }
 
         /// <summary>

@@ -23,7 +23,7 @@
 using System.IO;
 using FreezingArcher.Core;
 
-namespace FreezingArcher.Sound
+namespace FreezingArcher.Audio
 {
     public enum DistanceModel
     {

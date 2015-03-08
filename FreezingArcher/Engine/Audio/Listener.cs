@@ -1,5 +1,5 @@
 ﻿//
-//  Playground.cs
+//  Listener.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,26 +20,27 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System;
-using Pencil.Gaming.Audio;
 using Pencil.Gaming.MathUtils;
+using FreezingArcher.Core;
 
-namespace FreezingArcher.Sound
+namespace FreezingArcher.Audio
 {
-    public class Playground
+    public enum UpVector
     {
-        public Playground ()
-        {
-            /*ALBufferState;
-            ALGetBufferi;
-            ALSource3f;
-            ALSource3i;
-            ALSourceb;
-            ALSourcef;
-            ALSourcei;
-            ALListener3f;
-            ALListenerf;
-            ALListenerfv;*/
-        }
+        UnitX,
+        UnitY,
+        UnitZ
+    }
+
+    public class Listener
+    {
+        public Vector3 Position { get; set; }
+        public Vector3 Velocity { get; set; }
+
+        public float Gain { get; set; }
+
+        public Pair<Vector3, UpVector> Orientation { get; set; }
+
+        //TODO Effects: MetersPerUnit
     }
 }

@@ -148,11 +148,11 @@
     <Compile Include="Reflection\Method.cs" />
     <Compile Include="Reflection\Property.cs" />
     <Compile Include="Reflection\ReflectionHelper.cs" />
-    <Compile Include="Sound\Playground.cs" />
-    <Compile Include="Sound\Listener.cs" />
-    <Compile Include="Sound\AudioManager.cs" />
-    <Compile Include="Sound\Source.cs" />
-    <Compile Include="Sound\Sound.cs" />
+    <Compile Include="Audio\Playground.cs" />
+    <Compile Include="Audio\Source.cs" />
+    <Compile Include="Audio\Listener.cs" />
+    <Compile Include="Audio\AudioManager.cs" />
+    <Compile Include="Audio\Sound.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -272,6 +272,6 @@
     <Folder Include="Configuration\" />
     <Folder Include="Localization\" />
     <Folder Include="Reflection\" />
-    <Folder Include="Sound\" />
+    <Folder Include="Audio\" />
   </ItemGroup>
 </Project>

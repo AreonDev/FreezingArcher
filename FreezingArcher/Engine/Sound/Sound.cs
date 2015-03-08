@@ -1,5 +1,5 @@
 ﻿//
-//  Sound.cs
+//  AudioFile.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,60 +20,48 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using Pencil.Gaming.MathUtils;
 using FreezingArcher.Core.Interfaces;
-using System;
 using System.Collections.Generic;
+using System;
 
 namespace FreezingArcher.Sound
 {
+    public enum AudioFormat
+    {
+        WAV,
+        OGG,
+        AAC,
+        MP3,
+        FLAC
+    }
+
     public enum SoundState
     {
-        Initial = 4113,
-        Playing,
-        Paused,
-        Stopped
-    }
-
-    public enum SoundType
-    {
-        Static = 4136,
-        Streaming,
-        Undetermined = 4144
-    }
-
-    public enum SoundGroup : byte
-    {
-        Music,
-        Environment,
-        Effect,
-        Voice,
-        VoiceChat,
-        Custom1,
-        Custom2,
-        Custom3
+        Unused = 8208,
+        Pending,
+        Processed
     }
 
     public class Sound : IResource, IManageable
     {
-        public AudioFile[] GetProcessedAudioFiles ()
+        public int GetBitsPerChannel ()
         {
-            return null;
+            return 0;
         }
 
-        public AudioFile[] GetQueuedAudioFiles ()
+        public int GetChannelCount ()
         {
-            return null;
+            return 0;
         }
 
-        public SoundState GetState ()
+        public int GetFrequency ()
         {
-            return SoundState.Initial;
+            return 0;
         }
 
-        public SoundType GetSoundType ()
+        public int GetSize ()
         {
-            return SoundType.Undetermined;
+            return 0;
         }
 
         internal uint GetId ()
@@ -81,28 +69,18 @@ namespace FreezingArcher.Sound
             return 0;
         }
 
-        public AudioFile[] AudioFiles { get; set; }
+        public AudioFormat GetAudioFormat ()
+        {
+            return AudioFormat.WAV;
+        }
 
-        public Vector3 Position { get; set; }
-        public Vector3 Velocity { get; set; }
-        public Vector3 Direction { get; set; }
-
-        public bool SourceRelative { get; set; }
-        public bool Loop { get; set; }
-
-        public float ReferenceDistance { get; set; }
-        public float MaxDistance { get; set; }
-        public float RolloffFactor { get; set; }
-        public float Pitch { get; set; }
-        public float Gain { get; set; }
-        public float MinGain { get; set; }
-        public float MaxGain { get; set; }
-        public float ConeInnerAngle { get; set; }
-        public float ConeOuterAngle { get; set; }
-        public float ConeOuterGain { get; set; }
-        //TODO Effects
+        public SoundState GetState ()
+        {
+            return SoundState.Unused;
+        }
 
         #region IResource implementation
+
         public event Handler NeedsLoad;
 
         public List<Action> GetInitJobs (List<Action> list)
@@ -118,7 +96,8 @@ namespace FreezingArcher.Sound
         public void Destroy ()
         {}
 
-        public bool Loaded { get; protected set; }
+        public bool Loaded { get; set; }
+
         #endregion
 
         #region IManageable implementation

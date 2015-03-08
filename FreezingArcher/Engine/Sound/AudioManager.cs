@@ -38,61 +38,61 @@ namespace FreezingArcher.Sound
 
     public class AudioManager
     {
-        public AudioFile LoadAudioFile (string name, string file)
+        public Sound LoadSound (string name, string file)
         {
             return null;
         }
 
-        public AudioFile LoadAudioFile (string name, FileInfo file)
+        public Sound LoadSound (string name, FileInfo file)
         {
             return null;
         }
 
-        public AudioFile[] LoadAudioFiles (Pair<string, string>[] namesAndPaths)
+        public Sound[] LoadSound (Pair<string, string>[] namesAndPaths)
         {
             return null;
         }
 
-        public AudioFile[] LoadAudioFiles (Pair<string, FileInfo>[] namesAndPaths)
+        public Sound[] LoadSound (Pair<string, FileInfo>[] namesAndPaths)
         {
             return null;
         }
 
-        public Sound CreateSound (string name, Pair<string, FileInfo>[] audioFiles)
+        public Source CreateSource (string name, Pair<string, FileInfo>[] sounds)
         {
             return null;
         }
 
-        public Sound CreateSound (string name, Pair<string, string>[] audioFiles)
+        public Source CreateSource (string name, Pair<string, string>[] sounds)
         {
             return null;
         }
 
-        public Sound CreateSound (string name, string[] audioFileNames)
+        public Source CreateSource (string name, string[] soundNames)
         {
             return null;
         }
 
-        public Sound GetSound (string name)
+        public Source GetSource (string name)
         {
             return null;
         }
 
-        public bool RemoveSound (string name)
+        public bool RemoveSource (string name)
         {
             return false;
         }
 
-        public void PlaySound (string name)
+        public void PlaySource (string name)
         {}
 
-        public void StopSound (string name)
+        public void StopSource (string name)
         {}
 
-        public void PauseSound (string name)
+        public void PauseSource (string name)
         {}
 
-        public void RewindSound (string name)
+        public void RewindSource (string name)
         {}
 
         public Listener Listener { get; set; }

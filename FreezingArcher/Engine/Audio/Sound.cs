@@ -24,7 +24,7 @@ using FreezingArcher.Core.Interfaces;
 using System.Collections.Generic;
 using System;
 
-namespace FreezingArcher.Sound
+namespace FreezingArcher.Audio
 {
     public enum AudioFormat
     {

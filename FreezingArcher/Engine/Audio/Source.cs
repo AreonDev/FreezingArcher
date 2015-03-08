@@ -25,7 +25,7 @@ using FreezingArcher.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 
-namespace FreezingArcher.Sound
+namespace FreezingArcher.Audio
 {
     public enum SourceState
     {

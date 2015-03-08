@@ -84,13 +84,13 @@ namespace FreezingArcher.Audio
 
         /// <summary>
         /// Gets or sets a value indicating whether the position, velocity, cone and direction of this
-        /// <see cref="FreezingArcher.Sound.Source"/> are to be interpreted relative to the listener position.
+        /// <see cref="FreezingArcher.Audio.Source"/> are to be interpreted relative to the listener position.
         /// </summary>
         /// <value><c>true</c> if relative; otherwise, <c>false</c>.</value>
         public bool Relative { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Sound.Source"/> is looping.
+        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Audio.Source"/> is looping.
         /// </summary>
         /// <value><c>true</c> if looping; otherwise, <c>false</c>.</value>
         public bool Loop { get; set; }

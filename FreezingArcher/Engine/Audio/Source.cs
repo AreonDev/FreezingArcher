@@ -105,7 +105,10 @@ namespace FreezingArcher.Audio
         public float ConeInnerAngle { get; set; }
         public float ConeOuterAngle { get; set; }
         public float ConeOuterGain { get; set; }
-        //TODO Effects
+        //TODO Effects: AuxiliarySendFilter (Vector3i), DirectFilterGainHighFrequencyAuto (bool),
+        //              AuxiliarySendFilterGainAuto (bool), AuxiliarySendFilterGainHighFrequencyAuto (bool),
+        //              AuxiliarySendFilterGainHighFrequencyAuto (bool), AirAbsorptionFactor (float),
+        //              RoomRolloffFactor (float), ConeOuterGainHighFrequency (float), DirectFilter (int)
 
         #region IResource implementation
         public event Handler NeedsLoad;

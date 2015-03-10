@@ -2,6 +2,15 @@ FreezingArcher
 =========
 A 3D game engine (framework)
 
+How to clone
+------------
+```sh
+git clone git@github.com:fin-ger/FreezingArcher.git
+cd FreezingArcher
+git submodule init
+git submodule update
+```
+
 About the name
 --------------
 It was a name suggestion from github.

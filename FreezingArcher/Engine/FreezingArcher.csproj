@@ -28,7 +28,7 @@
     <CustomCommands>
       <CustomCommands>
         <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
-        <Command type="AfterBuild" command="cp -r &quot;${SolutionDir}/Pencil.Gaming/Pencil.Gaming/bin/Core-GLFW3/.&quot; &quot;${TargetDir}/&quot;" />
+        <Command type="AfterBuild" command="cp -r &quot;${SolutionDir}/Pencil.Gaming/Pencil.Gaming/bin/Release/.&quot; &quot;${TargetDir}/&quot;" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>

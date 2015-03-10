@@ -76,6 +76,26 @@ namespace FreezingArcher.Audio
             return 0;
         }
 
+        public void Play (bool shuffleSounds = false)
+        {}
+
+        public void PlayAt (TimeSpan timeOffset, bool shuffleSounds = false)
+        {}
+
+        public void PlaySound (string soundName, bool proceedWithNextSoundWhenFinished = false,
+            bool shuffleSounds = false)
+        {}
+
+        public void PlaySound (int soundIndex, bool proceedWithNextSoundWhenFinished = false,
+            bool shuffleSounds = false)
+        {}
+
+        public void PlaySounds (string[] soundPlaylist)
+        {}
+
+        public void PlaySounds (int[] soundIndexPlaylist)
+        {}
+
         public Sound[] AudioFiles { get; set; }
 
         public Vector3 Position { get; set; }

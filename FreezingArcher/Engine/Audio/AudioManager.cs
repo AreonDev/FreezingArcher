@@ -22,6 +22,7 @@
 //
 using System.IO;
 using FreezingArcher.Core;
+using System;
 
 namespace FreezingArcher.Audio
 {
@@ -83,16 +84,33 @@ namespace FreezingArcher.Audio
             return false;
         }
 
-        public void PlaySource (string name)
+        public void PlaySource (string sourceName, bool shuffleSounds = false)
         {}
 
-        public void StopSource (string name)
+        public void PlaySource (string sourceName, TimeSpan timeOffset, bool shuffleSounds = false)
         {}
 
-        public void PauseSource (string name)
+        public void PlaySource (string sourceName, string soundName, bool proceedWithNextSoundWhenFinished = false,
+            bool shuffleSounds = false)
         {}
 
-        public void RewindSource (string name)
+        public void PlaySource (string sourceName, int soundIndex, bool proceedWithNextSoundWhenFinished = false,
+            bool shuffleSounds = false)
+        {}
+
+        public void PlaySource (string sourceName, string[] soundPlaylist)
+        {}
+
+        public void PlaySource (string sourceName, int[] soundIndexPlaylist)
+        {}
+
+        public void StopSource (string sourceName)
+        {}
+
+        public void PauseSource (string sourceName)
+        {}
+
+        public void RewindSource (string sourceName)
         {}
 
         public Listener Listener { get; set; }

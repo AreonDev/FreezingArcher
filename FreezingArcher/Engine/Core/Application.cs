@@ -36,6 +36,7 @@ using FreezingArcher.Output;
 using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
+using Pencil.Gaming.Audio;
 
 namespace FreezingArcher.Core
 {
@@ -341,6 +342,17 @@ namespace FreezingArcher.Core
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Running application '{0}' ...", Name);
             MessageManager.StartProcessing ();
+
+            // openal test
+            uint buffer = AL.Utils.BufferFromWav("Audio/test.wav");
+            uint source;
+            AL.GenSources(1, out source);
+
+            AL.Source(source, ALSourcei.Buffer, (int) buffer);
+            AL.Source(source, ALSourceb.Looping, true);
+
+            AL.SourcePlay(source);
+
             while (!Window.ShouldClose ())
             {
                 // reexec loader if ressources need to be loaded again

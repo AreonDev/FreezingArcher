@@ -257,6 +257,8 @@
     </None>
     <None Include="lib\NVorbis.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="Audio\test.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup />

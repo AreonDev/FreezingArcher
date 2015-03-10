@@ -23,7 +23,6 @@
     <CustomCommands>
       <CustomCommands>
         <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
-        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/ &amp;&amp; mv lib/FurryLana.xml .&quot;" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
@@ -38,11 +37,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/ &amp;&amp; mv lib/FurryLana.xml .&quot;" workingdir="${TargetDir}" />
-      </CustomCommands>
-    </CustomCommands>
     <ConsolePause>False</ConsolePause>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
@@ -70,7 +64,6 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <PlatformTarget>x86</PlatformTarget>
     <ConsolePause>false</ConsolePause>
-    <PostBuildEvent>move /Y *.dll* lib\ &amp;&amp; move /Y *.pdb lib\ &amp;&amp; move /Y *.xml lib\ &amp;&amp; move /Y lib\FurryLana.pdb . &amp;&amp; move /Y lib\FurryLana.xml .</PostBuildEvent>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
@@ -82,7 +75,6 @@
     <DocumentationFile>..\Build\Release\FurryLana.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <PlatformTarget>x86</PlatformTarget>
-    <PostBuildEvent>move /Y *.dll* lib\ &amp;&amp; move /Y *.xml lib\ &amp;&amp; move /Y lib\FurryLana.xml .</PostBuildEvent>
     <ConsolePause>false</ConsolePause>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>

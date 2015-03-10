@@ -29,6 +29,7 @@
       <CustomCommands>
         <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
         <Command type="AfterBuild" command="cp -r &quot;${SolutionDir}/Pencil.Gaming/Pencil.Gaming/bin/Release/.&quot; &quot;${TargetDir}/&quot;" />
+        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/ &amp;&amp; mv lib/FurryLana.xml .&quot;" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -40,6 +41,11 @@
     <WarningLevel>4</WarningLevel>
     <Externalconsole>True</Externalconsole>
     <PlatformTarget>x86</PlatformTarget>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/ &amp;&amp; mv lib/FurryLana.xml .&quot;" workingdir="${TargetDir}" />
+      </CustomCommands>
+    </CustomCommands>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -58,6 +64,7 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
     <ConsolePause>false</ConsolePause>
+    <PostBuildEvent>move /Y *.dll* lib\ &amp;&amp; move /Y *.pdb lib\ &amp;&amp; move /Y *.xml lib\ &amp;&amp; move /Y lib\FurryLana.pdb . &amp;&amp; move /Y lib\FurryLana.xml .</PostBuildEvent>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
@@ -69,6 +76,7 @@
     <DocumentationFile>..\Build\Release\Engine.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
     <PlatformTarget>x86</PlatformTarget>
+    <PostBuildEvent>move /Y *.dll* lib\ &amp;&amp; move /Y *.xml lib\ &amp;&amp; move /Y lib\FurryLana.xml .</PostBuildEvent>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Externalconsole>true</Externalconsole>

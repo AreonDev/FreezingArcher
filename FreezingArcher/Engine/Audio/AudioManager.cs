@@ -48,12 +48,12 @@ namespace FreezingArcher.Audio
             return null;
         }
 
-        public Sound[] LoadSound (Pair<string, string>[] namesAndPaths)
+        public Sound[] LoadSounds (Pair<string, string>[] namesAndPaths)
         {
             return null;
         }
 
-        public Sound[] LoadSound (Pair<string, FileInfo>[] namesAndPaths)
+        public Sound[] LoadSounds (Pair<string, FileInfo>[] namesAndPaths)
         {
             return null;
         }

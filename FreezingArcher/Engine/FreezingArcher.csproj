@@ -153,6 +153,11 @@
     <Compile Include="Audio\Listener.cs" />
     <Compile Include="Audio\AudioManager.cs" />
     <Compile Include="Audio\Sound.cs" />
+    <Compile Include="Audio\AudioRouting.cs" />
+    <Compile Include="Audio\RoutingEntry.cs" />
+    <Compile Include="Audio\Filter.cs" />
+    <Compile Include="Audio\Effect.cs" />
+    <Compile Include="Audio\EffectSlot.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

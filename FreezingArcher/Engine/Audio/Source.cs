@@ -102,6 +102,9 @@ namespace FreezingArcher.Audio
         public Vector3 Velocity { get; set; }
         public Vector3 Direction { get; set; }
 
+        //TODO: On Filter set, call openal update filters
+        public Filter Filter { get; set;}
+
         /// <summary>
         /// Gets or sets a value indicating whether the position, velocity, cone and direction of this
         /// <see cref="FreezingArcher.Audio.Source"/> are to be interpreted relative to the listener position.

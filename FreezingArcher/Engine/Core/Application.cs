@@ -344,7 +344,7 @@ namespace FreezingArcher.Core
             MessageManager.StartProcessing ();
 
             // openal test
-            uint buffer = AL.Utils.BufferFromWav("Audio/test.wav");
+            uint buffer = AL.Utils.BufferFromOgg("Audio/test2.ogg");
             uint source;
             AL.GenSources(1, out source);
 
@@ -386,6 +386,9 @@ namespace FreezingArcher.Core
                 
                 Thread.Sleep (16);
             }
+
+            AL.DeleteSources(1, ref source);
+            AL.DeleteBuffers(1, ref buffer);
         }
 
         /// <summary>

@@ -170,5 +170,16 @@ namespace FreezingArcher.Core
         {
             return val < min ? min : val > max ? max : val;
         }
+
+        /// <summary>
+        /// Clamp the specified val between min and max.
+        /// </summary>
+        /// <param name="val">Value.</param>
+        /// <param name="min">Minimum.</param>
+        /// <param name="max">Maximum.</param>
+        public static float Clamp(this float val, float min, float max)
+        {
+            return val < min ? min : val > max ? max : val;
+        }
     }
 }

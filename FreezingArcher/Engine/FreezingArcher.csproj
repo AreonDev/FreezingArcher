@@ -155,11 +155,6 @@
     <Compile Include="Core\FAObject.cs" />
     <Compile Include="Core\TypeIdentifierAttribute.cs" />
     <Compile Include="Core\ObjectFactory.cs" />
-    <Compile Include="Sound\Playground.cs" />
-    <Compile Include="Sound\Listener.cs" />
-    <Compile Include="Sound\AudioManager.cs" />
-    <Compile Include="Sound\Source.cs" />
-    <Compile Include="Sound\Sound.cs" />
     <Compile Include="Audio\Playground.cs" />
     <Compile Include="Audio\Source.cs" />
     <Compile Include="Audio\Listener.cs" />
@@ -280,7 +275,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Folder Include="Content\" />
     <Folder Include="Messaging\" />

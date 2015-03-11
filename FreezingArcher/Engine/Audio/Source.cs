@@ -29,45 +29,137 @@ using FreezingArcher.Output;
 
 namespace FreezingArcher.Audio
 {
+    /// <summary>
+    /// Audio source state.
+    /// </summary>
     public enum SourceState
     {
+        /// <summary>
+        /// The initial state.
+        /// </summary>
         Initial = 4113,
+        /// <summary>
+        /// The playing state.
+        /// </summary>
         Playing,
+        /// <summary>
+        /// The paused state.
+        /// </summary>
         Paused,
+        /// <summary>
+        /// The stopped state.
+        /// </summary>
         Stopped
     }
 
+    /// <summary>
+    /// Audio source type.
+    /// </summary>
     public enum SourceType
     {
+        /// <summary>
+        /// The static source type.
+        /// </summary>
         Static = 4136,
+        /// <summary>
+        /// The streaming source type.
+        /// </summary>
         Streaming,
+        /// <summary>
+        /// The undetermined source type.
+        /// </summary>
         Undetermined = 4144
     }
 
+    /// <summary>
+    /// Audio source group.
+    /// </summary>
     public enum SourceGroup : byte
     {
+        /// <summary>
+        /// The music group.
+        /// </summary>
         Music,
+        /// <summary>
+        /// The environment group.
+        /// </summary>
         Environment,
+        /// <summary>
+        /// The effect group.
+        /// </summary>
         Effect,
+        /// <summary>
+        /// The voice group.
+        /// </summary>
         Voice,
+        /// <summary>
+        /// The voice chat group.
+        /// </summary>
         VoiceChat,
+        /// <summary>
+        /// The first custom group.
+        /// </summary>
         Custom1,
+        /// <summary>
+        /// The second custom group.
+        /// </summary>
         Custom2,
+        /// <summary>
+        /// The third custom group.
+        /// </summary>
         Custom3
     }
 
+    /// <summary>
+    /// Audio source class.
+    /// </summary>
     public class Source : IResource, IManageable
     {
+        /// <summary>
+        /// The name of the class.
+        /// </summary>
         public static readonly string ClassName = "Source_";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Audio.Source"/> class.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="sounds">Sounds.</param>
         public Source (string name, params Sound[] sounds)
         {
             Name = name;
             Sounds = sounds;
+            Loaded = false;
         }
 
+        /// <summary>
+        /// The openal source identifier (name).
+        /// </summary>
         protected uint AlSourceId;
 
+        /// <summary>
+        /// Load this resource.
+        /// </summary>
+        protected void Load ()
+        {
+            Loaded = false;
+            AL.GenSources (1, out AlSourceId);
+            if (Sounds.Length <= 0)
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name, "You have not specified any sounds for " +
+                        "this audio source!");
+
+            uint[] bids = new uint[Sounds.Length];
+            for (int i = 0; i < bids.Length; i++)
+                bids[i] = Sounds[i].GetId ();
+
+            AL.SourceQueueBuffers (AlSourceId, bids.Length, bids);
+            Loaded = true;
+        }
+
+        /// <summary>
+        /// Gets the currently played sound.
+        /// </summary>
+        /// <returns>The currently played sound.</returns>
         public Sound GetCurrentlyPlayedSound ()
         {
             if (!Loaded)
@@ -82,6 +174,10 @@ namespace FreezingArcher.Audio
             return Sounds[idx];
         }
 
+        /// <summary>
+        /// Gets the source state.
+        /// </summary>
+        /// <returns>The source state.</returns>
         public SourceState GetState ()
         {
             if (!Loaded)
@@ -96,6 +192,10 @@ namespace FreezingArcher.Audio
             return (SourceState) state;
         }
 
+        /// <summary>
+        /// Gets the type of the source.
+        /// </summary>
+        /// <returns>The source type.</returns>
         public SourceType GetSourceType ()
         {
             if (!Loaded)
@@ -110,6 +210,10 @@ namespace FreezingArcher.Audio
             return (SourceType) type;
         }
 
+        /// <summary>
+        /// Gets the openal identifier (name).
+        /// </summary>
+        /// <returns>The openal identifier (name).</returns>
         internal uint GetId ()
         {
             if (!Loaded)
@@ -122,55 +226,101 @@ namespace FreezingArcher.Audio
             return AlSourceId;
         }
 
+        /// <summary>
+        /// Play the specified sounds.
+        /// </summary>
+        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
         public void Play (bool shuffleSounds = false)
         {
             AL.SourcePlay (AlSourceId);
         }
 
+        /// <summary>
+        /// Plays sound at given time offset.
+        /// </summary>
+        /// <param name="timeOffset">Time offset.</param>
+        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
         public void PlayAt (TimeSpan timeOffset, bool shuffleSounds = false)
         {
             //TODO
         }
 
+        /// <summary>
+        /// Plays the given sound.
+        /// </summary>
+        /// <param name="soundName">Sound name.</param>
+        /// <param name="proceedWithNextSoundWhenFinished">If set to <c>true</c> proceed with next sound when finished.</param>
+        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
         public void PlaySound (string soundName, bool proceedWithNextSoundWhenFinished = false,
             bool shuffleSounds = false)
         {
             //TODO
         }
 
+        /// <summary>
+        /// Plays the given sound.
+        /// </summary>
+        /// <param name="soundIndex">Sound index.</param>
+        /// <param name="proceedWithNextSoundWhenFinished">If set to <c>true</c> proceed with next sound when finished.</param>
+        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
         public void PlaySound (int soundIndex, bool proceedWithNextSoundWhenFinished = false,
             bool shuffleSounds = false)
         {
             //TODO
         }
 
+        /// <summary>
+        /// Plays the given sounds from playlist.
+        /// </summary>
+        /// <param name="soundPlaylist">Playlist.</param>
         public void PlaySounds (string[] soundPlaylist)
         {
             //TODO
         }
 
+        /// <summary>
+        /// Plays the sounds from playlist.
+        /// </summary>
+        /// <param name="soundIndexPlaylist">Playlist.</param>
         public void PlaySounds (int[] soundIndexPlaylist)
         {
             //TODO
         }
 
+        /// <summary>
+        /// Pause this audio source.
+        /// </summary>
         public void Pause ()
         {
             AL.SourcePause (AlSourceId);
         }
 
+        /// <summary>
+        /// Stop this audio source.
+        /// </summary>
         public void Stop ()
         {
             AL.SourceStop (AlSourceId);
         }
 
+        /// <summary>
+        /// Rewind this audio source.
+        /// </summary>
         public void Rewind ()
         {
             AL.SourceRewind (AlSourceId);
         }
 
+        /// <summary>
+        /// Gets or sets the binded sounds.
+        /// </summary>
+        /// <value>The sounds.</value>
         public Sound[] Sounds { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets the position of this audio source.
+        /// </summary>
+        /// <value>The position.</value>
         public Vector3 Position
         {
             get
@@ -200,6 +350,10 @@ namespace FreezingArcher.Audio
             }
         }
 
+        /// <summary>
+        /// Gets or sets the velocity of this audio source.
+        /// </summary>
+        /// <value>The velocity.</value>
         public Vector3 Velocity
         {
             get
@@ -228,6 +382,10 @@ namespace FreezingArcher.Audio
             }
         }
 
+        /// <summary>
+        /// Gets or sets the direction of this audio source.
+        /// </summary>
+        /// <value>The direction.</value>
         public Vector3 Direction
         {
             get
@@ -257,6 +415,11 @@ namespace FreezingArcher.Audio
         }
 
         //TODO: On Filter set, call openal update filters
+
+        /// <summary>
+        /// Gets or sets the filter.
+        /// </summary>
+        /// <value>The filter.</value>
         public Filter Filter { get; set;}
 
         /// <summary>
@@ -324,6 +487,10 @@ namespace FreezingArcher.Audio
             }
         }
 
+        /// <summary>
+        /// Gets or sets the reference distance of this audio source.
+        /// </summary>
+        /// <value>The reference distance.</value>
         public float ReferenceDistance
         {
             get
@@ -352,6 +519,10 @@ namespace FreezingArcher.Audio
             }
         }
 
+        /// <summary>
+        /// Gets or sets the max distance.
+        /// </summary>
+        /// <value>The max distance.</value>
         public float MaxDistance
         {
             get
@@ -380,6 +551,10 @@ namespace FreezingArcher.Audio
             }
         }
 
+        /// <summary>
+        /// Gets or sets the rolloff factor.
+        /// </summary>
+        /// <value>The rolloff factor.</value>
         public float RolloffFactor
         {
             get
@@ -408,6 +583,10 @@ namespace FreezingArcher.Audio
             }
         }
 
+        /// <summary>
+        /// Gets or sets the pitch.
+        /// </summary>
+        /// <value>The pitch.</value>
         public float Pitch
         {
             get
@@ -436,6 +615,10 @@ namespace FreezingArcher.Audio
             }
         }
 
+        /// <summary>
+        /// Gets or sets the gain.
+        /// </summary>
+        /// <value>The gain.</value>
         public float Gain
         {
             get
@@ -464,36 +647,224 @@ namespace FreezingArcher.Audio
             }
         }
 
-        public float MinGain { get; set; }
-        public float MaxGain { get; set; }
-        public float ConeInnerAngle { get; set; }
-        public float ConeOuterAngle { get; set; }
-        public float ConeOuterGain { get; set; }
+        /// <summary>
+        /// Gets or sets the minimum gain.
+        /// </summary>
+        /// <value>The minimum gain.</value>
+        public float MinGain
+        {
+            get
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to get MinGain property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                float mg;
+                AL.GetSource (AlSourceId, ALSourcef.MinGain, out mg);
+                return mg;
+            }
+            set
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to set MinGain property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                AL.Source (AlSourceId, ALSourcef.MinGain, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the max gain.
+        /// </summary>
+        /// <value>The max gain.</value>
+        public float MaxGain
+        {
+            get
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to get MaxGain property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                float gain;
+                AL.GetSource (AlSourceId, ALSourcef.MaxGain, out gain);
+                return gain;
+            }
+            set
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to set MaxGain property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                AL.Source (AlSourceId, ALSourcef.MaxGain, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the cone inner angle.
+        /// </summary>
+        /// <value>The cone inner angle.</value>
+        public float ConeInnerAngle
+        {
+            get
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to get ConeInnerAngle property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                float angle;
+                AL.GetSource (AlSourceId, ALSourcef.ConeInnerAngle, out angle);
+                return angle;
+            }
+            set
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to set ConeInnerAngle property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                AL.Source (AlSourceId, ALSourcef.ConeInnerAngle, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the cone outer angle.
+        /// </summary>
+        /// <value>The cone outer angle.</value>
+        public float ConeOuterAngle
+        {
+            get
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to get ConeOuterAngle property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                float angle;
+                AL.GetSource (AlSourceId, ALSourcef.ConeOuterAngle, out angle);
+                return angle;
+            }
+            set
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to set ConeOuterAngle property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                AL.Source (AlSourceId, ALSourcef.ConeOuterAngle, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the cone outer gain.
+        /// </summary>
+        /// <value>The cone outer gain.</value>
+        public float ConeOuterGain
+        {
+            get
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to get ConeOuterGain property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                float gain;
+                AL.GetSource (AlSourceId, ALSourcef.ConeOuterGain, out gain);
+                return gain;
+            }
+            set
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to set ConeOuterGain property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                AL.Source (AlSourceId, ALSourcef.ConeOuterGain, value);
+            }
+        }
 
         //TODO Group gain
 
         #region IResource implementation
+        /// <summary>
+        /// Fire this event when you need the binded load function to be called.
+        /// For example after init or when new resources needs to be loaded.
+        /// </summary>
         public event Handler NeedsLoad;
 
+        /// <summary>
+        /// Gets the init jobs. The init jobs may not be called from the main thread as the initialization process is
+        /// multi threaded.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
         public List<Action> GetInitJobs (List<Action> list)
         {
             return list;
         }
 
+        /// <summary>
+        /// Gets the load jobs. The load jobs will be executed sequentially in the gl thread.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        /// <param name="reloader">Reloader.</param>
         public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
+            NeedsLoad = reloader;
+            list.Add (Load);
             return list;
         }
 
+        /// <summary>
+        /// Destroy this resource.
+        /// 
+        /// Why not IDisposable:
+        /// IDisposable is called from within the garbage collector context so we do not have a valid gl context there.
+        /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+        /// context.
+        /// </summary>
         public void Destroy ()
         {
             AL.DeleteSources (1, ref AlSourceId);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Audio.Source"/> is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }
         #endregion
 
         #region IManageable implementation
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
         public string Name { get; set; }
         #endregion
     }

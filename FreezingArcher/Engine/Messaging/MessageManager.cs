@@ -52,7 +52,7 @@ namespace FreezingArcher.Messaging
         /// </summary>
         public MessageManager ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating new message manager");
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new message manager");
             messageThread = new Thread (FlushQueue);
             mc = new Queue<IMessage> (2000);
         }
@@ -63,7 +63,7 @@ namespace FreezingArcher.Messaging
         /// <param name="m">Message Consumer to register</param>
         public void RegisterMessageConsumer (IMessageConsumer m)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Registering new message consumer '{0}'",
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Registering new message consumer '{0}'",
                 m.GetType ().ToString ());
             m.ValidMessages.ForEach (i =>
             {
@@ -84,7 +84,7 @@ namespace FreezingArcher.Messaging
         /// <param name="m">Message Consumer to unregister</param>
         public void UnregisterMessageConsumer (IMessageConsumer m)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Removing message consumer '{0}'",
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Removing message consumer '{0}'",
                 m.GetType ().ToString ());
             m.ValidMessages.ForEach (i =>
             {
@@ -100,7 +100,7 @@ namespace FreezingArcher.Messaging
         /// <param name="c">Message Creator to add</param>
         public void AddMessageCreator (IMessageCreator c)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Adding message creator '{0}'",
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Adding message creator '{0}'",
                 c.GetType ().ToString ());
             c.MessageCreated += HandleMessageCreated;
         }

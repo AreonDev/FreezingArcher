@@ -19,7 +19,6 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
     <ConsolePause>False</ConsolePause>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
@@ -28,7 +27,7 @@
     <CustomCommands>
       <CustomCommands>
         <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
-        <Command type="AfterBuild" command="cp -r &quot;${SolutionDir}/Pencil.Gaming/Pencil.Gaming/bin/Core-GLFW3/.&quot; &quot;${TargetDir}/&quot;" />
+        <Command type="AfterBuild" command="cp -r &quot;${SolutionDir}/Pencil.Gaming/Pencil.Gaming/bin/Debug/.&quot; &quot;${TargetDir}/&quot;" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -39,11 +38,16 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>True</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="cp -r &quot;${SolutionDir}/Pencil.Gaming/Pencil.Gaming/bin/Release/.&quot; &quot;${TargetDir}/&quot;" />
+      </CustomCommands>
+    </CustomCommands>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <DocumentationFile>..\Build\Release\Engine.xml</DocumentationFile>
+    <DocumentationFile>..\Build\Release\FreezingArcher.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,12 +57,12 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\Build\Debug\Engine.xml</DocumentationFile>
-    <PlatformTarget>x86</PlatformTarget>
+    <DocumentationFile>..\Build\Debug\FreezingArcher.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetFile) &amp;&amp; xcopy $(SolutionDir)/Pencil.Gaming/Pencil.Gaming/bin/Release $(TargetDir) &amp;&amp;</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
     <DebugType>none</DebugType>
@@ -66,12 +70,12 @@
     <OutputPath>..\Build\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\Build\Release\Engine.xml</DocumentationFile>
+    <DocumentationFile>..\Build\Release\FreezingArcher.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
-    <PlatformTarget>x86</PlatformTarget>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Externalconsole>true</Externalconsole>
+    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetFile) &amp;&amp; xcopy $(SolutionDir)/Pencil.Gaming/Pencil.Gaming/bin/Release $(TargetDir) &amp;&amp;</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -155,6 +159,29 @@
     <Compile Include="Core\FAObject.cs" />
     <Compile Include="Core\TypeIdentifierAttribute.cs" />
     <Compile Include="Core\ObjectFactory.cs" />
+    <Compile Include="Audio\Source.cs" />
+    <Compile Include="Audio\Listener.cs" />
+    <Compile Include="Audio\AudioManager.cs" />
+    <Compile Include="Audio\Sound.cs" />
+    <Compile Include="Audio\AudioRouting.cs" />
+    <Compile Include="Audio\RoutingEntry.cs" />
+    <Compile Include="Audio\Filter.cs" />
+    <Compile Include="Audio\Effect.cs" />
+    <Compile Include="Audio\EffectSlot.cs" />
+    <Compile Include="Audio\Effects\Reverb.cs" />
+    <Compile Include="Audio\Effects\Chorus.cs" />
+    <Compile Include="Audio\Effects\Distortion.cs" />
+    <Compile Include="Audio\Effects\Echo.cs" />
+    <Compile Include="Audio\Effects\Flanger.cs" />
+    <Compile Include="Audio\Effects\FrequencyShifter.cs" />
+    <Compile Include="Audio\Effects\PitchShifter.cs" />
+    <Compile Include="Audio\Effects\RingModulator.cs" />
+    <Compile Include="Audio\Effects\AutoWah.cs" />
+    <Compile Include="Audio\Effects\Compressor.cs" />
+    <Compile Include="Audio\Effects\Equalizer.cs" />
+    <Compile Include="Audio\Filters\LowpassFilter.cs" />
+    <Compile Include="Audio\Filters\HighpassFilter.cs" />
+    <Compile Include="Audio\Filters\BandpassFilter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -165,7 +192,13 @@
           <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
           <TextStylePolicy inheritsSet="null" scope="text/x-csharp" />
           <CSharpFormattingPolicy IndentSwitchBody="True" IndentBlocksInsideExpressions="True" AnonymousMethodBraceStyle="NextLine" PropertyBraceStyle="NextLine" PropertyGetBraceStyle="NextLine" PropertySetBraceStyle="NextLine" EventBraceStyle="NextLine" EventAddBraceStyle="NextLine" EventRemoveBraceStyle="NextLine" StatementBraceStyle="NextLine" ElseNewLinePlacement="NewLine" CatchNewLinePlacement="NewLine" FinallyNewLinePlacement="NewLine" WhileNewLinePlacement="DoNotCare" ArrayInitializerWrapping="DoNotChange" ArrayInitializerBraceStyle="NextLine" BeforeMethodDeclarationParentheses="False" BeforeMethodCallParentheses="False" BeforeConstructorDeclarationParentheses="False" NewLineBeforeConstructorInitializerColon="NewLine" NewLineAfterConstructorInitializerColon="SameLine" BeforeDelegateDeclarationParentheses="False" NewParentheses="False" SpacesBeforeBrackets="False" inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
-          <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/plain" />
+          <TextStylePolicy FileWidth="120" TabWidth="8" inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/plain" />
+          <TextStylePolicy inheritsSet="null" scope="application/config+xml" />
+          <XmlFormattingPolicy inheritsSet="null" scope="application/config+xml" />
+          <TextStylePolicy FileWidth="120" inheritsSet="VisualStudio" inheritsScope="text/plain" scope="application/xml" />
+          <XmlFormattingPolicy inheritsSet="Mono" inheritsScope="application/xml" scope="application/xml">
+            <DefaultFormat ContentIndentString="    " AttributesIndentString="    " />
+          </XmlFormattingPolicy>
         </Policies>
       </Properties>
     </MonoDevelop>
@@ -174,66 +207,6 @@
     <None Include="app.config" />
     <None Include="lib\AssimpNet.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="lib32\Assimp32.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="lib32\GLFW_LINUX_BROKEN.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib32\glfw.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib32\liblua.dylib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib32\liblua.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib32\libopenal.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib32\lua.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib32\openal32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib32\wrap_oal.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib32\libglfw.dylib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib64\Assimp64.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="lib64\glfw.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib64\libglfw.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib64\liblua.dylib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib64\liblua.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib64\libopenal.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib64\lua.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib64\openal32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib64\wrap_oal.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="lib64\libglfw.dylib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="lib\CommandLine.dll" />
     <None Include="lib\CommandLine.XML">
@@ -248,17 +221,14 @@
     <None Include="lib\NVorbis.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Audio\test.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Audio\test2.ogg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup />
-  <ItemGroup>
-    <Content Include="lib32\Assimp32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="lib64\Assimp64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Folder Include="Content\" />
@@ -268,6 +238,9 @@
     <Folder Include="Configuration\" />
     <Folder Include="Localization\" />
     <Folder Include="Reflection\" />
+    <Folder Include="Audio\" />
+    <Folder Include="Audio\Effects\" />
+    <Folder Include="Audio\Filters\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PostProcessor\PostProcessor.csproj">
@@ -278,7 +251,6 @@
     <ProjectReference Include="..\Pencil.Gaming\Pencil.Gaming\Pencil.Gaming.csproj">
       <Project>{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}</Project>
       <Name>Pencil.Gaming</Name>
-      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
 </Project>

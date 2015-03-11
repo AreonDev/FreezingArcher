@@ -19,11 +19,10 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
         <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
-        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/ &amp;&amp; mv lib/FurryLana.xml .&quot;" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/&quot;" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
@@ -37,10 +36,10 @@
     <OutputPath>..\Build\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/ &amp;&amp; mv lib/FurryLana.xml .&quot;" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/&quot;" workingdir="${TargetDir}" />
       </CustomCommands>
     </CustomCommands>
     <ConsolePause>False</ConsolePause>
@@ -50,9 +49,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Pencil.Gaming">
-      <HintPath>..\Engine\lib\Pencil.Gaming.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -68,9 +64,8 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\Build\Debug\FurryLana.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <PlatformTarget>x86</PlatformTarget>
     <ConsolePause>false</ConsolePause>
-    <PostBuildEvent>move /Y *.dll* lib\ &amp;&amp; move /Y *.pdb lib\ &amp;&amp; move /Y *.xml lib\ &amp;&amp; move /Y lib\FurryLana.pdb . &amp;&amp; move /Y lib\FurryLana.xml .</PostBuildEvent>
+    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetFile) &amp;&amp; xcopy $(SolutionDir)/Pencil.Gaming/Pencil.Gaming/bin/Release $(TargetDir) &amp;&amp; move /Y *.dll* lib\ &amp;&amp; move /Y *.pdb lib\ &amp;&amp; move /Y *.xml lib\</PostBuildEvent>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
@@ -81,8 +76,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\Build\Release\FurryLana.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <PlatformTarget>x86</PlatformTarget>
-    <PostBuildEvent>move /Y *.dll* lib\ &amp;&amp; move /Y *.xml lib\ &amp;&amp; move /Y lib\FurryLana.xml .</PostBuildEvent>
+    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetFile) &amp;&amp; xcopy $(SolutionDir)/Pencil.Gaming/Pencil.Gaming/bin/Release $(TargetDir) &amp;&amp; move /Y *.dll* lib\ &amp;&amp; move /Y *.xml lib\</PostBuildEvent>
     <ConsolePause>false</ConsolePause>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -91,6 +85,10 @@
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
       <Project>{E430674D-98AB-474A-BC42-A6DDE78623C7}</Project>
       <Name>FreezingArcher</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pencil.Gaming\Pencil.Gaming\Pencil.Gaming.csproj">
+      <Project>{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}</Project>
+      <Name>Pencil.Gaming</Name>
     </ProjectReference>
   </ItemGroup>
   <ProjectExtensions>

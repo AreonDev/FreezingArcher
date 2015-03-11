@@ -34,8 +34,10 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming;
+using Pencil.Gaming.Audio;
 using Pencil.Gaming.Graphics;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
+using FreezingArcher.Audio;
 
 namespace FreezingArcher.Core
 {
@@ -47,7 +49,7 @@ namespace FreezingArcher.Core
         /// <summary>
         /// The name of the class.
         /// </summary>
-        public static readonly string ClassName = "Application_";
+        public static readonly string ClassName = "Application";
 
         /// <summary>
         /// The global application instance.
@@ -110,7 +112,6 @@ namespace FreezingArcher.Core
         {
             Name = name;
             Logger.Initialize (name);
-            Logger.Log.RegisterLogModule (ClassName + name);
             MessageManager = new MessageManager ();
             MessageManager += this;
             ConfigManager.Initialize (MessageManager);
@@ -163,7 +164,8 @@ namespace FreezingArcher.Core
             Logger.Log.SetLogLevel ((LogLevel) ConfigManager.Instance["freezing_archer"]
                 .GetInteger ("general", "loglevel"));
 
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
+            Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new application '{0}'", name);
+            AudioManager = new AudioManager ();
             Localizer.Initialize (MessageManager);
 
             Window = new Window (
@@ -218,7 +220,7 @@ namespace FreezingArcher.Core
                 WriteAt (58, 9, "              ");
                 WriteAt (58, 9, focus.ToString ());
                 #endif
-                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Window '{0}' changed focus state to '{1}'",
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Window '{0}' changed focus state to '{1}'",
                     Window.Title, focus);
                 if (MessageCreated != null)
                     MessageCreated (new WindowFocusMessage (Window, focus));
@@ -229,7 +231,7 @@ namespace FreezingArcher.Core
                 WriteAt (58, 11, "              ");
                 WriteAt (58, 11, minimized.ToString ());
                 #endif
-                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name,
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
                     "Window '{0}' changed minimized state to '{1}'", Window.Title, minimized);
                 if (MessageCreated != null)
                     MessageCreated (new WindowMinimizeMessage (Window, minimized));
@@ -240,7 +242,7 @@ namespace FreezingArcher.Core
                 WriteAt (17, 15, "                                                       ");
                 WriteAt (17, 15, "WindowError: " + error + " - " + desc);
                 #endif
-                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Window '{0}' threw an error: [{1}] {2}",
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Window '{0}' threw an error: [{1}] {2}",
                     Window.Title, error.ToString (), desc);
                 if (MessageCreated != null)
                     MessageCreated (new WindowErrorMessage (Window, error.ToString (), desc));
@@ -274,10 +276,10 @@ namespace FreezingArcher.Core
                 WriteAt (58, 13, enter.ToString ());
                 #endif
                 if (enter)
-                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Mouse entered window '{0}'",
+                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Mouse entered window '{0}'",
                         Window.Title);
                 else
-                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Mouse leaved window '{0}'",
+                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Mouse leaved window '{0}'",
                         Window.Title);
 
                 if (MessageCreated != null)
@@ -339,8 +341,19 @@ namespace FreezingArcher.Core
             if (Cli)
                 return;
 
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Running application '{0}' ...", Name);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Running application '{0}' ...", Name);
             MessageManager.StartProcessing ();
+            FreezingArcher.Audio.Effects.Reverb effect = new FreezingArcher.Audio.Effects.Reverb();
+            AudioManager.GetSource("test").Gain = 1f;
+            var slot = AudioManager.Routing.GetFreeSlot();
+            slot.LoadedEffect = effect;
+
+            var re = AudioManager.Routing.AddAudioRouting(AudioManager.GetSource("test"), slot, 1f, null); /* Routing entry will be cached in Source, is used to break em up when cleared. */
+            // openal test
+            AudioManager.GetSource ("test").Loop = true;
+            AudioManager.PlaySource ("test");
+
+
             while (!Window.ShouldClose ())
             {
                 // reexec loader if ressources need to be loaded again
@@ -374,6 +387,7 @@ namespace FreezingArcher.Core
                 
                 Thread.Sleep (16);
             }
+            AudioManager.Routing.Remove(re);
         }
 
         /// <summary>
@@ -400,6 +414,12 @@ namespace FreezingArcher.Core
         /// <value>The message manager.</value>
         public MessageManager MessageManager { get; set; }
 
+        /// <summary>
+        /// Gets or sets the audio manager.
+        /// </summary>
+        /// <value>The audio manager.</value>
+        public AudioManager AudioManager { get; protected set; }
+
         #region IResource implementation
 
         /// <summary>
@@ -413,8 +433,12 @@ namespace FreezingArcher.Core
 
             Loaded = false;
 
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Initializing application '{0}' ...", Name);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing application '{0}' ...", Name);
             InputManager = new InputManager ();
+            AudioManager.LoadSound ("test2", "Audio/test2.ogg");
+            AudioManager.LoadSound ("test", "Audio/test.wav");
+            AudioManager.CreateSource ("test", "test", "test2");
+
             Initer = new JobExecuter ();
             Initer.InsertJobs (GetInitJobs (new List<Action>()));
             Initer.DoReexec += () => { InitAgain = true; };
@@ -431,8 +455,8 @@ namespace FreezingArcher.Core
         /// <param name="list">List.</param>
         public List<Action> GetInitJobs (List<Action> list)
         {
-            list = Window.GetInitJobs (list);
-            list = Game.GetInitJobs (list);
+            Window.GetInitJobs (list);
+            Game.GetInitJobs (list);
             return list;
         }
 
@@ -445,7 +469,7 @@ namespace FreezingArcher.Core
                 return;
 
             Loaded = false;
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Loading application '{0}' ...", Name);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading application '{0}' ...", Name);
             Loader.ExecJobsSequential ();
             Loaded = true;
         }
@@ -458,8 +482,8 @@ namespace FreezingArcher.Core
         /// <param name="reloader">The NeedLoad event handler.</param>
         public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
-            list = Window.GetLoadJobs (list, reloader);
-            list = Game.GetLoadJobs (list, reloader);
+            Window.GetLoadJobs (list, reloader);
+            Game.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }
@@ -474,8 +498,9 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Destroy ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Destroying application '{0}' ...", Name);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying application '{0}' ...", Name);
             Loaded = false;
+            AudioManager.Dispose ();
             MessageManager.StopProcessing ();
 
             if (!Cli)

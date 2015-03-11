@@ -115,6 +115,27 @@ namespace FreezingArcher.Audio
     /// </summary>
     public class Source : IResource, IManageable
     {
+        #region Effects
+        //Cache for audio routing to aux sends
+        private RoutingEntry[] auxSends;
+
+        //retrieve free routing number (1..max aux sends), -1 if all full
+        internal int GetRoutingId()
+        {
+            for (int j = 0; j < auxSends.Length; j++)
+                if (auxSends[j] == null)
+                    return j;
+
+            return -1;
+        }
+
+        //mark route as used or free route
+        internal void setRoute(RoutingEntry re, int num)
+        {
+            this.auxSends[num] = re;
+        }
+        #endregion
+
         /// <summary>
         /// The name of the class.
         /// </summary>
@@ -132,8 +153,10 @@ namespace FreezingArcher.Audio
             Name = name;
             Sounds = sounds;
             GroupGains = groupGains;
+            auxSends = new RoutingEntry[AL.MaxALCAuxiliarySends()];
             Loaded = false;
         }
+
 
         /// <summary>
         /// The openal source identifier (name).

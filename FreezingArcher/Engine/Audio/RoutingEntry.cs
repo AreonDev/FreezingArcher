@@ -36,10 +36,10 @@ namespace FreezingArcher.Audio
 
             this.Filter = filter;
             this.gain = gain.Clamp (0f, 1f);
-
+            sourceRouteIndex = -1;
 
         }
-
+        private int sourceRouteIndex;
         private float gain;
         private Filter filter;
 
@@ -94,24 +94,28 @@ namespace FreezingArcher.Audio
         void HandleFilterUpdate (object sender, EventArgs e)
         {
             if(setup)
-                AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 1, Filter == null ? 0 : (int)Filter.ALID);
+                AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, sourceRouteIndex, Filter == null ? 0 : (int)Filter.ALID);
         }
 
         private bool setup = false;
         internal void Setup ()
         {
             //TODO: Update Aux Sends
-            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 1, Filter == null ? 0 : (int)Filter.ALID);
+            sourceRouteIndex = Source.GetRoutingId();
+            if (sourceRouteIndex == -1)
+                return; //too many routes known
+            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, sourceRouteIndex, Filter == null ? 0 : (int)Filter.ALID);
             var error = (ALError)AL.GetError();
             AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, Gain);
-            error = (ALError)AL.GetError();
+            Source.setRoute(this, sourceRouteIndex);
             setup = true;
         }
 
         internal void Clear ()
         {
-            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, 0, 0, 0);
+            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, 0, sourceRouteIndex, 0);
             AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, Gain);
+            Source.setRoute(null, sourceRouteIndex);
             setup = false;
         }
 

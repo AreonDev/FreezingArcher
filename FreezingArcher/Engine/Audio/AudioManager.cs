@@ -95,6 +95,8 @@ namespace FreezingArcher.Audio
             Groups.Add (SourceGroup.Custom1, 1);
             Groups.Add (SourceGroup.Custom2, 1);
             Groups.Add (SourceGroup.Custom3, 1);
+
+            Routing = new AudioRouting();
         }
 
         /// <summary>
@@ -112,6 +114,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         protected Dictionary<SourceGroup, float> Groups;
 
+        public AudioRouting Routing {get; private set;}
         /// <summary>
         /// Sets the group gain.
         /// </summary>

@@ -343,20 +343,17 @@ namespace FreezingArcher.Core
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Running application '{0}' ...", Name);
             MessageManager.StartProcessing ();
-            Audio.AudioRouting ar = new FreezingArcher.Audio.AudioRouting();
             FreezingArcher.Audio.Effects.Reverb effect = new FreezingArcher.Audio.Effects.Reverb();
             AudioManager.GetSource("test").Gain = 1f;
             effect.GetLoadJobs(new List<Action>(), null).ForEach(j => j()); //load immediately
-            var slot = ar.GetFreeSlot();
+            var slot = AudioManager.Routing.GetFreeSlot();
             slot.LoadedEffect = effect;
 
-            var re = ar.AddAudioRouting(AudioManager.GetSource("test"), slot, 1f, null);
+            var re = AudioManager.Routing.AddAudioRouting(AudioManager.GetSource("test"), slot, 1f, null); /* Routing entry will be cached in Source, is used to break em up when cleared. */
             // openal test
             AudioManager.GetSource ("test").Loop = true;
             AudioManager.PlaySource ("test");
 
-            Thread.Sleep(1000);
-            AudioManager.StopSource("test");
 
             while (!Window.ShouldClose ())
             {

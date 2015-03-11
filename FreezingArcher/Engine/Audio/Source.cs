@@ -436,7 +436,34 @@ namespace FreezingArcher.Audio
             }
         }
 
-        public float Gain { get; set; }
+        public float Gain
+        {
+            get
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to get Gain property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                float gain;
+                AL.GetSource (AlSourceId, ALSourcef.Gain, out gain);
+                return gain;
+            }
+            set
+            {
+                if (!Loaded)
+                {
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                        "Trying to set Gain property before resource was loaded!");
+                    throw new InvalidOperationException ();
+                }
+
+                AL.Source (AlSourceId, ALSourcef.Gain, value);
+            }
+        }
+
         public float MinGain { get; set; }
         public float MaxGain { get; set; }
         public float ConeInnerAngle { get; set; }

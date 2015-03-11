@@ -40,7 +40,7 @@ namespace FreezingArcher.Core
         /// <summary>
         /// The name of the class.
         /// </summary>
-        public static readonly string ClassName = "Window_";
+        public static readonly string ClassName = "Window";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.Window"/> class.
@@ -50,7 +50,7 @@ namespace FreezingArcher.Core
         /// <param name="title">Title.</param>
         public Window (Vector2i size, Vector2i resolution, string title)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + title, "Creating new window '{0}'", title);
+            Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new window '{0}'", title);
 	    MSize = size;
 	    MResolution = resolution;
 	    MTitle = title;
@@ -64,7 +64,7 @@ namespace FreezingArcher.Core
         /// </summary>
         protected void Init ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Initializing window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing window '{0}'", Title);
             try
             {
                 Glfw.Init ();
@@ -93,7 +93,7 @@ namespace FreezingArcher.Core
         /// </summary>
         protected void Load ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Loading window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading window '{0}'", Title);
             try
             {
                 CreateWindow ();
@@ -130,7 +130,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Destroy ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Destroying window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying window '{0}'", Title);
             Glfw.DestroyWindow (Win);
             Glfw.Terminate ();
         }
@@ -156,7 +156,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void ToggleFullscreen ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Toggling fullscreen of window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Toggling fullscreen of window '{0}'", Title);
             Fullscreen = !Fullscreen;
         }
 
@@ -165,7 +165,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Show ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Showing window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Showing window '{0}'", Title);
             Glfw.ShowWindow (Win);
             Glfw.MakeContextCurrent (Win);
         }
@@ -175,7 +175,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Hide ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Hiding window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Hiding window '{0}'", Title);
             Glfw.HideWindow (Win);
         }
 
@@ -184,7 +184,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Minimize ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Minimizing window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Minimizing window '{0}'", Title);
             Glfw.IconifyWindow (Win);
         }
 
@@ -193,7 +193,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Restore ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Restoring window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Restoring window '{0}'", Title);
             Glfw.RestoreWindow (Win);
         }
 
@@ -239,7 +239,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void CaptureMouse ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Capturing mouse in window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Capturing mouse in window '{0}'", Title);
             CursorMode = CursorMode.CursorCaptured | CursorMode.CursorHidden;
             Glfw.SetInputMode (Win, InputMode.CursorMode, CursorMode);
         }
@@ -249,7 +249,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void ReleaseMouse ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Releasing mouse from window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Releasing mouse from window '{0}'", Title);
             CursorMode = CursorMode.CursorNormal;
             Glfw.SetInputMode (Win, InputMode.CursorMode, CursorMode);
         }
@@ -279,7 +279,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Close ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Closing window '{0}'", Title);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Closing window '{0}'", Title);
             Glfw.SetWindowShouldClose (Win, true);
         }
 
@@ -296,7 +296,7 @@ namespace FreezingArcher.Core
             set
 	    {
                 MSize = value;
-                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title,
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
                     "Setting size of window '{0}' to {1}x{2}", Title, value.X, value.Y);
                 Glfw.SetWindowSize (Win, value.X, value.Y);
             }
@@ -314,7 +314,7 @@ namespace FreezingArcher.Core
             }
             set
             {
-                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title,
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
                     "Setting fullscreen resolution of window '{0}' to {1}x{2}", Title, value.X, value.Y);
                 MResolution = value;
             }
@@ -332,7 +332,7 @@ namespace FreezingArcher.Core
             }
             set
 	    {
-                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Title, "Setting title of window '{0}' to '{1}'",
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Setting title of window '{0}' to '{1}'",
                     Title, value);
                 MTitle = value;
 		Glfw.SetWindowTitle (Win, value);
@@ -351,7 +351,7 @@ namespace FreezingArcher.Core
             }
             set
 	    {
-                Logger.Log.AddLogEntry (LogLevel.Warning, ClassName + Title,
+                Logger.Log.AddLogEntry (LogLevel.Warning, ClassName,
                     "Setting fullscreen state during runtime is not implemented yet!. " +
                     "Use the commnd line option or the config file entry to enter fullscreen mode on startup!");
                 //TODO toggle fullscreen
@@ -463,7 +463,7 @@ namespace FreezingArcher.Core
 	protected void CreateWindow ()
         {
 #if LINUX_INTEL_COMPATIBLE
-            Logger.Log.AddLogEntry (LogLevel.Warning, ClassName + Title,
+            Logger.Log.AddLogEntry (LogLevel.Warning, ClassName,
                 "You are using an unsupported graphics mode! Disable LINUX_INTEL_COMPATIBLE compile flag to fix it.");
             Glfw.WindowHint (WindowHint.ContextVersionMajor, 3);
             Glfw.WindowHint (WindowHint.ContextVersionMinor, 3);

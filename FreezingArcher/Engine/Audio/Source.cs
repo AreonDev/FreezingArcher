@@ -139,7 +139,7 @@ namespace FreezingArcher.Audio
         /// <summary>
         /// The name of the class.
         /// </summary>
-        public static readonly string ClassName = "Source_";
+        public static readonly string ClassName = "Source";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Audio.Source"/> class.
@@ -149,7 +149,7 @@ namespace FreezingArcher.Audio
         /// <param name="sounds">Sounds.</param>
         internal Source (string name, Dictionary<SourceGroup, float> groupGains, params Sound[] sounds)
         {
-            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName + Name, "Creating new audio source instance '{0}'", Name);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new audio source instance '{0}'", name);
             Name = name;
             Sounds = sounds;
             GroupGains = groupGains;
@@ -169,10 +169,10 @@ namespace FreezingArcher.Audio
         internal void Load ()
         {
             Loaded = false;
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Loading audio source '{0}'...", Name);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading audio source '{0}'...", Name);
             AL.GenSources (1, out AlSourceId);
             if (Sounds.Length <= 0)
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name, "You have not specified any sounds for " +
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, "You have not specified any sounds for " +
                         "this audio source!");
 
             uint[] bids = new uint[Sounds.Length];
@@ -192,7 +192,7 @@ namespace FreezingArcher.Audio
         {
             if (!Loaded)
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                     "Trying to read BufferProcessed property before resource was loaded!");
                 throw new InvalidOperationException ();
             }
@@ -210,7 +210,7 @@ namespace FreezingArcher.Audio
         {
             if (!Loaded)
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                     "Trying to read State property before resource was loaded!");
                 throw new InvalidOperationException ();
             }
@@ -228,7 +228,7 @@ namespace FreezingArcher.Audio
         {
             if (!Loaded)
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                     "Trying to read SourceType property before resource was loaded!");
                 throw new InvalidOperationException ();
             }
@@ -246,7 +246,7 @@ namespace FreezingArcher.Audio
         {
             if (!Loaded)
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                     "Trying to read openal id (name) property before resource was loaded!");
                 throw new InvalidOperationException ();
             }
@@ -340,7 +340,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read Position property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -354,7 +354,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set Position property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -373,7 +373,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read Velocity property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -386,7 +386,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set Velocity property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -405,7 +405,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read Direction property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -418,7 +418,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set Direction property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -446,7 +446,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read SourceRelative property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -459,7 +459,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read openal id (name) property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -478,7 +478,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read Looping property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -491,7 +491,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read Looping property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -510,7 +510,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read ReferenceDistance property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -523,7 +523,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set ReferenceDistance property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -542,7 +542,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read MaxDistance property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -555,7 +555,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set MaxDistance property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -574,7 +574,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read RolloffFactor property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -587,7 +587,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set RolloffFactor property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -606,7 +606,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to read Pitch property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -619,7 +619,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set Pitch property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -643,7 +643,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to get Gain property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -657,7 +657,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set Gain property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -677,7 +677,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to get MinGain property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -690,7 +690,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set MinGain property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -709,7 +709,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to get MaxGain property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -722,7 +722,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set MaxGain property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -741,7 +741,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to get ConeInnerAngle property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -754,7 +754,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set ConeInnerAngle property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -773,7 +773,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to get ConeOuterAngle property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -786,7 +786,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set ConeOuterAngle property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -805,7 +805,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to get ConeOuterGain property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -818,7 +818,7 @@ namespace FreezingArcher.Audio
             {
                 if (!Loaded)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                         "Trying to set ConeOuterGain property before resource was loaded!");
                     throw new InvalidOperationException ();
                 }
@@ -910,7 +910,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         public void Destroy ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName + Name, "Destroying audio source '{0}'", Name);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Destroying audio source '{0}'", Name);
             AL.DeleteSources (1, ref AlSourceId);
         }
 

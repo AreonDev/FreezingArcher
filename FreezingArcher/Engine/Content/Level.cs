@@ -36,7 +36,7 @@ namespace FreezingArcher.Content
         /// <summary>
         /// The name of the class.
         /// </summary>
-        public static readonly string ClassName = "Level_";
+        public static readonly string ClassName = "Level";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.Level"/> class.
@@ -44,7 +44,7 @@ namespace FreezingArcher.Content
         /// <param name="name">Unique name.</param>
         public Level (string name)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new level '{0}'", name);
+            Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new level '{0}'", name);
             Name = name;
             Loaded = true;
         }
@@ -83,7 +83,7 @@ namespace FreezingArcher.Content
         /// </summary>
         public void Destroy ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Destroying level '{0}'", Name);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying level '{0}'", Name);
         }
 
         /// <summary>

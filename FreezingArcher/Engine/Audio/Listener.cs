@@ -57,7 +57,7 @@ namespace FreezingArcher.Audio
         /// <summary>
         /// The name of the class.
         /// </summary>
-        public static readonly string ClassName = "Listener_";
+        public static readonly string ClassName = "Listener";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Audio.Listener"/> class.

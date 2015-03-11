@@ -107,7 +107,10 @@ namespace FreezingArcher.Audio
                 if (AL.GetError() != (int)ALError.NoError)
                     Logger.Log.AddLogEntry(LogLevel.Debug, ClassName, "Effect type {0} is NOT supported.", item.ToString());
                 else
+                {
                     Logger.Log.AddLogEntry(LogLevel.Debug, ClassName, "Effect type {0} IS supported.", item.ToString());
+                    SupportedEffects.Add(item);
+                }
             }
             AL.DeleteEffects(arr);
         }
@@ -126,6 +129,11 @@ namespace FreezingArcher.Audio
         /// The source groups gain registry.
         /// </summary>
         protected Dictionary<SourceGroup, float> Groups;
+
+        /// <summary>
+        /// The supported effects of the OpenAL context
+        /// </summary>
+        protected List<ALEffectType> SupportedEffects;
 
         /// <summary>
         /// Gets the routing helper.
@@ -527,6 +535,15 @@ namespace FreezingArcher.Audio
             {
                 AL.SpeedOfSound (value);
             }
+        }
+        /// <summary>
+        /// Query if the given effect type is supported by the current context
+        /// </summary>
+        /// <returns><c>true</c>, if effect type is supported, <c>false</c> otherwise.</returns>
+        /// <param name="type">Effect type.</param>
+        public bool EffectSupported(ALEffectType type)
+        {
+            return SupportedEffects.Contains(type);
         }
 
         #region IResource implementation

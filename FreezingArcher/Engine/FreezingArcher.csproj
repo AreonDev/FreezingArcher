@@ -169,6 +169,19 @@
     <Compile Include="Audio\Effect.cs" />
     <Compile Include="Audio\EffectSlot.cs" />
     <Compile Include="Audio\Effects\Reverb.cs" />
+    <Compile Include="Audio\Effects\Chorus.cs" />
+    <Compile Include="Audio\Effects\Distortion.cs" />
+    <Compile Include="Audio\Effects\Echo.cs" />
+    <Compile Include="Audio\Effects\Flanger.cs" />
+    <Compile Include="Audio\Effects\FrequencyShifter.cs" />
+    <Compile Include="Audio\Effects\PitchShifter.cs" />
+    <Compile Include="Audio\Effects\RingModulator.cs" />
+    <Compile Include="Audio\Effects\AutoWah.cs" />
+    <Compile Include="Audio\Effects\Compressor.cs" />
+    <Compile Include="Audio\Effects\Equalizer.cs" />
+    <Compile Include="Audio\Filters\LowpassFilter.cs" />
+    <Compile Include="Audio\Filters\HighpassFilter.cs" />
+    <Compile Include="Audio\Filters\BandpassFilter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -227,6 +240,7 @@
     <Folder Include="Reflection\" />
     <Folder Include="Audio\" />
     <Folder Include="Audio\Effects\" />
+    <Folder Include="Audio\Filters\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PostProcessor\PostProcessor.csproj">

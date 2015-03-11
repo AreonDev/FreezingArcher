@@ -165,6 +165,7 @@ namespace FreezingArcher.Core
                 .GetInteger ("general", "loglevel"));
 
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new application '{0}'", name);
+            AudioManager = new AudioManager ();
             Localizer.Initialize (MessageManager);
 
             Window = new Window (
@@ -435,7 +436,6 @@ namespace FreezingArcher.Core
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing application '{0}' ...", Name);
             InputManager = new InputManager ();
-            AudioManager = new AudioManager ();
             AudioManager.LoadSound ("test2", "Audio/test2.ogg");
             AudioManager.LoadSound ("test", "Audio/test.wav");
             AudioManager.CreateSource ("test", "test", "test2");

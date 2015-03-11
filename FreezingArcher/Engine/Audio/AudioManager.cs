@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using FreezingArcher.Core;
+using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming.Audio;
 
@@ -67,7 +68,7 @@ namespace FreezingArcher.Audio
     /// <summary>
     /// Audio manager.
     /// </summary>
-    public class AudioManager
+    public class AudioManager : IResource
     {
         /// <summary>
         /// The name of the class.
@@ -143,6 +144,10 @@ namespace FreezingArcher.Audio
             if (snd == null)
             {
                 snd = new Sound (name, file);
+
+                if (Loaded)
+                    NeedsLoad (snd.Load);
+
                 Sounds.Add (snd);
             }
 
@@ -162,6 +167,10 @@ namespace FreezingArcher.Audio
             if (snd == null)
             {
                 snd = new Sound (name, file);
+
+                if (Loaded)
+                    NeedsLoad (snd.Load);
+
                 Sounds.Add (snd);
             }
 
@@ -173,7 +182,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         /// <returns>The sounds.</returns>
         /// <param name="namesAndPaths">Names and paths.</param>
-        public Sound[] LoadSounds (Pair<string, string>[] namesAndPaths)
+        public Sound[] LoadSounds (params Pair<string, string>[] namesAndPaths)
         {
             Sound[] snds = new Sound[namesAndPaths.Length];
             for (int i = 0; i < snds.Length; i++)
@@ -186,7 +195,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         /// <returns>The sounds.</returns>
         /// <param name="namesAndPaths">Names and paths.</param>
-        public Sound[] LoadSounds (Pair<string, FileInfo>[] namesAndPaths)
+        public Sound[] LoadSounds (params Pair<string, FileInfo>[] namesAndPaths)
         {
             Sound[] snds = new Sound[namesAndPaths.Length];
             for (int i = 0; i < snds.Length; i++)
@@ -200,7 +209,7 @@ namespace FreezingArcher.Audio
         /// <returns>The source.</returns>
         /// <param name="name">Name.</param>
         /// <param name="sounds">Sounds.</param>
-        public Source CreateSource (string name, Pair<string, FileInfo>[] sounds)
+        public Source CreateSource (string name, params Pair<string, FileInfo>[] sounds)
         {
             Sound[] snds = LoadSounds (sounds);
             Source src = new Source (name, Groups, snds);
@@ -216,6 +225,10 @@ namespace FreezingArcher.Audio
             }
 
             Sources.Add (src);
+
+            if (Loaded)
+                NeedsLoad (src.Load);
+
             return src;
         }
 
@@ -225,7 +238,7 @@ namespace FreezingArcher.Audio
         /// <returns>The source.</returns>
         /// <param name="name">Name.</param>
         /// <param name="sounds">Sounds.</param>
-        public Source CreateSource (string name, Pair<string, string>[] sounds)
+        public Source CreateSource (string name, params Pair<string, string>[] sounds)
         {
             Sound[] snds = LoadSounds (sounds);
             Source src = new Source (name, Groups, snds);
@@ -241,6 +254,10 @@ namespace FreezingArcher.Audio
             }
 
             Sources.Add (src);
+
+            if (Loaded)
+                NeedsLoad (src.Load);
+
             return src;
         }
 
@@ -250,7 +267,7 @@ namespace FreezingArcher.Audio
         /// <returns>The source.</returns>
         /// <param name="name">Name.</param>
         /// <param name="soundNames">Sound names.</param>
-        public Source CreateSource (string name, string[] soundNames)
+        public Source CreateSource (string name, params string[] soundNames)
         {
             Sound[] snds = new Sound[soundNames.Length];
             for (int i = 0; i < snds.Length; i++)
@@ -268,6 +285,10 @@ namespace FreezingArcher.Audio
             }
 
             Sources.Add (src);
+
+            if (Loaded)
+                NeedsLoad (src.Load);
+
             return src;
         }
 
@@ -505,5 +526,37 @@ namespace FreezingArcher.Audio
                 AL.SpeedOfSound (value);
             }
         }
+
+        #region IResource implementation
+
+        public event Handler NeedsLoad;
+
+        public List<Action> GetInitJobs(List<Action> list)
+        {
+            Sources.ForEach (s => s.GetInitJobs (list));
+            Sounds.ForEach (s => s.GetInitJobs (list));
+            return list;
+        }
+
+        public List<Action> GetLoadJobs(List<Action> list, Handler reloader)
+        {
+            NeedsLoad = reloader;
+            Sounds.ForEach (s => s.GetLoadJobs (list, reloader));
+            Sources.ForEach (s => s.GetLoadJobs (list, reloader));
+            return list;
+        }
+
+        public void Destroy()
+        {
+            Loaded = false;
+            Sources.ForEach (s => s.Destroy ());
+            Sounds.ForEach (s => s.Destroy ());
+            Groups = null;
+            Listener = null;
+        }
+
+        public bool Loaded { get; protected set; }
+
+        #endregion
     }
 }

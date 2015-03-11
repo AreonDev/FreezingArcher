@@ -93,7 +93,7 @@ namespace FreezingArcher.Audio
         /// <summary>
         /// Load this resource.
         /// </summary>
-        protected void Load ()
+        internal void Load ()
         {
             Loaded = false;
             if (File.Extension == ".wav")

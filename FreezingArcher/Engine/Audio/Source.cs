@@ -142,7 +142,7 @@ namespace FreezingArcher.Audio
         /// <summary>
         /// Load this resource.
         /// </summary>
-        protected void Load ()
+        internal void Load ()
         {
             Loaded = false;
             AL.GenSources (1, out AlSourceId);

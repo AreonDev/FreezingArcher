@@ -40,6 +40,7 @@ namespace FreezingArcher.Audio
                 return;
             AL.DeleteAuxiliaryEffectSlots(new uint[]{ ALID });
         }
+
         internal bool Load()
         {
             uint[] alId = new uint[1];
@@ -49,6 +50,7 @@ namespace FreezingArcher.Audio
             this.ALID = alId[0];
             return true;
         }
+
         internal uint ALID { get; set; }
 
         internal string Name
@@ -58,34 +60,38 @@ namespace FreezingArcher.Audio
                 return "EffectSlot/" + ALID;
             }
         }
+
         private Effect efx;
-        public Effect LoadedEffect 
+
+        public Effect LoadedEffect
         {
-            get{
+            get
+            {
                 return efx;
             }
             set
             {
-                if(efx != null)
+                if (efx != null)
                 {
                     efx.Update -= HandleEFXUpdate;
                 }
                 efx = value;
-                if(efx != null)
+                if (efx != null)
                 {
                     efx.Update += HandleEFXUpdate;
-                    //TODO: Attch effect
+                    AL.AuxiliaryEffectSlot(ALID, ALAuxiliaryi.EffectslotEffect, (int)efx.ALID);
                 }
                 else
                 {
-                    //TODO: Attach null effect
+                    AL.AuxiliaryEffectSlot(ALID, ALAuxiliaryi.EffectslotEffect, 0);
                 }
             }
         }
 
-        void HandleEFXUpdate (object sender, EventArgs e)
+        void HandleEFXUpdate(object sender, EventArgs e)
         {
-
+            //reattach effect to ensure parameter updates are used instantly
+            AL.AuxiliaryEffectSlot(ALID, ALAuxiliaryi.EffectslotEffect, (int)((Effect)sender).ALID);
         }
     }
 }

@@ -23,6 +23,7 @@
 using System;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Core;
+using Pencil.Gaming.Audio;
 
 namespace FreezingArcher.Audio
 {
@@ -33,13 +34,10 @@ namespace FreezingArcher.Audio
             this.Source = source;
             this.Target = target;
 
-
-
-            this.gain = gain.Clamp (0f, 1f);
             this.Filter = filter;
+            this.gain = gain.Clamp (0f, 1f);
 
 
-            //TODO: Setup OpenAL aux sends and if necessary filters 
         }
 
         private float gain;
@@ -66,7 +64,8 @@ namespace FreezingArcher.Audio
             set
             {
                 this.gain = value.Clamp (0f, 1f); 
-                //TODO: Update gain in openal
+                if(setup)
+                AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, this.gain);
             }
         }
 
@@ -81,30 +80,43 @@ namespace FreezingArcher.Audio
                 if (filter != null)
                 {
                     filter.Update -= HandleFilterUpdate;
-                    //TODO: Deattach filter
                 }
                 filter = value;
                 if (filter != null)
                 {
                     filter.Update += HandleFilterUpdate;
-                    //TODO: Attach filter
+                    if(setup)
+                    AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 0, (int)filter.ALID);
+                }
+                else
+                {
+                    if(setup)
+                    AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 0, 0); //disable filter
                 }
             }
         }
 
         void HandleFilterUpdate (object sender, EventArgs e)
         {
-            //TODO: OpenAL reattach filter
+            if(setup)
+            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 0, (int)filter.ALID);
         }
 
+        private bool setup = false;
         internal void Setup ()
         {
-            //TODO: Initialization
+            //TODO: Update Aux Sends
+            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 0, (int)Filter.ALID);
+            AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, Gain);
+            setup = true;
         }
 
         internal void Clear ()
         {
             //TODO: Cleanup
+            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, 0, 0, 0);
+            AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, Gain);
+            setup = false;
         }
 
         #region IManageable implementation

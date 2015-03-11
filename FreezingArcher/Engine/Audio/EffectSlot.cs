@@ -22,12 +22,33 @@
 //
 using System;
 using FreezingArcher.Core.Interfaces;
+using Pencil.Gaming.Audio;
 
 namespace FreezingArcher.Audio
 {
     public class EffectSlot
     {
 
+        public EffectSlot()
+        {
+            ALID = uint.MaxValue;
+        }
+
+        ~EffectSlot()
+        {
+            if (ALID == uint.MaxValue)
+                return;
+            AL.DeleteAuxiliaryEffectSlots(new uint[]{ ALID });
+        }
+        internal bool Load()
+        {
+            uint[] alId = new uint[1];
+            AL.GenAuxiliaryEffectSlots(alId);
+            if (AL.GetError() != (int)ALError.NoError)
+                return false;
+            this.ALID = alId[0];
+            return true;
+        }
         internal uint ALID { get; set; }
 
         internal string Name

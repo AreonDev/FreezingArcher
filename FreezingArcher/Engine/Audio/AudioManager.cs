@@ -574,7 +574,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         public void Destroy()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Destroying audio manager...");
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying audio manager...");
             Loaded = false;
             Sources.ForEach (s => s.Destroy ());
             Sounds.ForEach (s => s.Destroy ());

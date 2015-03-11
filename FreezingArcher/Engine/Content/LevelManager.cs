@@ -44,7 +44,7 @@ namespace FreezingArcher.Content
         /// </summary>
         public LevelManager ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating new level manager");
+            Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new level manager");
             Levels = new List<Level> ();
             Loaded = true;
         }
@@ -88,7 +88,7 @@ namespace FreezingArcher.Content
         /// <param name="item">Item.</param>
         public void Add (Level item)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Adding new level '{0}' to level manager", item.Name);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Adding new level '{0}' to level manager", item.Name);
             Levels.Add (item);
 
             if (Levels.Count == 1)
@@ -104,7 +104,7 @@ namespace FreezingArcher.Content
         /// <param name="item">Item.</param>
         public void Remove (Level item)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Removing level '{0}' from level manager", item.Name);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Removing level '{0}' from level manager", item.Name);
             Levels.Remove (item);
         }
 
@@ -117,7 +117,7 @@ namespace FreezingArcher.Content
             Levels.RemoveAll (l => {
                 if (l.Name == name)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
+                    Logger.Log.AddLogEntry (LogLevel.Fine, ClassName,
                         "Removing level '{0}' from level manager", l.Name);
                     return true;
                 }
@@ -212,7 +212,7 @@ namespace FreezingArcher.Content
         /// </summary>
         public void Destroy ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Destroying level manager");
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying level manager");
             Levels.ForEach (l => l.Destroy ());
         }
 

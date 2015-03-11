@@ -50,7 +50,7 @@ namespace FreezingArcher.Localization
         /// </summary>
         public static void Initialize (MessageManager messageManager)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing global localizer instance ...");
+            Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Initializing global localizer instance ...");
             Dictionary<LocaleEnum, LocalizationData> dic = new Dictionary<LocaleEnum, LocalizationData> ();
             dic.Add (LocaleEnum.en_US, new LocalizationData ("Localization/en_US.xml"));
             dic.Add (LocaleEnum.de_DE, new LocalizationData ("Localization/de_DE.xml"));
@@ -66,7 +66,7 @@ namespace FreezingArcher.Localization
         public Localizer (Dictionary<LocaleEnum, LocalizationData> locales, MessageManager messageManager,
             LocaleEnum initialLocale = LocaleEnum.en_US)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating logger instance with initial locale '{0}'",
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating localizer instance with initial locale '{0}'",
                 initialLocale.ToString ());
             Locales = locales;
             CurrentLocale = initialLocale;
@@ -92,7 +92,7 @@ namespace FreezingArcher.Localization
             }
             set
             {
-                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Changing locale to '{0}'", value);
+                Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Changing locale to '{0}'", value);
                 CurLocale = value;
                 if (MessageCreated != null)
                     MessageCreated (new GeneralMessage ((int) MessageId.UpdateLocale));

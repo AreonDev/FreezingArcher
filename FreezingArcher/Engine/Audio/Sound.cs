@@ -68,7 +68,7 @@ namespace FreezingArcher.Audio
         /// <summary>
         /// The name of the class.
         /// </summary>
-        public static readonly string ClassName = "Sound_";
+        public static readonly string ClassName = "Sound";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Audio.Sound"/> class.
@@ -85,7 +85,8 @@ namespace FreezingArcher.Audio
         /// <param name="file">File.</param>
         internal Sound (string name, FileInfo file)
         {
-            Logger.Log.AddLogEntry (LogLevel.Fine, "Creating new sound '{0}' from '{1}'", name, file.FullName);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new sound '{0}' from '{1}'", name,
+                file.FullName);
             Name = name;
             File = file;
             Loaded = false;
@@ -96,7 +97,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         internal void Load ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Loading sound '{0}'...", Name);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading sound '{0}'...", Name);
             Loaded = false;
             if (File.Extension == ".wav")
             {
@@ -110,7 +111,7 @@ namespace FreezingArcher.Audio
             }
             else
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name, "Invalid file format '{0}'!", File.Extension);
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, "Invalid file format '{0}'!", File.Extension);
                 throw new FileLoadException ("Invalid file format");
             }
             Loaded = true;
@@ -183,7 +184,7 @@ namespace FreezingArcher.Audio
         {
             if (!Loaded)
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
                     "Trying to read openal id (name) property before resource was loaded!");
                 throw new InvalidOperationException ();
             }

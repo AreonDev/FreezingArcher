@@ -52,7 +52,7 @@ namespace FreezingArcher.Configuration
         /// </summary>
         static ConfigManager ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading configuration defaults ...");
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Loading configuration defaults ...");
 
             Section general = new Section ();
             DefaultConfig.B.Add ("general", general);
@@ -75,7 +75,7 @@ namespace FreezingArcher.Configuration
         /// </summary>
         public static void Initialize (MessageManager messageManager)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing config manager ...");
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Initializing config manager ...");
             Instance = new ConfigManager (messageManager);
             Instance.Add (new ConfigFile (DefaultConfig.A, DefaultConfig.B, messageManager));
         }
@@ -111,7 +111,7 @@ namespace FreezingArcher.Configuration
         /// <param name="item">Item.</param>
         public void Add (ConfigFile item)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Adding {0}.conf to config manager ...", item.Name);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Adding {0}.conf to config manager ...", item.Name);
             if (MessageCreated != null)
                 MessageCreated (new ConfigManagerItemAddedMessage (item));
             ConfigFiles.Add (item);
@@ -123,7 +123,7 @@ namespace FreezingArcher.Configuration
         /// <param name="item">Item.</param>
         public void Remove (ConfigFile item)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Removing {0}.conf from config manager ...", item.Name);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Removing {0}.conf from config manager ...", item.Name);
             if (MessageCreated != null)
                 MessageCreated (new ConfigManagerItemRemovedMessage (item));
             ConfigFiles.Remove (item);
@@ -138,7 +138,7 @@ namespace FreezingArcher.Configuration
             ConfigFiles.RemoveAll (c => {
                 if (c.Name == name)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
+                    Logger.Log.AddLogEntry (LogLevel.Fine, ClassName,
                         "Removing {0}.conf from config manager ...", c.Name);
                     if (MessageCreated != null)
                         MessageCreated (new ConfigManagerItemRemovedMessage (c));

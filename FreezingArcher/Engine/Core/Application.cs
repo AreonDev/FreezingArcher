@@ -49,7 +49,7 @@ namespace FreezingArcher.Core
         /// <summary>
         /// The name of the class.
         /// </summary>
-        public static readonly string ClassName = "Application_";
+        public static readonly string ClassName = "Application";
 
         /// <summary>
         /// The global application instance.
@@ -112,7 +112,6 @@ namespace FreezingArcher.Core
         {
             Name = name;
             Logger.Initialize (name);
-            Logger.Log.RegisterLogModule (ClassName + name);
             MessageManager = new MessageManager ();
             MessageManager += this;
             ConfigManager.Initialize (MessageManager);
@@ -165,7 +164,7 @@ namespace FreezingArcher.Core
             Logger.Log.SetLogLevel ((LogLevel) ConfigManager.Instance["freezing_archer"]
                 .GetInteger ("general", "loglevel"));
 
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + name, "Creating new application '{0}'", name);
+            Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new application '{0}'", name);
             Localizer.Initialize (MessageManager);
 
             Window = new Window (
@@ -220,7 +219,7 @@ namespace FreezingArcher.Core
                 WriteAt (58, 9, "              ");
                 WriteAt (58, 9, focus.ToString ());
                 #endif
-                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Window '{0}' changed focus state to '{1}'",
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Window '{0}' changed focus state to '{1}'",
                     Window.Title, focus);
                 if (MessageCreated != null)
                     MessageCreated (new WindowFocusMessage (Window, focus));
@@ -231,7 +230,7 @@ namespace FreezingArcher.Core
                 WriteAt (58, 11, "              ");
                 WriteAt (58, 11, minimized.ToString ());
                 #endif
-                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name,
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
                     "Window '{0}' changed minimized state to '{1}'", Window.Title, minimized);
                 if (MessageCreated != null)
                     MessageCreated (new WindowMinimizeMessage (Window, minimized));
@@ -242,7 +241,7 @@ namespace FreezingArcher.Core
                 WriteAt (17, 15, "                                                       ");
                 WriteAt (17, 15, "WindowError: " + error + " - " + desc);
                 #endif
-                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Window '{0}' threw an error: [{1}] {2}",
+                Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Window '{0}' threw an error: [{1}] {2}",
                     Window.Title, error.ToString (), desc);
                 if (MessageCreated != null)
                     MessageCreated (new WindowErrorMessage (Window, error.ToString (), desc));
@@ -276,10 +275,10 @@ namespace FreezingArcher.Core
                 WriteAt (58, 13, enter.ToString ());
                 #endif
                 if (enter)
-                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Mouse entered window '{0}'",
+                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Mouse entered window '{0}'",
                         Window.Title);
                 else
-                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Mouse leaved window '{0}'",
+                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Mouse leaved window '{0}'",
                         Window.Title);
 
                 if (MessageCreated != null)
@@ -341,7 +340,7 @@ namespace FreezingArcher.Core
             if (Cli)
                 return;
 
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Running application '{0}' ...", Name);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Running application '{0}' ...", Name);
             MessageManager.StartProcessing ();
             FreezingArcher.Audio.Effects.Reverb effect = new FreezingArcher.Audio.Effects.Reverb();
             AudioManager.GetSource("test").Gain = 1f;
@@ -434,7 +433,7 @@ namespace FreezingArcher.Core
 
             Loaded = false;
 
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Initializing application '{0}' ...", Name);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing application '{0}' ...", Name);
             InputManager = new InputManager ();
             AudioManager = new AudioManager ();
             AudioManager.LoadSound ("test", "Audio/test2.ogg");
@@ -471,7 +470,7 @@ namespace FreezingArcher.Core
                 return;
 
             Loaded = false;
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Loading application '{0}' ...", Name);
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading application '{0}' ...", Name);
             Loader.ExecJobsSequential ();
             Loaded = true;
         }
@@ -501,7 +500,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Destroy ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Destroying application '{0}' ...", Name);
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying application '{0}' ...", Name);
             Loaded = false;
             AudioManager.Destroy ();
             MessageManager.StopProcessing ();

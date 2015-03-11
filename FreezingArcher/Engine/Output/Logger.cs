@@ -150,7 +150,7 @@ namespace FreezingArcher.Output
         /// <param name="append">if set to <c>true</c> appends to the file if exists.</param>
         public Logger (FileInfo logFile, LogLevel minLvl = LogLevel.Fine, bool append = false)
         {
-            maxModNameLength = 20;
+            maxModNameLength = 16;
             minL = minLvl;
             t = new Thread (run);
             linesToProcess = new Queue<LogLine> ();

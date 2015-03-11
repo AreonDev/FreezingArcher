@@ -43,6 +43,7 @@ namespace FreezingArcher.Audio.Effects
 
 
         #region implemented abstract members of Effect
+
         /// <summary>
         /// Initialize this instance.
         /// </summary>
@@ -61,6 +62,7 @@ namespace FreezingArcher.Audio.Effects
             HighCutoff = _HighCutoff;
             return true;
         }
+
         #endregion
 
         private float _LowGain = 1f;
@@ -87,11 +89,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _HighCutoff = value.Clamp(4000f, 16000f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EqualizerHighCutoff, _HighCutoff);
+                
+                AL.Effect(ALID, ALEffectf.EqualizerHighCutoff, _HighCutoff);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the high gain.
         /// </summary>
@@ -105,11 +108,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _HighGain = value.Clamp(0.126f, 7.943f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EqualizerHighGain, _HighGain);
+                
+                AL.Effect(ALID, ALEffectf.EqualizerHighGain, _HighGain);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the width of the mid2 band.
         /// </summary>
@@ -123,11 +127,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Mid2Width = value.Clamp(0.01f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EqualizerMid2Width, _Mid2Width);
+                
+                AL.Effect(ALID, ALEffectf.EqualizerMid2Width, _Mid2Width);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the center frequency of the mid2 band.
         /// </summary>
@@ -141,11 +146,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Mid2Center = value.Clamp(1000f, 8000f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EqualizerMid2Center, _Mid2Center);
+                
+                AL.Effect(ALID, ALEffectf.EqualizerMid2Center, _Mid2Center);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the gain of the mid2 band.
         /// </summary>
@@ -159,11 +165,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Mid2Gain = value.Clamp(0.126f, 7.943f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EqualizerMid2Gain, _Mid2Gain);
+                
+                AL.Effect(ALID, ALEffectf.EqualizerMid2Gain, _Mid2Gain);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the width of the mid1 band.
         /// </summary>
@@ -177,11 +184,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Mid1Width = value.Clamp(0.01f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EqualizerMid1Width, _Mid1Width);
+                
+                AL.Effect(ALID, ALEffectf.EqualizerMid1Width, _Mid1Width);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the center frequency of the mid1 band.
         /// </summary>
@@ -195,11 +203,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Mid1Center = value.Clamp(200f, 3000f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EqualizerMid1Center, _Mid1Center);
+                
+                AL.Effect(ALID, ALEffectf.EqualizerMid1Center, _Mid1Center);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the gain of the mid1 band.
         /// </summary>
@@ -213,11 +222,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Mid1Gain = value.Clamp(0.126f, 7.943f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EqualizerMid1Gain, _Mid1Gain);
+                
+                AL.Effect(ALID, ALEffectf.EqualizerMid1Gain, _Mid1Gain);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the low cutoff frequency.
         /// </summary>
@@ -231,11 +241,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _LowCutoff = value.Clamp(50f, 800f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EqualizerLowCutoff, _LowCutoff);
+                
+                AL.Effect(ALID, ALEffectf.EqualizerLowCutoff, _LowCutoff);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the low gain.
         /// </summary>
@@ -249,8 +260,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _LowGain = value.Clamp(0.126f, 7.943f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EqualizerLowGain, _LowGain);
+                
+                AL.Effect(ALID, ALEffectf.EqualizerLowGain, _LowGain);
                 TriggerUpdate();
             }
         }

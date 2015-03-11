@@ -52,7 +52,7 @@ namespace FreezingArcher.Audio.Effects
             Resonance = _Resonance;
             return true;
         }
-            
+
         #endregion
 
         private float _AttackTime = 0.06f;
@@ -73,11 +73,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _PeakGain = value.Clamp(0.00003f, 31621f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.AutowahPeakGain, _PeakGain);
+                
+                AL.Effect(ALID, ALEffectf.AutowahPeakGain, _PeakGain);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the resonance.
         /// </summary>
@@ -91,11 +92,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Resonance = value.Clamp(2f, 1000f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.AutowahResonance, _Resonance);
+                
+                AL.Effect(ALID, ALEffectf.AutowahResonance, _Resonance);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the release time.
         /// </summary>
@@ -109,11 +111,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _ReleaseTime = value.Clamp(0.0001f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.AutowahReleaseTime, _ReleaseTime);
+                
+                AL.Effect(ALID, ALEffectf.AutowahReleaseTime, _ReleaseTime);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the attack time.
         /// </summary>
@@ -127,8 +130,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _AttackTime = value.Clamp(0.0001f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.AutowahAttackTime, _AttackTime);
+                
+                AL.Effect(ALID, ALEffectf.AutowahAttackTime, _AttackTime);
                 TriggerUpdate();
             }
         }

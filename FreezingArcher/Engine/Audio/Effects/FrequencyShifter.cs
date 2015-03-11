@@ -50,6 +50,7 @@ namespace FreezingArcher.Audio.Effects
             /// </summary>
             Off = 2,
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Audio.Effects.FrequencyShifter"/> class.
         /// </summary>
@@ -58,6 +59,7 @@ namespace FreezingArcher.Audio.Effects
         }
 
         #region implemented abstract members of Effect
+
         /// <summary>
         /// Initialize this instance.
         /// </summary>
@@ -71,6 +73,7 @@ namespace FreezingArcher.Audio.Effects
         }
 
         #endregion
+
         private float _Frequency = 0f;
         private Direction _LeftDirection = Direction.Down;
         private Direction _RightDirection = Direction.Down;
@@ -88,11 +91,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _RightDirection = value;
-                if (Loaded)
-                    AL.Effect(ALID, ALEffecti.FrequencyShifterRightDirection, (int)_RightDirection);
+                
+                AL.Effect(ALID, ALEffecti.FrequencyShifterRightDirection, (int)_RightDirection);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the left direction.
         /// </summary>
@@ -106,11 +110,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _LeftDirection = value;
-                if (Loaded)
-                    AL.Effect(ALID, ALEffecti.FrequencyShifterLeftDirection, (int)_LeftDirection);
+                
+                AL.Effect(ALID, ALEffecti.FrequencyShifterLeftDirection, (int)_LeftDirection);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the frequency.
         /// </summary>
@@ -124,8 +129,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Frequency = value.Clamp(0f, 24000f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.FrequencyShifterFrequency, _Frequency);
+                
+                AL.Effect(ALID, ALEffectf.FrequencyShifterFrequency, _Frequency);
                 TriggerUpdate();
             }
         }

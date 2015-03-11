@@ -39,6 +39,7 @@ namespace FreezingArcher.Audio.Effects
         }
 
         #region implemented abstract members of Effect
+
         /// <summary>
         /// Initialize this instance.
         /// </summary>
@@ -48,6 +49,7 @@ namespace FreezingArcher.Audio.Effects
             Enabled = _Enabled;
             return true;
         }
+
         #endregion
 
         private int _Enabled = 1;
@@ -65,8 +67,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Enabled = value.Clamp(0, 1);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffecti.CompressorOnoff, _Enabled);
+                
+                AL.Effect(ALID, ALEffecti.CompressorOnoff, _Enabled);
                 TriggerUpdate();
             }
         }

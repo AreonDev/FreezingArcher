@@ -90,8 +90,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Feedback = value.Clamp(-1f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ChorusFeedback, _Feedback);
+                
+                AL.Effect(ALID, ALEffectf.ChorusFeedback, _Feedback);
                 TriggerUpdate();
             }
         }
@@ -109,8 +109,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Depth = value.Clamp(0f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ChorusDepth, _Depth);
+                
+                AL.Effect(ALID, ALEffectf.ChorusDepth, _Depth);
                 TriggerUpdate();
             }
         }
@@ -128,8 +128,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Rate = value.Clamp(0f, 10f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ChorusRate, _Rate);
+                
+                AL.Effect(ALID, ALEffectf.ChorusRate, _Rate);
                 TriggerUpdate();
             }
         }
@@ -147,8 +147,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Phase = value.Clamp(-180, 180);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffecti.ChorusPhase, _Phase);
+                
+                AL.Effect(ALID, ALEffecti.ChorusPhase, _Phase);
                 TriggerUpdate();
             }
         }
@@ -166,8 +166,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _WaveForm = value;
-                if (Loaded)
-                    AL.Effect(ALID, ALEffecti.ChorusWaveform, (int)_WaveForm);
+                
+                AL.Effect(ALID, ALEffecti.ChorusWaveform, (int)_WaveForm);
                 TriggerUpdate();
             }
         }

@@ -39,6 +39,7 @@ namespace FreezingArcher.Audio.Filters
         }
 
         #region implemented abstract members of Filter
+
         /// <summary>
         /// Initialize this instance.
         /// </summary>
@@ -68,11 +69,12 @@ namespace FreezingArcher.Audio.Filters
             set
             {
                 _GainLF = value.Clamp(0f, 1f);
-                if (Loaded)
-                    AL.Filter(ALID, ALFilterf.HighpassGainLF, _GainLF);
+                
+                AL.Filter(ALID, ALFilterf.HighpassGainLF, _GainLF);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the gain.
         /// </summary>
@@ -86,8 +88,8 @@ namespace FreezingArcher.Audio.Filters
             set
             {
                 _Gain = value.Clamp(0f, 1f);
-                if (Loaded)
-                    AL.Filter(ALID, ALFilterf.HighpassGain, _Gain);
+                
+                AL.Filter(ALID, ALFilterf.HighpassGain, _Gain);
                 TriggerUpdate();
             }
         }

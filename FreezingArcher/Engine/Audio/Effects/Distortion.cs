@@ -56,11 +56,11 @@ namespace FreezingArcher.Audio.Effects
 
         #endregion
 
-        private float _DistortionEdge; 
-        private float _DistortionGain; 
-        private float _LowpassCutoff; 
-        private float _EQCenter; 
-        private float _EQBandwidth; 
+        private float _DistortionEdge;
+        private float _DistortionGain;
+        private float _LowpassCutoff;
+        private float _EQCenter;
+        private float _EQBandwidth;
 
         /// <summary>
         /// Gets or sets the EQ bandwidth.
@@ -75,8 +75,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _EQBandwidth = value.Clamp(80f, 24000f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.DistortionEQBandwidth, _EQBandwidth);
+                
+                AL.Effect(ALID, ALEffectf.DistortionEQBandwidth, _EQBandwidth);
                 TriggerUpdate();
             }
         }
@@ -94,11 +94,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _EQCenter = value.Clamp(80f, 24000f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.DistortionEQCenter, _EQCenter);
+                
+                AL.Effect(ALID, ALEffectf.DistortionEQCenter, _EQCenter);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the lowpass cutoff.
         /// </summary>
@@ -112,11 +113,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _LowpassCutoff = value.Clamp(80f, 24000f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.DistortionLowpassCutoff, _LowpassCutoff);
+                
+                AL.Effect(ALID, ALEffectf.DistortionLowpassCutoff, _LowpassCutoff);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the distortion gain.
         /// </summary>
@@ -130,11 +132,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _DistortionGain = value.Clamp(0.01f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.DistortionGain, _DistortionGain);
+                
+                AL.Effect(ALID, ALEffectf.DistortionGain, _DistortionGain);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the distortion edge.
         /// </summary>
@@ -148,8 +151,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _DistortionEdge = value.Clamp(0f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.DistortionEdge, _DistortionEdge);
+                
+                AL.Effect(ALID, ALEffectf.DistortionEdge, _DistortionEdge);
                 TriggerUpdate();
             }
         }

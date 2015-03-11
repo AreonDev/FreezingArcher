@@ -35,7 +35,7 @@ namespace FreezingArcher.Audio.Effects
         /// Waveform enum. 
         /// Enumeration of all possible Waveforms for the <see cref="Flanger"/> effect
         /// </summary>
-        public enum Waveform 
+        public enum Waveform
         {
             /// <summary>
             /// Sinus waveform.
@@ -46,6 +46,7 @@ namespace FreezingArcher.Audio.Effects
             /// </summary>
             Triangle = 1,
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Audio.Effects.Flanger"/> class.
         /// </summary>
@@ -55,6 +56,7 @@ namespace FreezingArcher.Audio.Effects
 
 
         #region implemented abstract members of Effect
+
         /// <summary>
         /// Initialize this instance.
         /// </summary>
@@ -63,6 +65,7 @@ namespace FreezingArcher.Audio.Effects
             AL.EffectType(ALID, ALEffectType.Flanger);
             return true;
         }
+
         #endregion
 
         private Waveform _WaveForm = Waveform.Triangle;
@@ -85,11 +88,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Delay = value.Clamp(0f, 0.004f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.FlangerDelay, _Delay);
+                
+                AL.Effect(ALID, ALEffectf.FlangerDelay, _Delay);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the feedback value.
         /// </summary>
@@ -103,11 +107,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Feedback = value.Clamp(-1f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.FlangerFeedback, _Feedback);
+                
+                AL.Effect(ALID, ALEffectf.FlangerFeedback, _Feedback);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the depth value.
         /// </summary>
@@ -121,11 +126,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Depth = value.Clamp(0f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.FlangerDepth, _Depth);
+                
+                AL.Effect(ALID, ALEffectf.FlangerDepth, _Depth);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the rate.
         /// </summary>
@@ -139,11 +145,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Rate = value.Clamp(0f, 10f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.FlangerRate, _Rate);
+                
+                AL.Effect(ALID, ALEffectf.FlangerRate, _Rate);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the phase.
         /// </summary>
@@ -157,11 +164,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Phase = value.Clamp(-180, 180);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffecti.FlangerPhase, _Phase);
+                
+                AL.Effect(ALID, ALEffecti.FlangerPhase, _Phase);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the wave form.
         /// </summary>
@@ -175,8 +183,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _WaveForm = value;
-                if (Loaded)
-                    AL.Effect(ALID, ALEffecti.FlangerWaveform, (int)_WaveForm);
+                
+                AL.Effect(ALID, ALEffecti.FlangerWaveform, (int)_WaveForm);
                 TriggerUpdate();
             }
         }

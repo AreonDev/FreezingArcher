@@ -69,11 +69,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _FineTune = value.Clamp(-50, 50);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffecti.PitchShifterFineTune, _FineTune);
+                
+                AL.Effect(ALID, ALEffecti.PitchShifterFineTune, _FineTune);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the coarse tune.
         /// </summary>
@@ -87,8 +88,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _CoarseTune = value.Clamp(-12, 12);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffecti.PitchShifterCoarseTune, _CoarseTune);
+                
+                AL.Effect(ALID, ALEffecti.PitchShifterCoarseTune, _CoarseTune);
                 TriggerUpdate();
             }
         }

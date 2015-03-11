@@ -34,7 +34,7 @@ namespace FreezingArcher.Audio.Effects
         /// <summary>
         /// Enumeration of all possible waveforms for the <see cref="RingModulator"/> effect.
         /// </summary>
-        public enum Waveform 
+        public enum Waveform
         {
             /// <summary>
             /// Sinus waveform.
@@ -90,11 +90,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _WaveForm = value;
-                if (Loaded)
-                    AL.Effect(ALID, ALEffecti.RingModulatorWaveform, (int)_WaveForm);
+                
+                AL.Effect(ALID, ALEffecti.RingModulatorWaveform, (int)_WaveForm);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the highpass cutoff.
         /// </summary>
@@ -108,11 +109,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _HighpassCutoff = value.Clamp(0f, 24000f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.RingModulatorHighpassCutoff, _HighpassCutoff);
+                
+                AL.Effect(ALID, ALEffectf.RingModulatorHighpassCutoff, _HighpassCutoff);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the frequency.
         /// </summary>
@@ -126,8 +128,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Frequency = value.Clamp(0f, 8000f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.RingModulatorFrequency, _Frequency);
+                
+                AL.Effect(ALID, ALEffectf.RingModulatorFrequency, _Frequency);
                 TriggerUpdate();
             }
         }

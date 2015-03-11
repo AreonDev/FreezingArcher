@@ -436,8 +436,9 @@ namespace FreezingArcher.Core
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing application '{0}' ...", Name);
             InputManager = new InputManager ();
             AudioManager = new AudioManager ();
-            AudioManager.LoadSound ("test", "Audio/test2.ogg");
-            AudioManager.CreateSource ("test", "test");
+            AudioManager.LoadSound ("test2", "Audio/test2.ogg");
+            AudioManager.LoadSound ("test", "Audio/test.wav");
+            AudioManager.CreateSource ("test", "test", "test2");
 
             Initer = new JobExecuter ();
             Initer.InsertJobs (GetInitJobs (new List<Action>()));

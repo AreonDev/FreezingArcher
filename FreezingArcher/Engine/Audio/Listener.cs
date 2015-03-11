@@ -66,7 +66,7 @@ namespace FreezingArcher.Audio
         /// <param name="velocity">Velocity.</param>
         /// <param name="orientation">Orientation.</param>
         /// <param name="gain">Gain.</param>
-        public Listener (Vector3 position, Vector3 velocity, Pair<Vector3, UpVector> orientation, float gain)
+        internal Listener (Vector3 position, Vector3 velocity, Pair<Vector3, UpVector> orientation, float gain)
         {
             InitPosition = position;
             InitVelocity = velocity;

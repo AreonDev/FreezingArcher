@@ -75,7 +75,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="fileName">File name.</param>
-        public Sound (string name, string fileName) : this (name, new FileInfo (fileName))
+        internal Sound (string name, string fileName) : this (name, new FileInfo (fileName))
         {}
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="file">File.</param>
-        public Sound (string name, FileInfo file)
+        internal Sound (string name, FileInfo file)
         {
             Name = name;
             File = file;

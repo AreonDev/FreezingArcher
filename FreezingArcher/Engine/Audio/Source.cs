@@ -124,11 +124,13 @@ namespace FreezingArcher.Audio
         /// Initializes a new instance of the <see cref="FreezingArcher.Audio.Source"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
+        /// <param name="groupGains">Reference to the group gains.</param>
         /// <param name="sounds">Sounds.</param>
-        public Source (string name, params Sound[] sounds)
+        internal Source (string name, Dictionary<SourceGroup, float> groupGains, params Sound[] sounds)
         {
             Name = name;
             Sounds = sounds;
+            GroupGains = groupGains;
             Loaded = false;
         }
 
@@ -150,7 +152,8 @@ namespace FreezingArcher.Audio
 
             uint[] bids = new uint[Sounds.Length];
             for (int i = 0; i < bids.Length; i++)
-                bids[i] = Sounds[i].GetId ();
+                if (Sounds[i] != null)
+                    bids[i] = Sounds[i].GetId ();
 
             AL.SourceQueueBuffers (AlSourceId, bids.Length, bids);
             Loaded = true;
@@ -616,6 +619,11 @@ namespace FreezingArcher.Audio
         }
 
         /// <summary>
+        /// The gain without group gain.
+        /// </summary>
+        protected float CleanGain;
+
+        /// <summary>
         /// Gets or sets the gain.
         /// </summary>
         /// <value>The gain.</value>
@@ -630,9 +638,10 @@ namespace FreezingArcher.Audio
                     throw new InvalidOperationException ();
                 }
 
-                float gain;
+                /*float gain;
                 AL.GetSource (AlSourceId, ALSourcef.Gain, out gain);
-                return gain;
+                return gain;*/
+                return CleanGain;
             }
             set
             {
@@ -643,7 +652,8 @@ namespace FreezingArcher.Audio
                     throw new InvalidOperationException ();
                 }
 
-                AL.Source (AlSourceId, ALSourcef.Gain, value);
+                CleanGain = value;
+                AL.Source (AlSourceId, ALSourcef.Gain, value * GroupGain);
             }
         }
 
@@ -807,7 +817,47 @@ namespace FreezingArcher.Audio
             }
         }
 
-        //TODO Group gain
+        /// <summary>
+        /// The group gains.
+        /// </summary>
+        protected Dictionary<SourceGroup, float> GroupGains;
+
+        /// <summary>
+        /// The source group.
+        /// </summary>
+        protected SourceGroup SourceGroup;
+
+        /// <summary>
+        /// Gets or sets the group.
+        /// </summary>
+        /// <value>The group.</value>
+        public SourceGroup Group
+        {
+            get
+            {
+                return SourceGroup;
+            }
+            set
+            {
+                SourceGroup = value;
+                Gain = CleanGain;
+            }
+        }
+
+        /// <summary>
+        /// Gets the group gain.
+        /// </summary>
+        /// <value>The group gain.</value>
+        public float GroupGain
+        {
+            get
+            {
+                float gain;
+                if (!GroupGains.TryGetValue (Group, out gain))
+                    gain = 1;
+                return gain;
+            }
+        }
 
         #region IResource implementation
         /// <summary>

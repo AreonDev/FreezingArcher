@@ -25,6 +25,14 @@ Global
 		{DAD798AA-F43A-4470-A081-28EF938A21D3}.Release|x86.Build.0 = Release|x86
 		{DAD798AA-F43A-4470-A081-28EF938A21D3}.ReleaseWindows|x86.ActiveCfg = ReleaseWindows|x86
 		{DAD798AA-F43A-4470-A081-28EF938A21D3}.ReleaseWindows|x86.Build.0 = ReleaseWindows|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Debug|x86.ActiveCfg = Debug|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Debug|x86.Build.0 = Debug|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.DebugWindows|x86.ActiveCfg = DebugWindows|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.DebugWindows|x86.Build.0 = DebugWindows|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Release|x86.ActiveCfg = Release|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Release|x86.Build.0 = Release|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.ReleaseWindows|x86.ActiveCfg = ReleaseWindows|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.ReleaseWindows|x86.Build.0 = ReleaseWindows|x86
 		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Debug|x86.ActiveCfg = Debug|x86
 		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Debug|x86.Build.0 = Debug|x86
 		{E430674D-98AB-474A-BC42-A6DDE78623C7}.DebugWindows|x86.ActiveCfg = Debug|x86

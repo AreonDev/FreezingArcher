@@ -20,13 +20,13 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using Pencil.Gaming.MathUtils;
+using System;
+using System.Collections.Generic;
 using FreezingArcher.Core;
 using FreezingArcher.Core.Interfaces;
-using System.Collections.Generic;
-using System;
-using Pencil.Gaming.Audio;
 using FreezingArcher.Output;
+using Pencil.Gaming.Audio;
+using Pencil.Gaming.MathUtils;
 
 namespace FreezingArcher.Audio
 {

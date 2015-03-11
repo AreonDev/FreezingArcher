@@ -34,9 +34,9 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming;
+using Pencil.Gaming.Audio;
 using Pencil.Gaming.Graphics;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
-using Pencil.Gaming.Audio;
 
 namespace FreezingArcher.Core
 {

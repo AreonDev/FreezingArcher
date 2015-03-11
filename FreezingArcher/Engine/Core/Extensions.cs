@@ -211,5 +211,10 @@ namespace FreezingArcher.Core
         {
             return val < min ? min : val > max ? max : val;
         }
+
+        public static int Clamp(this int val, int min, int max)
+        {
+            return val < min ? min : val > max ? max : val;
+        }
     }
 }

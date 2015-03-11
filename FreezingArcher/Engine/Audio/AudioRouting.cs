@@ -55,7 +55,12 @@ namespace FreezingArcher.Audio
 
         public EffectSlot GetFreeSlot()
         {
-            return effectSlots.FirstOrDefault(slot => slot.LoadedEffect == null);
+            for(int i = 0; i< effectSlots.Count; i++)
+            {
+                if (effectSlots[i].LoadedEffect == null)
+                    return effectSlots[i];
+            }
+            return null;
         }
 
         public IEnumerable<EffectSlot> GetSlots()

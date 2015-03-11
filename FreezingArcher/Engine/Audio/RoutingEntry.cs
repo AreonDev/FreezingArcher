@@ -23,6 +23,7 @@
 using System;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Core;
+using Pencil.Gaming.Audio;
 
 namespace FreezingArcher.Audio
 {
@@ -33,15 +34,12 @@ namespace FreezingArcher.Audio
             this.Source = source;
             this.Target = target;
 
-
-
-            this.gain = gain.Clamp (0f, 1f);
             this.Filter = filter;
+            this.gain = gain.Clamp (0f, 1f);
+            sourceRouteIndex = -1;
 
-
-            //TODO: Setup OpenAL aux sends and if necessary filters 
         }
-
+        private int sourceRouteIndex;
         private float gain;
         private Filter filter;
 
@@ -66,7 +64,8 @@ namespace FreezingArcher.Audio
             set
             {
                 this.gain = value.Clamp (0f, 1f); 
-                //TODO: Update gain in openal
+                if(setup)
+                AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, this.gain);
             }
         }
 
@@ -81,30 +80,43 @@ namespace FreezingArcher.Audio
                 if (filter != null)
                 {
                     filter.Update -= HandleFilterUpdate;
-                    //TODO: Deattach filter
                 }
                 filter = value;
                 if (filter != null)
                 {
                     filter.Update += HandleFilterUpdate;
-                    //TODO: Attach filter
                 }
+                    if(setup)
+                    AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 1, filter==null?0:(int)filter.ALID); //disable filter
             }
         }
 
         void HandleFilterUpdate (object sender, EventArgs e)
         {
-            //TODO: OpenAL reattach filter
+            if(setup)
+                AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, sourceRouteIndex, Filter == null ? 0 : (int)Filter.ALID);
         }
 
+        private bool setup = false;
         internal void Setup ()
         {
-            //TODO: Initialization
+            //TODO: Update Aux Sends
+            sourceRouteIndex = Source.GetRoutingId();
+            if (sourceRouteIndex == -1)
+                return; //too many routes known
+            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, sourceRouteIndex, Filter == null ? 0 : (int)Filter.ALID);
+            var error = (ALError)AL.GetError();
+            AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, Gain);
+            Source.setRoute(this, sourceRouteIndex);
+            setup = true;
         }
 
         internal void Clear ()
         {
-            //TODO: Cleanup
+            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, 0, sourceRouteIndex, 0);
+            AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, Gain);
+            Source.setRoute(null, sourceRouteIndex);
+            setup = false;
         }
 
         #region IManageable implementation

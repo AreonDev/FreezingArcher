@@ -113,7 +113,7 @@ namespace FreezingArcher.Audio
     /// <summary>
     /// Audio source class.
     /// </summary>
-    public class Source : IResource, IManageable
+    public class Source : IManageable, IDisposable
     {
         #region Effects
         //Cache for audio routing to aux sends
@@ -154,7 +154,7 @@ namespace FreezingArcher.Audio
             Sounds = sounds;
             GroupGains = groupGains;
             auxSends = new RoutingEntry[AL.MaxALCAuxiliarySends()];
-            Loaded = false;
+            Load ();
         }
 
 
@@ -166,9 +166,8 @@ namespace FreezingArcher.Audio
         /// <summary>
         /// Load this resource.
         /// </summary>
-        internal void Load ()
+        void Load ()
         {
-            Loaded = false;
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading audio source '{0}'...", Name);
             AL.GenSources (1, out AlSourceId);
             if (Sounds.Length <= 0)
@@ -181,7 +180,6 @@ namespace FreezingArcher.Audio
                     bids[i] = Sounds[i].GetId ();
 
             AL.SourceQueueBuffers (AlSourceId, bids.Length, bids);
-            Loaded = true;
         }
 
         /// <summary>
@@ -190,13 +188,6 @@ namespace FreezingArcher.Audio
         /// <returns>The currently played sound.</returns>
         public Sound GetCurrentlyPlayedSound ()
         {
-            if (!Loaded)
-            {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                    "Trying to read BufferProcessed property before resource was loaded!");
-                throw new InvalidOperationException ();
-            }
-
             int idx;
             AL.GetSource (AlSourceId, ALGetSourcei.BuffersProcessed, out idx);
             return Sounds[idx];
@@ -208,13 +199,6 @@ namespace FreezingArcher.Audio
         /// <returns>The source state.</returns>
         public SourceState GetState ()
         {
-            if (!Loaded)
-            {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                    "Trying to read State property before resource was loaded!");
-                throw new InvalidOperationException ();
-            }
-
             int state;
             AL.GetSource (AlSourceId, ALGetSourcei.SourceState, out state);
             return (SourceState) state;
@@ -226,13 +210,6 @@ namespace FreezingArcher.Audio
         /// <returns>The source type.</returns>
         public SourceType GetSourceType ()
         {
-            if (!Loaded)
-            {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                    "Trying to read SourceType property before resource was loaded!");
-                throw new InvalidOperationException ();
-            }
-
             int type;
             AL.GetSource (AlSourceId, ALGetSourcei.SourceType, out type);
             return (SourceType) type;
@@ -244,13 +221,6 @@ namespace FreezingArcher.Audio
         /// <returns>The openal identifier (name).</returns>
         internal uint GetId ()
         {
-            if (!Loaded)
-            {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                    "Trying to read openal id (name) property before resource was loaded!");
-                throw new InvalidOperationException ();
-            }
-
             return AlSourceId;
         }
 
@@ -338,13 +308,6 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read Position property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float px, py, pz;
 
                 AL.GetSource (AlSourceId, ALSource3f.Position, out px, out py, out pz);
@@ -352,13 +315,6 @@ namespace FreezingArcher.Audio
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set Position property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSource3f.Position, value.X, value.Y, value.Z);
             }
         }
@@ -371,26 +327,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read Velocity property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float vx, vy, vz;
                 AL.GetSource (AlSourceId, ALSource3f.Velocity, out vx, out vy, out vz);
                 return new Vector3 (vx, vy, vz);
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set Velocity property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSource3f.Velocity, value.X, value.Y, value.Z);
             }
         }
@@ -403,26 +345,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read Direction property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float dx, dy, dz;
                 AL.GetSource (AlSourceId, ALSource3f.Direction, out dx, out dy, out dz);
                 return new Vector3 (dx, dy, dz);
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set Direction property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSource3f.Direction, value.X, value.Y, value.Z);
             }
         }
@@ -444,26 +372,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read SourceRelative property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 bool rel;
                 AL.GetSource (AlSourceId, ALSourceb.SourceRelative, out rel);
                 return rel;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read openal id (name) property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourceb.SourceRelative, value);
             }
         }
@@ -476,26 +390,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read Looping property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 bool loop;
                 AL.GetSource (AlSourceId, ALSourceb.Looping, out loop);
                 return loop;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read Looping property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourceb.Looping, value);
             }
         }
@@ -508,26 +408,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read ReferenceDistance property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float dis;
                 AL.GetSource (AlSourceId, ALSourcef.ReferenceDistance, out dis);
                 return dis;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set ReferenceDistance property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourcef.ReferenceDistance, value);
             }
         }
@@ -540,26 +426,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read MaxDistance property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float dis;
                 AL.GetSource (AlSourceId, ALSourcef.MaxDistance, out dis);
                 return dis;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set MaxDistance property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourcef.MaxDistance, value);
             }
         }
@@ -572,26 +444,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read RolloffFactor property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float fac;
                 AL.GetSource (AlSourceId, ALSourcef.RolloffFactor, out fac);
                 return fac;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set RolloffFactor property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourcef.RolloffFactor, value);
             }
         }
@@ -604,26 +462,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to read Pitch property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float pitch;
                 AL.GetSource (AlSourceId, ALSourcef.Pitch, out pitch);
                 return pitch;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set Pitch property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourcef.Pitch, value);
             }
         }
@@ -641,13 +485,6 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to get Gain property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 /*float gain;
                 AL.GetSource (AlSourceId, ALSourcef.Gain, out gain);
                 return gain;*/
@@ -655,13 +492,6 @@ namespace FreezingArcher.Audio
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set Gain property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 CleanGain = value;
                 AL.Source (AlSourceId, ALSourcef.Gain, value * GroupGain);
             }
@@ -675,26 +505,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to get MinGain property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float mg;
                 AL.GetSource (AlSourceId, ALSourcef.MinGain, out mg);
                 return mg;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set MinGain property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourcef.MinGain, value);
             }
         }
@@ -707,26 +523,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to get MaxGain property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float gain;
                 AL.GetSource (AlSourceId, ALSourcef.MaxGain, out gain);
                 return gain;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set MaxGain property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourcef.MaxGain, value);
             }
         }
@@ -739,26 +541,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to get ConeInnerAngle property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float angle;
                 AL.GetSource (AlSourceId, ALSourcef.ConeInnerAngle, out angle);
                 return angle;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set ConeInnerAngle property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourcef.ConeInnerAngle, value);
             }
         }
@@ -771,26 +559,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to get ConeOuterAngle property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float angle;
                 AL.GetSource (AlSourceId, ALSourcef.ConeOuterAngle, out angle);
                 return angle;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set ConeOuterAngle property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourcef.ConeOuterAngle, value);
             }
         }
@@ -803,26 +577,12 @@ namespace FreezingArcher.Audio
         {
             get
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to get ConeOuterGain property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 float gain;
                 AL.GetSource (AlSourceId, ALSourcef.ConeOuterGain, out gain);
                 return gain;
             }
             set
             {
-                if (!Loaded)
-                {
-                    Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
-                        "Trying to set ConeOuterGain property before resource was loaded!");
-                    throw new InvalidOperationException ();
-                }
-
                 AL.Source (AlSourceId, ALSourcef.ConeOuterGain, value);
             }
         }
@@ -869,57 +629,19 @@ namespace FreezingArcher.Audio
             }
         }
 
-        #region IResource implementation
         /// <summary>
-        /// Fire this event when you need the binded load function to be called.
-        /// For example after init or when new resources needs to be loaded.
+        /// Releases all resource used by the <see cref="FreezingArcher.Audio.Source"/> object.
         /// </summary>
-        public event Handler NeedsLoad;
-
-        /// <summary>
-        /// Gets the init jobs. The init jobs may not be called from the main thread as the initialization process is
-        /// multi threaded.
-        /// </summary>
-        /// <returns>The init jobs.</returns>
-        /// <param name="list">List.</param>
-        public List<Action> GetInitJobs (List<Action> list)
-        {
-            return list;
-        }
-
-        /// <summary>
-        /// Gets the load jobs. The load jobs will be executed sequentially in the gl thread.
-        /// </summary>
-        /// <returns>The load jobs.</returns>
-        /// <param name="list">List.</param>
-        /// <param name="reloader">Reloader.</param>
-        public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
-        {
-            NeedsLoad = reloader;
-            list.Add (Load);
-            return list;
-        }
-
-        /// <summary>
-        /// Destroy this resource.
-        /// 
-        /// Why not IDisposable:
-        /// IDisposable is called from within the garbage collector context so we do not have a valid gl context there.
-        /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
-        /// context.
-        /// </summary>
-        public void Destroy ()
+        /// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="FreezingArcher.Audio.Source"/>. The
+        /// <see cref="Dispose"/> method leaves the <see cref="FreezingArcher.Audio.Source"/> in an unusable state.
+        /// After calling <see cref="Dispose"/>, you must release all references to the
+        /// <see cref="FreezingArcher.Audio.Source"/> so the garbage collector can reclaim the memory that the
+        /// <see cref="FreezingArcher.Audio.Source"/> was occupying.</remarks>
+        public void Dispose ()
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Destroying audio source '{0}'", Name);
             AL.DeleteSources (1, ref AlSourceId);
         }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Audio.Source"/> is loaded.
-        /// </summary>
-        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
-        public bool Loaded { get; protected set; }
-        #endregion
 
         #region IManageable implementation
         /// <summary>

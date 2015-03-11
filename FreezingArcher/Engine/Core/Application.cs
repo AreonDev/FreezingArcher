@@ -458,7 +458,6 @@ namespace FreezingArcher.Core
         {
             Window.GetInitJobs (list);
             Game.GetInitJobs (list);
-            AudioManager.GetInitJobs (list);
             return list;
         }
 
@@ -486,7 +485,6 @@ namespace FreezingArcher.Core
         {
             Window.GetLoadJobs (list, reloader);
             Game.GetLoadJobs (list, reloader);
-            AudioManager.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }
@@ -503,7 +501,7 @@ namespace FreezingArcher.Core
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying application '{0}' ...", Name);
             Loaded = false;
-            AudioManager.Destroy ();
+            AudioManager.Dispose ();
             MessageManager.StopProcessing ();
 
             if (!Cli)

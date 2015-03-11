@@ -69,7 +69,7 @@ namespace FreezingArcher.Audio
     /// <summary>
     /// Audio manager.
     /// </summary>
-    public class AudioManager : IResource
+    public class AudioManager : IDisposable
     {
         /// <summary>
         /// The name of the class.
@@ -181,9 +181,6 @@ namespace FreezingArcher.Audio
             {
                 snd = new Sound (name, file);
 
-                if (Loaded)
-                    NeedsLoad (snd.Load);
-
                 Sounds.Add (snd);
             }
 
@@ -205,9 +202,6 @@ namespace FreezingArcher.Audio
             if (snd == null)
             {
                 snd = new Sound (name, file);
-
-                if (Loaded)
-                    NeedsLoad (snd.Load);
 
                 Sounds.Add (snd);
             }
@@ -265,9 +259,6 @@ namespace FreezingArcher.Audio
 
             Sources.Add (src);
 
-            if (Loaded)
-                NeedsLoad (src.Load);
-
             return src;
         }
 
@@ -294,9 +285,6 @@ namespace FreezingArcher.Audio
             }
 
             Sources.Add (src);
-
-            if (Loaded)
-                NeedsLoad (src.Load);
 
             return src;
         }
@@ -326,9 +314,6 @@ namespace FreezingArcher.Audio
             }
 
             Sources.Add (src);
-
-            if (Loaded)
-                NeedsLoad (src.Load);
 
             return src;
         }
@@ -547,67 +532,23 @@ namespace FreezingArcher.Audio
             return SupportedEffects.Contains(type);
         }
 
-        #region IResource implementation
-
         /// <summary>
-        /// Fire this event when you need the binded load function to be called.
-        /// For example after init or when new resources needs to be loaded.
+        /// Releases all resource used by the <see cref="FreezingArcher.Audio.AudioManager"/> object.
         /// </summary>
-        public event Handler NeedsLoad;
-
-        /// <summary>
-        /// Gets the init jobs. The init jobs may not be called from the main thread as the initialization process is
-        /// multi threaded.
-        /// </summary>
-        /// <returns>The init jobs.</returns>
-        /// <param name="list">List.</param>
-        public List<Action> GetInitJobs(List<Action> list)
-        {
-            Sources.ForEach (s => s.GetInitJobs (list));
-            Sounds.ForEach (s => s.GetInitJobs (list));
-            return list;
-        }
-
-        /// <summary>
-        /// Gets the load jobs. The load jobs will be executed sequentially in the gl thread.
-        /// </summary>
-        /// <returns>The load jobs.</returns>
-        /// <param name="list">List.</param>
-        /// <param name="reloader">Reloader.</param>
-        public List<Action> GetLoadJobs(List<Action> list, Handler reloader)
-        {
-            NeedsLoad = reloader;
-            Sounds.ForEach (s => s.GetLoadJobs (list, reloader));
-            Sources.ForEach (s => s.GetLoadJobs (list, reloader));
-            return list;
-        }
-
-        /// <summary>
-        /// Destroy this resource.
-        /// 
-        /// Why not IDisposable:
-        /// IDisposable is called from within the garbage collector context so we do not have a valid gl context there.
-        /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
-        /// context.
-        /// </summary>
-        public void Destroy()
+        /// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="FreezingArcher.Audio.AudioManager"/>.
+        /// The <see cref="Dispose"/> method leaves the <see cref="FreezingArcher.Audio.AudioManager"/> in an unusable
+        /// state. After calling <see cref="Dispose"/>, you must release all references to the
+        /// <see cref="FreezingArcher.Audio.AudioManager"/> so the garbage collector can reclaim the memory that the
+        /// <see cref="FreezingArcher.Audio.AudioManager"/> was occupying.</remarks>
+        public void Dispose()
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying audio manager...");
-            Loaded = false;
-            Sources.ForEach (s => s.Destroy ());
-            Sounds.ForEach (s => s.Destroy ());
+            Sources.ForEach (s => s.Dispose ());
+            Sounds.ForEach (s => s.Dispose ());
             Routing.Destroy();
             Groups = null;
             Listener = null;
             SupportedEffects = null;
         }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Audio.AudioManager"/> is loaded.
-        /// </summary>
-        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
-        public bool Loaded { get; protected set; }
-
-        #endregion
     }
 }

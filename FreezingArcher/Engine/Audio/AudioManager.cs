@@ -596,8 +596,10 @@ namespace FreezingArcher.Audio
             Loaded = false;
             Sources.ForEach (s => s.Destroy ());
             Sounds.ForEach (s => s.Destroy ());
+            Routing.Destroy();
             Groups = null;
             Listener = null;
+            SupportedEffects = null;
         }
 
         /// <summary>

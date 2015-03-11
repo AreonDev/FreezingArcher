@@ -103,6 +103,18 @@ namespace FreezingArcher.Audio
             currentRouting.Remove (entry);
             entry.Clear ();
         }
+
+        /// <summary>
+        /// Destroy this instance including all objects created by it
+        /// Will destroy the EffectSlots
+        /// </summary>
+        public void Destroy()
+        {
+            foreach (var item in effectSlots)
+            {
+                item.Destroy();
+            }
+        }
     }
 }
 

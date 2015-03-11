@@ -44,7 +44,7 @@ namespace FreezingArcher.Audio
         /// Releases unmanaged resources and performs other cleanup operations before the
         /// <see cref="FreezingArcher.Audio.EffectSlot"/> is reclaimed by garbage collection.
         /// </summary>
-        ~EffectSlot()
+        internal void Destroy()
         {
             if (ALID == uint.MaxValue)
                 return;

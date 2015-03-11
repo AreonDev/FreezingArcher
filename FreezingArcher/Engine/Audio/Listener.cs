@@ -20,13 +20,13 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using Pencil.Gaming.MathUtils;
+using System;
+using System.Collections.Generic;
 using FreezingArcher.Core;
 using FreezingArcher.Core.Interfaces;
-using System.Collections.Generic;
-using System;
-using Pencil.Gaming.Audio;
 using FreezingArcher.Output;
+using Pencil.Gaming.Audio;
+using Pencil.Gaming.MathUtils;
 
 namespace FreezingArcher.Audio
 {
@@ -66,8 +66,9 @@ namespace FreezingArcher.Audio
         /// <param name="velocity">Velocity.</param>
         /// <param name="orientation">Orientation.</param>
         /// <param name="gain">Gain.</param>
-        public Listener (Vector3 position, Vector3 velocity, Pair<Vector3, UpVector> orientation, float gain)
+        internal Listener (Vector3 position, Vector3 velocity, Pair<Vector3, UpVector> orientation, float gain)
         {
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new listener instance");
             InitPosition = position;
             InitVelocity = velocity;
             InitGain = gain;

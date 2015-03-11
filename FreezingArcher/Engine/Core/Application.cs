@@ -34,9 +34,10 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming;
+using Pencil.Gaming.Audio;
 using Pencil.Gaming.Graphics;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
-using Pencil.Gaming.Audio;
+using FreezingArcher.Audio;
 
 namespace FreezingArcher.Core
 {
@@ -344,14 +345,8 @@ namespace FreezingArcher.Core
             MessageManager.StartProcessing ();
             Audio.AudioRouting ar = new FreezingArcher.Audio.AudioRouting();
             // openal test
-            uint buffer = AL.Utils.BufferFromOgg("Audio/test2.ogg");
-            uint source;
-            AL.GenSources(1, out source);
-
-            AL.Source(source, ALSourcei.Buffer, (int) buffer);
-            AL.Source(source, ALSourceb.Looping, true);
-
-            AL.SourcePlay(source);
+            AudioManager.GetSource ("test").Loop = true;
+            AudioManager.PlaySource ("test");
 
             while (!Window.ShouldClose ())
             {
@@ -386,9 +381,6 @@ namespace FreezingArcher.Core
                 
                 Thread.Sleep (16);
             }
-
-            AL.DeleteSources(1, ref source);
-            AL.DeleteBuffers(1, ref buffer);
         }
 
         /// <summary>
@@ -415,6 +407,12 @@ namespace FreezingArcher.Core
         /// <value>The message manager.</value>
         public MessageManager MessageManager { get; set; }
 
+        /// <summary>
+        /// Gets or sets the audio manager.
+        /// </summary>
+        /// <value>The audio manager.</value>
+        public AudioManager AudioManager { get; protected set; }
+
         #region IResource implementation
 
         /// <summary>
@@ -430,6 +428,10 @@ namespace FreezingArcher.Core
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Initializing application '{0}' ...", Name);
             InputManager = new InputManager ();
+            AudioManager = new AudioManager ();
+            AudioManager.LoadSound ("test", "Audio/test2.ogg");
+            AudioManager.CreateSource ("test", "test");
+
             Initer = new JobExecuter ();
             Initer.InsertJobs (GetInitJobs (new List<Action>()));
             Initer.DoReexec += () => { InitAgain = true; };
@@ -446,8 +448,9 @@ namespace FreezingArcher.Core
         /// <param name="list">List.</param>
         public List<Action> GetInitJobs (List<Action> list)
         {
-            list = Window.GetInitJobs (list);
-            list = Game.GetInitJobs (list);
+            Window.GetInitJobs (list);
+            Game.GetInitJobs (list);
+            AudioManager.GetInitJobs (list);
             return list;
         }
 
@@ -473,8 +476,9 @@ namespace FreezingArcher.Core
         /// <param name="reloader">The NeedLoad event handler.</param>
         public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
-            list = Window.GetLoadJobs (list, reloader);
-            list = Game.GetLoadJobs (list, reloader);
+            Window.GetLoadJobs (list, reloader);
+            Game.GetLoadJobs (list, reloader);
+            AudioManager.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }
@@ -491,6 +495,7 @@ namespace FreezingArcher.Core
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Destroying application '{0}' ...", Name);
             Loaded = false;
+            AudioManager.Destroy ();
             MessageManager.StopProcessing ();
 
             if (!Cli)

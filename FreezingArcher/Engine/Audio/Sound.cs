@@ -20,12 +20,12 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FreezingArcher.Core.Interfaces;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using Pencil.Gaming.Audio;
+using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
+using Pencil.Gaming.Audio;
 
 namespace FreezingArcher.Audio
 {
@@ -75,7 +75,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="fileName">File name.</param>
-        public Sound (string name, string fileName) : this (name, new FileInfo (fileName))
+        internal Sound (string name, string fileName) : this (name, new FileInfo (fileName))
         {}
 
         /// <summary>
@@ -83,8 +83,9 @@ namespace FreezingArcher.Audio
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="file">File.</param>
-        public Sound (string name, FileInfo file)
+        internal Sound (string name, FileInfo file)
         {
+            Logger.Log.AddLogEntry (LogLevel.Fine, "Creating new sound '{0}' from '{1}'", name, file.FullName);
             Name = name;
             File = file;
             Loaded = false;
@@ -93,8 +94,9 @@ namespace FreezingArcher.Audio
         /// <summary>
         /// Load this resource.
         /// </summary>
-        protected void Load ()
+        internal void Load ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Loading sound '{0}'...", Name);
             Loaded = false;
             if (File.Extension == ".wav")
             {

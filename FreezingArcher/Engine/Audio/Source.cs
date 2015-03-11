@@ -234,8 +234,7 @@ namespace FreezingArcher.Audio
         /// <summary>
         /// Play the specified sounds.
         /// </summary>
-        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
-        public void Play (bool shuffleSounds = false)
+        public void Play ()
         {
             AL.SourcePlay (AlSourceId);
         }
@@ -244,52 +243,38 @@ namespace FreezingArcher.Audio
         /// Plays sound at given time offset.
         /// </summary>
         /// <param name="timeOffset">Time offset.</param>
-        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
-        public void PlayAt (TimeSpan timeOffset, bool shuffleSounds = false)
+        public void PlayAt (TimeSpan timeOffset)
         {
-            //TODO
+            AL.Source (AlSourceId, ALSourcef.SecOffset, timeOffset.Seconds);
+            Play ();
         }
 
         /// <summary>
         /// Plays the given sound.
         /// </summary>
         /// <param name="soundName">Sound name.</param>
-        /// <param name="proceedWithNextSoundWhenFinished">If set to <c>true</c> proceed with next sound when finished.</param>
-        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
-        public void PlaySound (string soundName, bool proceedWithNextSoundWhenFinished = false,
-            bool shuffleSounds = false)
+        public void PlayAt (string soundName)
         {
-            //TODO
+            int bytes = 0;
+            for (int i = 0; Sounds[i].Name != soundName; i++)
+                bytes += Sounds[i].GetSize ();
+
+            AL.Source (AlSourceId, ALSourcei.ByteOffset, bytes);
+            Play ();
         }
 
         /// <summary>
         /// Plays the given sound.
         /// </summary>
         /// <param name="soundIndex">Sound index.</param>
-        /// <param name="proceedWithNextSoundWhenFinished">If set to <c>true</c> proceed with next sound when finished.</param>
-        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
-        public void PlaySound (int soundIndex, bool proceedWithNextSoundWhenFinished = false,
-            bool shuffleSounds = false)
+        public void PlayAt (int soundIndex)
         {
-            //TODO
-        }
+            int bytes = 0;
+            for (int i = 0; i < soundIndex; i++)
+                bytes += Sounds[i].GetSize ();
 
-        /// <summary>
-        /// Plays the given sounds from playlist.
-        /// </summary>
-        /// <param name="soundPlaylist">Playlist.</param>
-        public void PlaySounds (string[] soundPlaylist)
-        {
-            //TODO
-        }
-
-        /// <summary>
-        /// Plays the sounds from playlist.
-        /// </summary>
-        /// <param name="soundIndexPlaylist">Playlist.</param>
-        public void PlaySounds (int[] soundIndexPlaylist)
-        {
-            //TODO
+            AL.Source (AlSourceId, ALSourcei.ByteOffset, bytes);
+            Play ();
         }
 
         /// <summary>

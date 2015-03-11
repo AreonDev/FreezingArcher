@@ -329,10 +329,9 @@ namespace FreezingArcher.Audio
         /// Plays a source.
         /// </summary>
         /// <param name="sourceName">Source name.</param>
-        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
-        public void PlaySource (string sourceName, bool shuffleSounds = false)
+        public void PlaySource (string sourceName)
         {
-            GetSource (sourceName).Play (shuffleSounds);
+            GetSource (sourceName).Play ();
         }
 
         /// <summary>
@@ -352,10 +351,9 @@ namespace FreezingArcher.Audio
         /// </summary>
         /// <param name="sourceName">Source name.</param>
         /// <param name="timeOffset">Time offset.</param>
-        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
-        public void PlaySource (string sourceName, TimeSpan timeOffset, bool shuffleSounds = false)
+        public void PlaySource (string sourceName, TimeSpan timeOffset)
         {
-            GetSource (sourceName).PlayAt (timeOffset, shuffleSounds);
+            GetSource (sourceName).PlayAt (timeOffset);
         }
 
         /// <summary>
@@ -363,13 +361,9 @@ namespace FreezingArcher.Audio
         /// </summary>
         /// <param name="sourceName">Source name.</param>
         /// <param name="soundName">Sound name.</param>
-        /// <param name="proceedWithNextSoundWhenFinished">If set to <c>true</c> proceed with next sound when finished.</param>
-        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
-        public void PlaySource (string sourceName, string soundName, bool proceedWithNextSoundWhenFinished = false,
-            bool shuffleSounds = false)
+        public void PlaySource (string sourceName, string soundName)
         {
-            GetSource (sourceName).PlaySound (soundName, proceedWithNextSoundWhenFinished,
-                shuffleSounds);
+            GetSource (sourceName).PlayAt (soundName);
         }
 
         /// <summary>
@@ -377,34 +371,9 @@ namespace FreezingArcher.Audio
         /// </summary>
         /// <param name="sourceName">Source name.</param>
         /// <param name="soundIndex">Sound index.</param>
-        /// <param name="proceedWithNextSoundWhenFinished">If set to <c>true</c> proceed with next sound when finished.</param>
-        /// <param name="shuffleSounds">If set to <c>true</c> shuffle sounds.</param>
-        public void PlaySource (string sourceName, int soundIndex, bool proceedWithNextSoundWhenFinished = false,
-            bool shuffleSounds = false)
+        public void PlaySource (string sourceName, int soundIndex)
         {
-            GetSource (sourceName).PlaySound (soundIndex, proceedWithNextSoundWhenFinished,
-                shuffleSounds);
-        }
-
-        /// <summary>
-        /// Plays a source with the sounds ordered as given in the playlist.
-        /// </summary>
-        /// <param name="sourceName">Source name.</param>
-        /// <param name="soundPlaylist">Sound playlist.</param>
-        public void PlaySource (string sourceName, string[] soundPlaylist)
-        {
-            GetSource (sourceName).PlaySounds (soundPlaylist);
-        }
-
-        /// <summary>
-        /// Plays a source with the sounds ordered as given in the playlist.
-        /// </summary>
-        /// <param name="sourceName">Source name.</param>
-        /// <param name="soundIndexPlaylist">Sound index playlist.</param>
-        public void PlaySource (string sourceName, int[] soundIndexPlaylist)
-        {
-            GetSource (sourceName).PlaySounds (soundIndexPlaylist);
-
+            GetSource (sourceName).PlayAt (soundIndex);
         }
 
         /// <summary>

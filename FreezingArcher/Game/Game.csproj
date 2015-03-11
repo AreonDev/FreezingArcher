@@ -19,7 +19,6 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
         <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
@@ -37,7 +36,6 @@
     <OutputPath>..\Build\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
         <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
@@ -66,7 +64,6 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\Build\Debug\FurryLana.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <PlatformTarget>x86</PlatformTarget>
     <ConsolePause>false</ConsolePause>
     <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetFile) &amp;&amp; xcopy $(SolutionDir)/Pencil.Gaming/Pencil.Gaming/bin/Release $(TargetDir) &amp;&amp; move /Y *.dll* lib\ &amp;&amp; move /Y *.pdb lib\ &amp;&amp; move /Y *.xml lib\</PostBuildEvent>
     <Prefer32Bit>false</Prefer32Bit>
@@ -79,7 +76,6 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\Build\Release\FurryLana.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <PlatformTarget>x86</PlatformTarget>
     <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetFile) &amp;&amp; xcopy $(SolutionDir)/Pencil.Gaming/Pencil.Gaming/bin/Release $(TargetDir) &amp;&amp; move /Y *.dll* lib\ &amp;&amp; move /Y *.xml lib\</PostBuildEvent>
     <ConsolePause>false</ConsolePause>
     <Prefer32Bit>false</Prefer32Bit>

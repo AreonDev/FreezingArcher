@@ -40,6 +40,7 @@ namespace FreezingArcher.Audio.Effects
 
 
         #region implemented abstract members of Effect
+
         /// <summary>
         /// Initialize this instance.
         /// </summary>
@@ -53,6 +54,7 @@ namespace FreezingArcher.Audio.Effects
             Feedback = _Feedback;
             return true;
         }
+
         #endregion
 
         private float _Delay = 0.1f;
@@ -74,11 +76,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Spread = value.Clamp(-1f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EchoSpread, _Spread);
+                
+                AL.Effect(ALID, ALEffectf.EchoSpread, _Spread);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the feedback value.
         /// </summary>
@@ -92,11 +95,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Feedback = value.Clamp(0f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EchoFeedback, _Feedback);
+                
+                AL.Effect(ALID, ALEffectf.EchoFeedback, _Feedback);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the damping value.
         /// </summary>
@@ -110,11 +114,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Damping = value.Clamp(0f, 0.99f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EchoDamping, _Damping);
+                
+                AL.Effect(ALID, ALEffectf.EchoDamping, _Damping);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the LR delay.
         /// </summary>
@@ -128,11 +133,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _LRDelay = value.Clamp(0f, 0.404f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EchoLRDelay, _LRDelay);
+                
+                AL.Effect(ALID, ALEffectf.EchoLRDelay, _LRDelay);
                 TriggerUpdate();
             }
         }
+
         /// <summary>
         /// Gets or sets the delay.
         /// </summary>
@@ -146,8 +152,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Delay = value.Clamp(0f, 0.207f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.EchoDelay, _Delay);
+                
+                AL.Effect(ALID, ALEffectf.EchoDelay, _Delay);
                 TriggerUpdate();
             }
         }

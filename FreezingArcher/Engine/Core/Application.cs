@@ -345,7 +345,6 @@ namespace FreezingArcher.Core
             MessageManager.StartProcessing ();
             FreezingArcher.Audio.Effects.Reverb effect = new FreezingArcher.Audio.Effects.Reverb();
             AudioManager.GetSource("test").Gain = 1f;
-            effect.GetLoadJobs(new List<Action>(), null).ForEach(j => j()); //load immediately
             var slot = AudioManager.Routing.GetFreeSlot();
             slot.LoadedEffect = effect;
 

@@ -92,12 +92,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Gain = value.Clamp(0f, 1f);
-                if (Loaded)
+                
                 AL.Effect(ALID, ALEffectf.ReverbGain, _Gain);
                 TriggerUpdate();
             }
         }
-            
+
         /// <summary>
         /// Gets or sets the gain for high frequencies.
         /// </summary>
@@ -111,13 +111,13 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _GainHF = value.Clamp(0f, 1f);
-                if(Loaded)
+               
                 AL.Effect(ALID, ALEffectf.ReverbGainHF, _GainHF);
                 TriggerUpdate();
 
             }
         }
-            
+
         /// <summary>
         /// Gets or sets the diffusion.
         /// </summary>
@@ -131,12 +131,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Diffusion = value.Clamp(0f, 1f);
-                if(Loaded)
+              
                 AL.Effect(ALID, ALEffectf.ReverbDiffusion, _Diffusion);
                 TriggerUpdate();
             }
         }
-            
+
         /// <summary>
         /// Gets or sets the density.
         /// </summary>
@@ -150,12 +150,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _Density = value.Clamp(0f, 1f);
-                if(Loaded)
+                
                 AL.Effect(ALID, ALEffectf.ReverbDensity, _Density);
                 TriggerUpdate();
             }
         }
-            
+
         /// <summary>
         /// Gets or sets the decay time.
         /// </summary>
@@ -169,8 +169,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _DecayTime = value.Clamp(0.1f, 20f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ReverbDecayTime, _DecayTime);
+                
+                AL.Effect(ALID, ALEffectf.ReverbDecayTime, _DecayTime);
                 TriggerUpdate();
             }
         }
@@ -188,8 +188,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _DecayHFRatio = value.Clamp(0.1f, 2f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ReverbDecayHFRatio, _DecayHFRatio);
+                
+                AL.Effect(ALID, ALEffectf.ReverbDecayHFRatio, _DecayHFRatio);
                 TriggerUpdate();
             }
         }
@@ -207,8 +207,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _ReflectionsGain = value.Clamp(0f, 3.16f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ReverbReflectionsGain, _ReflectionsGain);
+                
+                AL.Effect(ALID, ALEffectf.ReverbReflectionsGain, _ReflectionsGain);
                 TriggerUpdate();
             }
         }
@@ -226,12 +226,12 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _ReflectionsDelay = value.Clamp(0f, 0.3f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ReverbReflectionsDelay, _ReflectionsDelay);
+                
+                AL.Effect(ALID, ALEffectf.ReverbReflectionsDelay, _ReflectionsDelay);
                 TriggerUpdate();
             }
         }
-            
+
         /// <summary>
         /// Gets or sets the late reverb gain.
         /// </summary>
@@ -245,8 +245,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _LateReverbGain = value.Clamp(0f, 10f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ReverbLateReverbGain, _LateReverbGain);
+                
+                AL.Effect(ALID, ALEffectf.ReverbLateReverbGain, _LateReverbGain);
                 TriggerUpdate();
             }
         }
@@ -264,8 +264,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _LateReverbDelay = value.Clamp(0f, 0.1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ReverbLateReverbDelay, _LateReverbDelay);
+                
+                AL.Effect(ALID, ALEffectf.ReverbLateReverbDelay, _LateReverbDelay);
                 TriggerUpdate();
             }
         }
@@ -283,8 +283,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _AirAbsorptionGainHF = value.Clamp(0.892f, 1f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ReverbAirAbsorptionGainHF, _AirAbsorptionGainHF);
+                
+                AL.Effect(ALID, ALEffectf.ReverbAirAbsorptionGainHF, _AirAbsorptionGainHF);
                 TriggerUpdate();
             }
         }
@@ -302,8 +302,8 @@ namespace FreezingArcher.Audio.Effects
             set
             {
                 _RoomRolloffFactor = value.Clamp(0f, 10f);
-                if (Loaded)
-                    AL.Effect(ALID, ALEffectf.ReverbRoomRolloffFactor, _RoomRolloffFactor);
+                
+                AL.Effect(ALID, ALEffectf.ReverbRoomRolloffFactor, _RoomRolloffFactor);
                 TriggerUpdate();
             }
         }

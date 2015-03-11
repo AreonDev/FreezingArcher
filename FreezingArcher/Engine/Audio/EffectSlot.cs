@@ -48,6 +48,7 @@ namespace FreezingArcher.Audio
             if (AL.GetError() != (int)ALError.NoError)
                 return false;
             this.ALID = alId[0];
+            AL.AuxiliaryEffectSlot(ALID, ALAuxiliaryi.EffectslotAuxiliarySendAuto, 0);
             return true;
         }
 

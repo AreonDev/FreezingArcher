@@ -85,35 +85,31 @@ namespace FreezingArcher.Audio
                 if (filter != null)
                 {
                     filter.Update += HandleFilterUpdate;
-                    if(setup)
-                    AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 0, (int)filter.ALID);
                 }
-                else
-                {
                     if(setup)
-                    AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 0, 0); //disable filter
-                }
+                    AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 1, filter==null?0:(int)filter.ALID); //disable filter
             }
         }
 
         void HandleFilterUpdate (object sender, EventArgs e)
         {
             if(setup)
-            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 0, (int)filter.ALID);
+                AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 1, Filter == null ? 0 : (int)Filter.ALID);
         }
 
         private bool setup = false;
         internal void Setup ()
         {
             //TODO: Update Aux Sends
-            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 0, (int)Filter.ALID);
+            AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, 1, Filter == null ? 0 : (int)Filter.ALID);
+            var error = (ALError)AL.GetError();
             AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, Gain);
+            error = (ALError)AL.GetError();
             setup = true;
         }
 
         internal void Clear ()
         {
-            //TODO: Cleanup
             AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, 0, 0, 0);
             AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, Gain);
             setup = false;

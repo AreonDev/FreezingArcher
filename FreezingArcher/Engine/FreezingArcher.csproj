@@ -168,6 +168,7 @@
     <Compile Include="Audio\Filter.cs" />
     <Compile Include="Audio\Effect.cs" />
     <Compile Include="Audio\EffectSlot.cs" />
+    <Compile Include="Audio\Effects\Reverb.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -225,6 +226,7 @@
     <Folder Include="Localization\" />
     <Folder Include="Reflection\" />
     <Folder Include="Audio\" />
+    <Folder Include="Audio\Effects\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PostProcessor\PostProcessor.csproj">

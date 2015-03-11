@@ -26,6 +26,7 @@ using Pencil.Gaming.Audio;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Core;
 using System.Linq;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Audio
 {
@@ -39,6 +40,15 @@ namespace FreezingArcher.Audio
              * Query OpenAL maxEffectSlots
              * GenEffectSlots for all times
              */
+
+            var effectSlot = new EffectSlot();
+            while (effectSlot.Load())
+            {
+                effectSlots.Add(effectSlot);
+                effectSlot = new EffectSlot();
+            }
+            effectSlot = null;
+            Logger.Log.AddLogEntry(LogLevel.Info, "SoundSystem", "{0} Auxiliary effect slots generated.", effectSlots.Count);
         }
         private List<RoutingEntry> currentRouting;
         private List<EffectSlot> effectSlots;

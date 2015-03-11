@@ -342,7 +342,7 @@ namespace FreezingArcher.Core
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Running application '{0}' ...", Name);
             MessageManager.StartProcessing ();
-
+            Audio.AudioRouting ar = new FreezingArcher.Audio.AudioRouting();
             // openal test
             uint buffer = AL.Utils.BufferFromOgg("Audio/test2.ogg");
             uint source;

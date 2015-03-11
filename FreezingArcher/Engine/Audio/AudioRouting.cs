@@ -30,16 +30,18 @@ using FreezingArcher.Output;
 
 namespace FreezingArcher.Audio
 {
-    public class AudioRouting
+    /// <summary>
+    /// Helper class for modeling the connections between sources and effect slots
+    /// </summary>
+    public sealed class AudioRouting
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Audio.AudioRouting"/> class.
+        /// </summary>
         public AudioRouting ()
         {
             effectSlots = new List<EffectSlot> ();
             currentRouting = new List<RoutingEntry> ();
-            /* TODO: 
-             * Query OpenAL maxEffectSlots
-             * GenEffectSlots for all times
-             */
 
             var effectSlot = new EffectSlot();
             while (effectSlot.Load())
@@ -48,11 +50,15 @@ namespace FreezingArcher.Audio
                 effectSlot = new EffectSlot();
             }
             effectSlot = null;
-            Logger.Log.AddLogEntry(LogLevel.Info, "SoundSystem", "{0} Auxiliary effect slots generated.", effectSlots.Count);
+            Logger.Log.AddLogEntry(LogLevel.Info, AudioManager.ClassName, "{0} auxiliary effect slots generated.", effectSlots.Count);
         }
-        private List<RoutingEntry> currentRouting;
+        private readonly List<RoutingEntry> currentRouting;
         private List<EffectSlot> effectSlots;
 
+        /// <summary>
+        /// Gets the first free effect slot.
+        /// </summary>
+        /// <returns>The free slot.</returns>
         public EffectSlot GetFreeSlot()
         {
             for(int i = 0; i< effectSlots.Count; i++)
@@ -63,11 +69,23 @@ namespace FreezingArcher.Audio
             return null;
         }
 
+        /// <summary>
+        /// Gets all effect slots.
+        /// </summary>
+        /// <returns>The slots.</returns>
         public IEnumerable<EffectSlot> GetSlots()
         {
             return effectSlots.AsReadOnly ();
         }
 
+        /// <summary>
+        /// Adds an audio routing entry from the given source to the given target, where a filter can be applied optionally
+        /// </summary>
+        /// <returns>The audio routing entry</returns>
+        /// <param name="source">Where does the signal come from?</param>
+        /// <param name="target">Where should the signal go to?</param>
+        /// <param name="gain">How loud should the final effect be?</param>
+        /// <param name="filter">Should the signal be filtered?</param>
         public RoutingEntry AddAudioRouting(Source source, EffectSlot target, float gain, Filter filter = null)
         {
             var routing = new RoutingEntry (source, target, gain.Clamp (0f, 1f), filter);
@@ -76,6 +94,10 @@ namespace FreezingArcher.Audio
             return routing;
         }
 
+        /// <summary>
+        /// Remove the specified entry.
+        /// </summary>
+        /// <param name="entry">Entry to remove</param>
         public void Remove(RoutingEntry entry)
         {
             currentRouting.Remove (entry);

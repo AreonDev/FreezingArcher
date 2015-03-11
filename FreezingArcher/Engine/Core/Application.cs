@@ -388,6 +388,7 @@ namespace FreezingArcher.Core
                 
                 Thread.Sleep (16);
             }
+            AudioManager.Routing.Remove(re);
         }
 
         /// <summary>

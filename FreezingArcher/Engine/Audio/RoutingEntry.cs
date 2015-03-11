@@ -27,7 +27,10 @@ using Pencil.Gaming.Audio;
 
 namespace FreezingArcher.Audio
 {
-    public class RoutingEntry : IManageable
+    /// <summary>
+    /// Helper class for audio routings from ALSource to EffectSlot
+    /// </summary>
+    public sealed class RoutingEntry : IManageable
     {
         internal RoutingEntry (Source source, EffectSlot target, float gain, Filter filter = null)
         {
@@ -43,18 +46,30 @@ namespace FreezingArcher.Audio
         private float gain;
         private Filter filter;
 
+        /// <summary>
+        /// Gets the source of the signal
+        /// </summary>
+        /// <value>The source.</value>
         public Source Source
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the target of the signal
+        /// </summary>
+        /// <value>The target.</value>
         public EffectSlot Target
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets or sets the gain of the effect (Effect will be reapplied instantly)
+        /// </summary>
+        /// <value>The gain.</value>
         public float Gain
         {
             get
@@ -69,6 +84,10 @@ namespace FreezingArcher.Audio
             }
         }
 
+        /// <summary>
+        /// Gets or sets the filter.
+        /// </summary>
+        /// <value>The filter.</value>
         public Filter Filter
         {
             get
@@ -105,7 +124,6 @@ namespace FreezingArcher.Audio
             if (sourceRouteIndex == -1)
                 return; //too many routes known
             AL.Source(Source.GetId(), ALSource3i.EfxAuxiliarySendFilter, (int)Target.ALID, sourceRouteIndex, Filter == null ? 0 : (int)Filter.ALID);
-            var error = (ALError)AL.GetError();
             AL.AuxiliaryEffectSlot(Target.ALID, ALAuxiliaryf.EffectslotGain, Gain);
             Source.setRoute(this, sourceRouteIndex);
             setup = true;
@@ -121,6 +139,10 @@ namespace FreezingArcher.Audio
 
         #region IManageable implementation
 
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
         public string Name
         {
             get

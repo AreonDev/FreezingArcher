@@ -26,14 +26,24 @@ using Pencil.Gaming.Audio;
 
 namespace FreezingArcher.Audio
 {
+    /// <summary>
+    /// ALEffectSlot equivalent class
+    /// </summary>
     public class EffectSlot
     {
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Audio.EffectSlot"/> class.
+        /// </summary>
         public EffectSlot()
         {
             ALID = uint.MaxValue;
         }
 
+        /// <summary>
+        /// Releases unmanaged resources and performs other cleanup operations before the
+        /// <see cref="FreezingArcher.Audio.EffectSlot"/> is reclaimed by garbage collection.
+        /// </summary>
         ~EffectSlot()
         {
             if (ALID == uint.MaxValue)
@@ -64,6 +74,10 @@ namespace FreezingArcher.Audio
 
         private Effect efx;
 
+        /// <summary>
+        /// Gets or sets the loaded effect.
+        /// </summary>
+        /// <value>The loaded effect.</value>
         public Effect LoadedEffect
         {
             get

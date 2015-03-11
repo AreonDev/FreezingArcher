@@ -27,8 +27,14 @@ using System.Collections.Generic;
 
 namespace FreezingArcher.Audio
 {
+    /// <summary>
+    /// Abstract base class for filters (LP, HP, BP)
+    /// </summary>
     public abstract class Filter : IResource
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Audio.Filter"/> class.
+        /// </summary>
         protected Filter()
         {
             Loaded = false;
@@ -36,13 +42,29 @@ namespace FreezingArcher.Audio
 
         #region IResource implementation
 
+        /// <summary>
+        /// Fire this event when you need the binded load function to be called.
+        /// For example after init or when new resources needs to be loaded.
+        /// </summary>
         public event Handler NeedsLoad;
 
+        /// <summary>
+        /// Gets the init jobs. The init jobs may not be called from the main thread as the initialization process is
+        /// multi threaded.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
         public List<Action> GetInitJobs(List<Action> list)
         {
             return list;
         }
 
+        /// <summary>
+        /// Gets the load jobs. The load jobs will be executed sequentially in the gl thread.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        /// <param name="reloader">Reloader.</param>
         public List<Action> GetLoadJobs(List<Action> list, Handler reloader)
         {
             NeedsLoad = reloader;
@@ -50,6 +72,14 @@ namespace FreezingArcher.Audio
             return list;
         }
 
+        /// <summary>
+        /// Destroy this resource.
+        /// 
+        /// Why not IDisposable:
+        /// IDisposable is called from within the garbage collector context so we do not have a valid gl context there.
+        /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+        /// context.
+        /// </summary>
         public void Destroy()
         {
             if (!Loaded)
@@ -57,6 +87,10 @@ namespace FreezingArcher.Audio
             AL.DeleteFilters(new uint[]{ ALID });
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="FreezingArcher.Audio.Filter"/> is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded
         {
             get;
@@ -65,6 +99,9 @@ namespace FreezingArcher.Audio
 
         #endregion
 
+        /// <summary>
+        /// Initialize this instance.
+        /// </summary>
         protected abstract bool Initialize();
 
         void Create()
@@ -80,9 +117,13 @@ namespace FreezingArcher.Audio
 
         internal uint ALID {get; private set;}
         /// <summary>
-        /// Occurs when update.
+        /// Occurs when an update is needed.
         /// </summary>
         public event EventHandler Update;
+
+        /// <summary>
+        /// Triggers the "Update" event handler.
+        /// </summary>
         protected void TriggerUpdate()
         {
             if (Update != null)

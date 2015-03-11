@@ -97,6 +97,19 @@ namespace FreezingArcher.Audio
             Groups.Add (SourceGroup.Custom3, 1);
 
             Routing = new AudioRouting();
+
+            var efxTypes = Enum.GetValues(typeof(ALEffectType));
+            var arr = new uint[1];
+            AL.GenEffects(arr);
+            foreach (ALEffectType item in efxTypes)
+            {
+                AL.EffectType(arr[0], item);
+                if (AL.GetError() != (int)ALError.NoError)
+                    Logger.Log.AddLogEntry(LogLevel.Debug, ClassName, "Effect type {0} is NOT supported.", item.ToString());
+                else
+                    Logger.Log.AddLogEntry(LogLevel.Debug, ClassName, "Effect type {0} IS supported.", item.ToString());
+            }
+            AL.DeleteEffects(arr);
         }
 
         /// <summary>
@@ -114,6 +127,10 @@ namespace FreezingArcher.Audio
         /// </summary>
         protected Dictionary<SourceGroup, float> Groups;
 
+        /// <summary>
+        /// Gets the routing helper.
+        /// </summary>
+        /// <value>The routing helper.</value>
         public AudioRouting Routing {get; private set;}
         /// <summary>
         /// Sets the group gain.

@@ -26,8 +26,14 @@ using FreezingArcher.Core;
 
 namespace FreezingArcher.Audio.Effects
 {
+    /// <summary>
+    /// Simple test implementation of reverb
+    /// </summary>
     public class Reverb : Effect
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Audio.Effects.Reverb"/> class.
+        /// </summary>
         public Reverb()
         {
 
@@ -35,6 +41,9 @@ namespace FreezingArcher.Audio.Effects
 
         #region implemented abstract members of Effect
 
+        /// <summary>
+        /// Initialize this instance.
+        /// </summary>
         protected override bool Initialize()
         {
             AL.EffectType(ALID, ALEffectType.Reverb);

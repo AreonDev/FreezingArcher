@@ -84,6 +84,7 @@ namespace FreezingArcher.Audio
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new AudioManager instance");
             Sounds = new List<Sound> ();
             Sources = new List<Source> ();
+            SupportedEffects = new List<ALEffectType>();
             Listener = new Listener (Vector3.Zero, Vector3.Zero,
                 new Pair<Vector3, UpVector> (Vector3.Zero, UpVector.UnitX), 1);
             Groups = new Dictionary<SourceGroup, float> ();

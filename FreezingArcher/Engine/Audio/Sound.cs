@@ -85,6 +85,7 @@ namespace FreezingArcher.Audio
         /// <param name="file">File.</param>
         internal Sound (string name, FileInfo file)
         {
+            Logger.Log.AddLogEntry (LogLevel.Fine, "Creating new sound '{0}' from '{1}'", name, file.FullName);
             Name = name;
             File = file;
             Loaded = false;
@@ -95,6 +96,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         internal void Load ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Loading sound '{0}'...", Name);
             Loaded = false;
             if (File.Extension == ".wav")
             {

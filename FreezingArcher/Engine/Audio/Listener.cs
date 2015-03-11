@@ -68,6 +68,7 @@ namespace FreezingArcher.Audio
         /// <param name="gain">Gain.</param>
         internal Listener (Vector3 position, Vector3 velocity, Pair<Vector3, UpVector> orientation, float gain)
         {
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new listener instance");
             InitPosition = position;
             InitVelocity = velocity;
             InitGain = gain;

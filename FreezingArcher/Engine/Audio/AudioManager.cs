@@ -27,6 +27,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming.Audio;
+using Pencil.Gaming.MathUtils;
 
 namespace FreezingArcher.Audio
 {
@@ -80,8 +81,11 @@ namespace FreezingArcher.Audio
         /// </summary>
         public AudioManager ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new AudioManager instance");
             Sounds = new List<Sound> ();
             Sources = new List<Source> ();
+            Listener = new Listener (Vector3.Zero, Vector3.Zero,
+                new Pair<Vector3, UpVector> (Vector3.Zero, UpVector.UnitX), 1);
             Groups = new Dictionary<SourceGroup, float> ();
             Groups.Add (SourceGroup.Music, 1);
             Groups.Add (SourceGroup.Environment, 1);
@@ -115,6 +119,8 @@ namespace FreezingArcher.Audio
         /// <param name="gain">Gain.</param>
         public void SetGroupGain (SourceGroup sourceGroup, float gain)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Setting group gain of '{0}' to {1}",
+                sourceGroup.ToString (), gain.ToString ());
             Groups[sourceGroup] = gain;
         }
 
@@ -139,6 +145,7 @@ namespace FreezingArcher.Audio
         /// <param name="file">File.</param>
         public Sound LoadSound (string name, string file)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading new sound '{0}' from '{1}'", name , file);
             Sound snd = Sounds.Find (s => s.Name == name);
 
             if (snd == null)
@@ -162,6 +169,8 @@ namespace FreezingArcher.Audio
         /// <param name="file">File.</param>
         public Sound LoadSound (string name, FileInfo file)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading new sound '{0}' from '{1}'", name ,
+                file.FullName);
             Sound snd = Sounds.Find (s => s.Name == name);
 
             if (snd == null)
@@ -211,6 +220,7 @@ namespace FreezingArcher.Audio
         /// <param name="sounds">Sounds.</param>
         public Source CreateSource (string name, params Pair<string, FileInfo>[] sounds)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating new sound source '{0}'", name);
             Sound[] snds = LoadSounds (sounds);
             Source src = new Source (name, Groups, snds);
 
@@ -240,6 +250,7 @@ namespace FreezingArcher.Audio
         /// <param name="sounds">Sounds.</param>
         public Source CreateSource (string name, params Pair<string, string>[] sounds)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating new sound source '{0}'", name);
             Sound[] snds = LoadSounds (sounds);
             Source src = new Source (name, Groups, snds);
 
@@ -269,6 +280,7 @@ namespace FreezingArcher.Audio
         /// <param name="soundNames">Sound names.</param>
         public Source CreateSource (string name, params string[] soundNames)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating new sound source '{0}'", name);
             Sound[] snds = new Sound[soundNames.Length];
             for (int i = 0; i < snds.Length; i++)
                 snds[i] = Sounds.Find (s => s.Name == soundNames[i]);
@@ -309,6 +321,7 @@ namespace FreezingArcher.Audio
         /// <param name="name">Name.</param>
         public bool RemoveSource (string name)
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Removing sound source '{0}'", name);
             return Sources.RemoveAll (s => name == s.Name) > 0;
         }
 
@@ -529,8 +542,18 @@ namespace FreezingArcher.Audio
 
         #region IResource implementation
 
+        /// <summary>
+        /// Fire this event when you need the binded load function to be called.
+        /// For example after init or when new resources needs to be loaded.
+        /// </summary>
         public event Handler NeedsLoad;
 
+        /// <summary>
+        /// Gets the init jobs. The init jobs may not be called from the main thread as the initialization process is
+        /// multi threaded.
+        /// </summary>
+        /// <returns>The init jobs.</returns>
+        /// <param name="list">List.</param>
         public List<Action> GetInitJobs(List<Action> list)
         {
             Sources.ForEach (s => s.GetInitJobs (list));
@@ -538,6 +561,12 @@ namespace FreezingArcher.Audio
             return list;
         }
 
+        /// <summary>
+        /// Gets the load jobs. The load jobs will be executed sequentially in the gl thread.
+        /// </summary>
+        /// <returns>The load jobs.</returns>
+        /// <param name="list">List.</param>
+        /// <param name="reloader">Reloader.</param>
         public List<Action> GetLoadJobs(List<Action> list, Handler reloader)
         {
             NeedsLoad = reloader;
@@ -546,8 +575,17 @@ namespace FreezingArcher.Audio
             return list;
         }
 
+        /// <summary>
+        /// Destroy this resource.
+        /// 
+        /// Why not IDisposable:
+        /// IDisposable is called from within the garbage collector context so we do not have a valid gl context there.
+        /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
+        /// context.
+        /// </summary>
         public void Destroy()
         {
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Destroying audio manager...");
             Loaded = false;
             Sources.ForEach (s => s.Destroy ());
             Sounds.ForEach (s => s.Destroy ());
@@ -555,6 +593,10 @@ namespace FreezingArcher.Audio
             Listener = null;
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Audio.AudioManager"/> is loaded.
+        /// </summary>
+        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
         public bool Loaded { get; protected set; }
 
         #endregion

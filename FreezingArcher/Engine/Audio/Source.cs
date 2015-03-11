@@ -128,6 +128,7 @@ namespace FreezingArcher.Audio
         /// <param name="sounds">Sounds.</param>
         internal Source (string name, Dictionary<SourceGroup, float> groupGains, params Sound[] sounds)
         {
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName + Name, "Creating new audio source instance '{0}'", Name);
             Name = name;
             Sounds = sounds;
             GroupGains = groupGains;
@@ -145,6 +146,7 @@ namespace FreezingArcher.Audio
         internal void Load ()
         {
             Loaded = false;
+            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName + Name, "Loading audio source '{0}'...", Name);
             AL.GenSources (1, out AlSourceId);
             if (Sounds.Length <= 0)
                 Logger.Log.AddLogEntry (LogLevel.Error, ClassName + Name, "You have not specified any sounds for " +
@@ -900,6 +902,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         public void Destroy ()
         {
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName + Name, "Destroying audio source '{0}'", Name);
             AL.DeleteSources (1, ref AlSourceId);
         }
 

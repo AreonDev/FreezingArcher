@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -29,6 +29,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>..\Build\Debug\FurryLana.xml</DocumentationFile>
     <ConsolePause>false</ConsolePause>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -46,6 +47,7 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>..\Build\Release\FurryLana.xml</DocumentationFile>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -65,8 +67,8 @@
     <DocumentationFile>..\Build\Debug\FurryLana.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <ConsolePause>false</ConsolePause>
-    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetFile) &amp;&amp; xcopy $(SolutionDir)/Pencil.Gaming/Pencil.Gaming/bin/Release $(TargetDir) &amp;&amp; move /Y *.dll* lib\ &amp;&amp; move /Y *.pdb lib\ &amp;&amp; move /Y *.xml lib\</PostBuildEvent>
     <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
     <DebugType>none</DebugType>
@@ -76,19 +78,21 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\Build\Release\FurryLana.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetFile) &amp;&amp; xcopy $(SolutionDir)/Pencil.Gaming/Pencil.Gaming/bin/Release $(TargetDir) &amp;&amp; move /Y *.dll* lib\ &amp;&amp; move /Y *.xml lib\</PostBuildEvent>
     <ConsolePause>false</ConsolePause>
     <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
       <Project>{E430674D-98AB-474A-BC42-A6DDE78623C7}</Project>
       <Name>FreezingArcher</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Pencil.Gaming\Pencil.Gaming\Pencil.Gaming.csproj">
       <Project>{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}</Project>
       <Name>Pencil.Gaming</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ProjectExtensions>
@@ -103,4 +107,25 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
+if $(ConfigurationName) == DebugWindows goto :debug
+if $(ConfigurationName) == Debug goto :debug
+goto :release
+
+:debug
+xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
+move /Y *.dll* lib\ 
+move /Y *.pdb lib\
+move /Y *.xml lib\
+
+goto :end
+:release
+xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir) 
+move /Y *.dll* lib\ 
+move /Y *.xml lib\
+
+:end
+echo Successfully finished!</PostBuildEvent>
+  </PropertyGroup>
 </Project>

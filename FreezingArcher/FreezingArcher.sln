@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreezingArcher", "Engine\FreezingArcher.csproj", "{E430674D-98AB-474A-BC42-A6DDE78623C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game\Game.csproj", "{DAD798AA-F43A-4470-A081-28EF938A21D3}"
@@ -12,11 +14,19 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
-		Release|x86 = Release|x86
 		DebugWindows|x86 = DebugWindows|x86
+		Release|x86 = Release|x86
 		ReleaseWindows|x86 = ReleaseWindows|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Debug|x86.ActiveCfg = Debug|x86
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Debug|x86.Build.0 = Debug|x86
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.DebugWindows|x86.ActiveCfg = DebugWindows|x86
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.DebugWindows|x86.Build.0 = DebugWindows|x86
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Release|x86.ActiveCfg = Release|x86
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Release|x86.Build.0 = Release|x86
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.ReleaseWindows|x86.ActiveCfg = ReleaseWindows|x86
+		{E430674D-98AB-474A-BC42-A6DDE78623C7}.ReleaseWindows|x86.Build.0 = ReleaseWindows|x86
 		{DAD798AA-F43A-4470-A081-28EF938A21D3}.Debug|x86.ActiveCfg = Debug|x86
 		{DAD798AA-F43A-4470-A081-28EF938A21D3}.Debug|x86.Build.0 = Debug|x86
 		{DAD798AA-F43A-4470-A081-28EF938A21D3}.DebugWindows|x86.ActiveCfg = DebugWindows|x86
@@ -25,22 +35,6 @@ Global
 		{DAD798AA-F43A-4470-A081-28EF938A21D3}.Release|x86.Build.0 = Release|x86
 		{DAD798AA-F43A-4470-A081-28EF938A21D3}.ReleaseWindows|x86.ActiveCfg = ReleaseWindows|x86
 		{DAD798AA-F43A-4470-A081-28EF938A21D3}.ReleaseWindows|x86.Build.0 = ReleaseWindows|x86
-		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Debug|x86.ActiveCfg = Debug|x86
-		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Debug|x86.Build.0 = Debug|x86
-		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.DebugWindows|x86.ActiveCfg = DebugWindows|x86
-		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.DebugWindows|x86.Build.0 = DebugWindows|x86
-		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Release|x86.ActiveCfg = Release|x86
-		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Release|x86.Build.0 = Release|x86
-		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.ReleaseWindows|x86.ActiveCfg = ReleaseWindows|x86
-		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.ReleaseWindows|x86.Build.0 = ReleaseWindows|x86
-		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Debug|x86.ActiveCfg = Debug|x86
-		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Debug|x86.Build.0 = Debug|x86
-		{E430674D-98AB-474A-BC42-A6DDE78623C7}.DebugWindows|x86.ActiveCfg = Debug|x86
-		{E430674D-98AB-474A-BC42-A6DDE78623C7}.DebugWindows|x86.Build.0 = Debug|x86
-		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Release|x86.ActiveCfg = Release|x86
-		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Release|x86.Build.0 = Release|x86
-		{E430674D-98AB-474A-BC42-A6DDE78623C7}.ReleaseWindows|x86.ActiveCfg = Release|x86
-		{E430674D-98AB-474A-BC42-A6DDE78623C7}.ReleaseWindows|x86.Build.0 = Release|x86
 		{F2D91778-AD1F-4433-A451-2016B873064B}.Debug|x86.ActiveCfg = Debug|x86
 		{F2D91778-AD1F-4433-A451-2016B873064B}.Debug|x86.Build.0 = Debug|x86
 		{F2D91778-AD1F-4433-A451-2016B873064B}.DebugWindows|x86.ActiveCfg = Debug|x86
@@ -49,10 +43,21 @@ Global
 		{F2D91778-AD1F-4433-A451-2016B873064B}.Release|x86.Build.0 = Release|x86
 		{F2D91778-AD1F-4433-A451-2016B873064B}.ReleaseWindows|x86.ActiveCfg = Release|x86
 		{F2D91778-AD1F-4433-A451-2016B873064B}.ReleaseWindows|x86.Build.0 = Release|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Debug|x86.ActiveCfg = Debug|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Debug|x86.Build.0 = Debug|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.DebugWindows|x86.ActiveCfg = DebugWindows|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.DebugWindows|x86.Build.0 = DebugWindows|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Release|x86.ActiveCfg = Release|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.Release|x86.Build.0 = Release|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.ReleaseWindows|x86.ActiveCfg = ReleaseWindows|x86
+		{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}.ReleaseWindows|x86.Build.0 = ReleaseWindows|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
-		$0.TextStylePolicy = $1
+		$0.TextStylePolicy = $9
 		$1.inheritsSet = null
 		$1.scope = text/x-csharp
 		$0.CSharpFormattingPolicy = $2
@@ -70,31 +75,26 @@ Global
 		$2.inheritsSet = Mono
 		$2.inheritsScope = text/x-csharp
 		$2.scope = text/x-csharp
-		$0.TextStylePolicy = $3
 		$3.FileWidth = 120
 		$3.TabWidth = 8
 		$3.inheritsSet = VisualStudio
 		$3.inheritsScope = text/plain
 		$3.scope = text/plain
-		$0.TextStylePolicy = $4
 		$4.inheritsSet = null
 		$4.scope = application/config+xml
-		$0.XmlFormattingPolicy = $5
+		$0.XmlFormattingPolicy = $7
 		$5.inheritsSet = null
 		$5.scope = application/config+xml
-		$0.TextStylePolicy = $6
 		$6.FileWidth = 120
 		$6.inheritsSet = VisualStudio
 		$6.inheritsScope = text/plain
 		$6.scope = application/xml
-		$0.XmlFormattingPolicy = $7
 		$7.DefaultFormat = $8
 		$8.ContentIndentString = "    "
 		$8.AttributesIndentString = "    "
 		$7.inheritsSet = Mono
 		$7.inheritsScope = application/xml
 		$7.scope = application/xml
-		$0.TextStylePolicy = $9
 		$9.inheritsSet = null
 		$9.scope = application/octet-stream
 		$0.StandardHeader = $10

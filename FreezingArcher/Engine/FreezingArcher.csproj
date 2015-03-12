@@ -23,13 +23,14 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <DocumentationFile>..\Build\Debug\FreezingArcher.xml</DocumentationFile>
+    <DocumentationFile>..\Build\Debug\FreezingArcher.XML</DocumentationFile>
     <CustomCommands>
       <CustomCommands>
         <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
         <Command type="AfterBuild" command="cp -r &quot;${SolutionDir}/Pencil.Gaming/Pencil.Gaming/bin/Debug/.&quot; &quot;${TargetDir}/&quot;" />
       </CustomCommands>
     </CustomCommands>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -48,6 +49,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <DocumentationFile>..\Build\Release\FreezingArcher.xml</DocumentationFile>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,7 +64,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetFile) &amp;&amp; xcopy $(SolutionDir)/Pencil.Gaming/Pencil.Gaming/bin/Release $(TargetDir) &amp;&amp;</PostBuildEvent>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
     <DebugType>none</DebugType>
@@ -75,7 +77,7 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Externalconsole>true</Externalconsole>
-    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetFile) &amp;&amp; xcopy $(SolutionDir)/Pencil.Gaming/Pencil.Gaming/bin/Release $(TargetDir) &amp;&amp;</PostBuildEvent>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -230,27 +232,30 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Content\" />
-    <Folder Include="Messaging\" />
-    <Folder Include="Output\" />
-    <Folder Include="Messaging\Interfaces\" />
-    <Folder Include="Configuration\" />
-    <Folder Include="Localization\" />
-    <Folder Include="Reflection\" />
-    <Folder Include="Audio\" />
-    <Folder Include="Audio\Effects\" />
-    <Folder Include="Audio\Filters\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\PostProcessor\PostProcessor.csproj">
       <Project>{F2D91778-AD1F-4433-A451-2016B873064B}</Project>
       <Name>PostProcessor</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Pencil.Gaming\Pencil.Gaming\Pencil.Gaming.csproj">
       <Project>{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}</Project>
       <Name>Pencil.Gaming</Name>
     </ProjectReference>
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
+if $(ConfigurationName) == DebugWindows goto :debug
+if $(ConfigurationName) == Debug goto :debug
+goto :release
+:debug
+xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Debug $(TargetDir)
+goto :end
+:release
+xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
+
+:end
+echo Successfully finished!</PostBuildEvent>
+  </PropertyGroup>
 </Project>

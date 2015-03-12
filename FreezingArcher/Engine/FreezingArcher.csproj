@@ -192,6 +192,9 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Audio\Filters\BandpassFilter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="AfterClean">
+    <RemoveDir Directories="$(TargetDir)" />
+  </Target>
   <ItemGroup />
   <ProjectExtensions>
     <MonoDevelop>

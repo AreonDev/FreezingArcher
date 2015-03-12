@@ -81,6 +81,7 @@ namespace FreezingArcher.Audio
         /// </summary>
         public AudioManager ()
         {
+            AL.MakeCurrent();
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new AudioManager instance");
             Sounds = new List<Sound> ();
             Sources = new List<Source> ();
@@ -96,7 +97,6 @@ namespace FreezingArcher.Audio
             Groups.Add (SourceGroup.Custom1, 1);
             Groups.Add (SourceGroup.Custom2, 1);
             Groups.Add (SourceGroup.Custom3, 1);
-
             Routing = new AudioRouting();
 
             var efxTypes = Enum.GetValues(typeof(ALEffectType));

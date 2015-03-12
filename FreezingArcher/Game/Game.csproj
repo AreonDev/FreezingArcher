@@ -69,7 +69,25 @@
     <ConsolePause>false</ConsolePause>
     <Prefer32Bit>false</Prefer32Bit>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
+    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
+if $(ConfigurationName) == DebugWindows goto :debug
+if $(ConfigurationName) == Debug goto :debug
+goto :release
+
+:debug
+xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
+move /Y *.dll* lib\ 
+move /Y *.pdb lib\
+move /Y *.xml lib\
+
+goto :end
+:release
+xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir) 
+move /Y *.dll* lib\ 
+move /Y *.xml lib\
+
+:end
+echo Successfully finished!</PostBuildEvent>  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
@@ -81,7 +99,25 @@
     <ConsolePause>false</ConsolePause>
     <Prefer32Bit>false</Prefer32Bit>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
+    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
+if $(ConfigurationName) == DebugWindows goto :debug
+if $(ConfigurationName) == Debug goto :debug
+goto :release
+
+:debug
+xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
+move /Y *.dll* lib\ 
+move /Y *.pdb lib\
+move /Y *.xml lib\
+
+goto :end
+:release
+xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir) 
+move /Y *.dll* lib\ 
+move /Y *.xml lib\
+
+:end
+echo Successfully finished!</PostBuildEvent>  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
@@ -107,25 +143,4 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
-if $(ConfigurationName) == DebugWindows goto :debug
-if $(ConfigurationName) == Debug goto :debug
-goto :release
-
-:debug
-xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
-move /Y *.dll* lib\ 
-move /Y *.pdb lib\
-move /Y *.xml lib\
-
-goto :end
-:release
-xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir) 
-move /Y *.dll* lib\ 
-move /Y *.xml lib\
-
-:end
-echo Successfully finished!</PostBuildEvent>
-  </PropertyGroup>
 </Project>

@@ -3,5 +3,5 @@
 cwd=$(dirname "${BASH_SOURCE[0]}")
 pwd=$(pwd)
 cd "$cwd/FreezingArcher/Build/Debug"
-mono FurryLana.exe
+mono FurryLana.exe $@
 cd "$pwd"

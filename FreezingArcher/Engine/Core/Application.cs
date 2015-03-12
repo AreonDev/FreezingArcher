@@ -500,11 +500,13 @@ namespace FreezingArcher.Core
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying application '{0}' ...", Name);
             Loaded = false;
-            AudioManager.Dispose ();
             MessageManager.StopProcessing ();
 
             if (!Cli)
+            {
+                AudioManager.Dispose ();
                 Window.Destroy ();
+            }
 
             #if DEBUG_EVENTS
             Console.SetCursorPosition (0, OrigRow + 17);

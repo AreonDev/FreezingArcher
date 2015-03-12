@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DAD798AA-F43A-4470-A081-28EF938A21D3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>FreezingArcher.Game</RootNamespace>
@@ -74,7 +72,8 @@ xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
 move /Y *.dll* lib\ 
 move /Y *.pdb lib\
 move /Y *.xml lib\
-echo Successfully finished!</PostBuildEvent>  </PropertyGroup>
+echo Successfully finished!</PostBuildEvent>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
@@ -90,7 +89,8 @@ echo Successfully finished!</PostBuildEvent>  </PropertyGroup>
 xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir) 
 move /Y *.dll* lib\ 
 move /Y *.xml lib\
-echo Successfully finished!</PostBuildEvent>  </PropertyGroup>
+echo Successfully finished!</PostBuildEvent>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">

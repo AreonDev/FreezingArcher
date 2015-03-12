@@ -66,16 +66,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
-if $(ConfigurationName) == DebugWindows goto :debug
-if $(ConfigurationName) == Debug goto :debug
-goto :release
-:debug
 xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Debug $(TargetDir)
-goto :end
-:release
-xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
-
-:end
 echo Successfully finished!</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
@@ -91,16 +82,7 @@ echo Successfully finished!</PostBuildEvent>
     <Externalconsole>true</Externalconsole>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
-if $(ConfigurationName) == DebugWindows goto :debug
-if $(ConfigurationName) == Debug goto :debug
-goto :release
-:debug
-xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Debug $(TargetDir)
-goto :end
-:release
 xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
-
-:end
 echo Successfully finished!</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>

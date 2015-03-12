@@ -70,23 +70,10 @@
     <Prefer32Bit>false</Prefer32Bit>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
-if $(ConfigurationName) == DebugWindows goto :debug
-if $(ConfigurationName) == Debug goto :debug
-goto :release
-
-:debug
 xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
 move /Y *.dll* lib\ 
 move /Y *.pdb lib\
 move /Y *.xml lib\
-
-goto :end
-:release
-xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir) 
-move /Y *.dll* lib\ 
-move /Y *.xml lib\
-
-:end
 echo Successfully finished!</PostBuildEvent>  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
     <DebugType>none</DebugType>
@@ -100,23 +87,9 @@ echo Successfully finished!</PostBuildEvent>  </PropertyGroup>
     <Prefer32Bit>false</Prefer32Bit>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
-if $(ConfigurationName) == DebugWindows goto :debug
-if $(ConfigurationName) == Debug goto :debug
-goto :release
-
-:debug
-xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
-move /Y *.dll* lib\ 
-move /Y *.pdb lib\
-move /Y *.xml lib\
-
-goto :end
-:release
 xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir) 
 move /Y *.dll* lib\ 
 move /Y *.xml lib\
-
-:end
 echo Successfully finished!</PostBuildEvent>  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

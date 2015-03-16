@@ -2,11 +2,11 @@
 	path = FreezingArcher/Pencil.Gaming
 	url = git@github.com:martin31821/Pencil.Gaming.git
 [submodule "assimp"]
-	path = assimp
+	path = FreezingArcher/assimp
 	url = git@github.com:martin31821/assimp-net.git
 [submodule "jitterphysics"]
-	path = jitterphysics
+	path = FreezingArcher/jitterphysics
 	url = git@github.com:martin31821/jitterphysics.git
 [submodule "gwen"]
-	path = gwen
+	path = FreezingArcher/gwen
 	url = git@github.com:martin31821/gwen-dotnet.git

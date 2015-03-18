@@ -1,69 +1,51 @@
-url: https://y7kim.github.io
+url: http://fin-ger.github.io/FreezingArcher/
 baseurl:
 
 # Site settings
-title: Awesome Title
-email: your-email@domain.com
-description: "Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description."
+title: FreezingArcher
+email: FreezingArcher@gmail.com
+description: "FreezingArcher is a lightweight cross platform framework (currently only GNU/Linux x64 and Windows x64 are officially supported) for 3D game development in C# (mono/.NET)."
 
 # Color settings (hex-codes without the leading hash-tag)
 color:
-  primary: fed136
-  secondary: fec503  
+  primary: 36bbfe
+  secondary: 03aafe
   secondary-dark: 333
 
 # Team names, titles and social links
 people:
-- name: Kay Garland
+- name: David Bögelsack
   pic: 1
-  position: Lead Designer
+  position: Lead Developer For Rendering Architecture
   social:
-    - title: twitter
-      url: #
-    - title: facebook
-      url: #
-    - title: stack-overflow
-      url: #
+    - title: github
+      url: https://github.com/DavidB3
 
-- name: Larry Parker
+- name: Fin Christensen
   pic: 2
-  position: Lead Marketer
+  position: Core Developer
   social:
-    - title: twitter
-      url: #
-    - title: facebook
-      url: #
-    - title: linkedin
-      url: #
+    - title: github
+      url: https://github.com/fin-ger
 
-- name: Diana Petersen
+- name: Willi Failla
   pic: 3
-  position: Lead Developer
+  position: Developer
   social:
-    - title: twitter
-      url: #
-    - title: facebook
-      url: #
-    - title: google-plus
-      url: #
+    - title: github
+      url: https://github.com/wfailla
+
+- name: Martin Koppehel
+  pic: 4
+  position: Core Developer
+  social:
+    - title: github
+      url: https://github.com/martin31821
 
 # Social networks usernames (many more available: google-plus, flickr, dribbble, pinterest, instagram, tumblr, linkedin, etc.)
 social:
-  - title: twitter
-    url: http://twitter.com/jekyllrb
-  - title: facebook
-    url:
-  - title: stack-overflow
-    url: http://stackoverflow.com/questions/tagged/jekyll
-  - title: bitbucket 
-    url: http://bitbucket.org/jekyll
   - title: github
-    url: http://github.com/jekyll
-
-# Postal address (add as many lines as necessary)
-address:
-  - line: 3481 Melrose Place
-  - line: Beverly Hills, CA 90210
+    url: https://github.com/fin-ger/FreezingArcher
 
 # Build settings
 markdown: kramdown

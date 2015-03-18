@@ -1,89 +1,20 @@
-<!DOCTYPE html>
-<html>
+---
+layout: default
+---
 
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="FreezingArcher : A 3D game engine/framework">
+<div class="home">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+  <h1>Posts</h1>
 
-    <title>FreezingArcher</title>
-  </head>
+  <ul class="posts">
+    {% for post in site.posts %}
+      <li>
+        <span class="post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+        <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
 
-  <body>
+  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/fin-ger/FreezingArcher">View on GitHub</a>
-
-          <h1 id="project_title">FreezingArcher</h1>
-          <h2 id="project_tagline">A 3D game engine/framework</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/fin-ger/FreezingArcher/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/fin-ger/FreezingArcher/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
-<a id="freezingarcher" class="anchor" href="#freezingarcher" aria-hidden="true"><span class="octicon octicon-link"></span></a>FreezingArcher</h1>
-
-<p>FreezingArcher is a lightweight cross platform framework (currently only GNU/Linux x64 and Windows x64 are officially supported) for 3D game development in C# (mono/.NET). The aim of this project is to offer a lightweight but powerful game development environment in C#. The aim is not to create an easy to use drag 'n drop editor for a bloated all-in-one game engine suitable for every purpose. This framework is from developers for developers.</p>
-
-<p>In its current state the engine is far from being finished. It is under heavy development. This software is free software. It is licensed under the GNU GPLv2. The software is also available for free. So feel free to fork this project and bring some of your ideas back into FreezingArcher via pull requests. You may also test the available components and report bugs or create requests for new features to improve the framework.</p>
-
-<h2>
-<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
-
-<p>Have a look at the <a href="https://github.com/fin-ger/FreezingArcher/wiki">wiki</a> for some <a href="https://github.com/fin-ger/FreezingArcher/wiki/Components">examples</a> and a <a href="https://github.com/fin-ger/FreezingArcher/wiki/Home#quickstart">quickstart</a> guide (to appear). This documentation is very basic and far from complete. Feel free to improve it or create some bug reports for unclear or wrong statements in the docs.</p>
-
-<h2>
-<a id="external-libraries-used-in-the-framework" class="anchor" href="#external-libraries-used-in-the-framework" aria-hidden="true"><span class="octicon octicon-link"></span></a>External libraries used in the framework</h2>
-
-<p>We are using a bunch of third party libraries for this framework. Without those perls of code a project like this would not be possible. Many thanks to all the developers creating free libraries and making the source code available and reusable to others.</p>
-
-<ul>
-<li>
-<a href="http://www.codeproject.com/Articles/35401/A-Cross-platform-C-Class-for-Using-INI-Files-to-St">STA.INIFile</a> from Moreno Airoldi, licensed under <a href="http://www.codeproject.com/info/cpol10.aspx">The Code Project Open License (CPOL)</a>
-</li>
-<li>
-<a href="https://github.com/andykorth/Pencil.Gaming">Pencil.Gaming</a> from Andy Korth and Antonie Blom, licensed under <a href="https://github.com/andykorth/Pencil.Gaming/blob/master/Pencil.Gaming/LICENSE.TXT">MIT</a><br>
-we created out own fork <a href="https://github.com/martin31821/Pencil.Gaming">here</a>
-</li>
-<li>
-<a href="http://commandline.codeplex.com/">CommandLine</a> from Giacomo Stelluti Scala, licensed under <a href="http://commandline.codeplex.com/license">MIT</a>
-</li>
-<li>
-<a href="http://jitter-physics.com">Jitter Physics</a> from Thorben Linneweber, licensed under a proprietary license which can be found in the original source code<br>
-we created our own fork <a href="https://github.com/martin31821/jitterphysics">here</a>
-</li>
-<li>
-<a href="https://code.google.com/p/assimp-net/">Assimp-Net</a> from Nicholas Woodfield, licensed under <a href="http://opensource.org/licenses/mit-license.php">MIT</a><br>
-we created our own fork <a href="https://github.com/martin31821/assimp-net">here</a>
-</li>
-<li>
-<a href="https://code.google.com/p/gwen-dotnet/">GWEN dotnet</a>, licensed under <a href="http://opensource.org/licenses/mit-license.php">MIT</a><br>
-we created our own fork <a href="https://github.com/martin31821/gwen-dotnet">here</a>
-</li>
-</ul>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">FreezingArcher maintained by <a href="https://github.com/fin-ger">fin-ger</a></p>
-        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
-</html>
+</div>

@@ -322,8 +322,7 @@ header .intro-text .intro-heading {
 }
 
 section {
-    padding: 0;
-    padding-top: 100px;
+    padding: 100px 0;
 }
 
 section h2.section-heading {
@@ -343,7 +342,7 @@ section h3.section-subheading {
 
 @media(min-width:768px) {
     section {
-        padding-top: 150px;
+        padding: 150px 0;
     }
 }
 

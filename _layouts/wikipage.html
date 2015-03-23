@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+  {% include wiki/head.html %}
+
+
+    <body id="page-top" class="index">
+
+      {% include wiki/header.html %}
+
+      <div id="tocbar" class="col"><div id="bartoggle"><div class="fa fa-angle-left"></div></div><div id="toc"></div></div>
+
+      <section id="wiki">
+	<h1>{{ page.title }}</h1>
+	{{ content }}
+      </section>
+
+      {% include wiki/footer.html %}
+      {% include wiki/js.html %}
+
+    </body>
+</html>
+
+<!--<ul class="wikiMenu">
+  {% for p in site.pages %}
+    {% if p.menu == "wiki" %}
+    <li><a class="post-link" href="{{ p.url | prepend: site.baseurl }}">{{ p.title }}</a></li>
+    {% endif %}
+  {% endfor %}
+</ul>-->

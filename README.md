@@ -23,6 +23,10 @@ Documentation
 -------------
 Have a look at the [wiki](https://github.com/fin-ger/FreezingArcher/wiki) for some [examples](https://github.com/fin-ger/FreezingArcher/wiki/Components) and a [quickstart](https://github.com/fin-ger/FreezingArcher/wiki/Home#quickstart) guide.
 
+CI
+--
+Have a look at our [CI System](http://jenkins.areon-dev.de) for the latest builds and build trends of our project.
+
 External libraries
 ------------------
  * [STA.INIFile](http://www.codeproject.com/Articles/35401/A-Cross-platform-C-Class-for-Using-INI-Files-to-St) from Moreno Airoldi, licensed under [The Code Project Open License (CPOL)](http://www.codeproject.com/info/cpol10.aspx)

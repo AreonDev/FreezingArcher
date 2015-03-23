@@ -1,6 +1,10 @@
 FreezingArcher
 =========
-A 3D game engine (framework)
+A 3D game engine (framework) which is:
+ * lightweight
+ * fast
+ * extensible
+ * easy-to-use
 
 How to clone
 ------------

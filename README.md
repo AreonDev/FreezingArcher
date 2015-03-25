@@ -27,6 +27,7 @@ CI
 --
 Have a look at our [CI System](http://jenkins.areon-dev.de) for the latest builds and build trends of our project.
 Currently we are working hard to let failed builds create new issues.
+
 External libraries
 ------------------
  * [STA.INIFile](http://www.codeproject.com/Articles/35401/A-Cross-platform-C-Class-for-Using-INI-Files-to-St) from Moreno Airoldi, licensed under [The Code Project Open License (CPOL)](http://www.codeproject.com/info/cpol10.aspx)
@@ -39,3 +40,5 @@ External libraries
 we created our own fork [here](https://github.com/martin31821/assimp-net)
  * [GWEN dotnet](https://code.google.com/p/gwen-dotnet/), licensed under [MIT](http://opensource.org/licenses/mit-license.php)  
 we created our own fork [here](https://github.com/martin31821/gwen-dotnet)
+
+Additionally we use the awesome Jenkins CI System

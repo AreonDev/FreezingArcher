@@ -42,4 +42,4 @@ we created our own fork [here](https://github.com/martin31821/assimp-net)
  * [GWEN dotnet](https://code.google.com/p/gwen-dotnet/), licensed under [MIT](http://opensource.org/licenses/mit-license.php)  
 we created our own fork [here](https://github.com/martin31821/gwen-dotnet)
 
-Additionally we use the awesome Jenkins CI System, which I am currently testing
+Additionally we use the awesome Jenkins CI System

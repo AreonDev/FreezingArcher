@@ -26,6 +26,7 @@ Have a look at the [wiki](https://github.com/fin-ger/FreezingArcher/wiki) for so
 CI
 --
 Have a look at our [CI System](http://jenkins.areon-dev.de) for the latest builds and build trends of our project.
+
 Currently we are working hard to let failed builds create new issues.
 
 External libraries

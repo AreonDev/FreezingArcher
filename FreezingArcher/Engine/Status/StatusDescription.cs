@@ -22,10 +22,16 @@
 //
 using System.Collections.Generic;
 
-namespace FreezingArcher.Exception
+namespace FreezingArcher.Status
 {
+    /// <summary>
+    /// This class provides the status codes with descriptions for logging.
+    /// </summary>
     public static class StatusDescription
     {
+        /// <summary>
+        /// The global status code description table.
+        /// </summary>
         public static readonly Dictionary<Status, string> Descriptions = new Dictionary<Status, string> ();
 
         static StatusDescription ()

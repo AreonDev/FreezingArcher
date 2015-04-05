@@ -190,8 +190,8 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Audio\Filters\LowpassFilter.cs" />
     <Compile Include="Audio\Filters\HighpassFilter.cs" />
     <Compile Include="Audio\Filters\BandpassFilter.cs" />
-    <Compile Include="Exception\StatusEnum.cs" />
-    <Compile Include="Exception\StatusDescription.cs" />
+    <Compile Include="Status\StatusEnum.cs" />
+    <Compile Include="Status\StatusDescription.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -255,6 +255,6 @@ echo Successfully finished!</PostBuildEvent>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Exception\" />
+    <Folder Include="Status\" />
   </ItemGroup>
 </Project>

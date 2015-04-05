@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F2D91778-AD1F-4433-A451-2016B873064B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>PostProcessor</RootNamespace>

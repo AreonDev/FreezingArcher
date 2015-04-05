@@ -168,6 +168,8 @@ namespace FreezingArcher.Core
             AudioManager = new AudioManager ();
             Localizer.Initialize (MessageManager);
 
+            Logger.Log.AddLogEntry(LogLevel.Info, ClassName, Status.Status.DeveloperWasUnderCaffeinated);
+
             Window = new Window (
                 ParserUtils.ParseVector (
                     ConfigManager.Instance["freezing_archer"].GetString ("general", "size")),

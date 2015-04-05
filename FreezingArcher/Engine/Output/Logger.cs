@@ -86,8 +86,8 @@ namespace FreezingArcher.Output
         public string ToString (int maxLength)
         {
             string pre = "[" + LogLevel.ToString().PadRight(7) +"] "+Timestamp + " [" + ModuleName.PadRight(maxLength) + "]: ";
-            Format = Format.Replace ("\n", "\n" + pre + "--> ");
-            return string.Concat (pre, string.Format (Format, Param));
+            var _fmt = Format.Replace ("\n", "\n" + pre + "--> ");
+            return string.Concat (pre, string.Format (_fmt, Param));
         }
 
         /// <summary>Returns a <see cref="System.String" /> that represents this instance.</summary>
@@ -95,8 +95,8 @@ namespace FreezingArcher.Output
         public string ToConsoleString(int maxLength)
         {
             string pre = "[" + ModuleName.PadRight(maxLength) + "]: ";
-            Format = Format.Replace ("\n", "\n" + pre + "--> ");
-            return string.Concat (pre, string.Format (Format, Param));
+            var _fmt = Format.Replace ("\n", "\n" + pre + "--> ");
+            return string.Concat (pre, string.Format (_fmt, Param));
         }
 
     }
@@ -237,10 +237,26 @@ namespace FreezingArcher.Output
         public void AddLogEntry (LogLine x)
         {
             maxModNameLength = Math.Max (maxModNameLength, x.ModuleName.Length);
-            lock (linesToProcess) {
+            lock (linesToProcess) 
                 linesToProcess.Enqueue (x);
-            }
+
         }
+
+        /// <summary>
+        /// Adds the log entry.
+        /// </summary>
+        /// <param name="level">Level.</param>
+        /// <param name="moduleName">Module name.</param>
+        /// <param name="status">Status code.</param>
+        /// <param name="additionalMessage">Additional message.</param>
+        public void AddLogEntry(LogLevel level, string moduleName, Status.Status status, string additionalMessage = null)
+        {
+            var fd = FreezingArcher.Status.StatusDescription.Descriptions[status];
+            var x = new LogLine{ LogLevel = level, ModuleName = moduleName, Format = "Code:" + (int)status + "\n" + fd + (additionalMessage != null ? "\n" + additionalMessage : ""), Param = { }, Timestamp = DateTime.Now };
+            AddLogEntry(x);
+        }
+
+
 
         /// <summary>Releases unmanaged and - optionally - managed resources.</summary>
         public void Dispose ()

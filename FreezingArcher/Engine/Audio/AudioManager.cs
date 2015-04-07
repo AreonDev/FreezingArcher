@@ -252,7 +252,7 @@ namespace FreezingArcher.Audio
             // source with name already exists
             if (f != null)
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, Status.BadArgument,
                     "The source with the name '{0}' is already registered!", name);
                 return null;
             }
@@ -279,7 +279,7 @@ namespace FreezingArcher.Audio
             // source with name already exists
             if (f != null)
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, Status.BadArgument,
                     "The source with the name '{0}' is already registered!", name);
                 return null;
             }
@@ -308,7 +308,7 @@ namespace FreezingArcher.Audio
             // source with name already exists
             if (f != null)
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, Status.BadArgument,
                     "The source with the name '{0}' is already registered!", name);
                 return null;
             }

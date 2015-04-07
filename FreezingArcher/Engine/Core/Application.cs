@@ -146,7 +146,7 @@ namespace FreezingArcher.Core
                 {
                     if (i > 8)
                     {
-                        Logger.Log.AddLogEntry (LogLevel.Error, "CommandLineInterface",
+                        Logger.Log.AddLogEntry (LogLevel.Error, "CommandLineInterface", Status.BadArgument,
                             "The given loglevel '{0}' is not valid. Using configuration value...", i);
                         return;
                     }
@@ -168,7 +168,7 @@ namespace FreezingArcher.Core
             AudioManager = new AudioManager ();
             Localizer.Initialize (MessageManager);
 
-            Logger.Log.AddLogEntry(LogLevel.Info, ClassName, Status.Status.DeveloperWasUnderCaffeinated);
+            Logger.Log.AddLogEntry(LogLevel.Info, ClassName, Status.DeveloperWasUnderCaffeinated);
 
             Window = new Window (
                 ParserUtils.ParseVector (

@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Output
 {
@@ -231,7 +232,7 @@ namespace FreezingArcher.Output
             var x = new LogLine { LogLevel = level, ModuleName = moduleName, Format = format, Param = args, Timestamp = DateTime.Now };
             AddLogEntry (x);
         }
-
+            
         /// <summary>Adds the log entry.</summary>
         /// <param name="x">The line to add.</param>
         public void AddLogEntry (LogLine x)
@@ -249,10 +250,11 @@ namespace FreezingArcher.Output
         /// <param name="moduleName">Module name.</param>
         /// <param name="status">Status code.</param>
         /// <param name="additionalMessage">Additional message.</param>
-        public void AddLogEntry(LogLevel level, string moduleName, Status.Status status, string additionalMessage = null)
+        /// <param name="args">Arguments.</param>
+        public void AddLogEntry(LogLevel level, string moduleName, Status status, string additionalMessage = null, params object[] args)
         {
-            var fd = FreezingArcher.Status.StatusDescription.Descriptions[status];
-            var x = new LogLine{ LogLevel = level, ModuleName = moduleName, Format = "Code:" + (int)status + "\n" + fd + (additionalMessage != null ? "\n" + additionalMessage : ""), Param = { }, Timestamp = DateTime.Now };
+            var fd = StatusDescription.Descriptions[status];
+            var x = new LogLine{ LogLevel = level, ModuleName = moduleName, Format = (additionalMessage ?? "Code:" + (int)status + "\n" + fd), Param = args, Timestamp = DateTime.Now };
             AddLogEntry(x);
         }
 

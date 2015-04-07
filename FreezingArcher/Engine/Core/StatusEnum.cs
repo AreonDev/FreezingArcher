@@ -21,7 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 
-namespace FreezingArcher.Status
+namespace FreezingArcher.Core
 {
     /// <summary>
     /// Enumeration for status codes. 0-99 are success codes, 100-199 are codes for running operations,

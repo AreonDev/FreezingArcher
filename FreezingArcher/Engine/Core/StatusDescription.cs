@@ -22,7 +22,7 @@
 //
 using System.Collections.Generic;
 
-namespace FreezingArcher.Status
+namespace FreezingArcher.Core
 {
     /// <summary>
     /// This class provides the status codes with descriptions for logging.

@@ -190,8 +190,8 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Audio\Filters\LowpassFilter.cs" />
     <Compile Include="Audio\Filters\HighpassFilter.cs" />
     <Compile Include="Audio\Filters\BandpassFilter.cs" />
-    <Compile Include="Status\StatusEnum.cs" />
-    <Compile Include="Status\StatusDescription.cs" />
+    <Compile Include="Core\StatusEnum.cs" />
+    <Compile Include="Core\StatusDescription.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -253,8 +253,5 @@ echo Successfully finished!</PostBuildEvent>
       <Project>{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}</Project>
       <Name>Pencil.Gaming</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Status\" />
   </ItemGroup>
 </Project>

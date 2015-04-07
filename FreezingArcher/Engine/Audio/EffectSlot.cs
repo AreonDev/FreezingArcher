@@ -24,6 +24,7 @@ using System;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming.Audio;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Audio
 {
@@ -54,12 +55,13 @@ namespace FreezingArcher.Audio
 
         internal bool Load()
         {
-            Logger.Log.AddLogEntry(LogLevel.Info, AudioManager.ClassName, "Try gen AUXSlot");
+            Logger.Log.AddLogEntry(LogLevel.Debug, AudioManager.ClassName, Status.DeveloperWasUnderCaffeinated, "Try gen AUXSlot");
             uint[] alId = new uint[1];
             AL.GenAuxiliaryEffectSlots(alId);
-            Logger.Log.AddLogEntry(LogLevel.Info, AudioManager.ClassName, "ID: {0}", alId[0]);
+            Logger.Log.AddLogEntry(LogLevel.Debug, AudioManager.ClassName,
+                Status.DeveloperAccidentallyTookSleepingPillsInsteadOfMigrainePills, "ID: " + alId[0]);
             var error = (ALError)AL.GetError();
-            Logger.Log.AddLogEntry(LogLevel.Info, AudioManager.ClassName, "{0}", error);
+            Logger.Log.AddLogEntry(LogLevel.Debug, AudioManager.ClassName, Status.DeveloperWasDrunk, error.ToString ());
             if (error != ALError.NoError)
                 return false;
             this.ALID = alId[0];

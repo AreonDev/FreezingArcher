@@ -27,6 +27,7 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Configuration
 {
@@ -139,7 +140,7 @@ namespace FreezingArcher.Configuration
             Value value;
             if (!s.TryGetValue (valueName, out value))
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, Status.DataNotAvailable,
                     "There is no default value registered for '{0}'!", valueName);
                 return null;
             }
@@ -169,7 +170,7 @@ namespace FreezingArcher.Configuration
             case ValueType.Bytes:
                 return new Value (IniConfig.GetValue (section, valueName, value.Bytes));
             default:
-                Logger.Log.AddLogEntry (LogLevel.Severe, ClassName,
+                Logger.Log.AddLogEntry (LogLevel.Severe, ClassName, Status.UnexpectedData,
                     "The type '{0}' of the given value is not supported! This type shouldn't even exist!",
                     value.Type.ToString ());
                 return null;
@@ -189,7 +190,7 @@ namespace FreezingArcher.Configuration
             if (v.Type == ValueType.Boolean)
                 return v.Boolean;
 
-            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName,
+            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName, Status.BadData,
                 "The requested value '{0}:{1}' is not of type bool!", section, valueName);
             throw new InvalidDataException ("The requested value is of wrong type!");
         }
@@ -207,7 +208,7 @@ namespace FreezingArcher.Configuration
             if (v.Type == ValueType.Integer)
                 return v.Integer;
 
-            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName,
+            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName, Status.BadData,
                 "The requested value '{0}:{1}' is not of type int!", section, valueName);
             throw new InvalidDataException ("The requested value is of wrong type!");
         }
@@ -225,7 +226,7 @@ namespace FreezingArcher.Configuration
             if (v.Type == ValueType.Double)
                 return v.Double;
 
-            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName,
+            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName, Status.BadData,
                 "The requested value '{0}:{1}' is not of type double!", section, valueName);
             throw new InvalidDataException ("The requested value is of wrong type!");
         }
@@ -243,7 +244,7 @@ namespace FreezingArcher.Configuration
             if (v.Type == ValueType.String)
                 return v.String;
 
-            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName,
+            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName, Status.BadData,
                 "The requested value '{0}:{1}' is not of type string!", section, valueName);
             throw new InvalidDataException ("The requested value is of wrong type!");
         }
@@ -261,7 +262,7 @@ namespace FreezingArcher.Configuration
             if (v.Type == ValueType.Bytes)
                 return v.Bytes;
 
-            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName,
+            Logger.Log.AddLogEntry (LogLevel.Fatal, ClassName, Status.BadData,
                 "The requested value '{0}:{1}' is not of type byte[]!", section, valueName);
             throw new InvalidDataException ("The requested value is of wrong type!");
         }
@@ -300,7 +301,7 @@ namespace FreezingArcher.Configuration
             Section s;
             if (!Defaults.TryGetValue (section, out s))
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, Status.BadArgument,
                     "Section '{0}' is not registered!", section);
                 return false;
             }
@@ -308,14 +309,14 @@ namespace FreezingArcher.Configuration
             Value defValue;
             if (!s.TryGetValue (valueName, out defValue))
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, Status.BadArgument,
                     "'{0}' is not registered!", valueName);
                 return false;
             }
 
             if (value.Type != defValue.Type)
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName,
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, Status.BadArgument,
                     "The given value type '{0}' is not equal with the default value type!", value.Type.ToString ());
                 return false;
             }
@@ -343,7 +344,7 @@ namespace FreezingArcher.Configuration
                 ValueSet (value);
                 return true;
             default:
-                Logger.Log.AddLogEntry (LogLevel.Severe, ClassName,
+                Logger.Log.AddLogEntry (LogLevel.Severe, ClassName, Status.UnexpectedData,
                     "The type '{0}' of the given value is not supported! This type shouldn't even exist!",
                     value.Type.ToString ());
                 return false;

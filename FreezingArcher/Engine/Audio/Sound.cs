@@ -26,6 +26,7 @@ using System.IO;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming.Audio;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Audio
 {
@@ -110,7 +111,7 @@ namespace FreezingArcher.Audio
             }
             else
             {
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, "Invalid file format '{0}'!", File.Extension);
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, Status.BadData, "Invalid file format '{0}'!", File.Extension);
                 throw new FileLoadException ("Invalid file format");
             }
         }

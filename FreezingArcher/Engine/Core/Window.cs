@@ -351,7 +351,7 @@ namespace FreezingArcher.Core
             }
             set
 	    {
-                Logger.Log.AddLogEntry (LogLevel.Warning, ClassName,
+                Logger.Log.AddLogEntry (LogLevel.Warning, ClassName, Status.NotImplemented,
                     "Setting fullscreen state during runtime is not implemented yet!. " +
                     "Use the commnd line option or the config file entry to enter fullscreen mode on startup!");
                 //TODO toggle fullscreen
@@ -463,7 +463,7 @@ namespace FreezingArcher.Core
 	protected void CreateWindow ()
         {
 #if LINUX_INTEL_COMPATIBLE
-            Logger.Log.AddLogEntry (LogLevel.Warning, ClassName,
+            Logger.Log.AddLogEntry (LogLevel.Warning, ClassName, Status.ItsNotABugItsAFeature,
                 "You are using an unsupported graphics mode! Disable LINUX_INTEL_COMPATIBLE compile flag to fix it.");
             Glfw.WindowHint (WindowHint.ContextVersionMajor, 3);
             Glfw.WindowHint (WindowHint.ContextVersionMinor, 3);

@@ -26,6 +26,7 @@ using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming.Audio;
 using Pencil.Gaming.MathUtils;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Audio
 {
@@ -171,7 +172,7 @@ namespace FreezingArcher.Audio
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading audio source '{0}'...", Name);
             AL.GenSources (1, out AlSourceId);
             if (Sounds.Length <= 0)
-                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, "You have not specified any sounds for " +
+                Logger.Log.AddLogEntry (LogLevel.Error, ClassName, Status.BadData, "You have not specified any sounds for " +
                         "this audio source!");
 
             uint[] bids = new uint[Sounds.Length];

@@ -23,6 +23,7 @@
 using System.Text.RegularExpressions;
 using FreezingArcher.Output;
 using Pencil.Gaming.MathUtils;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Configuration
 {
@@ -49,7 +50,7 @@ namespace FreezingArcher.Configuration
                 return new Vector2i (x, y);
             }
 
-            Logger.Log.AddLogEntry (LogLevel.Error, "ConfigManager#ParseVector",
+            Logger.Log.AddLogEntry (LogLevel.Error, "ConfigManager#ParseVector", Status.BadData,
                 "Could not parse a vector from string! Have you messed up your resolution config?");
             return new Vector2i ();
         }

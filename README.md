@@ -15,6 +15,17 @@ $ git submodule init
 $ git submodule update
 ```
 
+How to build
+------------
+### Windows
+Use `WindowsDebug` or `WindowsRelease` build targets when developing with `VisualStudio 2013`. All other IDE's are not officially supported.
+
+### Linux
+Use `Debug` or `Release` build target when developing with `MonoDevelop >=5.0`. All other IDE's are not officially supported.
+
+### MacOS
+There is currently no support for building and running `FreezingArcher` under `MacOS`.
+
 About the name
 --------------
 It was a name suggestion from github.

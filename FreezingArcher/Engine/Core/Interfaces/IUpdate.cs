@@ -34,12 +34,5 @@ namespace FreezingArcher.Core.Interfaces
         /// </summary>
         /// <param name="deltaTime">Time delta.</param>
         void FrameSyncedUpdate (double deltaTime);
-
-        /// <summary>
-        /// This update is called in an extra thread which does not have a valid gl context.
-        /// The updaterate might differ from the framerate.
-        /// </summary>
-        /// <param name="updateDescription">Update description.</param>
-        void Update (InputDescription updateDescription);
     }
 }

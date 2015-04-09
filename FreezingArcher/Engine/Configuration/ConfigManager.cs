@@ -28,6 +28,7 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
+using FreezingArcher.Input;
 
 namespace FreezingArcher.Configuration
 {
@@ -76,6 +77,13 @@ namespace FreezingArcher.Configuration
         public static void Initialize (MessageManager messageManager)
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Initializing config manager ...");
+
+            Section keymap = new Section ();
+            DefaultConfig.B.Add ("keymapping", keymap);
+
+            foreach (var k in KeyRegistry.Keys)
+                keymap.Add (k.Key, new Value (k.Value.ToString ()));
+
             Instance = new ConfigManager (messageManager);
             Instance.Add (new ConfigFile (DefaultConfig.A, DefaultConfig.B, messageManager));
         }

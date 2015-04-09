@@ -115,16 +115,6 @@ namespace FreezingArcher.Content
             LevelManager.FrameSyncedUpdate (deltaTime);
         }
 
-        /// <summary>
-        /// This update is called in an extra thread which does not have a valid gl context.
-        /// The updaterate might differ from the framerate.
-        /// </summary>
-        /// <param name="desc">Update description.</param>
-        public void Update (InputDescription desc)
-        {
-            LevelManager.Update (desc);
-        }
-
         #endregion
 
         /// <summary>

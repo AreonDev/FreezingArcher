@@ -158,7 +158,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\WindowMinimizeMessage.cs" />
     <Compile Include="Messaging\WindowErrorMessage.cs" />
     <Compile Include="Messaging\WindowMouseOverMessage.cs" />
-    <Compile Include="Input\InputDescription.cs" />
     <Compile Include="Reflection\Attribute.cs" />
     <Compile Include="Reflection\DynamicClassBuilder.cs" />
     <Compile Include="Reflection\Method.cs" />
@@ -192,6 +191,9 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Audio\Filters\BandpassFilter.cs" />
     <Compile Include="Core\StatusEnum.cs" />
     <Compile Include="Core\StatusDescription.cs" />
+    <Compile Include="Messaging\InputMessage.cs" />
+    <Compile Include="Input\KeyRegistry.cs" />
+    <Compile Include="Core\PeriodicTask.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

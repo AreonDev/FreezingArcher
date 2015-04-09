@@ -22,23 +22,53 @@
 //
 using System.Collections.Generic;
 using Pencil.Gaming.MathUtils;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Input;
 
-namespace FreezingArcher.Input
+namespace FreezingArcher.Messaging
 {
     /// <summary>
     /// Update description.
     /// </summary>
-    public class InputDescription
+    public class InputMessage : IMessage
     {
+        #region IMessage implementation
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Input.InputDescription"/> class.
+        /// Gets or sets the source.
+        /// </summary>
+        /// <value>The source.</value>
+        public object Source { get; set; }
+
+        /// <summary>
+        /// Gets or sets the destination.
+        /// </summary>
+        /// <value>The destination.</value>
+        public object Destination { get; set; }
+
+        /// <summary>
+        /// Gets the message identifier.
+        /// </summary>
+        /// <value>The message identifier.</value>
+        public int MessageId
+        {
+            get
+            {
+                return (int) Messaging.MessageId.Input;
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.InputMessage"/> class.
         /// </summary>
         /// <param name="keys">Keys.</param>
         /// <param name="mouse">Mouse.</param>
         /// <param name="mouseMovement">Mouse movement.</param>
         /// <param name="mouseScroll">Mouse scroll.</param>
         /// <param name="deltaTime">Delta time.</param>
-        public InputDescription (List<KeyboardInput> keys, List<MouseInput> mouse,
+        public InputMessage (List<string> keys, List<MouseInput> mouse,
             Vector2 mouseMovement, Vector2 mouseScroll, float deltaTime)
         {
             Keys = keys;
@@ -52,7 +82,7 @@ namespace FreezingArcher.Input
         /// Gets or sets the keys.
         /// </summary>
         /// <value>The keys.</value>
-        public List<KeyboardInput> Keys { get; protected set; }
+        public List<string> Keys { get; protected set; }
 
         /// <summary>
         /// Gets or sets the mouse.

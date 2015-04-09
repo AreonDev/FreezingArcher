@@ -35,6 +35,10 @@ namespace FreezingArcher.Messaging
         /// </summary>
         UpdateLocale = 1,
         /// <summary>
+        /// Occurs when the input manager is flushed.
+        /// </summary>
+        Input,
+        /// <summary>
         /// Occurs when a config file value is set.
         /// </summary>
         ConfigFileValueSet = 10,

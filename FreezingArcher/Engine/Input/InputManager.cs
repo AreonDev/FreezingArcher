@@ -24,14 +24,25 @@ using System.Collections.Generic;
 using Pencil.Gaming;
 using Pencil.Gaming.MathUtils;
 using FreezingArcher.Output;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Input
 {
     /// <summary>
     /// Input manager.
     /// </summary>
-    public class InputManager
+    public class InputManager : IMessageCreator
     {
+        #region IMessageCreator implementation
+
+        /// <summary>
+        /// Occurs when a new message is created an is ready for processing
+        /// </summary>
+        public event MessageEvent MessageCreated;
+
+        #endregion
+
         /// <summary>
         /// The name of the class.
         /// </summary>
@@ -40,14 +51,15 @@ namespace FreezingArcher.Input
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Input.InputManager"/> class.
         /// </summary>
-        public InputManager ()
+        public InputManager (MessageManager messageManager)
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Creating new input manager");
+            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new input manager");
             Keys = new List<KeyboardInput> ();
             Mouse = new List<MouseInput> ();
             MouseMovement = Vector2.Zero;
             MouseScroll = Vector2.Zero;
             OldMousePosition = Vector2.Zero;
+            messageManager += this;
         }
 
         /// <summary>
@@ -124,19 +136,18 @@ namespace FreezingArcher.Input
         }
 
         /// <summary>
-        /// Generates the update description.
+        /// Generates the input message.
         /// </summary>
-        /// <returns>The update description.</returns>
         /// <param name="deltaTime">Delta time.</param>
-        public InputDescription GenerateUpdateDescription (float deltaTime)
+        public void GenerateInputMessage (float deltaTime)
         {
-            InputDescription id = new InputDescription (new List<KeyboardInput> (Keys), new List<MouseInput> (Mouse),
-                MouseMovement, MouseScroll, deltaTime);
+            InputMessage id = KeyRegistry.GenerateInputMessage (Keys, Mouse, MouseMovement, MouseScroll, deltaTime);
             Keys.Clear ();
             Mouse.Clear ();
             MouseMovement = Vector2.Zero;
             MouseScroll = Vector2.Zero;
-            return id;
+            if (MessageCreated != null)
+                MessageCreated (id);
         }
     }
 }

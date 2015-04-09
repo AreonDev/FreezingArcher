@@ -370,16 +370,7 @@ namespace FreezingArcher.Core
                 
                 Renderer.RendererCore.Clear (Color4.DodgerBlue);
 
-                /*if (counter > 4)
-                {
-                    TaskFactory.StartNew (
-                        () => Resource.Update (Application.Instance.ResourceManager.
-                                           InputManager.GenerateUpdateDescription ((float) deltaTime)));
-                    counter = 0;
-                }
-                counter++; FUCKING FIX THIS - THIS IS BROKEN BY DESIGN!!!!!1111elf WHAT THE FUUUUUCK! FIXME
-                */
-                //TODO: call initer if InitAgain set - this shall be done in the update thread and not in this thread.
+
 
                 Game.FrameSyncedUpdate (deltaTime);
                 Renderer.RendererCore.Draw ();
@@ -436,7 +427,7 @@ namespace FreezingArcher.Core
             Loaded = false;
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing application '{0}' ...", Name);
-            InputManager = new InputManager ();
+            InputManager = new InputManager (MessageManager);
             AudioManager.LoadSound ("test2", "Audio/test2.ogg");
             AudioManager.LoadSound ("test", "Audio/test.wav");
             AudioManager.CreateSource ("test", "test", "test2");

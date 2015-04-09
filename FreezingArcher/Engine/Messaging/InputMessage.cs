@@ -24,6 +24,8 @@ using System.Collections.Generic;
 using Pencil.Gaming.MathUtils;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Input;
+using FreezingArcher.Output;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Messaging
 {
@@ -68,8 +70,8 @@ namespace FreezingArcher.Messaging
         /// <param name="mouseMovement">Mouse movement.</param>
         /// <param name="mouseScroll">Mouse scroll.</param>
         /// <param name="deltaTime">Delta time.</param>
-        public InputMessage (List<string> keys, List<MouseInput> mouse,
-            Vector2 mouseMovement, Vector2 mouseScroll, float deltaTime)
+        public InputMessage (List<KeyboardInput> keys, List<MouseInput> mouse,
+            Vector2 mouseMovement, Vector2 mouseScroll, double deltaTime)
         {
             Keys = keys;
             Mouse = mouse;
@@ -82,7 +84,7 @@ namespace FreezingArcher.Messaging
         /// Gets or sets the keys.
         /// </summary>
         /// <value>The keys.</value>
-        public List<string> Keys { get; protected set; }
+        public List<KeyboardInput> Keys { get; protected set; }
 
         /// <summary>
         /// Gets or sets the mouse.
@@ -106,6 +108,6 @@ namespace FreezingArcher.Messaging
         /// Gets or sets the delta time.
         /// </summary>
         /// <value>The delta time.</value>
-        public float DeltaTime { get; protected set; }
+        public double DeltaTime { get; protected set; }
     }
 }

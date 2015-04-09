@@ -23,19 +23,20 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+using FreezingArcher.Output;
 
-namespace FreezingArcher.Base.Utils
+namespace FreezingArcher.Core
 {
     /// <summary>
     /// Helper class for accurate timers
     /// <remarks>compatible to System.Timers.Timer</remarks>
     /// </summary>
-    public class AccurateTimer
+    public class PeriodicTask
     {
+        private Action onTick;
 
-        private Action<int> onTick;
         /// <summary>
-        /// Gets a value indicating whether this <see cref="AccurateTimer"/> is running.
+        /// Gets a value indicating whether this <see cref="PeriodicTask"/> is running.
         /// </summary>
         /// <value>
         ///   <c>true</c> if running; otherwise, <c>false</c>.
@@ -48,25 +49,37 @@ namespace FreezingArcher.Base.Utils
         /// <value>
         /// The interval.
         /// </value>
-        public double Interval { get; private set; }
+        public long Interval { get; private set; }
 
         /// <summary>
         /// The stopwatch
         /// </summary>
-        private System.Diagnostics.Stopwatch sw;
-        /// <summary>
-        /// The interval to wait
-        /// </summary>
-        private double intervalToWait;
+        private Stopwatch sw;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AccurateTimer"/> class.
+        /// Initializes a new instance of the <see cref="PeriodicTask"/> class.
         /// </summary>
-        /// <param name="interval_">The interval.</param>
-        public AccurateTimer (double interval, Action<int> functor) //in µs
+        /// <param name="interval">The interval in ms.</param>
+        /// <param name="functor">Callback when period is over.</param>
+        public PeriodicTask (long interval, Action functor)
         {
+            if (interval < 0)
+            {
+                Logger.Log.AddLogEntry (LogLevel.Severe, "PeriodicTask", Status.BadArgument,
+                    "Your interval period '{0}' is negative!", interval);
+                throw new ArgumentOutOfRangeException ("interval",
+                    "Your interval period '" + interval + "' is negative!");
+            }
+
+            if (functor == null)
+            {
+                Logger.Log.AddLogEntry (LogLevel.Severe, "PeriodicTask", Status.YouShallNotPassNull,
+                    "Your period callback shall not be null!");
+                throw new ArgumentNullException ("functor", "You shall not pass!");
+            }
+
             onTick = functor;
-            sw = new System.Diagnostics.Stopwatch ();
+            sw = new Stopwatch ();
             Running = false;
             Interval = interval;
         }
@@ -95,19 +108,20 @@ namespace FreezingArcher.Base.Utils
         /// </summary>
         private void Run ()
         {
-            Debug.Print (Stopwatch.Frequency.ToString () + " ticks per second in System.Diagnostics.Stopwatch");
+            int toSleep;
             sw.Start ();
-            intervalToWait = Interval;
 
             while (Running) 
             {
-                Thread.Sleep (1);
-                if (intervalToWait <= 0) {
-                    sw.Restart ();
-                    onTick ((int)(-intervalToWait)); //pass interval 
-
-                }
-                intervalToWait = Interval - (((double)sw.ElapsedTicks / (double)Stopwatch.Frequency) * 1000000d); //inµs
+                toSleep = (int) (Interval - sw.ElapsedMilliseconds);
+                #if DEBUG_PERFORMANCE
+                Logger.Log.AddLogEntry (LogLevel.Debug, "PeriodicTask", "Task took {0} ticks to execute.",
+                    sw.ElapsedTicks);
+                #endif
+                if (toSleep > 0)
+                    Thread.Sleep (toSleep);
+                sw.Restart ();
+                onTick ();
             }
             sw.Stop ();
             sw.Reset ();

@@ -113,6 +113,14 @@ namespace FreezingArcher.Core
         /// The given data is well formed but does not fit in the context.
         /// </summary>
         UnexpectedData,
+        /// <summary>
+        /// The requested operation cannot handle the amount of data.
+        /// </summary>
+        TooMuchData,
+        /// <summary>
+        /// You shall not pass (null)!
+        /// </summary>
+        YouShallNotPassNull,
 
         /// <summary>
         /// Error while caching data.

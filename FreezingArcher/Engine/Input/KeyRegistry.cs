@@ -26,40 +26,95 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Configuration;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
 using Pencil.Gaming;
+using FreezingArcher.Messaging.Interfaces;
+using System;
 
 namespace FreezingArcher.Input
 {
-    public static class KeyRegistry
+    /// <summary>
+    /// Key registryto map keycodes to game actions.
+    /// </summary>
+    public sealed class KeyRegistry : IMessageConsumer
     {
-        public static Dictionary<string, Key> Keys = new Dictionary<string, Key> ();
+        /// <summary>
+        /// Global instance of the key registry.
+        /// </summary>
+        public static readonly KeyRegistry Instance = new KeyRegistry ();
 
-        static KeyRegistry ()
+        /// <summary>
+        /// The key mapping.
+        /// </summary>
+        public Dictionary<string, Key> Keys = new Dictionary<string, Key> ();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Input.KeyRegistry"/> class.
+        /// </summary>
+        public KeyRegistry ()
         {
+            ValidMessages = new int[] { (int) MessageId.ConfigFileValueSet };
             Keys.Add ("forward", Key.W);
             Keys.Add ("backward", Key.S);
             Keys.Add ("left", Key.A);
             Keys.Add ("right", Key.D);
             Keys.Add ("sneek", Key.LeftShift);
             Keys.Add ("run", Key.LeftControl);
+            Keys.Add ("close", Key.Escape);
         }
 
-        public static InputMessage GenerateInputMessage (List<KeyboardInput> keys, List<MouseInput> mouse,
-            Vector2 mouseMovement, Vector2 mouseScroll, float deltaTime)
+        /// <summary>
+        /// Generates the input message.
+        /// </summary>
+        /// <returns>The input message.</returns>
+        /// <param name="keys">Keys.</param>
+        /// <param name="mouse">Mouse.</param>
+        /// <param name="mouseMovement">Mouse movement.</param>
+        /// <param name="mouseScroll">Mouse scroll.</param>
+        /// <param name="deltaTime">Delta time.</param>
+        public InputMessage GenerateInputMessage (List<KeyboardInput> keys, List<MouseInput> mouse,
+            Vector2 mouseMovement, Vector2 mouseScroll, double deltaTime)
         {
-            List<string> skeys = new List<string> ();
-            List<string> ikeys = new List<string> ();
+            string s;
 
             foreach (KeyboardInput i in keys)
-                skeys.Add (i.ToString ());
+                if (CachedConfig.TryGetValue (i.Key, out s))
+                    i.KeyAction = s;
 
+            return new InputMessage (keys, mouse, mouseMovement, mouseScroll, deltaTime);
+        }
+
+        Dictionary<Key, string> CachedConfig = new Dictionary<Key, string> ();
+
+        /// <summary>
+        /// Regenerate config cache.
+        /// </summary>
+        internal void RecacheConfig ()
+        {
+            CachedConfig.Clear ();
             Section section;
             ConfigManager.DefaultConfig.B.TryGetValue ("keymapping", out section);
-            foreach (string k in skeys)
-                foreach (string s in section.Keys)
-                    if (ConfigManager.Instance["freezing_archer"].GetString ("keymapping", s) == k)
-                        ikeys.Add (s);
-
-            return new InputMessage (ikeys, mouse, mouseMovement, mouseScroll, deltaTime);
+            foreach (var pair in section)
+                CachedConfig.Add (
+                    (Key) Enum.Parse (typeof (Key), ConfigManager.Instance["freezing_archer"]
+                        .GetString ("keymapping", pair.Key)), pair.Key);
         }
+
+        #region IMessageConsumer implementation
+
+        /// <summary>
+        /// Processes the invoming message
+        /// </summary>
+        /// <param name="msg">Message to process</param>
+        public void ConsumeMessage(IMessage msg)
+        {
+            RecacheConfig ();
+        }
+
+        /// <summary>
+        /// Gets the valid messages which can be used in the ConsumeMessage method
+        /// </summary>
+        /// <value>The valid messages</value>
+        public int[] ValidMessages { get; private set; }
+
+        #endregion
     }
 }

@@ -48,12 +48,17 @@ namespace FreezingArcher.Input
         /// Gets or sets the key.
         /// </summary>
         /// <value>The key.</value>
-        public Key Key { get; internal set; }
+        internal Key Key { get; set; }
+        /// <summary>
+        /// Gets or sets the key action.
+        /// </summary>
+        /// <value>The key action.</value>
+        public string KeyAction { get; internal set; }
         /// <summary>
         /// Gets or sets the scancode.
         /// </summary>
         /// <value>The scancode.</value>
-        public int Scancode { get;  internal set; }
+        internal int Scancode { get; set; }
         /// <summary>
         /// Gets or sets the action.
         /// </summary>

@@ -26,6 +26,7 @@ using Pencil.Gaming.MathUtils;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
+using System;
 
 namespace FreezingArcher.Input
 {
@@ -60,6 +61,7 @@ namespace FreezingArcher.Input
             MouseScroll = Vector2.Zero;
             OldMousePosition = Vector2.Zero;
             messageManager += this;
+            KeyRegistry.Instance.RecacheConfig ();
         }
 
         /// <summary>
@@ -136,12 +138,29 @@ namespace FreezingArcher.Input
         }
 
         /// <summary>
+        /// Get the current delta time.
+        /// </summary>
+        protected Func<double> GetDeltaTime;
+
+        /// <summary>
+        /// Sets the delta time func.
+        /// </summary>
+        /// <value>The delta time func.</value>
+        public Func<double> DeltaTimeFunc
+        {
+            set
+            {
+                GetDeltaTime = value ?? (() => 0);
+            }
+        }
+
+        /// <summary>
         /// Generates the input message.
         /// </summary>
-        /// <param name="deltaTime">Delta time.</param>
-        public void GenerateInputMessage (float deltaTime)
+        public void GenerateInputMessage ()
         {
-            InputMessage id = KeyRegistry.GenerateInputMessage (Keys, Mouse, MouseMovement, MouseScroll, deltaTime);
+            InputMessage id =
+                KeyRegistry.Instance.GenerateInputMessage (Keys, Mouse, MouseMovement, MouseScroll, GetDeltaTime ());
             Keys.Clear ();
             Mouse.Clear ();
             MouseMovement = Vector2.Zero;

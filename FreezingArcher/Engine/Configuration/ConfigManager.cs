@@ -81,7 +81,7 @@ namespace FreezingArcher.Configuration
             Section keymap = new Section ();
             DefaultConfig.B.Add ("keymapping", keymap);
 
-            foreach (var k in KeyRegistry.Keys)
+            foreach (var k in KeyRegistry.Instance.Keys)
                 keymap.Add (k.Key, new Value (k.Value.ToString ()));
 
             Instance = new ConfigManager (messageManager);

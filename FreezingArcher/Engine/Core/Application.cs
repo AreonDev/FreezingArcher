@@ -168,7 +168,7 @@ namespace FreezingArcher.Core
             AudioManager = new AudioManager ();
             Localizer.Initialize (MessageManager);
 
-            Logger.Log.AddLogEntry(LogLevel.Info, ClassName, Status.DeveloperWasUnderCaffeinated);
+            Logger.Log.AddLogEntry(LogLevel.Warning, ClassName, Status.ZombieApocalypse);
 
             Window = new Window (
                 ParserUtils.ParseVector (
@@ -307,12 +307,12 @@ namespace FreezingArcher.Core
                 WriteAt (15, 13, action.ToString ());
                 #endif
                 
-                if (key == Key.F16 && action == KeyAction.Release)// F11 - dafuq?
+                if (key == Key.F11 && action == KeyAction.Release)// F11 - dafuq?
                 {
                     Window.ToggleFullscreen ();
                 }
 
-                if (key == Key.F6 && action == KeyAction.Release)
+                if (key == Key.F1 && action == KeyAction.Release)
                 {
                     if (Window.IsMouseCaptured ())
                         Window.ReleaseMouse ();
@@ -320,7 +320,7 @@ namespace FreezingArcher.Core
                         Window.CaptureMouse ();
                 }
 
-                if (key == Key.F7 && action == KeyAction.Release)
+                if (key == Key.F2 && action == KeyAction.Release)
                     ConfigManager.Instance.SaveAll ();
 
                 if (key == Key.Escape && action == KeyAction.Release)
@@ -331,9 +331,9 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// A TaskFactory to provide an update threading manager.
+        /// The periodic task.
         /// </summary>
-        protected TaskFactory TaskFactory = new TaskFactory ();
+        protected PeriodicTask PeriodicTask;
 
         /// <summary>
         /// Run this instance.
@@ -355,6 +355,10 @@ namespace FreezingArcher.Core
             AudioManager.GetSource ("test").Loop = true;
             AudioManager.PlaySource ("test");
 
+            double deltaTime = 0;
+            InputManager.DeltaTimeFunc = () => deltaTime;
+
+            PeriodicTask.Start ();
 
             while (!Window.ShouldClose ())
             {
@@ -366,11 +370,9 @@ namespace FreezingArcher.Core
                     LoadAgain = false;
                 }
 
-                double deltaTime = Window.GetDeltaTime ();
+                deltaTime = Window.GetDeltaTime ();
                 
                 Renderer.RendererCore.Clear (Color4.DodgerBlue);
-
-
 
                 Game.FrameSyncedUpdate (deltaTime);
                 Renderer.RendererCore.Draw ();
@@ -428,6 +430,7 @@ namespace FreezingArcher.Core
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing application '{0}' ...", Name);
             InputManager = new InputManager (MessageManager);
+            PeriodicTask = new PeriodicTask (32, InputManager.GenerateInputMessage);
             AudioManager.LoadSound ("test2", "Audio/test2.ogg");
             AudioManager.LoadSound ("test", "Audio/test.wav");
             AudioManager.CreateSource ("test", "test", "test2");
@@ -493,6 +496,7 @@ namespace FreezingArcher.Core
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying application '{0}' ...", Name);
             Loaded = false;
+            PeriodicTask.Stop ();
             MessageManager.StopProcessing ();
 
             if (!Cli)

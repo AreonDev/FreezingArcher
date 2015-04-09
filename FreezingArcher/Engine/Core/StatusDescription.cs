@@ -60,6 +60,8 @@ namespace FreezingArcher.Core
 	    Descriptions.Add (Status.DataNotAvailable, "The requested data is not available.");
 	    Descriptions.Add (Status.NotEnoughData, "There is not enough data given to proceed with the operation.");
 	    Descriptions.Add (Status.UnexpectedData, "The given data is well formed but does not fit in the context.");
+            Descriptions.Add (Status.TooMuchData, "The requested operation cannot handle the amount of data.");
+            Descriptions.Add (Status.YouShallNotPassNull, "You shall not pass (null)!");
 	    Descriptions.Add (Status.Caching, "Error while caching data.");
 	    Descriptions.Add (Status.DataCachedForTooLong, "Data was cached for too long.");
 	    Descriptions.Add (Status.DataNotCachedLongEnough, "Data was not cached long enough.");

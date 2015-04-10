@@ -19,6 +19,9 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
+using System.Runtime.CompilerServices;
+
+
 #endregion
 
 using System;
@@ -142,7 +145,6 @@ namespace FreezingArcher.Math {
 			Z = v.Z;
 		}
 
-
 		/// <summary>
 		/// Gets or sets the value at the index of the Vector.
 		/// </summary>
@@ -237,7 +239,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="a">Left operand.</param>
 		/// <param name="b">Right operand.</param>
-		/// <param name="result">Result of operation.</param>
+        /// <param name="result">Result of operation.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Add(ref Vector3 a, ref Vector3 b, out Vector3 result) {
 			result = new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 		}
@@ -258,7 +261,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="a">First operand</param>
 		/// <param name="b">Second operand</param>
-		/// <param name="result">Result of subtraction</param>
+        /// <param name="result">Result of subtraction</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Subtract(ref Vector3 a, ref Vector3 b, out Vector3 result) {
 			result = new Vector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 		}
@@ -279,7 +283,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="vector">Left operand.</param>
 		/// <param name="scale">Right operand.</param>
-		/// <param name="result">Result of the operation.</param>
+        /// <param name="result">Result of the operation.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Multiply(ref Vector3 vector, float scale, out Vector3 result) {
 			result = new Vector3(vector.X * scale, vector.Y * scale, vector.Z * scale);
 		}
@@ -300,7 +305,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="vector">Left operand.</param>
 		/// <param name="scale">Right operand.</param>
-		/// <param name="result">Result of the operation.</param>
+        /// <param name="result">Result of the operation.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Multiply(ref Vector3 vector, ref Vector3 scale, out Vector3 result) {
 			result = new Vector3(vector.X * scale.X, vector.Y * scale.Y, vector.Z * scale.Z);
 		}
@@ -321,7 +327,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="vector">Left operand.</param>
 		/// <param name="scale">Right operand.</param>
-		/// <param name="result">Result of the operation.</param>
+        /// <param name="result">Result of the operation.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Divide(ref Vector3 vector, float scale, out Vector3 result) {
 			Multiply(ref vector, 1 / scale, out result);
 		}
@@ -342,7 +349,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="vector">Left operand.</param>
 		/// <param name="scale">Right operand.</param>
-		/// <param name="result">Result of the operation.</param>
+        /// <param name="result">Result of the operation.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Divide(ref Vector3 vector, ref Vector3 scale, out Vector3 result) {
 			result = new Vector3(vector.X / scale.X, vector.Y / scale.Y, vector.Z / scale.Z);
 		}
@@ -365,7 +373,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="a">First operand</param>
 		/// <param name="b">Second operand</param>
-		/// <param name="result">The component-wise minimum</param>
+        /// <param name="result">The component-wise minimum</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void ComponentMin(ref Vector3 a, ref Vector3 b, out Vector3 result) {
 			result.X = a.X < b.X ? a.X : b.X;
 			result.Y = a.Y < b.Y ? a.Y : b.Y;
@@ -390,7 +399,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="a">First operand</param>
 		/// <param name="b">Second operand</param>
-		/// <param name="result">The component-wise maximum</param>
+        /// <param name="result">The component-wise maximum</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void ComponentMax(ref Vector3 a, ref Vector3 b, out Vector3 result) {
 			result.X = a.X > b.X ? a.X : b.X;
 			result.Y = a.Y > b.Y ? a.Y : b.Y;
@@ -437,7 +447,8 @@ namespace FreezingArcher.Math {
 		/// <param name="vec">Input vector</param>
 		/// <param name="min">Minimum vector</param>
 		/// <param name="max">Maximum vector</param>
-		/// <param name="result">The clamped vector</param>
+        /// <param name="result">The clamped vector</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Clamp(ref Vector3 vec, ref Vector3 min, ref Vector3 max, out Vector3 result) {
 			result.X = vec.X < min.X ? min.X : vec.X > max.X ? max.X : vec.X;
 			result.Y = vec.Y < min.Y ? min.Y : vec.Y > max.Y ? max.Y : vec.Y;
@@ -461,7 +472,8 @@ namespace FreezingArcher.Math {
 		/// Scale a vector to unit length
 		/// </summary>
 		/// <param name="vec">The input vector</param>
-		/// <param name="result">The normalized vector</param>
+        /// <param name="result">The normalized vector</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Normalize(ref Vector3 vec, out Vector3 result) {
 			float scale = 1.0f / vec.Length;
 			result.X = vec.X * scale;
@@ -486,7 +498,8 @@ namespace FreezingArcher.Math {
 		/// Scale a vector to approximately unit length
 		/// </summary>
 		/// <param name="vec">The input vector</param>
-		/// <param name="result">The normalized vector</param>
+        /// <param name="result">The normalized vector</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void NormalizeFast(ref Vector3 vec, out Vector3 result) {
 			float scale = MathHelper.InverseSqrtFast(vec.X * vec.X + vec.Y * vec.Y + vec.Z * vec.Z);
 			result.X = vec.X * scale;
@@ -509,7 +522,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="left">First operand</param>
 		/// <param name="right">Second operand</param>
-		/// <param name="result">The dot product of the two inputs</param>
+        /// <param name="result">The dot product of the two inputs</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Dot(ref Vector3 left, ref Vector3 right, out float result) {
 			result = left.X * right.X + left.Y * right.Y + left.Z * right.Z;
 		}
@@ -532,7 +546,8 @@ namespace FreezingArcher.Math {
 		/// <param name="left">First operand</param>
 		/// <param name="right">Second operand</param>
 		/// <returns>The cross product of the two inputs</returns>
-		/// <param name="result">The cross product of the two inputs</param>
+        /// <param name="result">The cross product of the two inputs</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Cross(ref Vector3 left, ref Vector3 right, out Vector3 result) {
 			result = new Vector3(left.Y * right.Z - left.Z * right.Y,
 				left.Z * right.X - left.X * right.Z,
@@ -559,7 +574,8 @@ namespace FreezingArcher.Math {
 		/// <param name="a">First input vector</param>
 		/// <param name="b">Second input vector</param>
 		/// <param name="blend">The blend factor. a when blend=0, b when blend=1.</param>
-		/// <param name="result">a when blend=0, b when blend=1, and a linear combination otherwise</param>
+        /// <param name="result">a when blend=0, b when blend=1, and a linear combination otherwise</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Lerp(ref Vector3 a, ref Vector3 b, float blend, out Vector3 result) {
 			result.X = blend * (b.X - a.X) + a.X;
 			result.Y = blend * (b.Y - a.Y) + a.Y;
@@ -585,7 +601,8 @@ namespace FreezingArcher.Math {
 		/// <param name="c">Third input Vector.</param>
 		/// <param name="u">First Barycentric Coordinate.</param>
 		/// <param name="v">Second Barycentric Coordinate.</param>
-		/// <param name="result">Output Vector. a when u=v=0, b when u=1,v=0, c when u=0,v=1, and a linear combination of a,b,c otherwise</param>
+        /// <param name="result">Output Vector. a when u=v=0, b when u=1,v=0, c when u=0,v=1, and a linear combination of a,b,c otherwise</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void BaryCentric(ref Vector3 a, ref Vector3 b, ref Vector3 c, float u, float v, out Vector3 result) {
 			result = a; // copy
 
@@ -619,7 +636,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="vec">The vector to transform</param>
 		/// <param name="mat">The desired transformation</param>
-		/// <param name="result">The transformed vector</param>
+        /// <param name="result">The transformed vector</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void TransformVector(ref Vector3 vec, ref Matrix mat, out Vector3 result) {
 			result.X = vec.X * mat.Row0.X +
 				vec.Y * mat.Row1.X +
@@ -654,7 +672,8 @@ namespace FreezingArcher.Math {
 		/// </remarks>
 		/// <param name="norm">The normal to transform</param>
 		/// <param name="mat">The desired transformation</param>
-		/// <param name="result">The transformed normal</param>
+        /// <param name="result">The transformed normal</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void TransformNormal(ref Vector3 norm, ref Matrix mat, out Vector3 result) {
 			Matrix Inverse = Matrix.Invert(mat);
 			Vector3.TransformNormalInverse(ref norm, ref Inverse, out result);
@@ -683,7 +702,8 @@ namespace FreezingArcher.Math {
 		/// </remarks>
 		/// <param name="norm">The normal to transform</param>
 		/// <param name="invMat">The inverse of the desired transformation</param>
-		/// <param name="result">The transformed normal</param>
+        /// <param name="result">The transformed normal</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void TransformNormalInverse(ref Vector3 norm, ref Matrix invMat, out Vector3 result) {
 			result.X = norm.X * invMat.Row0.X +
 				norm.Y * invMat.Row0.Y +
@@ -710,10 +730,18 @@ namespace FreezingArcher.Math {
 			return p;
 		}
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Distance(ref Vector3 value1, ref Vector3 value2, out float result)
+        {
+            DistanceSquared(ref value1, ref value2, out result);
+            result = (float)System.Math.Sqrt(result);
+        }
+
 		/// <summary>Transform a Position by the given Matrix</summary>
 		/// <param name="pos">The position to transform</param>
 		/// <param name="mat">The desired transformation</param>
-		/// <param name="result">The transformed position</param>
+        /// <param name="result">The transformed position</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void TransformPosition(ref Vector3 pos, ref Matrix mat, out Vector3 result) {
 			result.X = pos.X * mat.Row0.X +
 				pos.Y * mat.Row1.X +
@@ -744,11 +772,15 @@ namespace FreezingArcher.Math {
 		/// <summary>Transform a Vector by the given Matrix</summary>
 		/// <param name="vec">The vector to transform</param>
 		/// <param name="mat">The desired transformation</param>
-		/// <param name="result">The transformed vector</param>
+        /// <param name="result">The transformed vector</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Transform(ref Vector3 vec, ref Matrix mat, out Vector3 result) {
-			Vector4 v4 = new Vector4(vec.X, vec.Y, vec.Z, 1.0f);
-			Vector4.Transform(ref v4, ref mat, out v4);
-			result = v4.Xyz;
+            var x = (vec.X * mat.M11) + (vec.Y * mat.M21) + (vec.Z * mat.M31) + mat.M41;
+            var y = (vec.X * mat.M12) + (vec.Y * mat.M22) + (vec.Z * mat.M32) + mat.M42;
+            var z = (vec.X * mat.M13) + (vec.Y * mat.M23) + (vec.Z * mat.M33) + mat.M43;
+            result.X = x;
+            result.Y = y;
+            result.Z = z;
 		}
 
 		/// <summary>
@@ -768,18 +800,81 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="vec">The vector to transform.</param>
 		/// <param name="quat">The quaternion to rotate the vector by.</param>
-		/// <param name="result">The result of the operation.</param>
+        /// <param name="result">The result of the operation.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Transform(ref Vector3 vec, ref Quaternion quat, out Vector3 result) {
 			// Since vec.W == 0, we can optimize quat * vec * quat^-1 as follows:
 			// vec + 2.0 * cross(quat.xyz, cross(quat.xyz, vec) + quat.w * vec)
-			Vector3 xyz = quat.Xyz, temp, temp2;
-			Vector3.Cross(ref xyz, ref vec, out temp);
-			Vector3.Multiply(ref vec, quat.W, out temp2);
-			Vector3.Add(ref temp, ref temp2, out temp);
-			Vector3.Cross(ref xyz, ref temp, out temp);
-			Vector3.Multiply(ref temp, 2, out temp);
-			Vector3.Add(ref vec, ref temp, out result);
+            float x = 2 * (quat.Y * vec.Z - quat.Z * vec.Y);
+            float y = 2 * (quat.Z * vec.X - quat.X * vec.Z);
+            float z = 2 * (quat.X * vec.Y - quat.Y * vec.X);
+
+            result.X = vec.X + x * quat.W + (quat.Y * z - quat.Z * y);
+            result.Y = vec.Y + y * quat.W + (quat.Z * x - quat.X * z);
+            result.Z = vec.Z + z * quat.W + (quat.X * y - quat.Y * x);
 		}
+
+        /// <summary>
+        /// Transforms an array of vertices by the given matrix.
+        /// </summary>
+        /// <param name="sourceArray">The vertices to transform.</param>
+        /// <param name="matrix">The matrix to transform the vertices with.</param>
+        /// <param name="destinationArray">The result of the operation.</param>
+        public static void Transform(Vector3[] sourceArray, ref Matrix matrix, Vector3[] destinationArray)
+        {
+            // TODO: Are there options on some platforms to implement a vectorized version of this?
+
+            for (var i = 0; i < sourceArray.Length; i++)
+            {
+                var position = sourceArray[i];                
+                destinationArray[i] =
+                    new Vector3(
+                        (position.X*matrix.M11) + (position.Y*matrix.M21) + (position.Z*matrix.M31) + matrix.M41,
+                        (position.X*matrix.M12) + (position.Y*matrix.M22) + (position.Z*matrix.M32) + matrix.M42,
+                        (position.X*matrix.M13) + (position.Y*matrix.M23) + (position.Z*matrix.M33) + matrix.M43);
+            }
+        }
+
+        /// <summary>
+        /// Transforms an array of vectors by a quaternion rotation.
+        /// </summary>
+        /// <param name="sourceArray">The vectors to transform</param>
+        /// <param name="rotation">The quaternion to rotate the vector by.</param>
+        /// <param name="destinationArray">The result of the operation.</param>
+        public static void Transform(Vector3[] sourceArray, ref Quaternion rotation, Vector3[] destinationArray)
+        {
+            // TODO: Are there options on some platforms to implement a vectorized version of this?
+
+            for (var i = 0; i < sourceArray.Length; i++)
+            {
+                var position = sourceArray[i];
+
+                float x = 2 * (rotation.Y * position.Z - rotation.Z * position.Y);
+                float y = 2 * (rotation.Z * position.X - rotation.X * position.Z);
+                float z = 2 * (rotation.X * position.Y - rotation.Y * position.X);
+
+                destinationArray[i] =
+                    new Vector3(
+                        position.X + x * rotation.W + (rotation.Y * z - rotation.Z * y),
+                        position.Y + y * rotation.W + (rotation.Z * x - rotation.X * z),
+                        position.Z + z * rotation.W + (rotation.X * y - rotation.Y * x));
+            }
+        }
+
+        /// <summary>
+        /// Calculates the squared distance between two given <see cref="Vector3"/>
+        /// </summary>
+        /// <param name="value1">Value1.</param>
+        /// <param name="value2">Value2.</param>
+        /// <param name="result">Result.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void DistanceSquared(ref Vector3 value1, ref Vector3 value2, out float result)
+        {
+            result = (value1.X - value2.X) * (value1.X - value2.X) +
+                (value1.Y - value2.Y) * (value1.Y - value2.Y) +
+                (value1.Z - value2.Z) * (value1.Z - value2.Z);
+        }
+
 
 		/// <summary>Transform a Vector3 by the given Matrix, and project the resulting Vector4 back to a Vector3</summary>
 		/// <param name="vec">The vector to transform</param>
@@ -794,7 +889,8 @@ namespace FreezingArcher.Math {
 		/// <summary>Transform a Vector3 by the given Matrix, and project the resulting Vector4 back to a Vector3</summary>
 		/// <param name="vec">The vector to transform</param>
 		/// <param name="mat">The desired transformation</param>
-		/// <param name="result">The transformed vector</param>
+        /// <param name="result">The transformed vector</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void TransformPerspective(ref Vector3 vec, ref Matrix mat, out Vector3 result) {
 			Vector4 v = new Vector4(vec, 1);
 			Vector4.Transform(ref v, ref mat, out v);
@@ -818,7 +914,8 @@ namespace FreezingArcher.Math {
 		/// <param name="first">The first vector.</param>
 		/// <param name="second">The second vector.</param>
 		/// <param name="result">Angle (in radians) between the vectors.</param>
-		/// <remarks>Note that the returned angle is never bigger than the constant Pi.</remarks>
+        /// <remarks>Note that the returned angle is never bigger than the constant Pi.</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void CalculateAngle(ref Vector3 first, ref Vector3 second, out float result) {
 			float temp;
 			Vector3.Dot(ref first, ref second, out temp);
@@ -968,6 +1065,7 @@ namespace FreezingArcher.Math {
 		/// <param name="left">The first instance.</param>
 		/// <param name="right">The second instance.</param>
 		/// <returns>The result of the calculation.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Vector3 operator +(Vector3 left, Vector3 right) {
 			left.X += right.X;
 			left.Y += right.Y;
@@ -981,6 +1079,7 @@ namespace FreezingArcher.Math {
 		/// <param name="left">The first instance.</param>
 		/// <param name="right">The second instance.</param>
 		/// <returns>The result of the calculation.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Vector3 operator -(Vector3 left, Vector3 right) {
 			left.X -= right.X;
 			left.Y -= right.Y;
@@ -993,6 +1092,7 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="vec">The instance.</param>
 		/// <returns>The result of the calculation.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Vector3 operator -(Vector3 vec) {
 			vec.X = -vec.X;
 			vec.Y = -vec.Y;
@@ -1006,6 +1106,7 @@ namespace FreezingArcher.Math {
 		/// <param name="vec">The instance.</param>
 		/// <param name="scale">The scalar.</param>
 		/// <returns>The result of the calculation.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Vector3 operator *(Vector3 vec, float scale) {
 			vec.X *= scale;
 			vec.Y *= scale;
@@ -1018,7 +1119,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="scale">The scalar.</param>
 		/// <param name="vec">The instance.</param>
-		/// <returns>The result of the calculation.</returns>
+        /// <returns>The result of the calculation.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Vector3 operator *(float scale, Vector3 vec) {
 			vec.X *= scale;
 			vec.Y *= scale;
@@ -1031,7 +1133,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="vec">The instance.</param>
 		/// <param name="scale">The scalar.</param>
-		/// <returns>The result of the calculation.</returns>
+        /// <returns>The result of the calculation.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Vector3 operator /(Vector3 vec, float scale) {
 			float mult = 1.0f / scale;
 			vec.X *= mult;
@@ -1045,7 +1148,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="left">The first instance.</param>
 		/// <param name="right">The second instance.</param>
-		/// <returns>True, if left equals right; false otherwise.</returns>
+        /// <returns>True, if left equals right; false otherwise.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool operator ==(Vector3 left, Vector3 right) {
 			return left.Equals(right);
 		}
@@ -1055,7 +1159,8 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="left">The first instance.</param>
 		/// <param name="right">The second instance.</param>
-		/// <returns>True, if left does not equa lright; false otherwise.</returns>
+        /// <returns>True, if left does not equa lright; false otherwise.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool operator !=(Vector3 left, Vector3 right) {
 			return !left.Equals(right);
 		}
@@ -1091,7 +1196,8 @@ namespace FreezingArcher.Math {
 
 		/// <summary>Indicates whether the current vector is equal to another vector.</summary>
 		/// <param name="other">A vector to compare with this vector.</param>
-		/// <returns>true if the current vector is equal to the vector parameter; otherwise, false.</returns>
+        /// <returns>true if the current vector is equal to the vector parameter; otherwise, false.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool Equals(Vector3 other) {
 			return
 				X == other.X &&

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pencil.Gaming", "Pencil.Gam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math", "Math\Math.csproj", "{6EA025BA-DB6F-40AA-B970-069A104D2659}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Physics", "Physics\Physics.csproj", "{2FE998BB-BA71-4264-8C6F-C118E953DF1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -21,6 +23,14 @@ Global
 		ReleaseWindows|x86 = ReleaseWindows|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.Debug|x86.Build.0 = Debug|Any CPU
+		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.DebugWindows|x86.ActiveCfg = Debug|Any CPU
+		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.DebugWindows|x86.Build.0 = Debug|Any CPU
+		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.Release|x86.ActiveCfg = Release|Any CPU
+		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.Release|x86.Build.0 = Release|Any CPU
+		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.ReleaseWindows|x86.ActiveCfg = Release|Any CPU
+		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.ReleaseWindows|x86.Build.0 = Release|Any CPU
 		{6EA025BA-DB6F-40AA-B970-069A104D2659}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{6EA025BA-DB6F-40AA-B970-069A104D2659}.Debug|x86.Build.0 = Debug|Any CPU
 		{6EA025BA-DB6F-40AA-B970-069A104D2659}.DebugWindows|x86.ActiveCfg = Debug|Any CPU

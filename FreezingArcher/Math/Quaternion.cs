@@ -516,5 +516,17 @@ namespace FreezingArcher.Math {
 			//be converted to ie a one or a zero in the last position 
 			return new Quaternion(vector, 0.0f);
 		}
+
+        /// <summary>
+        /// Creates a new quaternion based on the given axis and the length
+        /// </summary>
+        /// <param name="axis">Axis.</param>
+        /// <param name="length">Length.</param>
+        /// <param name="rotation">Rotation.</param>
+        public static void CreateFromAxisAngle (ref Vector3 axis, float length, out Quaternion rotation)
+        {
+            rotation.xyz = axis;
+            rotation.w = length;
+        }
 	}
 }

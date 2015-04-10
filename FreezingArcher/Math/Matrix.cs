@@ -334,7 +334,49 @@ namespace FreezingArcher.Math {
 		#region Static
 		
 		#region CreateFromAxisAngle
-		
+        /// <summary>
+        /// Build a rotation matrix from the specified axis/angle rotation.
+        /// </summary>
+        /// <param name="axis">The axis to rotate about.</param>
+        /// <param name="angle">Angle in radians to rotate counter-clockwise (looking in the direction of the given axis).</param>
+        /// <param name="result">A matrix instance.</param>
+        public static void CreateFromAxisAngle(ref Vector3 axis, float angle, out Matrix result) {
+            // normalize and create a local copy of the vector.
+            axis.Normalize();
+            float axisX = axis.X, axisY = axis.Y, axisZ = axis.Z;
+
+            // calculate angles
+            float cos = (float)System.Math.Cos(-angle);
+            float sin = (float)System.Math.Sin(-angle);
+            float t = 1.0f - cos;
+
+            // do the conversion math once
+            float tXX = t * axisX * axisX,
+            tXY = t * axisX * axisY,
+            tXZ = t * axisX * axisZ,
+            tYY = t * axisY * axisY,
+            tYZ = t * axisY * axisZ,
+            tZZ = t * axisZ * axisZ;
+
+            float sinX = sin * axisX,
+            sinY = sin * axisY,
+            sinZ = sin * axisZ;
+
+            result.Row0.X = tXX + cos;
+            result.Row0.Y = tXY - sinZ;
+            result.Row0.Z = tXZ + sinY;
+            result.Row0.W = 0;
+            result.Row1.X = tXY + sinZ;
+            result.Row1.Y = tYY + cos;
+            result.Row1.Z = tYZ - sinX;
+            result.Row1.W = 0;
+            result.Row2.X = tXZ - sinY;
+            result.Row2.Y = tYZ + sinX;
+            result.Row2.Z = tZZ + cos;
+            result.Row2.W = 0;
+            result.Row3 = Vector4.UnitW;
+        }
+
 		/// <summary>
 		/// Build a rotation matrix from the specified axis/angle rotation.
 		/// </summary>
@@ -980,10 +1022,81 @@ namespace FreezingArcher.Math {
 			                   left.X*right.M13 + left.Y*right.M23+ left.Z*right.M33+ left.W*right.M43,
 			                   left.X*right.M14 + left.Y*right.M24+ left.Z*right.M34+ left.W*right.M44);
 		}
+
 		public static Vector4 operator*(Vector4 left, Matrix right)
 		{
 			return Mult(left, right);
 		}
+
+        public static Matrix operator*(Matrix mat, float scalar)
+        {
+            return new Matrix (
+                mat.M11 * scalar,
+                mat.M12 * scalar,
+                mat.M13 * scalar,
+                mat.M14 * scalar,
+                mat.M21 * scalar,
+                mat.M22 * scalar,
+                mat.M23 * scalar,
+                mat.M24 * scalar,
+                mat.M31 * scalar,
+                mat.M32 * scalar,
+                mat.M33 * scalar,
+                mat.M34 * scalar,
+                mat.M41 * scalar,
+                mat.M42 * scalar,
+                mat.M43 * scalar,
+                mat.M44 * scalar
+            );
+        }
+
+        public static Matrix operator+(Matrix lhs, Matrix rhs)
+        {
+            return new Matrix 
+            (
+                lhs.M11 + rhs.M11,
+                lhs.M12 + rhs.M12,
+                lhs.M13 + rhs.M13,
+                lhs.M14 + rhs.M14,
+
+                lhs.M21 + rhs.M21,
+                lhs.M22 + rhs.M22,
+                lhs.M23 + rhs.M23,
+                lhs.M24 + rhs.M24,
+
+                lhs.M31 + rhs.M31,
+                lhs.M32 + rhs.M32,
+                lhs.M33 + rhs.M33,
+                lhs.M34 + rhs.M34,
+
+                lhs.M41 + rhs.M41,
+                lhs.M42 + rhs.M42,
+                lhs.M43 + rhs.M43,
+                lhs.M44 + rhs.M44
+            );
+        }
+
+        public static void Mult(ref Matrix mat, float scalar, out Matrix res)
+        {
+            res = new Matrix (
+                mat.M11 * scalar,
+                mat.M12 * scalar,
+                mat.M13 * scalar,
+                mat.M14 * scalar,
+                mat.M21 * scalar,
+                mat.M22 * scalar,
+                mat.M23 * scalar,
+                mat.M24 * scalar,
+                mat.M31 * scalar,
+                mat.M32 * scalar,
+                mat.M33 * scalar,
+                mat.M34 * scalar,
+                mat.M41 * scalar,
+                mat.M42 * scalar,
+                mat.M43 * scalar,
+                mat.M44 * scalar
+            );
+        }
 		#endregion
 
 		#region Invert Functions
@@ -1169,6 +1282,32 @@ namespace FreezingArcher.Math {
 		#endregion
 
 		#endregion
+
+        public static void Add (ref Matrix lhs, ref Matrix rhs, out Matrix output)
+        {
+            output = new Matrix 
+                (
+                    lhs.M11 + rhs.M11,
+                    lhs.M12 + rhs.M12,
+                    lhs.M13 + rhs.M13,
+                    lhs.M14 + rhs.M14,
+
+                    lhs.M21 + rhs.M21,
+                    lhs.M22 + rhs.M22,
+                    lhs.M23 + rhs.M23,
+                    lhs.M24 + rhs.M24,
+
+                    lhs.M31 + rhs.M31,
+                    lhs.M32 + rhs.M32,
+                    lhs.M33 + rhs.M33,
+                    lhs.M34 + rhs.M34,
+
+                    lhs.M41 + rhs.M41,
+                    lhs.M42 + rhs.M42,
+                    lhs.M43 + rhs.M43,
+                    lhs.M44 + rhs.M44
+                );
+        }
 
 		#region IEquatable<Matrix4> Members
 

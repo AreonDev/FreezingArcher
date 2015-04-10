@@ -9,7 +9,7 @@ A 3D game engine (framework) which is:
 How to clone
 ------------
 ```sh
-$ git clone git@github.com:fin-ger/FreezingArcher.git
+$ git clone git@github.com:AreonDev/FreezingArcher.git
 $ cd FreezingArcher
 $ git submodule init
 $ git submodule update

@@ -60,8 +60,8 @@ namespace FreezingArcher.Input
             MouseMovement = Vector2.Zero;
             MouseScroll = Vector2.Zero;
             OldMousePosition = Vector2.Zero;
+            KeyRegistry.Instance = new KeyRegistry ();
             messageManager += this;
-            KeyRegistry.Instance.RecacheConfig ();
         }
 
         /// <summary>

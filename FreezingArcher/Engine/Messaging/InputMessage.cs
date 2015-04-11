@@ -20,6 +20,9 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+#define DEBUG_PERFORMANCE
+using System;
+using System.Linq;
 using System.Collections.Generic;
 using Pencil.Gaming.MathUtils;
 using FreezingArcher.Messaging.Interfaces;
@@ -78,6 +81,12 @@ namespace FreezingArcher.Messaging
             MouseMovement = mouseMovement;
             MouseScroll = mouseScroll;
             DeltaTime = deltaTime;
+
+            #if DEBUG_PERFORMANCE
+            if (Keys.Count > 0)
+                Logger.Log.AddLogEntry (LogLevel.Warning, "InputMessage", Status.AKittenDies,
+                    String.Concat (Keys.Select (k => k.KeyAction)));
+            #endif
         }
 
         /// <summary>

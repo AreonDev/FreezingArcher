@@ -396,7 +396,7 @@ namespace FreezingArcher.Configuration
         /// <param name="section">Section.</param>
         /// <param name="valueName">Value name.</param>
         /// <param name="value">Value.</param>
-        public void SetBool (string section, string valueName, string value)
+        public void SetString (string section, string valueName, string value)
         {
             SetValue (section, valueName, new Value (value));
         }

@@ -1476,10 +1476,11 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="v">The instance.</param>
 		/// <returns>A pointer to the first element of v.</returns>
+        #pragma warning disable 3002
 		unsafe public static explicit operator int*(Vector4i v) {
 			return &v.X;
 		}
-
+        #pragma warning restore 3002
 		/// <summary>
 		/// Returns a pointer to the first element of the specified instance.
 		/// </summary>

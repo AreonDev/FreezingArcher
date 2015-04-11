@@ -31,11 +31,9 @@ namespace FreezingArcher.Math {
 	/// Represents a Quaternion.
 	/// </summary>
 	[Serializable]
-	[StructLayout(LayoutKind.Sequential)]
-	public struct Quaternion : IEquatable<Quaternion> {
-		private Vector3 xyz;
-		private float w;
-
+	[StructLayout(LayoutKind.Explicit)]
+	public struct Quaternion : IEquatable<Quaternion> 
+    {
 		/// <summary>
 		/// Defines the identity quaternion.
 		/// </summary>
@@ -46,9 +44,14 @@ namespace FreezingArcher.Math {
 		/// </summary>
 		/// <param name="v">The vector part</param>
 		/// <param name="w">The w part</param>
-		public Quaternion(Vector3 v, float w) {
-			this.xyz = v;
-			this.w = w;
+		public Quaternion(Vector3 v, float w) 
+        {
+            //just to suppress compile errors
+            this.X = 0;
+            this.Y = 0;
+            this.Z = 0;
+            this.Xyz = v;
+			this.W = w;
 		}
 
 		/// <summary>
@@ -65,30 +68,35 @@ namespace FreezingArcher.Math {
 		/// <summary>
 		/// Gets or sets an Vector3 with the X, Y and Z components of this instance.
 		/// </summary>
-		public Vector3 Xyz { get { return xyz; } set { xyz = value; } }
+        [FieldOffset(0)]
+		public Vector3 Xyz;
 
 		/// <summary>
 		/// Gets or sets the X component of this instance.
 		/// </summary>
 		[XmlIgnore]
-		public float X { get { return xyz.X; } set { xyz.X = value; } }
+        [FieldOffset(0)]
+        public float X;
 
 		/// <summary>
 		/// Gets or sets the Y component of this instance.
 		/// </summary>
 		[XmlIgnore]
-		public float Y { get { return xyz.Y; } set { xyz.Y = value; } }
+        [FieldOffset(4)]
+		public float Y;
 
 		/// <summary>
 		/// Gets or sets the Z component of this instance.
 		/// </summary>
 		[XmlIgnore]
-		public float Z { get { return xyz.Z; } set { xyz.Z = value; } }
+        [FieldOffset(8)]
+        public float Z;
 
 		/// <summary>
 		/// Gets or sets the W component of this instance.
 		/// </summary>
-		public float W { get { return w; } set { w = value; } }
+        [FieldOffset(12)]
+        public float W;
 
 		/// <summary>
 		/// Convert the current quaternion to axis angle representation
@@ -525,8 +533,11 @@ namespace FreezingArcher.Math {
         /// <param name="rotation">Rotation.</param>
         public static void CreateFromAxisAngle (ref Vector3 axis, float length, out Quaternion rotation)
         {
-            rotation.xyz = axis;
-            rotation.w = length;
+            rotation.X = 0;
+            rotation.Y = 0;
+            rotation.Z = 0;
+            rotation.Xyz = axis;
+            rotation.W = length;
         }
 	}
 }

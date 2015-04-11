@@ -25,6 +25,7 @@ using System.Runtime.CompilerServices;
 
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
+using System;
 
 [assembly: AssemblyTitle ("Math")]
 [assembly: AssemblyDescription ("")]
@@ -34,6 +35,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright ("wfailla")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
+[assembly: CLSCompliant(true)]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,

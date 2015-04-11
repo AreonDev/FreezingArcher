@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math", "Math\Math.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Physics", "Physics\Physics.csproj", "{2FE998BB-BA71-4264-8C6F-C118E953DF1D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssimpNet", "assimp\AssimpNet\AssimpNet.csproj", "{3415FF29-C0BE-44FC-AD34-94796118E690}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssimpNet.Interop.Generator", "assimp\AssimpNet.Interop.Generator\AssimpNet.Interop.Generator.csproj", "{EA4EF0BE-B8A9-4149-8B5A-7E353AD628C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -31,6 +35,14 @@ Global
 		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.Release|x86.Build.0 = Release|Any CPU
 		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.ReleaseWindows|x86.ActiveCfg = Release|Any CPU
 		{2FE998BB-BA71-4264-8C6F-C118E953DF1D}.ReleaseWindows|x86.Build.0 = Release|Any CPU
+		{3415FF29-C0BE-44FC-AD34-94796118E690}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3415FF29-C0BE-44FC-AD34-94796118E690}.Debug|x86.Build.0 = Debug|Any CPU
+		{3415FF29-C0BE-44FC-AD34-94796118E690}.DebugWindows|x86.ActiveCfg = DebugWindows|Any CPU
+		{3415FF29-C0BE-44FC-AD34-94796118E690}.DebugWindows|x86.Build.0 = DebugWindows|Any CPU
+		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|x86.ActiveCfg = Release|Any CPU
+		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|x86.Build.0 = Release|Any CPU
+		{3415FF29-C0BE-44FC-AD34-94796118E690}.ReleaseWindows|x86.ActiveCfg = ReleaseWindows|Any CPU
+		{3415FF29-C0BE-44FC-AD34-94796118E690}.ReleaseWindows|x86.Build.0 = ReleaseWindows|Any CPU
 		{6EA025BA-DB6F-40AA-B970-069A104D2659}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{6EA025BA-DB6F-40AA-B970-069A104D2659}.Debug|x86.Build.0 = Debug|Any CPU
 		{6EA025BA-DB6F-40AA-B970-069A104D2659}.DebugWindows|x86.ActiveCfg = Debug|Any CPU
@@ -63,6 +75,10 @@ Global
 		{E430674D-98AB-474A-BC42-A6DDE78623C7}.Release|x86.Build.0 = Release|x86
 		{E430674D-98AB-474A-BC42-A6DDE78623C7}.ReleaseWindows|x86.ActiveCfg = ReleaseWindows|x86
 		{E430674D-98AB-474A-BC42-A6DDE78623C7}.ReleaseWindows|x86.Build.0 = ReleaseWindows|x86
+		{EA4EF0BE-B8A9-4149-8B5A-7E353AD628C0}.Debug|x86.ActiveCfg = Net20-Debug|Any CPU
+		{EA4EF0BE-B8A9-4149-8B5A-7E353AD628C0}.DebugWindows|x86.ActiveCfg = Net20-Debug|Any CPU
+		{EA4EF0BE-B8A9-4149-8B5A-7E353AD628C0}.Release|x86.ActiveCfg = Net20-Release|Any CPU
+		{EA4EF0BE-B8A9-4149-8B5A-7E353AD628C0}.ReleaseWindows|x86.ActiveCfg = Net20-Release|Any CPU
 		{F2D91778-AD1F-4433-A451-2016B873064B}.Debug|x86.ActiveCfg = Debug|x86
 		{F2D91778-AD1F-4433-A451-2016B873064B}.Debug|x86.Build.0 = Debug|x86
 		{F2D91778-AD1F-4433-A451-2016B873064B}.DebugWindows|x86.ActiveCfg = Debug|x86

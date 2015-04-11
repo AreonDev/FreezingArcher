@@ -375,62 +375,7 @@ namespace FreezingArcher.Math {
             result.Row2.Z = tZZ + cos;
             result.Row2.W = 0;
             result.Row3 = Vector4.UnitW;
-        }
-
-		/// <summary>
-		/// Build a rotation matrix from the specified axis/angle rotation.
-		/// </summary>
-		/// <param name="axis">The axis to rotate about.</param>
-		/// <param name="angle">Angle in radians to rotate counter-clockwise (looking in the direction of the given axis).</param>
-		/// <param name="result">A matrix instance.</param>
-		public static void CreateFromAxisAngle(Vector3 axis, float angle, out Matrix result) {
-			// normalize and create a local copy of the vector.
-			axis.Normalize();
-			float axisX = axis.X, axisY = axis.Y, axisZ = axis.Z;
-
-			// calculate angles
-			float cos = (float)System.Math.Cos(-angle);
-			float sin = (float)System.Math.Sin(-angle);
-			float t = 1.0f - cos;
-
-			// do the conversion math once
-			float tXX = t * axisX * axisX,
-			tXY = t * axisX * axisY,
-			tXZ = t * axisX * axisZ,
-			tYY = t * axisY * axisY,
-			tYZ = t * axisY * axisZ,
-			tZZ = t * axisZ * axisZ;
-
-			float sinX = sin * axisX,
-			sinY = sin * axisY,
-			sinZ = sin * axisZ;
-
-			result.Row0.X = tXX + cos;
-			result.Row0.Y = tXY - sinZ;
-			result.Row0.Z = tXZ + sinY;
-			result.Row0.W = 0;
-			result.Row1.X = tXY + sinZ;
-			result.Row1.Y = tYY + cos;
-			result.Row1.Z = tYZ - sinX;
-			result.Row1.W = 0;
-			result.Row2.X = tXZ - sinY;
-			result.Row2.Y = tYZ + sinX;
-			result.Row2.Z = tZZ + cos;
-			result.Row2.W = 0;
-			result.Row3 = Vector4.UnitW;
-		}
-		
-		/// <summary>
-		/// Build a rotation matrix from the specified axis/angle rotation.
-		/// </summary>
-		/// <param name="axis">The axis to rotate about.</param>
-		/// <param name="angle">Angle in radians to rotate counter-clockwise (looking in the direction of the given axis).</param>
-		/// <returns>A matrix instance.</returns>
-		public static Matrix CreateFromAxisAngle(Vector3 axis, float angle) {
-			Matrix result;
-			CreateFromAxisAngle(axis, angle, out result);
-			return result;
-		}
+        }		
 		
 		#endregion
 
@@ -445,7 +390,7 @@ namespace FreezingArcher.Math {
 			Vector3 axis;
 			float angle;
 			q.ToAxisAngle(out axis, out angle);
-			CreateFromAxisAngle(axis, angle, out result);
+			CreateFromAxisAngle(ref axis, angle, out result);
 		}
 
 		/// <summary>

@@ -3,7 +3,7 @@
 //
 //  Author:
 //       Martin Koppehel <martin.koppehel@st.ovgu.de>
-//       Willy Failla <>
+//       Willy Failla <wfailla@wfailla.de>
 //
 //  Copyright (c) 2015 Fin Christensen
 //

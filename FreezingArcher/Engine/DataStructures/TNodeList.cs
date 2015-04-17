@@ -35,7 +35,7 @@ namespace FreezingArcher.DataStructures
         public Node<T> FindByValue (T value)
         {
             foreach (Node<T> node in Items)
-                if (node.Value == value)
+                if (node.Value.Equals(value))
                     return node;
 
             return null;

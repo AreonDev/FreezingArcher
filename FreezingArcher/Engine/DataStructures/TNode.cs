@@ -25,7 +25,7 @@ namespace FreezingArcher.DataStructures
 {
     public class Node<T>
     {
-        public Node (T data = null, NodeList<T> neighbors = null)
+        public Node (T data = default (T), NodeList<T> neighbors = default (NodeList<T>))
         {
             Value = data;
             Neighbors = neighbors;

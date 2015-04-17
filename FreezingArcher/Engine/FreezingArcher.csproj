@@ -194,6 +194,10 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\InputMessage.cs" />
     <Compile Include="Input\KeyRegistry.cs" />
     <Compile Include="Core\PeriodicTask.cs" />
+    <Compile Include="DataStructures\TNode.cs" />
+    <Compile Include="DataStructures\TNodeList.cs" />
+    <Compile Include="DataStructures\TBinaryTreeNode.cs" />
+    <Compile Include="DataStructures\TBinaryTree.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -255,5 +259,8 @@ echo Successfully finished!</PostBuildEvent>
       <Project>{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}</Project>
       <Name>Pencil.Gaming</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataStructures\" />
   </ItemGroup>
 </Project>

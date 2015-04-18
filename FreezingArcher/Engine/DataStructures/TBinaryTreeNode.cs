@@ -23,11 +23,24 @@
 
 namespace FreezingArcher.DataStructures
 {
+    /// <summary>
+    /// Binary tree node.
+    /// </summary>
     public class BinaryTreeNode<T> : Node<T>
     {
+        /// <summary>
+        /// Initializes a new instance of this class.
+        /// </summary>
+        /// <param name="data">Data.</param>
         public BinaryTreeNode (T data) : base (data, null)
         {}
 
+        /// <summary>
+        /// Initializes a new instance of this class.
+        /// </summary>
+        /// <param name="data">Data.</param>
+        /// <param name="left">Left.</param>
+        /// <param name="right">Right.</param>
         public BinaryTreeNode (T data, BinaryTreeNode<T> left, BinaryTreeNode<T> right)
         {
             Value = data;
@@ -38,6 +51,10 @@ namespace FreezingArcher.DataStructures
             Neighbors = children;
         }
 
+        /// <summary>
+        /// Gets or sets the left node.
+        /// </summary>
+        /// <value>The left.</value>
         public BinaryTreeNode<T> Left
         {
             get
@@ -51,6 +68,10 @@ namespace FreezingArcher.DataStructures
             }
         }
 
+        /// <summary>
+        /// Gets or sets the right node.
+        /// </summary>
+        /// <value>The right.</value>
         public BinaryTreeNode<T> Right
         {
             get

@@ -27,6 +27,7 @@ using FreezingArcher.Output;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
 using System;
+using System.Diagnostics;
 
 namespace FreezingArcher.Input
 {
@@ -61,6 +62,7 @@ namespace FreezingArcher.Input
             MouseScroll = Vector2.Zero;
             OldMousePosition = Vector2.Zero;
             KeyRegistry.Instance = new KeyRegistry ();
+            Stopwatch = new Stopwatch();
             messageManager += this;
         }
 
@@ -88,6 +90,11 @@ namespace FreezingArcher.Input
         /// The old mouse position.
         /// </summary>
         protected Vector2 OldMousePosition;
+
+        /// <summary>
+        /// The stopwatch for input update.
+        /// </summary>
+        protected Stopwatch Stopwatch;
 
         /// <summary>
         /// Handles the keyboard input.
@@ -138,35 +145,19 @@ namespace FreezingArcher.Input
         }
 
         /// <summary>
-        /// Get the current delta time.
-        /// </summary>
-        protected Func<double> GetDeltaTime;
-
-        /// <summary>
-        /// Sets the delta time func.
-        /// </summary>
-        /// <value>The delta time func.</value>
-        public Func<double> DeltaTimeFunc
-        {
-            set
-            {
-                GetDeltaTime = value ?? (() => 0);
-            }
-        }
-
-        /// <summary>
         /// Generates the input message.
         /// </summary>
         public void GenerateInputMessage ()
         {
             InputMessage id =
-                KeyRegistry.Instance.GenerateInputMessage (Keys, Mouse, MouseMovement, MouseScroll, GetDeltaTime ());
+                KeyRegistry.Instance.GenerateInputMessage (Keys, Mouse, MouseMovement, MouseScroll, Stopwatch.Elapsed);
             Keys.Clear ();
             Mouse.Clear ();
             MouseMovement = Vector2.Zero;
             MouseScroll = Vector2.Zero;
             if (MessageCreated != null)
                 MessageCreated (id);
+            Stopwatch.Start();
         }
     }
 }

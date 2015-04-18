@@ -95,7 +95,9 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Package>xbuild12</Package>
+    </Reference>
     <Reference Include="NVorbis">
       <HintPath>lib\NVorbis.dll</HintPath>
     </Reference>
@@ -121,7 +123,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\Game.cs" />
     <Compile Include="Content\Level.cs" />
     <Compile Include="Content\LevelManager.cs" />
-    <Compile Include="Core\Interfaces\IUpdate.cs" />
     <Compile Include="Messaging\MessageEvent.cs" />
     <Compile Include="Messaging\MessageID.cs" />
     <Compile Include="Messaging\MessageManager.cs" />
@@ -196,6 +197,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="DataStructures\TNodeList.cs" />
     <Compile Include="DataStructures\TBinaryTreeNode.cs" />
     <Compile Include="DataStructures\TBinaryTree.cs" />
+    <Compile Include="Messaging\UpdateMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

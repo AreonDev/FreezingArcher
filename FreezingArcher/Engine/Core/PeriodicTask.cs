@@ -118,6 +118,7 @@ namespace FreezingArcher.Core
                 Logger.Log.AddLogEntry (LogLevel.Debug, "PeriodicTask", "Task took {0} ticks to execute.",
                     sw.ElapsedTicks);
                 #endif
+
                 if (toSleep > 0)
                     Thread.Sleep (toSleep);
                 sw.Restart ();

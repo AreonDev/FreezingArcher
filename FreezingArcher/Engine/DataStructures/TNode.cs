@@ -23,16 +23,32 @@
 
 namespace FreezingArcher.DataStructures
 {
+    /// <summary>
+    /// A node for tree datastructures.
+    /// </summary>
     public class Node<T>
     {
+        /// <summary>
+        /// Initializes a new instance of this class.
+        /// </summary>
+        /// <param name="data">Data.</param>
+        /// <param name="neighbors">Neighbors.</param>
         public Node (T data = default (T), NodeList<T> neighbors = default (NodeList<T>))
         {
             Value = data;
             Neighbors = neighbors;
         }
 
+        /// <summary>
+        /// Gets or sets the value of this node.
+        /// </summary>
+        /// <value>The value.</value>
         public T Value { get; set; }
 
+        /// <summary>
+        /// Gets or sets the neighbors of this node.
+        /// </summary>
+        /// <value>The neighbors.</value>
         protected NodeList<T> Neighbors { get; set; }
     }
 }

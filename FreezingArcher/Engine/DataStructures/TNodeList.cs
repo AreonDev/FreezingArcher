@@ -24,14 +24,26 @@ using System.Collections.ObjectModel;
 
 namespace FreezingArcher.DataStructures
 {
+    /// <summary>
+    /// Node list.
+    /// </summary>
     public class NodeList<T> : Collection<Node<T>>
     {
+        /// <summary>
+        /// Initializes a new instance of this class.
+        /// </summary>
+        /// <param name="initialSize">Initial size.</param>
         public NodeList (int initialSize = 0)
         {
             for (int i = 0; i < initialSize; i++)
                 Items.Add (default (Node<T>));
         }
 
+        /// <summary>
+        /// Finds a node by value.
+        /// </summary>
+        /// <returns>The by value.</returns>
+        /// <param name="value">Value.</param>
         public Node<T> FindByValue (T value)
         {
             foreach (Node<T> node in Items)

@@ -20,7 +20,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-#define DEBUG_PERFORMANCE
+//#define DEBUG_PERFORMANCE
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -74,7 +74,7 @@ namespace FreezingArcher.Messaging
         /// <param name="mouseScroll">Mouse scroll.</param>
         /// <param name="deltaTime">Delta time.</param>
         public InputMessage (List<KeyboardInput> keys, List<MouseInput> mouse,
-            Vector2 mouseMovement, Vector2 mouseScroll, double deltaTime)
+            Vector2 mouseMovement, Vector2 mouseScroll, TimeSpan deltaTime)
         {
             Keys = keys;
             Mouse = mouse;
@@ -117,6 +117,17 @@ namespace FreezingArcher.Messaging
         /// Gets or sets the delta time.
         /// </summary>
         /// <value>The delta time.</value>
-        public double DeltaTime { get; protected set; }
+        public TimeSpan DeltaTime { get; protected set; }
+
+        /// <summary>
+        /// Determines whether a key is pressed.
+        /// </summary>
+        /// <returns><c>true</c> key is pressed; otherwise, <c>false</c>.</returns>
+        /// <param name="action">The action name associated with the key.</param>
+        public bool IsKeyPressed (string action)
+        {
+            var key = Keys.Find (k => k.KeyAction == action);
+            return key.Action == Pencil.Gaming.KeyAction.Press || key.Action == Pencil.Gaming.KeyAction.Repeat;
+        }
     }
 }

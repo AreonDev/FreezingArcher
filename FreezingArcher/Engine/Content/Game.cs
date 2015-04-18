@@ -31,7 +31,7 @@ namespace FreezingArcher.Content
     /// <summary>
     /// Game.
     /// </summary>
-    public class Game : IResource, IManageable, IUpdate
+    public class Game : IResource, IManageable
     {
         /// <summary>
         /// The name of the class.
@@ -101,19 +101,6 @@ namespace FreezingArcher.Content
         /// For example after init or when new resources needs to be loaded.
         /// </summary>
         public event Handler NeedsLoad;
-
-        #endregion
-
-        #region IUpdate implementation
-
-        /// <summary>
-        /// This update is called before every frame draw inside a gl context.
-        /// </summary>
-        /// <param name="deltaTime">Time delta.</param>
-        public void FrameSyncedUpdate (double deltaTime)
-        {
-            LevelManager.FrameSyncedUpdate (deltaTime);
-        }
 
         #endregion
 

@@ -22,13 +22,23 @@
 //
 namespace FreezingArcher.DataStructures
 {
+    /// <summary>
+    /// Binary tree.
+    /// </summary>
     public class BinaryTree<T>
     {
+        /// <summary>
+        /// Clear this instance.
+        /// </summary>
         public virtual void Clear ()
         {
             Root = null;
         }
 
+        /// <summary>
+        /// Gets or sets the root of the tree.
+        /// </summary>
+        /// <value>The root.</value>
         public BinaryTreeNode<T> Root { get; set; }
     }
 }

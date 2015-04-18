@@ -38,6 +38,7 @@ using Pencil.Gaming.Audio;
 using Pencil.Gaming.Graphics;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
 using FreezingArcher.Audio;
+using System.Diagnostics;
 
 namespace FreezingArcher.Core
 {
@@ -331,9 +332,16 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// The periodic task.
+        /// The periodic update task.
         /// </summary>
-        protected PeriodicTask PeriodicTask;
+        protected PeriodicTask PeriodicUpdateTask;
+
+        /// <summary>
+        /// The periodic input task.
+        /// </summary>
+        protected PeriodicTask PeriodicInputTask;
+
+        private Stopwatch updateStopwatch;
 
         /// <summary>
         /// Run this instance.
@@ -355,10 +363,9 @@ namespace FreezingArcher.Core
             AudioManager.GetSource ("test").Loop = true;
             AudioManager.PlaySource ("test");
 
-            double deltaTime = 0;
-            InputManager.DeltaTimeFunc = () => deltaTime;
-
-            PeriodicTask.Start ();
+            updateStopwatch.Start ();
+            PeriodicUpdateTask.Start ();
+            PeriodicInputTask.Start ();
 
             while (!Window.ShouldClose ())
             {
@@ -369,12 +376,8 @@ namespace FreezingArcher.Core
                     Loader.ExecJobsSequential ();
                     LoadAgain = false;
                 }
-
-                deltaTime = Window.GetDeltaTime ();
                 
                 Renderer.RendererCore.Clear (Color4.DodgerBlue);
-
-                Game.FrameSyncedUpdate (deltaTime);
                 Renderer.RendererCore.Draw ();
 
                 Window.SwapBuffers ();
@@ -430,7 +433,12 @@ namespace FreezingArcher.Core
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing application '{0}' ...", Name);
             InputManager = new InputManager (MessageManager);
-            PeriodicTask = new PeriodicTask (32, InputManager.GenerateInputMessage);
+            updateStopwatch = new Stopwatch();
+            PeriodicUpdateTask = new PeriodicTask (32, () => {
+                MessageCreated(new UpdateMessage(updateStopwatch.Elapsed));
+                updateStopwatch.Restart();
+            });
+            PeriodicInputTask = new PeriodicTask (16, InputManager.GenerateInputMessage);
             AudioManager.LoadSound ("test2", "Audio/test2.ogg");
             AudioManager.LoadSound ("test", "Audio/test.wav");
             AudioManager.CreateSource ("test", "test", "test2");
@@ -496,7 +504,9 @@ namespace FreezingArcher.Core
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying application '{0}' ...", Name);
             Loaded = false;
-            PeriodicTask.Stop ();
+            PeriodicInputTask.Stop ();
+            PeriodicUpdateTask.Stop ();
+            updateStopwatch.Stop ();
             MessageManager.StopProcessing ();
 
             if (!Cli)

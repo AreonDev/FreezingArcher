@@ -39,6 +39,10 @@ namespace FreezingArcher.Messaging
         /// </summary>
         Input,
         /// <summary>
+        /// Occurs when an update needs to be processed.
+        /// </summary>
+        Update,
+        /// <summary>
         /// Occurs when a config file value is set.
         /// </summary>
         ConfigFileValueSet = 10,

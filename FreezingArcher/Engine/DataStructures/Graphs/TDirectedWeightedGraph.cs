@@ -43,8 +43,15 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         public void Init ()
         {
-            InternalEdges = new List<DirectedEdge<TData, TWeight>>();
-            InternalNodes = new List<DirectedNode<TData, TWeight>>();
+            if (InternalEdges == null)
+                InternalEdges = new List<DirectedEdge<TData, TWeight>>();
+            else
+                InternalEdges.Clear();
+
+            if (InternalNodes == null)
+                InternalNodes = new List<DirectedNode<TData, TWeight>>();
+            else
+                InternalEdges.Clear();
         }
 
         /// <summary>

@@ -23,7 +23,6 @@
 using System;
 using FreezingArcher.Core;
 using FreezingArcher.DataStructures.Graphs;
-using FreezingArcher.Output;
 
 namespace FreezingArcher.Game
 {

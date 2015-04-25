@@ -36,7 +36,7 @@ namespace FreezingArcher.Game
         public static void Main (string[] args)
         {
             Application.Create ("Freezing Archer", args);
-	    GraphTest.Test();
+	    //GraphTest.Test();
         }
     }
 }

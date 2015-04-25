@@ -199,8 +199,10 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="DataStructures\TBinaryTree.cs" />
     <Compile Include="Messaging\UpdateMessage.cs" />
     <Compile Include="DataStructures\Graphs\TNode.cs" />
-    <Compile Include="DataStructures\Graphs\TEdge.cs" />
     <Compile Include="DataStructures\Graphs\TDirectedWeightedGraph.cs" />
+    <Compile Include="DataStructures\Graphs\TDirectedNode.cs" />
+    <Compile Include="DataStructures\Graphs\TDirectedEdge.cs" />
+    <Compile Include="DataStructures\Graphs\TEdge.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

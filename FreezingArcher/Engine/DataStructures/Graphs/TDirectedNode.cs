@@ -1,5 +1,5 @@
 ﻿//
-//  TNode.cs
+//  TDirectedNode.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -27,10 +27,10 @@ using System.Collections.Generic;
 namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
-    /// Node for use in graphs.
+    /// Node for use in directed graphs.
     /// </summary>
-    [TypeIdentifier (0)]
-    public class Node<TData, TWeight> : FAObject where TWeight : IComparable
+    [TypeIdentifier (3)]
+    public class DirectedNode<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>
         /// Initialize this node with data.
@@ -40,10 +40,10 @@ namespace FreezingArcher.DataStructures.Graphs
         {
             Data = data;
 
-            if (InternalEdges == null)
-                InternalEdges = new List<Edge<TData, TWeight>>();
+            if (InternalOutgoingEdges == null)
+                InternalOutgoingEdges = new List<DirectedEdge<TData, TWeight>>();
             else
-                InternalEdges.Clear();
+                InternalOutgoingEdges.Clear();
         }
 
         /// <summary>
@@ -53,20 +53,37 @@ namespace FreezingArcher.DataStructures.Graphs
         public TData Data { get; set; }
 
         /// <summary>
-        /// Gets the edges.
+        /// Gets the outgoing edges.
         /// </summary>
         /// <value>The edges.</value>
-        public IReadOnlyCollection<Edge<TData, TWeight>> Edges
+        public IReadOnlyCollection<DirectedEdge<TData, TWeight>> OutgoingEdges
         {
             get
             {
-                return InternalEdges;
+                return InternalOutgoingEdges;
             }
         }
 
         /// <summary>
-        /// The internal edges.
+        /// The internal outgoing edges.
         /// </summary>
-        internal List<Edge<TData, TWeight>> InternalEdges;
+        internal List<DirectedEdge<TData, TWeight>> InternalOutgoingEdges;
+
+        /// <summary>
+        /// Gets the incoming edges.
+        /// </summary>
+        /// <value>The incoming edges.</value>
+        public IReadOnlyCollection<DirectedEdge<TData, TWeight>> IncomingEdges
+        {
+            get
+            {
+                return InternalIncomingEdges;
+            }
+        }
+
+        /// <summary>
+        /// The internal incoming edges.
+        /// </summary>
+        internal List<DirectedEdge<TData, TWeight>> InternalIncomingEdges;
     }
 }

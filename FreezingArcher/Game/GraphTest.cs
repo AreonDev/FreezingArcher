@@ -27,10 +27,19 @@ using FreezingArcher.Output;
 
 namespace FreezingArcher.Game
 {
+    /// <summary>
+    /// Graph tests.
+    /// </summary>
     public static class GraphTest
     {
+	/// <summary>
+	/// The name of the module.
+	/// </summary>
 	public static readonly string ModuleName = "GraphTest";
 
+	/// <summary>
+	/// Test the graphs.
+	/// </summary>
 	public static void Test()
 	{
 	    var objectManager = new ObjectManager();

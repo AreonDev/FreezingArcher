@@ -31,7 +31,10 @@ namespace FreezingArcher.Core
     /// </summary>
     public abstract class FAObject
     {
-        private ObjectManager objectManager;
+        /// <summary>
+        /// The object manager.
+        /// </summary>
+        protected ObjectManager ObjectManager;
         // Game-unique identifier for objects
         internal ulong ID {get; private set; }
         internal bool Destroyed {get; private set;}
@@ -39,7 +42,7 @@ namespace FreezingArcher.Core
         internal void Init(ObjectManager manager, uint id)
         {
             this.ID = ((ulong)this.GetAttribute<TypeIdentifierAttribute>(false).TypeID << 48) | (ulong)id;
-            this.objectManager = manager;
+            this.ObjectManager = manager;
         }
 
         /// <summary>
@@ -56,7 +59,7 @@ namespace FreezingArcher.Core
         public virtual void Destroy()
         {
             Destroyed = true;
-            objectManager.PrepareForRecycling(this);
+            ObjectManager.PrepareForRecycling(this);
         }
 
         /// <summary>

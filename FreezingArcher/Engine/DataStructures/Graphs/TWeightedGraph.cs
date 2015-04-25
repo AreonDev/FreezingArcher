@@ -1,5 +1,5 @@
 ﻿//
-//  TDirectedWeightedGraph.cs
+//  TWeightedGraph.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -28,15 +28,15 @@ using FreezingArcher.Output;
 namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
-    /// Directed weighted graph.
+    /// Weighted graph.
     /// </summary>
     [TypeIdentifier (2)]
-    public class DirectedWeightedGraph<TData, TWeight> : FAObject where TWeight : IComparable
+    public class WeightedGraph<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>
         /// The name of the module.
         /// </summary>
-        public const string ModuleName = "DirectedWeightedGraph";
+        public const string ModuleName = "WeightedGraph";
 
         /// <summary>
         /// Initialize the graph.
@@ -44,12 +44,12 @@ namespace FreezingArcher.DataStructures.Graphs
         public void Init ()
         {
             if (InternalEdges == null)
-                InternalEdges = new List<DirectedEdge<TData, TWeight>>();
+                InternalEdges = new List<Edge<TData, TWeight>>();
             else
                 InternalEdges.Clear();
 
             if (InternalNodes == null)
-                InternalNodes = new List<DirectedNode<TData, TWeight>>();
+                InternalNodes = new List<Node<TData, TWeight>>();
             else
                 InternalEdges.Clear();
         }
@@ -57,18 +57,18 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <summary>
         /// The real edges are stored here for internal use.
         /// </summary>
-        protected List<DirectedEdge<TData, TWeight>> InternalEdges;
+        protected List<Edge<TData, TWeight>> InternalEdges;
 
         /// <summary>
         /// The real nodes are stored here for internal use.
         /// </summary>
-        protected List<DirectedNode<TData, TWeight>> InternalNodes;
+        protected List<Node<TData, TWeight>> InternalNodes;
 
         /// <summary>
         /// Get a read only collection of all registered edges.
         /// </summary>
         /// <value>The edges.</value>
-        public IReadOnlyCollection<DirectedEdge<TData, TWeight>> Edges
+        public IReadOnlyCollection<Edge<TData, TWeight>> Edges
         {
             get
             {
@@ -80,7 +80,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Get a read only collection of all registered nodes.
         /// </summary>
         /// <value>The nodes.</value>
-        public IReadOnlyCollection<DirectedNode<TData, TWeight>> Nodes
+        public IReadOnlyCollection<Node<TData, TWeight>> Nodes
         {
             get
             {
@@ -105,23 +105,20 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if node was added, <c>false</c> otherwise.</returns>
         /// <param name="data">The data the node should hold.</param>
-        /// <param name="outgoingEdgeNodes">Collection of outgoing edges to be created. The pair consists of a
-        /// destination node and an edge weight.</param>
-        /// <param name="incomingEdgeNodes">Collection of incoming edges to be created. The pair consists of a
-        /// source node and an edge weight.</param>
-        public virtual bool AddNode (TData data, ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> outgoingEdgeNodes,
-            ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> incomingEdgeNodes)
+        /// <param name="edgeNodes">Collection of edges to be created. The pair consists of a
+        /// neighbour node and an edge weight.</param>
+        public virtual bool AddNode (TData data, ICollection<Pair<Node<TData, TWeight>, TWeight>> edgeNodes)
         {
             // create new node with object recycler
-            DirectedNode<TData, TWeight> node = ObjectManager.CreateOrRecycle<DirectedNode<TData, TWeight>> (3);
+            Node<TData, TWeight> node = ObjectManager.CreateOrRecycle<Node<TData, TWeight>> (3);
 
             // initialize new node with data
             node.Init (data);
 
-            // do we have outgoing edges?
-            if (outgoingEdgeNodes != null && outgoingEdgeNodes.Count > 0)
+            // do we have edges?
+            if (edgeNodes != null && edgeNodes.Count > 0)
             {
-                foreach (var edgeNode in outgoingEdgeNodes)
+                foreach (var edgeNode in edgeNodes)
                 {
                     // does destination node exist? If not adding this node to the graph will fail
                     if (edgeNode.A != null)
@@ -138,27 +135,6 @@ namespace FreezingArcher.DataStructures.Graphs
                 }
             }
 
-            // do we have incoming edges?
-            if (incomingEdgeNodes != null && incomingEdgeNodes.Count > 0)
-            {
-                foreach (var edgeNode in incomingEdgeNodes)
-                {
-                    // does source node exist? If not adding this node to the graph will fail
-                    if (edgeNode.A != null)
-                    {
-                        Logger.Log.AddLogEntry (LogLevel.Severe, ModuleName,
-                            "Failed to create edge from nonexistent node {0}", edgeNode.A);
-
-                        // failure
-                        return false;
-                    }
-
-
-                    // add new edge
-                    AddEdge(edgeNode.A, node, edgeNode.B);
-                }
-            }
-
             // add new node to internal node list
             InternalNodes.Add (node);
 
@@ -170,7 +146,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if node was removed, <c>false</c> otherwise.</returns>
         /// <param name="node">Node identifier.</param>
-        public virtual bool RemoveNode (DirectedNode<TData, TWeight> node)
+        public virtual bool RemoveNode (Node<TData, TWeight> node)
         {
             // print error if remove failed
             if (InternalNodes.Remove(node))
@@ -179,19 +155,15 @@ namespace FreezingArcher.DataStructures.Graphs
                 return false;
             }
 
-            // remove all incoming edges associated with this node
-            foreach (var edge in node.IncomingEdges)
+            // remove all edges associated with this node
+            foreach (var edge in node.Edges)
             {
-                edge.SourceNode.InternalOutgoingEdges.Remove (edge);
-                InternalEdges.Remove (edge);
-                edge.Destroy();
-            }
+                if (edge.FirstNode == node)
+                    edge.SecondNode.InternalEdges.Remove(edge);
+                else
+                    edge.FirstNode.InternalEdges.Remove(edge);
 
-            // remove all outgoing edges associated with this node
-            foreach (var edge in node.OutgoingEdges)
-            {
-                edge.DestinationNode.InternalIncomingEdges.Remove(edge);
-                InternalEdges.Remove(edge);
+                InternalEdges.Remove (edge);
                 edge.Destroy();
             }
 
@@ -205,31 +177,30 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Adds an edge from a given source node to a given destination node with a given edge weight.
         /// </summary>
         /// <returns><c>true</c>, if edge was added, <c>false</c> otherwise.</returns>
-        /// <param name="sourceNode">The source node.</param>
-        /// <param name="destinationNode">The destination node.</param>
+        /// <param name="firstNode">The first node.</param>
+        /// <param name="secondNode">The second node.</param>
         /// <param name="weight">The edge weight.</param>
-        public virtual bool AddEdge (DirectedNode<TData, TWeight> sourceNode, DirectedNode<TData, TWeight> destinationNode,
-            TWeight weight)
+        public virtual bool AddEdge (Node<TData, TWeight> firstNode, Node<TData, TWeight> secondNode, TWeight weight)
         {
             // fail if one of the nodes is null
-            if (sourceNode == null || destinationNode == null)
+            if (firstNode == null || secondNode == null)
             {
                 Logger.Log.AddLogEntry(LogLevel.Severe, ModuleName, "Cannot create edge on null node!");
                 return false;
             }
 
             // create new edge with object recycler
-            DirectedEdge<TData, TWeight> edge = ObjectManager.CreateOrRecycle<DirectedEdge<TData, TWeight>>(4);
+            Edge<TData, TWeight> edge = ObjectManager.CreateOrRecycle<Edge<TData, TWeight>>(4);
 
             // initialize edge with data
-            edge.Init(weight, sourceNode, destinationNode);
+            edge.Init(weight, firstNode, secondNode);
 
             // add created edge to source and destination nodes
-            sourceNode.InternalOutgoingEdges.Add (edge);
-            destinationNode.InternalIncomingEdges.Add (edge);
+            firstNode.InternalEdges.Add(edge);
+            secondNode.InternalEdges.Add(edge);
 
             // add created node to graph
-            InternalEdges.Add (edge);
+            InternalEdges.Add(edge);
 
             // everything ok
             return true;
@@ -240,7 +211,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if edge was removed, <c>false</c> otherwise.</returns>
         /// <param name="edge">The edge.</param>
-        public virtual bool RemoveEdge (DirectedEdge<TData, TWeight> edge)
+        public virtual bool RemoveEdge (Edge<TData, TWeight> edge)
         {
             // fail if edge is null
             if (edge == null)
@@ -250,7 +221,7 @@ namespace FreezingArcher.DataStructures.Graphs
             }
 
             // if source or destination node are null we do really have a problem
-            if (edge.SourceNode == null || edge.DestinationNode == null)
+            if (edge.FirstNode == null || edge.SecondNode == null)
             {
                 Logger.Log.AddLogEntry (LogLevel.Severe, ModuleName,
                     "Detected an edge with referenced nodes that do not exist!" +
@@ -259,8 +230,8 @@ namespace FreezingArcher.DataStructures.Graphs
             }
 
             // remove edge from source and destination nodes
-            edge.SourceNode.InternalOutgoingEdges.Remove(edge);
-            edge.DestinationNode.InternalIncomingEdges.Remove(edge);
+            edge.FirstNode.InternalEdges.Remove(edge);
+            edge.SecondNode.InternalEdges.Remove(edge);
 
             // remove edge from graph
             InternalEdges.Remove(edge);

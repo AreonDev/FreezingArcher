@@ -109,8 +109,9 @@ namespace FreezingArcher.DataStructures.Graphs
         /// destination node and an edge weight.</param>
         /// <param name="incomingEdgeNodes">Collection of incoming edges to be created. The pair consists of a
         /// source node and an edge weight.</param>
-        public virtual bool AddNode (TData data, ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> outgoingEdgeNodes,
-            ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> incomingEdgeNodes)
+        public virtual DirectedNode<TData, TWeight> AddNode (TData data,
+            ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> outgoingEdgeNodes = null,
+            ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> incomingEdgeNodes = null)
         {
             // create new node with object recycler
             DirectedNode<TData, TWeight> node = ObjectManager.CreateOrRecycle<DirectedNode<TData, TWeight>> (3);
@@ -130,11 +131,17 @@ namespace FreezingArcher.DataStructures.Graphs
                             "Failed to create edge to nonexistent node {0}, skipping...", edgeNode.A);
 
                         // failure
-                        return false;
+                        return null;
                     }
 
                     // add new edge
-                    AddEdge(node, edgeNode.A, edgeNode.B);
+                    var edge = AddEdge(node, edgeNode.A, edgeNode.B);
+
+                    if (edge == null)
+                    {
+                        Logger.Log.AddLogEntry(LogLevel.Severe, ModuleName, "Failed to create edge!");
+                        return null;
+                    }
                 }
             }
 
@@ -150,19 +157,25 @@ namespace FreezingArcher.DataStructures.Graphs
                             "Failed to create edge from nonexistent node {0}", edgeNode.A);
 
                         // failure
-                        return false;
+                        return null;
                     }
 
 
                     // add new edge
-                    AddEdge(edgeNode.A, node, edgeNode.B);
+                    var edge = AddEdge(edgeNode.A, node, edgeNode.B);
+
+                    if (edge == null)
+                    {
+                        Logger.Log.AddLogEntry(LogLevel.Severe, ModuleName, "Failed to create edge!");
+                        return null;
+                    }
                 }
             }
 
             // add new node to internal node list
             InternalNodes.Add (node);
 
-            return true;
+            return node;
         }
 
         /// <summary>
@@ -208,14 +221,14 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <param name="sourceNode">The source node.</param>
         /// <param name="destinationNode">The destination node.</param>
         /// <param name="weight">The edge weight.</param>
-        public virtual bool AddEdge (DirectedNode<TData, TWeight> sourceNode, DirectedNode<TData, TWeight> destinationNode,
+        public virtual DirectedEdge<TData, TWeight> AddEdge (DirectedNode<TData, TWeight> sourceNode, DirectedNode<TData, TWeight> destinationNode,
             TWeight weight)
         {
             // fail if one of the nodes is null
             if (sourceNode == null || destinationNode == null)
             {
                 Logger.Log.AddLogEntry(LogLevel.Severe, ModuleName, "Cannot create edge on null node!");
-                return false;
+                return null;
             }
 
             // create new edge with object recycler
@@ -232,7 +245,7 @@ namespace FreezingArcher.DataStructures.Graphs
             InternalEdges.Add (edge);
 
             // everything ok
-            return true;
+            return edge;
         }
 
         /// <summary>

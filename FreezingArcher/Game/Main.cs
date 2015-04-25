@@ -21,7 +21,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Core;
-using FreezingArcher.Localization;
 
 namespace FreezingArcher.Game
 {
@@ -37,6 +36,7 @@ namespace FreezingArcher.Game
         public static void Main (string[] args)
         {
             Application.Create ("Freezing Archer", args);
+	    GraphTest.Test();
         }
     }
 }

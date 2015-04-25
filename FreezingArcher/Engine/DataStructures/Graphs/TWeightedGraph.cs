@@ -30,7 +30,7 @@ namespace FreezingArcher.DataStructures.Graphs
     /// <summary>
     /// Weighted graph.
     /// </summary>
-    [TypeIdentifier (2)]
+    [TypeIdentifier (5)]
     public class WeightedGraph<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>
@@ -107,7 +107,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <param name="data">The data the node should hold.</param>
         /// <param name="edgeNodes">Collection of edges to be created. The pair consists of a
         /// neighbour node and an edge weight.</param>
-        public virtual bool AddNode (TData data, ICollection<Pair<Node<TData, TWeight>, TWeight>> edgeNodes)
+        public virtual bool AddNode (TData data, ICollection<Pair<Node<TData, TWeight>, TWeight>> edgeNodes = null)
         {
             // create new node with object recycler
             Node<TData, TWeight> node = ObjectManager.CreateOrRecycle<Node<TData, TWeight>> (3);

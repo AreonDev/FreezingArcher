@@ -69,6 +69,9 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         internal List<Edge<TData, TWeight>> InternalEdges;
 
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
         public override void Destroy()
         {
             Data = default(TData);

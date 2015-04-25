@@ -62,5 +62,16 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <value>The destination node.</value>
         public DirectedNode<TData, TWeight> DestinationNode { get; internal set; }
+
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
+        public override void Destroy()
+        {
+            Weight = default(TWeight);
+            SourceNode = null;
+            DestinationNode = null;
+            base.Destroy();
+        }
     }
 }

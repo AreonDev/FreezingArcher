@@ -68,5 +68,12 @@ namespace FreezingArcher.DataStructures.Graphs
         /// The internal edges.
         /// </summary>
         internal List<Edge<TData, TWeight>> InternalEdges;
+
+        public override void Destroy()
+        {
+            Data = default(TData);
+            InternalEdges.Clear();
+            base.Destroy();
+        }
     }
 }

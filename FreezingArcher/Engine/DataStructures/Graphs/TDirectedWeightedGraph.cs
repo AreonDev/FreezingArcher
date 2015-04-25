@@ -89,6 +89,18 @@ namespace FreezingArcher.DataStructures.Graphs
         }
 
         /// <summary>
+        /// Destroy this instance.
+        /// </summary>
+        public override void Destroy()
+        {
+            InternalEdges.ForEach (e => e.Destroy());
+            InternalNodes.ForEach (n => n.Destroy());
+            InternalEdges.Clear();
+            InternalNodes.Clear();
+            base.Destroy();
+        }
+
+        /// <summary>
         /// Add a node to this graph.
         /// </summary>
         /// <returns><c>true</c>, if node was added, <c>false</c> otherwise.</returns>

@@ -44,6 +44,11 @@ namespace FreezingArcher.DataStructures.Graphs
                 InternalOutgoingEdges = new List<DirectedEdge<TData, TWeight>>();
             else
                 InternalOutgoingEdges.Clear();
+
+            if (InternalIncomingEdges == null)
+                InternalIncomingEdges = new List<DirectedEdge<TData, TWeight>>();
+            else
+                InternalIncomingEdges.Clear();
         }
 
         /// <summary>
@@ -85,5 +90,16 @@ namespace FreezingArcher.DataStructures.Graphs
         /// The internal incoming edges.
         /// </summary>
         internal List<DirectedEdge<TData, TWeight>> InternalIncomingEdges;
+
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
+        public override void Destroy()
+        {
+            InternalOutgoingEdges.Clear();
+            InternalIncomingEdges.Clear();
+            Data = default(TData);
+            base.Destroy();
+        }
     }
 }

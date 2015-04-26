@@ -28,11 +28,11 @@ using System.Runtime.CompilerServices;
 using System;
 
 [assembly: AssemblyTitle ("Math")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyDescription ("Freezing Archer math library")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
-[assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("wfailla")]
+[assembly: AssemblyCompany ("AreonDev")]
+[assembly: AssemblyProduct ("FreezingArcher")]
+[assembly: AssemblyCopyright ("David Bögelsack, Fin Christensen, Willy Failla, Martin Koppehel")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 [assembly: CLSCompliant(true)]

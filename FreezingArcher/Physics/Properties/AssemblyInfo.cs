@@ -5,11 +5,11 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle ("Physics")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyDescription ("Henge3D Physics engine for Freezing Archer 3D game framework")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("GEWI Europe GmbH")]
-[assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("Martin Koppehel")]
+[assembly: AssemblyCompany ("AreonDev")]
+[assembly: AssemblyProduct ("FreezingArcher")]
+[assembly: AssemblyCopyright ("David Bögelsack, Fin Christensen, Willy Failla, Martin Koppehel, Brett Ernst (original author)")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 

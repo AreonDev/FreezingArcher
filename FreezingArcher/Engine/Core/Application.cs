@@ -118,7 +118,7 @@ namespace FreezingArcher.Core
             ConfigManager.Initialize (MessageManager);
 
             CommandLineInterface.Instance.SetHelp ("Freezing Archer 3D game engine/framework", "Alpha 0.0.1",
-                "402:PaymentRequired", 2015, 'h', "help", true, true, null,
+                "AreonDev", 2015, 'h', "help", true, true, null,
                 new string[] {"Authors: David Bögelsack, Fin Christensen, Willy Failla und Martin Koppehel\n"});
 
             // set fullscreen if overriden by command line.
@@ -504,13 +504,13 @@ namespace FreezingArcher.Core
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying application '{0}' ...", Name);
             Loaded = false;
-            PeriodicInputTask.Stop ();
-            PeriodicUpdateTask.Stop ();
-            updateStopwatch.Stop ();
             MessageManager.StopProcessing ();
 
             if (!Cli)
             {
+                PeriodicInputTask.Stop ();
+                PeriodicUpdateTask.Stop ();
+                updateStopwatch.Stop ();
                 AudioManager.Dispose ();
                 Window.Destroy ();
             }

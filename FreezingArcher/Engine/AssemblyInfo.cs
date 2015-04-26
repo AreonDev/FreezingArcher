@@ -6,7 +6,7 @@ using System.Reflection;
 [assembly: AssemblyTitle("FreezingArcher")]
 [assembly: AssemblyDescription("Freezing Archer Engine library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("AreonDev")]
 [assembly: AssemblyProduct("FreezingArcher")]
 [assembly: AssemblyCopyright("David Bögelsack, Fin Christensen, Willy Failla, Martin Koppehel")]
 [assembly: AssemblyTrademark("")]

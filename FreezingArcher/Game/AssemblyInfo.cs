@@ -28,7 +28,7 @@ using System.Reflection;
 [assembly: AssemblyTitle("FurryLana")]
 [assembly: AssemblyDescription("3D snake")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("402PaymentRequired")]
+[assembly: AssemblyCompany("AreonDev")]
 [assembly: AssemblyProduct("FurryLana")]
 [assembly: AssemblyCopyright("Fin Christensen, Claudius Grimm, Paul Stang")]
 [assembly: AssemblyTrademark("")]

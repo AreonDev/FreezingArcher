@@ -28,7 +28,6 @@ namespace FreezingArcher.DataStructures.Graphs
     /// <summary>
     /// Directed edge for use in graphs.
     /// </summary>
-    [TypeIdentifier (4)]
     public class DirectedEdge<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>

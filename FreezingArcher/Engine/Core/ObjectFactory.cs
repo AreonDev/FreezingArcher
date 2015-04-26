@@ -38,11 +38,12 @@ namespace FreezingArcher.Core
         public delegate FAObject ObjectFactory();
         private class ObjectTypeManager
         {
-            private uint lastIndex = 0;
-            private Dictionary<uint, FAObject> objects;
-            private Queue<FAObject> objectsToRecylce;
-            private ObjectFactory factory;
-            private ObjectManager mgr;
+            uint lastIndex = 0;
+            Dictionary<uint, FAObject> objects;
+            readonly Queue<FAObject> objectsToRecylce;
+            ObjectFactory factory;
+            ObjectManager mgr;
+
             public ObjectTypeManager(ObjectManager mgr, ObjectFactory factory, int objectCount = 1000)
             {
                 this.mgr = mgr;
@@ -81,28 +82,19 @@ namespace FreezingArcher.Core
                     objectsToRecylce.Enqueue(fAObject);
             }
         }
-        private Dictionary<ushort, ObjectTypeManager> objectTypes;
+        private Dictionary<int, ObjectTypeManager> objectTypes;
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.ObjectManager"/> class.
         /// </summary>
         public ObjectManager()
         {
             Logger.Log.AddLogEntry(LogLevel.Info, "ObjectManager", "Initializing object manager...");
-            objectTypes = new Dictionary<ushort, ObjectTypeManager>();
-            var derived = ReflectionHelper.GetDerivedTypes(typeof(FAObject));
-            foreach (var type in derived)
-            {
-                if (!type.IsClass || type.IsAbstract)
-                    continue;
-
-                TypeIdentifierAttribute tia = type.GetAttribute<TypeIdentifierAttribute>(false);
-                objectTypes.Add(tia.TypeID, new ObjectTypeManager(this, () => Activator.CreateInstance(type) as FAObject));
-            }
+            objectTypes = new Dictionary<int, ObjectTypeManager>();
         }
 
         internal void PrepareForRecycling(FAObject fAObject)
         {
-            objectTypes[(ushort)((fAObject.ID & 0xFFFF000000000000) >> 48)].PrepareForRecycling(fAObject);
+            objectTypes[fAObject.TypeId].PrepareForRecycling(fAObject);
         }
 
         /// <summary>
@@ -111,9 +103,16 @@ namespace FreezingArcher.Core
         /// <returns>new or recycled object</returns>
         /// <param name="typeId">TypeId of the object to recycle</param>
         /// <typeparam name="T">Return Type</typeparam>
-        public T CreateOrRecycle<T>(ushort typeId) where T: FAObject
-        {
-            return objectTypes[typeId].CreateNewOrRecycle() as T;
+        public T CreateOrRecycle<T>() where T: FAObject, new()
+        {            
+            var hc = typeof(T).GetHashCode();
+            ObjectTypeManager mgr;
+            if(!objectTypes.TryGetValue(hc, out mgr))
+            {
+                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", typeof(T).FullName);
+                objectTypes.Add(hc, mgr = new ObjectTypeManager(this, () => new T()));
+            }
+            return mgr.CreateNewOrRecycle() as T;
         }
 
         /// <summary>
@@ -122,11 +121,28 @@ namespace FreezingArcher.Core
         /// <returns>new or recycled object</returns>
         /// <param name="type">Type of object to recycle</param>
         /// <typeparam name="T">Return Type</typeparam>
-        public T CreateOrRecycle<T>(Type type) where T: FAObject
+        public T CreateOrRecycle<T>(Type type) where T: FAObject, new()
         {
-            return objectTypes[type.GetAttribute<TypeIdentifierAttribute>(false).TypeID].CreateNewOrRecycle() as T;
+            var hc = type.GetHashCode();
+            ObjectTypeManager mgr;
+            if(!objectTypes.TryGetValue(hc, out mgr))
+            {
+                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", typeof(T).FullName);
+                objectTypes.Add(hc, mgr = new ObjectTypeManager(this, () => new T()));
+            }
+            return mgr.CreateNewOrRecycle() as T;
         }
 
+        public T CreateOrRecycle<T>(int hc) where T : FAObject, new()
+        {
+            ObjectTypeManager mgr;
+            if(!objectTypes.TryGetValue(hc, out mgr))
+            {
+                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", typeof(T).FullName);
+                objectTypes.Add(hc, mgr = new ObjectTypeManager(this, () => new T()));
+            }
+            return mgr.CreateNewOrRecycle() as T;
+        }
     }
 }
 

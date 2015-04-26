@@ -29,7 +29,6 @@ namespace FreezingArcher.DataStructures.Graphs
     /// <summary>
     /// Node for use in graphs.
     /// </summary>
-    [TypeIdentifier (0)]
     public class Node<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>

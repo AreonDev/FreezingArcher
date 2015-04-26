@@ -30,7 +30,6 @@ namespace FreezingArcher.DataStructures.Graphs
     /// <summary>
     /// Weighted graph.
     /// </summary>
-    [TypeIdentifier (5)]
     public class WeightedGraph<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>

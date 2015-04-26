@@ -161,7 +161,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Reflection\Property.cs" />
     <Compile Include="Reflection\ReflectionHelper.cs" />
     <Compile Include="Core\FAObject.cs" />
-    <Compile Include="Core\TypeIdentifierAttribute.cs" />
     <Compile Include="Core\ObjectFactory.cs" />
     <Compile Include="Audio\Source.cs" />
     <Compile Include="Audio\Listener.cs" />

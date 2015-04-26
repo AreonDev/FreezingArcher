@@ -31,24 +31,29 @@ namespace FreezingArcher.Core
     /// </summary>
     public abstract class FAObject
     {
-        /// <summary>
-        /// The object manager.
-        /// </summary>
+        public FAObject()
+        {
+            TypeId = GetType().GetHashCode();
+        }
+
         protected ObjectManager ObjectManager;
-        // Game-unique identifier for objects
-        internal ulong ID {get; private set; }
-        internal bool Destroyed {get; private set;}
+
+        internal uint InstId { get; private set; }
+
+        internal int TypeId { get; private set; }
+
+        internal bool Destroyed;
 
         internal void Init(ObjectManager manager, uint id)
         {
-            this.ID = ((ulong)this.GetAttribute<TypeIdentifierAttribute>(false).TypeID << 48) | (ulong)id;
-            this.ObjectManager = manager;
+            ObjectManager = manager;
+            InstId = id;
         }
 
         /// <summary>
         /// Recycle this instance.
         /// </summary>
-        public void Recycle()
+        public virtual void Recycle()
         {
             Destroyed = false;
         }
@@ -62,47 +67,21 @@ namespace FreezingArcher.Core
             ObjectManager.PrepareForRecycling(this);
         }
 
-        /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="FreezingArcher.Core.FAObject"/>.
-        /// </summary>
-        /// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="FreezingArcher.Core.FAObject"/>.</param>
-        /// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current
-        /// <see cref="FreezingArcher.Core.FAObject"/>; otherwise, <c>false</c>.</returns>
+        public override string ToString()
+        {
+            return string.Format("FAObject ({0}, Instance: {1})", TypeId, InstId);
+        }
         public override bool Equals(object obj)
         {
-            var fAObject = obj as FAObject;
-            if (fAObject != null)
-                return fAObject.ID == ID;
-            else
+            var fa = obj as FAObject;
+            if (fa == null)
                 return false;
-        }
-        /// <param name="lhs">Left object</param>
-        /// <param name="rhs">Right object</param>
-        public static bool operator== (FAObject lhs, FAObject rhs)
-        {
-            return lhs.ID == rhs.ID; 
-            //  will determine if
-            //a) types are equal
-            //b) instance is equal
+            return fa.InstId == InstId && fa.TypeId == TypeId;
         }
 
-        /// <param name="lhs">Left object</param>
-        /// <param name="rhs">Right object</param>
-        public static bool operator!= (FAObject lhs, FAObject rhs)
+        public override int GetHashCode()
         {
-            return lhs.ID != rhs.ID;
-        }
-
-        /// <summary>
-        /// Serves as a hash function for a <see cref="FreezingArcher.Core.FAObject"/> object.
-        /// </summary>
-        /// <remarks>>This hash function is collision-free for up to 2^16 objects, probable more.</remarks>
-        /// <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a
-        /// hash table.</returns>
-        public override int GetHashCode ()
-        {
-            return (int)(((this.ID & 0xFFFF000000000000) >> 32) ^ (this.ID & 0x00000000FFFFFFFF));
-            //hash the object type as higher 16 bits into the lower 32bits from instance
+            return unchecked((int)(TypeId ^ InstId));               
         }
     }
 }

@@ -42,7 +42,7 @@ namespace FreezingArcher.Game
 	public static void Test()
 	{
 	    var objectManager = new ObjectManager();
-	    var graph = objectManager.CreateOrRecycle<DirectedWeightedGraph<string, uint>>(2);
+	    var graph = objectManager.CreateOrRecycle<DirectedWeightedGraph<string, uint>>();
 	    graph.Init();
 
 	    var node1 = graph.AddNode("Node 1");

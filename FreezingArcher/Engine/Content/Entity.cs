@@ -31,7 +31,6 @@ namespace FreezingArcher.Content
     /// <summary>
     /// Component based Entity.
     /// </summary>
-    [TypeIdentifier(6)]
     public class Entity : FAObject, IManageable
     {
         /// <summary>
@@ -68,7 +67,7 @@ namespace FreezingArcher.Content
         public T GetComponent<T> () where T : AbstractEntityComponent
         {
             AbstractEntityComponent component;
-            Components.TryGetValue (typeof(T).GetAttribute<TypeIdentifierAttribute>(true).TypeID, out component);
+            Components.TryGetValue (typeof(T).GetHashCode(), out component);
             return component as T;
         }
 
@@ -80,7 +79,7 @@ namespace FreezingArcher.Content
         /// <typeparam name="T">The type of the component.</typeparam>
         public bool AddComponent<T>(T component) where T : AbstractEntityComponent
         {
-            int typeid = typeof(T).GetAttribute<TypeIdentifierAttribute>(true).TypeID;
+            int typeid = typeof(T).GetHashCode();
 
             if (Components.ContainsKey (typeid))
             {
@@ -101,7 +100,7 @@ namespace FreezingArcher.Content
         /// <typeparam name="T">The type of the component which should be removed.</typeparam>
         public bool RemoveComponent<T> () where T : AbstractEntityComponent
         {
-            int typeid = typeof(T).GetAttribute<TypeIdentifierAttribute>(true).TypeID;
+            int typeid = typeof(T).GetHashCode();
 
             if (!Components.ContainsKey (typeid))
             {

@@ -28,7 +28,6 @@ namespace FreezingArcher.DataStructures.Graphs
     /// <summary>
     /// Edge for use in graphs.
     /// </summary>
-    [TypeIdentifier (1)]
     public class Edge<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>

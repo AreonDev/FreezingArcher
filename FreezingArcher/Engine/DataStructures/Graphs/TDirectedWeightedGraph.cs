@@ -29,8 +29,7 @@ namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
     /// Directed weighted graph.
-    /// </summary>
-    [TypeIdentifier (2)]
+                      /// </summary>
     public class DirectedWeightedGraph<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>
@@ -114,7 +113,7 @@ namespace FreezingArcher.DataStructures.Graphs
             ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> incomingEdgeNodes = null)
         {
             // create new node with object recycler
-            DirectedNode<TData, TWeight> node = ObjectManager.CreateOrRecycle<DirectedNode<TData, TWeight>> (3);
+            DirectedNode<TData, TWeight> node = ObjectManager.CreateOrRecycle<DirectedNode<TData, TWeight>> ();
 
             // initialize new node with data
             node.Init (data);
@@ -232,7 +231,7 @@ namespace FreezingArcher.DataStructures.Graphs
             }
 
             // create new edge with object recycler
-            DirectedEdge<TData, TWeight> edge = ObjectManager.CreateOrRecycle<DirectedEdge<TData, TWeight>>(4);
+            DirectedEdge<TData, TWeight> edge = ObjectManager.CreateOrRecycle<DirectedEdge<TData, TWeight>>();
 
             // initialize edge with data
             edge.Init(weight, sourceNode, destinationNode);

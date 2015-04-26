@@ -24,13 +24,16 @@ using System;
 using FreezingArcher.Core;
 using System.Collections.Generic;
 using FreezingArcher.Output;
+using System.Collections;
+using System.Linq;
 
 namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
     /// Directed weighted graph.
-                      /// </summary>
-    public class DirectedWeightedGraph<TData, TWeight> : FAObject where TWeight : IComparable
+    /// </summary>
+    public sealed class DirectedWeightedGraph<TData, TWeight> : FAObject, IEnumerable<DirectedNode<TData, TWeight>>,
+    IEnumerable<DirectedEdge<TData, TWeight>> where TWeight : IComparable
     {
         /// <summary>
         /// The name of the module.
@@ -56,18 +59,18 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <summary>
         /// The real edges are stored here for internal use.
         /// </summary>
-        protected List<DirectedEdge<TData, TWeight>> InternalEdges;
+        List<DirectedEdge<TData, TWeight>> InternalEdges;
 
         /// <summary>
         /// The real nodes are stored here for internal use.
         /// </summary>
-        protected List<DirectedNode<TData, TWeight>> InternalNodes;
+        List<DirectedNode<TData, TWeight>> InternalNodes;
 
         /// <summary>
         /// Get a read only collection of all registered edges.
         /// </summary>
         /// <value>The edges.</value>
-        public IReadOnlyCollection<DirectedEdge<TData, TWeight>> Edges
+        public ReadOnlyList<DirectedEdge<TData, TWeight>> Edges
         {
             get
             {
@@ -79,7 +82,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Get a read only collection of all registered nodes.
         /// </summary>
         /// <value>The nodes.</value>
-        public IReadOnlyCollection<DirectedNode<TData, TWeight>> Nodes
+        public ReadOnlyList<DirectedNode<TData, TWeight>> Nodes
         {
             get
             {
@@ -108,7 +111,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// destination node and an edge weight.</param>
         /// <param name="incomingEdgeNodes">Collection of incoming edges to be created. The pair consists of a
         /// source node and an edge weight.</param>
-        public virtual DirectedNode<TData, TWeight> AddNode (TData data,
+        public DirectedNode<TData, TWeight> AddNode (TData data,
             ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> outgoingEdgeNodes = null,
             ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> incomingEdgeNodes = null)
         {
@@ -124,10 +127,12 @@ namespace FreezingArcher.DataStructures.Graphs
                 foreach (var edgeNode in outgoingEdgeNodes)
                 {
                     // does destination node exist? If not adding this node to the graph will fail
-                    if (edgeNode.A != null)
+                    if (edgeNode.A == null)
                     {
                         Logger.Log.AddLogEntry (LogLevel.Severe, ModuleName,
                             "Failed to create edge to nonexistent node {0}, skipping...", edgeNode.A);
+
+                        node.Destroy();
 
                         // failure
                         return null;
@@ -139,6 +144,9 @@ namespace FreezingArcher.DataStructures.Graphs
                     if (edge == null)
                     {
                         Logger.Log.AddLogEntry(LogLevel.Severe, ModuleName, "Failed to create edge!");
+
+                        node.Destroy();
+
                         return null;
                     }
                 }
@@ -150,10 +158,12 @@ namespace FreezingArcher.DataStructures.Graphs
                 foreach (var edgeNode in incomingEdgeNodes)
                 {
                     // does source node exist? If not adding this node to the graph will fail
-                    if (edgeNode.A != null)
+                    if (edgeNode.A == null)
                     {
                         Logger.Log.AddLogEntry (LogLevel.Severe, ModuleName,
                             "Failed to create edge from nonexistent node {0}", edgeNode.A);
+
+                        node.Destroy();
 
                         // failure
                         return null;
@@ -166,6 +176,9 @@ namespace FreezingArcher.DataStructures.Graphs
                     if (edge == null)
                     {
                         Logger.Log.AddLogEntry(LogLevel.Severe, ModuleName, "Failed to create edge!");
+
+                        node.Destroy();
+
                         return null;
                     }
                 }
@@ -182,7 +195,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if node was removed, <c>false</c> otherwise.</returns>
         /// <param name="node">Node identifier.</param>
-        public virtual bool RemoveNode (DirectedNode<TData, TWeight> node)
+        public bool RemoveNode (DirectedNode<TData, TWeight> node)
         {
             // print error if remove failed
             if (InternalNodes.Remove(node))
@@ -220,7 +233,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <param name="sourceNode">The source node.</param>
         /// <param name="destinationNode">The destination node.</param>
         /// <param name="weight">The edge weight.</param>
-        public virtual DirectedEdge<TData, TWeight> AddEdge (DirectedNode<TData, TWeight> sourceNode, DirectedNode<TData, TWeight> destinationNode,
+        public DirectedEdge<TData, TWeight> AddEdge (DirectedNode<TData, TWeight> sourceNode, DirectedNode<TData, TWeight> destinationNode,
             TWeight weight)
         {
             // fail if one of the nodes is null
@@ -252,7 +265,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if edge was removed, <c>false</c> otherwise.</returns>
         /// <param name="edge">The edge.</param>
-        public virtual bool RemoveEdge (DirectedEdge<TData, TWeight> edge)
+        public bool RemoveEdge (DirectedEdge<TData, TWeight> edge)
         {
             // fail if edge is null
             if (edge == null)
@@ -280,6 +293,81 @@ namespace FreezingArcher.DataStructures.Graphs
             // destroy the edge
             edge.Destroy();
             return true;
+        }
+
+        #region IEnumerable<DirectedNode<TData, TWeight>> implementation
+
+        /// <summary>
+        /// Gets the enumerator for nodes.
+        /// </summary>
+        /// <returns>The node enumerator.</returns>
+        IEnumerator<DirectedNode<TData, TWeight>> IEnumerable<DirectedNode<TData, TWeight>>.GetEnumerator()
+        {
+            return Nodes.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IEnumerable<DirectedEdge<TData, TWeight>> implementation
+
+        /// <summary>
+        /// Gets the enumerator for edges.
+        /// </summary>
+        /// <returns>The edge enumerator.</returns>
+        IEnumerator<DirectedEdge<TData, TWeight>> IEnumerable<DirectedEdge<TData, TWeight>>.GetEnumerator()
+        {
+            return Edges.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IEnumerable implementation
+
+        /// <summary>
+        /// Gets the enumerator for nodes.
+        /// </summary>
+        /// <returns>The node enumerator.</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Nodes.GetEnumerator();
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Do depth-first-search on this graph.
+        /// </summary>
+        /// <returns>The node matching the predicate.</returns>
+        /// <param name="startNode">Start node.</param>
+        /// <param name="predicate">Predicate.</param>
+        public DirectedNode<TData, TWeight> DepthFirstSearch (DirectedNode<TData, TWeight> startNode,
+            Predicate<DirectedNode<TData, TWeight>> predicate)
+        {
+            DirectedEdge<TData, TWeight> edge;
+            Stack<DirectedEdge<TData, TWeight>> stack = new Stack<DirectedEdge<TData, TWeight>>();
+            List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+
+            if (predicate(startNode))
+                return startNode;
+
+            reachedNodes.Add(startNode);
+            startNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+
+            do
+            {
+                edge = stack.Pop();
+
+                if (!reachedNodes.Contains(edge.DestinationNode))
+                {
+                    if (predicate(edge.DestinationNode))
+                        return edge.DestinationNode;
+
+                    reachedNodes.Add(edge.DestinationNode);
+                    edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                }
+            } while (stack.Count > 0);
+
+            return stack.Count < 1 ? null : edge.DestinationNode;
         }
     }
 }

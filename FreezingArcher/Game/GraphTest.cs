@@ -23,6 +23,7 @@
 using System;
 using FreezingArcher.Core;
 using FreezingArcher.DataStructures.Graphs;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Game
 {
@@ -47,23 +48,34 @@ namespace FreezingArcher.Game
 
 	    var node1 = graph.AddNode("Node 1");
 
-	    var node2 = graph.AddNode("Node 2", new Pair<DirectedNode<string, uint>, uint>[] {
-		new Pair<DirectedNode<string, uint>, uint> (node1, 4)
+	    var node2 = graph.AddNode("Node 2", null, new Pair<DirectedNode<string, uint>, uint>[] {
+		new Pair<DirectedNode<string, uint>, uint>(node1, 19)
 	    });
 
-	    var node3 = graph.AddNode("Node 3", null, new Pair<DirectedNode<string, uint>, uint>[] {
-		new Pair<DirectedNode<string, uint>, uint> (node1, 2)
+	    var node3 = graph.AddNode("Node 3", new Pair<DirectedNode<string, uint>, uint>[] {
+		new Pair<DirectedNode<string, uint>, uint>(node2, 12)
+	    }, new Pair<DirectedNode<string, uint>, uint>[] {
+		new Pair<DirectedNode<string, uint>, uint>(node1, 1)
 	    });
 
-	    graph.AddEdge(node3, node2, 42);
+	    var node4 = graph.AddNode("Node 4", new Pair<DirectedNode<string, uint>, uint>[] {
+		new Pair<DirectedNode<string, uint>, uint>(node1, 42)
+	    }, new Pair<DirectedNode<string, uint>, uint>[] {
+		new Pair<DirectedNode<string, uint>, uint>(node3, 4)
+	    });
 
 	    foreach (var node in graph.Nodes)
-		Console.WriteLine ("{0} - outgoing: {1}, incoming {2}", node.Data, node.OutgoingEdges.Count,
-		    node.IncomingEdges.Count);
+		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "{0} - outgoing: {1}, incoming {2}", node.Data,
+		    node.OutgoingEdges.Count, node.IncomingEdges.Count);
 
 	    foreach (var edge in graph.Edges)
-		Console.WriteLine("Edge from {0} to {1} with weight {2}", edge.SourceNode.Data,
-		    edge.DestinationNode.Data, edge.Weight);
+		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "Edge from {0} to {1} with weight {2}",
+		    edge.SourceNode.Data, edge.DestinationNode.Data, edge.Weight);
+
+	    graph.DepthFirstSearch(node1, n => {
+		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", n.Data);
+		return false;
+	    });
 	}
     }
 }

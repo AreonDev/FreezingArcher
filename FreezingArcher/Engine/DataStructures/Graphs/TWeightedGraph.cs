@@ -24,13 +24,15 @@ using System;
 using FreezingArcher.Core;
 using System.Collections.Generic;
 using FreezingArcher.Output;
+using System.Collections;
 
 namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
     /// Weighted graph.
     /// </summary>
-    public class WeightedGraph<TData, TWeight> : FAObject where TWeight : IComparable
+    public sealed class WeightedGraph<TData, TWeight> : FAObject, IEnumerable<Node<TData, TWeight>>,
+    IEnumerable<Edge<TData, TWeight>> where TWeight : IComparable
     {
         /// <summary>
         /// The name of the module.
@@ -56,18 +58,18 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <summary>
         /// The real edges are stored here for internal use.
         /// </summary>
-        protected List<Edge<TData, TWeight>> InternalEdges;
+        List<Edge<TData, TWeight>> InternalEdges;
 
         /// <summary>
         /// The real nodes are stored here for internal use.
         /// </summary>
-        protected List<Node<TData, TWeight>> InternalNodes;
+        List<Node<TData, TWeight>> InternalNodes;
 
         /// <summary>
         /// Get a read only collection of all registered edges.
         /// </summary>
         /// <value>The edges.</value>
-        public IReadOnlyCollection<Edge<TData, TWeight>> Edges
+        public ReadOnlyList<Edge<TData, TWeight>> Edges
         {
             get
             {
@@ -79,7 +81,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Get a read only collection of all registered nodes.
         /// </summary>
         /// <value>The nodes.</value>
-        public IReadOnlyCollection<Node<TData, TWeight>> Nodes
+        public ReadOnlyList<Node<TData, TWeight>> Nodes
         {
             get
             {
@@ -106,7 +108,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <param name="data">The data the node should hold.</param>
         /// <param name="edgeNodes">Collection of edges to be created. The pair consists of a
         /// neighbour node and an edge weight.</param>
-        public virtual bool AddNode (TData data, ICollection<Pair<Node<TData, TWeight>, TWeight>> edgeNodes = null)
+        public bool AddNode (TData data, ICollection<Pair<Node<TData, TWeight>, TWeight>> edgeNodes = null)
         {
             // create new node with object recycler
             Node<TData, TWeight> node = ObjectManager.CreateOrRecycle<Node<TData, TWeight>> (3);
@@ -120,10 +122,12 @@ namespace FreezingArcher.DataStructures.Graphs
                 foreach (var edgeNode in edgeNodes)
                 {
                     // does destination node exist? If not adding this node to the graph will fail
-                    if (edgeNode.A != null)
+                    if (edgeNode.A == null)
                     {
                         Logger.Log.AddLogEntry (LogLevel.Severe, ModuleName,
                             "Failed to create edge to nonexistent node {0}, skipping...", edgeNode.A);
+
+                        node.Destroy();
 
                         // failure
                         return false;
@@ -145,7 +149,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if node was removed, <c>false</c> otherwise.</returns>
         /// <param name="node">Node identifier.</param>
-        public virtual bool RemoveNode (Node<TData, TWeight> node)
+        public bool RemoveNode (Node<TData, TWeight> node)
         {
             // print error if remove failed
             if (InternalNodes.Remove(node))
@@ -179,7 +183,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <param name="firstNode">The first node.</param>
         /// <param name="secondNode">The second node.</param>
         /// <param name="weight">The edge weight.</param>
-        public virtual bool AddEdge (Node<TData, TWeight> firstNode, Node<TData, TWeight> secondNode, TWeight weight)
+        public bool AddEdge (Node<TData, TWeight> firstNode, Node<TData, TWeight> secondNode, TWeight weight)
         {
             // fail if one of the nodes is null
             if (firstNode == null || secondNode == null)
@@ -210,7 +214,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if edge was removed, <c>false</c> otherwise.</returns>
         /// <param name="edge">The edge.</param>
-        public virtual bool RemoveEdge (Edge<TData, TWeight> edge)
+        public bool RemoveEdge (Edge<TData, TWeight> edge)
         {
             // fail if edge is null
             if (edge == null)
@@ -239,5 +243,44 @@ namespace FreezingArcher.DataStructures.Graphs
             edge.Destroy();
             return true;
         }
+
+        #region IEnumerable<Node<TData, TWeight>> implementation
+
+        /// <summary>
+        /// Gets the enumerator for nodes.
+        /// </summary>
+        /// <returns>The node enumerator.</returns>
+        IEnumerator<Node<TData, TWeight>> IEnumerable<Node<TData, TWeight>>.GetEnumerator()
+        {
+            return Nodes.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IEnumerable<Edge<TData, TWeight>> implementation
+
+        /// <summary>
+        /// Gets the enumerator for edge.
+        /// </summary>
+        /// <returns>The edge enumerator.</returns>
+        IEnumerator<Edge<TData, TWeight>> IEnumerable<Edge<TData, TWeight>>.GetEnumerator()
+        {
+            return Edges.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IEnumerable implementation
+
+        /// <summary>
+        /// Gets the enumerator for nodes.
+        /// </summary>
+        /// <returns>The node enumerator.</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Nodes.GetEnumerator();
+        }
+
+        #endregion
     }
 }

@@ -29,7 +29,7 @@ namespace FreezingArcher.DataStructures.Graphs
     /// <summary>
     /// Node for use in directed graphs.
     /// </summary>
-    public class DirectedNode<TData, TWeight> : FAObject where TWeight : IComparable
+    public sealed class DirectedNode<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>
         /// Initialize this node with data.

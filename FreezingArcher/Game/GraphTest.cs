@@ -20,7 +20,6 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System;
 using FreezingArcher.Core;
 using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Output;
@@ -58,7 +57,7 @@ namespace FreezingArcher.Game
 		new Pair<DirectedNode<string, uint>, uint>(node1, 1)
 	    });
 
-	    var node4 = graph.AddNode("Node 4", new Pair<DirectedNode<string, uint>, uint>[] {
+	    graph.AddNode("Node 4", new Pair<DirectedNode<string, uint>, uint>[] {
 		new Pair<DirectedNode<string, uint>, uint>(node1, 42)
 	    }, new Pair<DirectedNode<string, uint>, uint>[] {
 		new Pair<DirectedNode<string, uint>, uint>(node3, 4)

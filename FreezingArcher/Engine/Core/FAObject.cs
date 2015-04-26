@@ -31,11 +31,17 @@ namespace FreezingArcher.Core
     /// </summary>
     public abstract class FAObject
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Core.FAObject"/> class.
+        /// </summary>
         public FAObject()
         {
             TypeId = GetType().GetHashCode();
         }
 
+        /// <summary>
+        /// The object manager.
+        /// </summary>
         protected ObjectManager ObjectManager;
 
         internal uint InstId { get; private set; }
@@ -67,10 +73,20 @@ namespace FreezingArcher.Core
             ObjectManager.PrepareForRecycling(this);
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents the current <see cref="FreezingArcher.Core.FAObject"/>.
+        /// </summary>
+        /// <returns>A <see cref="System.String"/> that represents the current <see cref="FreezingArcher.Core.FAObject"/>.</returns>
         public override string ToString()
         {
             return string.Format("FAObject ({0}, Instance: {1})", TypeId, InstId);
         }
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="FreezingArcher.Core.FAObject"/>.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="FreezingArcher.Core.FAObject"/>.</param>
+        /// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current
+        /// <see cref="FreezingArcher.Core.FAObject"/>; otherwise, <c>false</c>.</returns>
         public override bool Equals(object obj)
         {
             var fa = obj as FAObject;
@@ -79,6 +95,11 @@ namespace FreezingArcher.Core
             return fa.InstId == InstId && fa.TypeId == TypeId;
         }
 
+        /// <summary>
+        /// Serves as a hash function for a <see cref="FreezingArcher.Core.FAObject"/> object.
+        /// </summary>
+        /// <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a
+        /// hash table.</returns>
         public override int GetHashCode()
         {
             return unchecked((int)(TypeId ^ InstId));               

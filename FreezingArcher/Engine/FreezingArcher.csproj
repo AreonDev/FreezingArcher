@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -192,10 +192,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\InputMessage.cs" />
     <Compile Include="Input\KeyRegistry.cs" />
     <Compile Include="Core\PeriodicTask.cs" />
-    <Compile Include="DataStructures\TNode.cs" />
-    <Compile Include="DataStructures\TNodeList.cs" />
-    <Compile Include="DataStructures\TBinaryTreeNode.cs" />
-    <Compile Include="DataStructures\TBinaryTree.cs" />
     <Compile Include="Messaging\UpdateMessage.cs" />
     <Compile Include="Content\Entity.cs" />
     <Compile Include="Content\AbstractEntityComponent.cs" />
@@ -206,6 +202,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="DataStructures\Graphs\TNode.cs" />
     <Compile Include="DataStructures\Graphs\TWeightedGraph.cs" />
     <Compile Include="DataStructures\ReadOnlyList.cs" />
+    <Compile Include="DataStructures\Trees\TBinaryTree.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -270,5 +267,6 @@ echo Successfully finished!</PostBuildEvent>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataStructures\" />
+    <Folder Include="DataStructures\Trees\" />
   </ItemGroup>
 </Project>

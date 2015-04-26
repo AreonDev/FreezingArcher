@@ -101,7 +101,6 @@ namespace FreezingArcher.Core
         /// Creates a new object or recycles a destroyed object
         /// </summary>
         /// <returns>new or recycled object</returns>
-        /// <param name="typeId">TypeId of the object to recycle</param>
         /// <typeparam name="T">Return Type</typeparam>
         public T CreateOrRecycle<T>() where T: FAObject, new()
         {            
@@ -133,6 +132,12 @@ namespace FreezingArcher.Core
             return mgr.CreateNewOrRecycle() as T;
         }
 
+        /// <summary>
+        /// Creates a new object or recycles a destroyed object
+        /// </summary>
+        /// <returns>new or recycled object</returns>
+        /// <param name="hc">HashCode of the type of the object</param>
+        /// <typeparam name="T">Return Type</typeparam>
         public T CreateOrRecycle<T>(int hc) where T : FAObject, new()
         {
             ObjectTypeManager mgr;

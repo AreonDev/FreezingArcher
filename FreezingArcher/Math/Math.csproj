@@ -46,6 +46,7 @@
     <Compile Include="Vector2.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="MathHelper.cs" />
+    <Compile Include="Matrix3.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

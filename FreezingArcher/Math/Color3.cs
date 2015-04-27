@@ -883,7 +883,7 @@ namespace FreezingArcher.Math
 
 		#endregion
 
-		#region IEquatable<Color4> Members
+		#region IEquatable<Color3> Members
 
 		/// <summary>
 		/// Compares whether this Color4 structure is equal to the specified Color4.
@@ -892,11 +892,230 @@ namespace FreezingArcher.Math
 		/// <returns>True if both Color4 structures contain the same components; false otherwise.</returns>
 		public bool Equals(Color3 other) {
 			return
-				this.R == other.R &&
-				this.G == other.G &&
-				this.B == other.B;
+				R == other.R &&
+				G == other.G &&
+				B == other.B;
 		}
 
 		#endregion
+
+        /// <summary>
+        /// Constructs a Color3 where each component is
+        /// set to the same value.
+        /// </summary>
+        /// <param name="value">Value to set R, G, B components</param>
+        public Color3(float value)
+        {
+            R = value;
+            G = value;
+            B = value;
+        }
+
+        /// <summary>
+        /// Adds the two colors together.
+        /// </summary>
+        /// <param name="a">First color</param>
+        /// <param name="b">Second color</param>
+        /// <returns>Added color</returns>
+        public static Color3 operator +(Color3 a, Color3 b)
+        {
+            Color3 c;
+            c.R = a.R + b.R;
+            c.G = a.G + b.G;
+            c.B = a.B + b.B;
+            return c;
+        }
+
+        /// <summary>
+        /// Adds the value to each of the components of the color.
+        /// </summary>
+        /// <param name="color">Source color</param>
+        /// <param name="value">Value to add to each component</param>
+        /// <returns>Added color</returns>
+        public static Color3 operator +(Color3 color, float value)
+        {
+            Color3 c;
+            c.R = color.R + value;
+            c.G = color.G + value;
+            c.B = color.B + value;
+            return c;
+        }
+
+        /// <summary>
+        /// Adds the value to each of the components of the color.
+        /// </summary>
+        /// <param name="value">Value to add to each component</param>
+        /// <param name="color">Source color</param>
+        /// <returns>Added color</returns>
+        public static Color3 operator +(float value, Color3 color)
+        {
+            Color3 c;
+            c.R = color.R + value;
+            c.G = color.G + value;
+            c.B = color.B + value;
+            return c;
+        }
+
+        /// <summary>
+        /// Subtracts the second color from the first color.
+        /// </summary>
+        /// <param name="a">First color</param>
+        /// <param name="b">Second color</param>
+        /// <returns>Resulting color</returns>
+        public static Color3 operator -(Color3 a, Color3 b)
+        {
+            Color3 c;
+            c.R = a.R - b.R;
+            c.G = a.G - b.G;
+            c.B = a.B - b.B;
+            return c;
+        }
+
+        /// <summary>
+        /// Subtracts the value from each of the color's components.
+        /// </summary>
+        /// <param name="color">Source color</param>
+        /// <param name="value">Value to subtract from each component</param>
+        /// <returns>Resulting color</returns>
+        public static Color3 operator -(Color3 color, float value)
+        {
+            Color3 c;
+            c.R = color.R - value;
+            c.G = color.G - value;
+            c.B = color.B - value;
+            return c;
+        }
+
+        /// <summary>
+        /// Subtracts the color's components from the value, returning
+        /// the result as a new color. Same as <c>new Color4D(value) - color</c>
+        /// </summary>
+        /// <param name="value">Value for each component of the first color</param>
+        /// <param name="color">Second color</param>
+        /// <returns>Resulting color</returns>
+        public static Color3 operator -(float value, Color3 color)
+        {
+            Color3 c;
+            c.R = value - color.R;
+            c.G = value - color.G;
+            c.B = value - color.B;
+            return c;
+        }
+
+        /// <summary>
+        /// Multiplies the two colors.
+        /// </summary>
+        /// <param name="a">First color</param>
+        /// <param name="b">Second color</param>
+        /// <returns>Multiplied color.</returns>
+        public static Color3 operator *(Color3 a, Color3 b)
+        {
+            Color3 c;
+            c.R = a.R * b.R;
+            c.G = a.G * b.G;
+            c.B = a.B * b.B;
+            return c;
+        }
+
+        /// <summary>
+        /// Multiplies the color by a scalar value, component wise.
+        /// </summary>
+        /// <param name="value">Source color</param>
+        /// <param name="scale">Scalar value</param>
+        /// <returns>Resulting color</returns>
+        public static Color3 operator *(Color3 value, float scale)
+        {
+            Color3 c;
+            c.R = value.R * scale;
+            c.G = value.G * scale;
+            c.B = value.B * scale;
+            return c;
+        }
+
+        /// <summary>
+        /// Multiplies the color by a scalar value, component wise.
+        /// </summary>
+        /// <param name="scale">Scalar value</param>
+        /// <param name="value">Source color</param>
+        /// <returns>Resulting color</returns>
+        public static Color3 operator *(float scale, Color3 value)
+        {
+            Color3 c;
+            c.R = value.R * scale;
+            c.G = value.G * scale;
+            c.B = value.B * scale;
+            return c;
+        }
+
+        /// <summary>
+        /// Divides the first color by the second color, component wise.
+        /// </summary>
+        /// <param name="a">First color</param>
+        /// <param name="b">Second color</param>
+        /// <returns>Resulting color</returns>
+        public static Color3 operator /(Color3 a, Color3 b)
+        {
+            Color3 c;
+            c.R = a.R / b.R;
+            c.G = a.G / b.G;
+            c.B = a.B / b.B;
+            return c;
+        }
+
+        /// <summary>
+        /// Divides the color by a divisor value.
+        /// </summary>
+        /// <param name="color">Source color</param>
+        /// <param name="divisor">Divisor</param>
+        /// <returns>Resulting color</returns>
+        public static Color3 operator /(Color3 color, float divisor)
+        {
+            float invDivisor = 1.0f / divisor;
+            Color3 c;
+            c.R = color.R * invDivisor;
+            c.G = color.G * invDivisor;
+            c.B = color.B * invDivisor;
+            return c;
+        }
+
+        /// <summary>
+        /// Gets or sets the component value at the specified zero-based index
+        /// in the order of RGBA (index 0 access R, 1 access G, etc). If
+        /// the index is not in range, a value of zero is returned.
+        /// </summary>
+        /// <param name="index">Zero-based index.</param>
+        /// <returns>The component value</returns>
+        public float this[int index]
+        {
+            get
+            {
+                switch(index)
+                {
+                case 0:
+                    return R;
+                case 1:
+                    return G;
+                case 2:
+                    return B;
+                default:
+                    return 0;
+                }
+            }
+            set
+            {
+                switch(index)
+                {
+                case 0:
+                    R = value;
+                    break;
+                case 1:
+                    G = value;
+                    break;
+                case 2:
+                    B = value;
+                    break;
+                }
+            }
+        }
 	}
 }

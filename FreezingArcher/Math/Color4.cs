@@ -92,6 +92,43 @@ namespace FreezingArcher.Math
 			A = a / (float)Byte.MaxValue;
 		}
 
+        /// <summary>
+        /// Constructs a Color4 where each component is
+        /// set to the same value.
+        /// </summary>
+        /// <param name="value">Value to set R, G, B, A components</param>
+        public Color4(float value)
+        {
+            R = value;
+            G = value;
+            B = value;
+            A = value;
+        }
+
+        /// <summary>
+        /// Constructs a Color4 from a Color3. Alpha is set to 1.0.
+        /// </summary>
+        /// <param name="rgb">RGB values</param>
+        public Color4(Color3 rgb)
+        {
+            R = rgb.R;
+            G = rgb.G;
+            B = rgb.B;
+            A = 1.0f;
+        }
+
+        /// <summary>
+        /// Constructs a Color4 from a Color3 and alpha value.
+        /// </summary>
+        /// <param name="rgb">RGB values</param>
+        /// <param name="alpha">Alpha value</param>
+        public Color4(Color3 rgb, float alpha)
+        {
+            R = rgb.R;
+            G = rgb.G;
+            B = rgb.B;
+            A = alpha;
+        }
 		#endregion
 
 		#region Public Members
@@ -908,5 +945,227 @@ namespace FreezingArcher.Math
 		}
 
 		#endregion
+
+        /// <summary>
+        /// Adds the two colors together.
+        /// </summary>
+        /// <param name="a">First color</param>
+        /// <param name="b">Second color</param>
+        /// <returns>Added color</returns>
+        public static Color4 operator +(Color4 a, Color4 b)
+        {
+            Color4 c;
+            c.R = a.R + b.R;
+            c.G = a.G + b.G;
+            c.B = a.B + b.B;
+            c.A = a.A + b.A;
+            return c;
+        }
+
+        /// <summary>
+        /// Adds the value to each of the components of the color.
+        /// </summary>
+        /// <param name="color">Source color</param>
+        /// <param name="value">Value to add to each component</param>
+        /// <returns>Added color</returns>
+        public static Color4 operator +(Color4 color, float value)
+        {
+            Color4 c;
+            c.R = color.R + value;
+            c.G = color.G + value;
+            c.B = color.B + value;
+            c.A = color.A + value;
+            return c;
+        }
+
+        /// <summary>
+        /// Adds the value to each of the components of the color.
+        /// </summary>
+        /// <param name="value">Value to add to each component</param>
+        /// <param name="color">Source color</param>
+        /// <returns>Added color</returns>
+        public static Color4 operator +(float value, Color4 color)
+        {
+            Color4 c;
+            c.R = color.R + value;
+            c.G = color.G + value;
+            c.B = color.B + value;
+            c.A = color.A + value;
+            return c;
+        }
+
+        /// <summary>
+        /// Subtracts the second color from the first color.
+        /// </summary>
+        /// <param name="a">First color</param>
+        /// <param name="b">Second color</param>
+        /// <returns>Resulting color</returns>
+        public static Color4 operator -(Color4 a, Color4 b)
+        {
+            Color4 c;
+            c.R = a.R - b.R;
+            c.G = a.G - b.G;
+            c.B = a.B - b.B;
+            c.A = a.A - b.A;
+            return c;
+        }
+
+        /// <summary>
+        /// Subtracts the value from each of the color's components.
+        /// </summary>
+        /// <param name="color">Source color</param>
+        /// <param name="value">Value to subtract from each component</param>
+        /// <returns>Resulting color</returns>
+        public static Color4 operator -(Color4 color, float value)
+        {
+            Color4 c;
+            c.R = color.R - value;
+            c.G = color.G - value;
+            c.B = color.B - value;
+            c.A = color.A - value;
+            return c;
+        }
+
+        /// <summary>
+        /// Subtracts the color's components from the value, returning
+        /// the result as a new color. Same as <c>new Color4(value) - color</c>
+        /// </summary>
+        /// <param name="value">Value for each component of the first color</param>
+        /// <param name="color">Second color</param>
+        /// <returns>Resulting color</returns>
+        public static Color4 operator -(float value, Color4 color)
+        {
+            Color4 c;
+            c.R = value - color.R;
+            c.G = value - color.G;
+            c.B = value - color.B;
+            c.A = value - color.A;
+            return c;
+        }
+
+        /// <summary>
+        /// Multiplies the two colors.
+        /// </summary>
+        /// <param name="a">First color</param>
+        /// <param name="b">Second color</param>
+        /// <returns>Multiplied color.</returns>
+        public static Color4 operator *(Color4 a, Color4 b)
+        {
+            Color4 c;
+            c.R = a.R * b.R;
+            c.G = a.G * b.G;
+            c.B = a.B * b.B;
+            c.A = a.A * b.A;
+            return c;
+        }
+
+        /// <summary>
+        /// Multiplies the color by a scalar value, component wise.
+        /// </summary>
+        /// <param name="value">Source color</param>
+        /// <param name="scale">Scalar value</param>
+        /// <returns>Resulting color</returns>
+        public static Color4 operator *(Color4 value, float scale)
+        {
+            Color4 c;
+            c.R = value.R * scale;
+            c.G = value.G * scale;
+            c.B = value.B * scale;
+            c.A = value.A * scale;
+            return c;
+        }
+
+        /// <summary>
+        /// Multiplies the color by a scalar value, component wise.
+        /// </summary>
+        /// <param name="scale">Scalar value</param>
+        /// <param name="value">Source color</param>
+        /// <returns>Resulting color</returns>
+        public static Color4 operator *(float scale, Color4 value)
+        {
+            Color4 c;
+            c.R = value.R * scale;
+            c.G = value.G * scale;
+            c.B = value.B * scale;
+            c.A = value.A * scale;
+            return c;
+        }
+
+        /// <summary>
+        /// Divides the first color by the second color, component wise.
+        /// </summary>
+        /// <param name="a">First color</param>
+        /// <param name="b">Second color</param>
+        /// <returns>Resulting color</returns>
+        public static Color4 operator /(Color4 a, Color4 b)
+        {
+            Color4 c;
+            c.R = a.R / b.R;
+            c.G = a.G / b.G;
+            c.B = a.B / b.B;
+            c.A = a.A / b.A;
+            return c;
+        }
+
+        /// <summary>
+        /// Divides the color by a divisor value.
+        /// </summary>
+        /// <param name="color">Source color</param>
+        /// <param name="divisor">Divisor</param>
+        /// <returns>Resulting color</returns>
+        public static Color4 operator /(Color4 color, float divisor)
+        {
+            float invDivisor = 1.0f / divisor;
+            Color4 c;
+            c.R = color.R * invDivisor;
+            c.G = color.G * invDivisor;
+            c.B = color.B * invDivisor;
+            c.A = color.A * invDivisor;
+            return c;
+        }
+        /// <summary>
+        /// Gets or sets the component value at the specified zero-based index
+        /// in the order of RGBA (index 0 access R, 1 access G, etc). If
+        /// the index is not in range, a value of zero is returned.
+        /// </summary>
+        /// <param name="index">Zero-based index.</param>
+        /// <returns>The component value</returns>
+        public float this[int index]
+        {
+            get
+            {
+                switch(index)
+                {
+                case 0:
+                    return R;
+                case 1:
+                    return G;
+                case 2:
+                    return B;
+                case 3:
+                    return A;
+                default:
+                    return 0;
+                }
+            }
+            set
+            {
+                switch(index)
+                {
+                case 0:
+                    R = value;
+                    break;
+                case 1:
+                    G = value;
+                    break;
+                case 2:
+                    B = value;
+                    break;
+                case 3:
+                    A = value;
+                    break;
+                }
+            }
+        }
 	}
 }

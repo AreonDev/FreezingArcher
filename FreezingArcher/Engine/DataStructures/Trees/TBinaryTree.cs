@@ -29,7 +29,7 @@ namespace FreezingArcher.DataStructures.Trees
     /// <summary>
     /// Binary tree of arbitrary data
     /// </summary>
-    public class BinaryTree<TData> : IEnumerable<TData>, IEnumerable<BinaryTree<TData>>
+    public class BinaryTree<TData> : ITree<TData>, IEnumerable<BinaryTree<TData>>
     {
         /// <summary>
         /// Enumerates all nodes or their data in pre-order traversal
@@ -457,6 +457,18 @@ namespace FreezingArcher.DataStructures.Trees
         }
 
         /// <summary>
+        /// Gets the <see cref="FreezingArcher.DataStructures.Trees.BinaryTree{TData}"/> at the specified index.
+        /// </summary>
+        /// <param name="index">0 for left, otherwise right</param>
+        public BinaryTree<TData> this[byte index]
+        {
+            get
+            {
+                return index == 0 ? Left : Right;
+            }
+        }
+
+        /// <summary>
         /// Adds a new child as left child.
         /// </summary>
         /// <returns><c>true</c>, if left child was added, <c>false</c> otherwise.</returns>
@@ -562,8 +574,6 @@ namespace FreezingArcher.DataStructures.Trees
         {
             return ((IEnumerable<BinaryTree<TData>>)PreOrder).GetEnumerator();
         }
-        #endregion
-        #region IEnumerable implementation
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return ((System.Collections.IEnumerable)PreOrder).GetEnumerator();

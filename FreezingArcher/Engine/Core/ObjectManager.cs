@@ -108,7 +108,7 @@ namespace FreezingArcher.Core
             ObjectTypeManager mgr;
             if(!objectTypes.TryGetValue(hc, out mgr))
             {
-                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", typeof(T).FullName);
+                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", typeof(T).GetFriendlyName());
                 objectTypes.Add(hc, mgr = new ObjectTypeManager(this, () => new T()));
             }
             return mgr.CreateNewOrRecycle() as T;
@@ -126,7 +126,7 @@ namespace FreezingArcher.Core
             ObjectTypeManager mgr;
             if(!objectTypes.TryGetValue(hc, out mgr))
             {
-                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", typeof(T).FullName);
+                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", typeof(T).GetFriendlyName());
                 objectTypes.Add(hc, mgr = new ObjectTypeManager(this, () => new T()));
             }
             return mgr.CreateNewOrRecycle() as T;
@@ -143,7 +143,7 @@ namespace FreezingArcher.Core
             ObjectTypeManager mgr;
             if(!objectTypes.TryGetValue(hc, out mgr))
             {
-                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", typeof(T).FullName);
+                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", typeof(T).GetFriendlyName());
                 objectTypes.Add(hc, mgr = new ObjectTypeManager(this, () => new T()));
             }
             return mgr.CreateNewOrRecycle() as T;

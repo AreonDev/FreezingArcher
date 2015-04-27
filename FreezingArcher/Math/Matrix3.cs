@@ -368,12 +368,12 @@ namespace FreezingArcher.Math
 		/// <returns>The rotation matrix</returns>
 		public static Matrix3 FromEulerAnglesXYZ(float x, float y, float z)
 		{
-			float cr = (float) Math.Cos(x);
-			float sr = (float) Math.Sin(x);
-			float cp = (float) Math.Cos(y);
-			float sp = (float) Math.Sin(y);
-			float cy = (float) Math.Cos(z);
-			float sy = (float) Math.Sin(z);
+			float cr = (float) System.Math.Cos(x);
+			float sr = (float) System.Math.Sin(x);
+			float cp = (float) System.Math.Cos(y);
+			float sp = (float) System.Math.Sin(y);
+			float cy = (float) System.Math.Cos(z);
+			float sy = (float) System.Math.Sin(z);
 
 			float srsp = sr * sp;
 			float crsp = cr * sp;
@@ -417,8 +417,8 @@ namespace FreezingArcher.Math
                  |  0  sin(A)  cos(A) |	
             */
 			Matrix3 m = Identity;
-			m.B2 = m.C3 = (float) Math.Cos(radians);
-			m.C2 = (float) Math.Sin(radians);
+			m.B2 = m.C3 = (float) System.Math.Cos(radians);
+			m.C2 = (float) System.Math.Sin(radians);
 			m.B3 = -m.C2;
 			return m;
 		}
@@ -436,8 +436,8 @@ namespace FreezingArcher.Math
                  | -sin(A)  0   cos(A) |
             */
 			Matrix3 m = Identity;
-			m.A1 = m.C3 = (float) Math.Cos(radians);
-			m.A3 = (float) Math.Sin(radians);
+			m.A1 = m.C3 = (float) System.Math.Cos(radians);
+			m.A3 = (float) System.Math.Sin(radians);
 			m.C1 = -m.A3;
 			return m;
 		}
@@ -455,8 +455,8 @@ namespace FreezingArcher.Math
                  |  0        0        1 |
              */
 			Matrix3 m = Identity;
-			m.A1 = m.B2 = (float) Math.Cos(radians);
-			m.B1 = (float) Math.Sin(radians);
+			m.A1 = m.B2 = (float) System.Math.Cos(radians);
+			m.B1 = (float) System.Math.Sin(radians);
 			m.A2 = -m.B1;
 			return m;
 		}

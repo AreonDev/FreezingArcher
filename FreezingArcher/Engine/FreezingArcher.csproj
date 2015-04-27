@@ -95,9 +95,7 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Package>xbuild12</Package>
-    </Reference>
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="NVorbis">
       <HintPath>lib\NVorbis.dll</HintPath>
     </Reference>
@@ -163,7 +161,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Reflection\Property.cs" />
     <Compile Include="Reflection\ReflectionHelper.cs" />
     <Compile Include="Core\FAObject.cs" />
-    <Compile Include="Core\ObjectFactory.cs" />
     <Compile Include="Audio\Source.cs" />
     <Compile Include="Audio\Listener.cs" />
     <Compile Include="Audio\AudioManager.cs" />
@@ -203,6 +200,9 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="DataStructures\Graphs\TWeightedGraph.cs" />
     <Compile Include="DataStructures\ReadOnlyList.cs" />
     <Compile Include="DataStructures\Trees\TBinaryTree.cs" />
+    <Compile Include="DataStructures\Trees\TTree.cs" />
+    <Compile Include="Core\ObjectManager.cs" />
+    <Compile Include="DataStructures\Trees\ITTree.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

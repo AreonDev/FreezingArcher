@@ -41,7 +41,7 @@ namespace FreezingArcher.Core
         public static T GetAttribute<T>(this object o, bool inherit) where T: Attribute
         {
             var attribs = o.GetType().GetCustomAttributes(typeof(T), inherit);
-            if(attribs.Length > 0)
+            if (attribs.Length > 0)
                 return attribs[0] as T;
             return null;
         }
@@ -56,7 +56,7 @@ namespace FreezingArcher.Core
         public static T GetAttribute<T>(this Type t, bool inherit) where T: Attribute
         {
             var attribs = t.GetCustomAttributes(typeof(T), inherit);
-            if(attribs.Length > 0)
+            if (attribs.Length > 0)
                 return attribs[0] as T;
             return null;
         }
@@ -85,8 +85,10 @@ namespace FreezingArcher.Core
             max = double.MinValue;
             foreach (var item in enumerable)
             {
-                if (item < min) min = item;
-                else if (item > max) max = item;
+                if (item < min)
+                    min = item;
+                else if (item > max)
+                    max = item;
             }
         }
 
@@ -102,8 +104,10 @@ namespace FreezingArcher.Core
             max = int.MinValue;
             foreach (var item in enumerable)
             {
-                if (item < min) min = item;
-                else if (item > max) max = item;
+                if (item < min)
+                    min = item;
+                else if (item > max)
+                    max = item;
             }
         }
 
@@ -188,7 +192,9 @@ namespace FreezingArcher.Core
         /// <param name="t">T.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static IEnumerable<T> ToCollection<T>(this T t)
-        { yield return t; }
+        {
+            yield return t;
+        }
 
         /// <summary>
         /// Clamp the specified val between min and max.
@@ -222,5 +228,34 @@ namespace FreezingArcher.Core
         {
             return val < min ? min : val > max ? max : val;
         }
+
+        /// <summary>
+        /// Gets the friendly name of the given type.
+        /// </summary>
+        /// <returns>The friendly name.</returns>
+        /// <param name="type">Type.</param>
+        public static string GetFriendlyName(this Type type)
+        {
+            string friendlyName = type.Name;
+            if (type.IsGenericType)
+            {
+                int iBacktick = friendlyName.IndexOf('`');
+                if (iBacktick > 0)
+                {
+                    friendlyName = friendlyName.Remove(iBacktick);
+                }
+                friendlyName += "<";
+                Type[] typeParameters = type.GetGenericArguments();
+                for (int i = 0; i < typeParameters.Length; ++i)
+                {
+                    string typeParamName = typeParameters[i].Name;
+                    friendlyName += (i == 0 ? typeParamName : "," + typeParamName);
+                }
+                friendlyName += ">";
+            }
+
+            return friendlyName;
+        }
+
     }
 }

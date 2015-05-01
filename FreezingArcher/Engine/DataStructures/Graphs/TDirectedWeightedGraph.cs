@@ -21,19 +21,20 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
-using FreezingArcher.Core;
-using System.Collections.Generic;
-using FreezingArcher.Output;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using FreezingArcher.Core;
+using FreezingArcher.Output;
+using Assimp;
 
 namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
     /// Directed weighted graph.
     /// </summary>
-    public sealed class DirectedWeightedGraph<TData, TWeight> : FAObject, IEnumerable<DirectedNode<TData, TWeight>>,
-    IEnumerable<DirectedEdge<TData, TWeight>>, IEnumerable<TData> where TWeight : IComparable
+    public sealed class DirectedWeightedGraph<TData, TWeight> : FAObject, IEnumerable<DirectedWeightedNode<TData, TWeight>>,
+    IEnumerable<DirectedWeightedEdge<TData, TWeight>>, IEnumerable<TData> where TWeight : IComparable
     {
         /// <summary>
         /// The name of the module.
@@ -46,12 +47,12 @@ namespace FreezingArcher.DataStructures.Graphs
         public void Init ()
         {
             if (InternalEdges == null)
-                InternalEdges = new List<DirectedEdge<TData, TWeight>>();
+                InternalEdges = new List<DirectedWeightedEdge<TData, TWeight>>();
             else
                 InternalEdges.Clear();
 
             if (InternalNodes == null)
-                InternalNodes = new List<DirectedNode<TData, TWeight>>();
+                InternalNodes = new List<DirectedWeightedNode<TData, TWeight>>();
             else
                 InternalEdges.Clear();
 
@@ -65,18 +66,18 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <summary>
         /// The real edges are stored here for internal use.
         /// </summary>
-        List<DirectedEdge<TData, TWeight>> InternalEdges;
+        List<DirectedWeightedEdge<TData, TWeight>> InternalEdges;
 
         /// <summary>
         /// The real nodes are stored here for internal use.
         /// </summary>
-        List<DirectedNode<TData, TWeight>> InternalNodes;
+        List<DirectedWeightedNode<TData, TWeight>> InternalNodes;
 
         /// <summary>
         /// Get a read only collection of all registered edges.
         /// </summary>
         /// <value>The edges.</value>
-        public ReadOnlyList<DirectedEdge<TData, TWeight>> Edges
+        public ReadOnlyList<DirectedWeightedEdge<TData, TWeight>> Edges
         {
             get
             {
@@ -88,7 +89,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Get a read only collection of all registered nodes.
         /// </summary>
         /// <value>The nodes.</value>
-        public ReadOnlyList<DirectedNode<TData, TWeight>> Nodes
+        public ReadOnlyList<DirectedWeightedNode<TData, TWeight>> Nodes
         {
             get
             {
@@ -117,12 +118,12 @@ namespace FreezingArcher.DataStructures.Graphs
         /// destination node and an edge weight.</param>
         /// <param name="incomingEdgeNodes">Collection of incoming edges to be created. The pair consists of a
         /// source node and an edge weight.</param>
-        public DirectedNode<TData, TWeight> AddNode (TData data,
-            ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> outgoingEdgeNodes = null,
-            ICollection<Pair<DirectedNode<TData, TWeight>, TWeight>> incomingEdgeNodes = null)
+        public DirectedWeightedNode<TData, TWeight> AddNode (TData data,
+            ICollection<Pair<DirectedWeightedNode<TData, TWeight>, TWeight>> outgoingEdgeNodes = null,
+            ICollection<Pair<DirectedWeightedNode<TData, TWeight>, TWeight>> incomingEdgeNodes = null)
         {
             // create new node with object recycler
-            DirectedNode<TData, TWeight> node = ObjectManager.CreateOrRecycle<DirectedNode<TData, TWeight>> ();
+            DirectedWeightedNode<TData, TWeight> node = ObjectManager.CreateOrRecycle<DirectedWeightedNode<TData, TWeight>> ();
 
             // initialize new node with data
             node.Init (data);
@@ -201,7 +202,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if node was removed, <c>false</c> otherwise.</returns>
         /// <param name="node">Node identifier.</param>
-        public bool RemoveNode (DirectedNode<TData, TWeight> node)
+        public bool RemoveNode (DirectedWeightedNode<TData, TWeight> node)
         {
             // print error if remove failed
             if (InternalNodes.Remove(node))
@@ -239,8 +240,8 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <param name="sourceNode">The source node.</param>
         /// <param name="destinationNode">The destination node.</param>
         /// <param name="weight">The edge weight.</param>
-        public DirectedEdge<TData, TWeight> AddEdge (DirectedNode<TData, TWeight> sourceNode, DirectedNode<TData, TWeight> destinationNode,
-            TWeight weight)
+        public DirectedWeightedEdge<TData, TWeight> AddEdge (DirectedWeightedNode<TData, TWeight> sourceNode,
+            DirectedWeightedNode<TData, TWeight> destinationNode, TWeight weight)
         {
             // fail if one of the nodes is null
             if (sourceNode == null || destinationNode == null)
@@ -250,7 +251,7 @@ namespace FreezingArcher.DataStructures.Graphs
             }
 
             // create new edge with object recycler
-            DirectedEdge<TData, TWeight> edge = ObjectManager.CreateOrRecycle<DirectedEdge<TData, TWeight>>();
+            DirectedWeightedEdge<TData, TWeight> edge = ObjectManager.CreateOrRecycle<DirectedWeightedEdge<TData, TWeight>>();
 
             // initialize edge with data
             edge.Init(weight, sourceNode, destinationNode);
@@ -271,7 +272,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if edge was removed, <c>false</c> otherwise.</returns>
         /// <param name="edge">The edge.</param>
-        public bool RemoveEdge (DirectedEdge<TData, TWeight> edge)
+        public bool RemoveEdge (DirectedWeightedEdge<TData, TWeight> edge)
         {
             // fail if edge is null
             if (edge == null)
@@ -307,7 +308,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Gets the enumerator for nodes.
         /// </summary>
         /// <returns>The node enumerator.</returns>
-        IEnumerator<DirectedNode<TData, TWeight>> IEnumerable<DirectedNode<TData, TWeight>>.GetEnumerator()
+        IEnumerator<DirectedWeightedNode<TData, TWeight>> IEnumerable<DirectedWeightedNode<TData, TWeight>>.GetEnumerator()
         {
             return Nodes.GetEnumerator();
         }
@@ -320,7 +321,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Gets the enumerator for edges.
         /// </summary>
         /// <returns>The edge enumerator.</returns>
-        IEnumerator<DirectedEdge<TData, TWeight>> IEnumerable<DirectedEdge<TData, TWeight>>.GetEnumerator()
+        IEnumerator<DirectedWeightedEdge<TData, TWeight>> IEnumerable<DirectedWeightedEdge<TData, TWeight>>.GetEnumerator()
         {
             return Edges.GetEnumerator();
         }
@@ -329,6 +330,10 @@ namespace FreezingArcher.DataStructures.Graphs
 
         #region IEnumerable<TData> implementation
 
+        /// <summary>
+        /// Gets the enumerator over the data.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
         IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
         {
             return Nodes.Select(n => n.Data).GetEnumerator();
@@ -355,12 +360,12 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <returns>The node matching the predicate.</returns>
         /// <param name="startNode">Start node.</param>
         /// <param name="predicate">Predicate.</param>
-        public DirectedNode<TData, TWeight> DepthFirstSearch (DirectedNode<TData, TWeight> startNode,
-            Predicate<DirectedNode<TData, TWeight>> predicate)
+        public DirectedWeightedNode<TData, TWeight> DepthFirstSearch (DirectedWeightedNode<TData, TWeight> startNode,
+            Predicate<DirectedWeightedNode<TData, TWeight>> predicate)
         {
-            DirectedEdge<TData, TWeight> edge;
-            Stack<DirectedEdge<TData, TWeight>> stack = new Stack<DirectedEdge<TData, TWeight>>();
-            List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+            DirectedWeightedEdge<TData, TWeight> edge;
+            Stack<DirectedWeightedEdge<TData, TWeight>> stack = new Stack<DirectedWeightedEdge<TData, TWeight>>();
+            List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
 
             if (predicate(startNode))
                 return startNode;
@@ -382,7 +387,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 }
             } while (stack.Count > 0);
 
-            return stack.Count < 1 ? null : edge.DestinationNode;
+            return null;
         }
 
         /// <summary>
@@ -391,13 +396,13 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <returns>The node matching the predicate.</returns>
         /// <param name="startNode">Start node.</param>
         /// <param name="predicate">Predicate.</param>
-        public DirectedNode<TData, TWeight> BreadthFirstSearch (DirectedNode<TData, TWeight> startNode,
-            Predicate<DirectedNode<TData, TWeight>> predicate)
+        public DirectedWeightedNode<TData, TWeight> BreadthFirstSearch (DirectedWeightedNode<TData, TWeight> startNode,
+            Predicate<DirectedWeightedNode<TData, TWeight>> predicate)
         {
-            Queue<DirectedNode<TData, TWeight>> queue = new Queue<DirectedNode<TData, TWeight>>();
-            List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
-            DirectedNode<TData, TWeight> node;
-            IOrderedEnumerable<DirectedEdge<TData, TWeight>> children;
+            Queue<DirectedWeightedNode<TData, TWeight>> queue = new Queue<DirectedWeightedNode<TData, TWeight>>();
+            List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
+            DirectedWeightedNode<TData, TWeight> node;
+            IOrderedEnumerable<DirectedWeightedEdge<TData, TWeight>> children;
 
             queue.Enqueue(startNode);
             reachedNodes.Add(startNode);
@@ -442,8 +447,8 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Depth first enumerable class.
         /// Creates enumerators doing a depth first search through a given directed and weighted graph.
         /// </summary>
-        public sealed class DepthFirstEnumerable : IEnumerable<TData>, IEnumerable<DirectedNode<TData, TWeight>>,
-        IEnumerable<DirectedEdge<TData, TWeight>>
+        public sealed class DepthFirstEnumerable : IEnumerable<TData>, IEnumerable<DirectedWeightedNode<TData, TWeight>>,
+        IEnumerable<DirectedWeightedEdge<TData, TWeight>>
         {
             readonly DirectedWeightedGraph<TData, TWeight> graph;
 
@@ -463,9 +468,9 @@ namespace FreezingArcher.DataStructures.Graphs
             /// <returns>The enumerator.</returns>
             IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
             {
-                DirectedEdge<TData, TWeight> edge;
-                Stack<DirectedEdge<TData, TWeight>> stack = new Stack<DirectedEdge<TData, TWeight>>();
-                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+                DirectedWeightedEdge<TData, TWeight> edge;
+                Stack<DirectedWeightedEdge<TData, TWeight>> stack = new Stack<DirectedWeightedEdge<TData, TWeight>>();
+                List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
 
                 yield return graph.Nodes[0].Data;
 
@@ -487,16 +492,16 @@ namespace FreezingArcher.DataStructures.Graphs
             }
             #endregion
 
-            #region IEnumerable<DirectedNode<TData, TWeight>> implementation
+            #region IEnumerable<DirectedWeightedNode<TData, TWeight>> implementation
             /// <summary>
             /// Gets the enumerator enumerating over the nodes.
             /// </summary>
             /// <returns>The enumerator.</returns>
-            IEnumerator<DirectedNode<TData, TWeight>> IEnumerable<DirectedNode<TData, TWeight>>.GetEnumerator()
+            IEnumerator<DirectedWeightedNode<TData, TWeight>> IEnumerable<DirectedWeightedNode<TData, TWeight>>.GetEnumerator()
             {
-                DirectedEdge<TData, TWeight> edge;
-                Stack<DirectedEdge<TData, TWeight>> stack = new Stack<DirectedEdge<TData, TWeight>>();
-                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+                DirectedWeightedEdge<TData, TWeight> edge;
+                Stack<DirectedWeightedEdge<TData, TWeight>> stack = new Stack<DirectedWeightedEdge<TData, TWeight>>();
+                List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
 
                 yield return graph.Nodes[0];
 
@@ -518,16 +523,16 @@ namespace FreezingArcher.DataStructures.Graphs
             }
             #endregion
 
-            #region IEnumerable<DirectedEdge<TData, TWeight>> implementation
+            #region IEnumerable<DirectedWeightedEdge<TData, TWeight>> implementation
             /// <summary>
             /// Gets the enumerator enumerating over the edges.
             /// </summary>
             /// <returns>The enumerator.</returns>
-            IEnumerator<DirectedEdge<TData, TWeight>> IEnumerable<DirectedEdge<TData, TWeight>>.GetEnumerator()
+            IEnumerator<DirectedWeightedEdge<TData, TWeight>> IEnumerable<DirectedWeightedEdge<TData, TWeight>>.GetEnumerator()
             {
-                DirectedEdge<TData, TWeight> edge;
-                Stack<DirectedEdge<TData, TWeight>> stack = new Stack<DirectedEdge<TData, TWeight>>();
-                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+                DirectedWeightedEdge<TData, TWeight> edge;
+                Stack<DirectedWeightedEdge<TData, TWeight>> stack = new Stack<DirectedWeightedEdge<TData, TWeight>>();
+                List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
 
                 reachedNodes.Add(graph.Nodes[0]);
                 graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
@@ -554,9 +559,9 @@ namespace FreezingArcher.DataStructures.Graphs
             /// <returns>The enumerator.</returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                DirectedEdge<TData, TWeight> edge;
-                Stack<DirectedEdge<TData, TWeight>> stack = new Stack<DirectedEdge<TData, TWeight>>();
-                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+                DirectedWeightedEdge<TData, TWeight> edge;
+                Stack<DirectedWeightedEdge<TData, TWeight>> stack = new Stack<DirectedWeightedEdge<TData, TWeight>>();
+                List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
 
                 yield return graph.Nodes[0];
 
@@ -583,8 +588,8 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Breadth first enumerable class.
         /// Creates enumerators doing a breadth first search through a given directed and weighted graph.
         /// </summary>
-        public sealed class BreadthFirstEnumerable : IEnumerable<TData>, IEnumerable<DirectedNode<TData, TWeight>>,
-        IEnumerable<DirectedEdge<TData, TWeight>>
+        public sealed class BreadthFirstEnumerable : IEnumerable<TData>, IEnumerable<DirectedWeightedNode<TData, TWeight>>,
+        IEnumerable<DirectedWeightedEdge<TData, TWeight>>
         {
             readonly DirectedWeightedGraph<TData, TWeight> graph;
 
@@ -604,10 +609,10 @@ namespace FreezingArcher.DataStructures.Graphs
             /// <returns>The enumerator.</returns>
             IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
             {
-                Queue<DirectedNode<TData, TWeight>> queue = new Queue<DirectedNode<TData, TWeight>>();
-                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
-                DirectedNode<TData, TWeight> node;
-                IOrderedEnumerable<DirectedEdge<TData, TWeight>> children;
+                Queue<DirectedWeightedNode<TData, TWeight>> queue = new Queue<DirectedWeightedNode<TData, TWeight>>();
+                List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
+                DirectedWeightedNode<TData, TWeight> node;
+                IOrderedEnumerable<DirectedWeightedEdge<TData, TWeight>> children;
 
                 queue.Enqueue(graph.Nodes[0]);
                 reachedNodes.Add(graph.Nodes[0]);
@@ -632,17 +637,17 @@ namespace FreezingArcher.DataStructures.Graphs
             }
             #endregion
 
-            #region IEnumerable<DirectedNode<TData, TWeight>> implementation
+            #region IEnumerable<DirectedWeightedNode<TData, TWeight>> implementation
             /// <summary>
             /// Gets the enumerator enumerating over the nodes.
             /// </summary>
             /// <returns>The enumerator.</returns>
-            IEnumerator<DirectedNode<TData, TWeight>> IEnumerable<DirectedNode<TData, TWeight>>.GetEnumerator()
+            IEnumerator<DirectedWeightedNode<TData, TWeight>> IEnumerable<DirectedWeightedNode<TData, TWeight>>.GetEnumerator()
             {
-                Queue<DirectedNode<TData, TWeight>> queue = new Queue<DirectedNode<TData, TWeight>>();
-                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
-                DirectedNode<TData, TWeight> node;
-                IOrderedEnumerable<DirectedEdge<TData, TWeight>> children;
+                Queue<DirectedWeightedNode<TData, TWeight>> queue = new Queue<DirectedWeightedNode<TData, TWeight>>();
+                List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
+                DirectedWeightedNode<TData, TWeight> node;
+                IOrderedEnumerable<DirectedWeightedEdge<TData, TWeight>> children;
 
                 queue.Enqueue(graph.Nodes[0]);
                 reachedNodes.Add(graph.Nodes[0]);
@@ -667,17 +672,17 @@ namespace FreezingArcher.DataStructures.Graphs
             }
             #endregion
 
-            #region IEnumerable<DirectedEdge<TData, TWeight>> implementation
+            #region IEnumerable<DirectedWeightedEdge<TData, TWeight>> implementation
             /// <summary>
             /// Gets the enumerator enumerating over the edges.
             /// </summary>
             /// <returns>The enumerator.</returns>
-            IEnumerator<DirectedEdge<TData, TWeight>> IEnumerable<DirectedEdge<TData, TWeight>>.GetEnumerator()
+            IEnumerator<DirectedWeightedEdge<TData, TWeight>> IEnumerable<DirectedWeightedEdge<TData, TWeight>>.GetEnumerator()
             {
-                Queue<DirectedNode<TData, TWeight>> queue = new Queue<DirectedNode<TData, TWeight>>();
-                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
-                DirectedNode<TData, TWeight> node;
-                IOrderedEnumerable<DirectedEdge<TData, TWeight>> children;
+                Queue<DirectedWeightedNode<TData, TWeight>> queue = new Queue<DirectedWeightedNode<TData, TWeight>>();
+                List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
+                DirectedWeightedNode<TData, TWeight> node;
+                IOrderedEnumerable<DirectedWeightedEdge<TData, TWeight>> children;
 
                 queue.Enqueue(graph.Nodes[0]);
                 reachedNodes.Add(graph.Nodes[0]);
@@ -709,10 +714,10 @@ namespace FreezingArcher.DataStructures.Graphs
             /// <returns>The enumerator.</returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                Queue<DirectedNode<TData, TWeight>> queue = new Queue<DirectedNode<TData, TWeight>>();
-                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
-                DirectedNode<TData, TWeight> node;
-                IOrderedEnumerable<DirectedEdge<TData, TWeight>> children;
+                Queue<DirectedWeightedNode<TData, TWeight>> queue = new Queue<DirectedWeightedNode<TData, TWeight>>();
+                List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
+                DirectedWeightedNode<TData, TWeight> node;
+                IOrderedEnumerable<DirectedWeightedEdge<TData, TWeight>> children;
 
                 queue.Enqueue(graph.Nodes[0]);
                 reachedNodes.Add(graph.Nodes[0]);

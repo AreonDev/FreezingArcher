@@ -1,5 +1,5 @@
 ﻿//
-//  TDirectedEdge.cs
+//  TEdge.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -26,22 +26,21 @@ using FreezingArcher.Core;
 namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
-    /// Directed edge for use in graphs.
+    /// Edge for use in graphs.
     /// </summary>
-    public sealed class DirectedEdge<TData, TWeight> : FAObject where TWeight : IComparable
+    public sealed class WeightedEdge<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>
         /// Initialize this edge with the given data.
         /// </summary>
         /// <param name="weight">Edge weight.</param>
-        /// <param name="sourceNode">Source node.</param>
-        /// <param name="destinationNode">Destination node.</param>
-        internal void Init (TWeight weight, DirectedNode<TData, TWeight> sourceNode,
-            DirectedNode<TData, TWeight> destinationNode)
+        /// <param name="firstNode">First node.</param>
+        /// <param name="secondNode">Second node.</param>
+        internal void Init (TWeight weight, WeightedNode<TData, TWeight> firstNode, WeightedNode<TData, TWeight> secondNode)
         {
             Weight = weight;
-            SourceNode = sourceNode;
-            DestinationNode = destinationNode;
+            FirstNode = firstNode;
+            SecondNode = secondNode;
         }
 
         /// <summary>
@@ -51,16 +50,16 @@ namespace FreezingArcher.DataStructures.Graphs
         public TWeight Weight { get; set; }
 
         /// <summary>
-        /// Gets the source node.
+        /// Gets the first node.
         /// </summary>
         /// <value>The source node.</value>
-        public DirectedNode<TData, TWeight> SourceNode { get; internal set; }
+        public WeightedNode<TData, TWeight> FirstNode { get; internal set; }
 
         /// <summary>
-        /// Gets the destination node.
+        /// Gets the second node.
         /// </summary>
         /// <value>The destination node.</value>
-        public DirectedNode<TData, TWeight> DestinationNode { get; internal set; }
+        public WeightedNode<TData, TWeight> SecondNode { get; internal set; }
 
         /// <summary>
         /// Destroy this instance.
@@ -68,8 +67,8 @@ namespace FreezingArcher.DataStructures.Graphs
         public override void Destroy()
         {
             Weight = default(TWeight);
-            SourceNode = null;
-            DestinationNode = null;
+            FirstNode = null;
+            SecondNode = null;
             base.Destroy();
         }
     }

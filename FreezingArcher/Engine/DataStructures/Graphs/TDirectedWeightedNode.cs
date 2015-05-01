@@ -1,5 +1,5 @@
 ﻿//
-//  TNode.cs
+//  TDirectedNode.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -27,9 +27,9 @@ using System.Collections.Generic;
 namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
-    /// Node for use in graphs.
+    /// Node for use in directed graphs.
     /// </summary>
-    public sealed class Node<TData, TWeight> : FAObject where TWeight : IComparable
+    public sealed class DirectedWeightedNode<TData, TWeight> : FAObject where TWeight : IComparable
     {
         /// <summary>
         /// Initialize this node with data.
@@ -39,10 +39,15 @@ namespace FreezingArcher.DataStructures.Graphs
         {
             Data = data;
 
-            if (InternalEdges == null)
-                InternalEdges = new List<Edge<TData, TWeight>>();
+            if (InternalOutgoingEdges == null)
+                InternalOutgoingEdges = new List<DirectedWeightedEdge<TData, TWeight>>();
             else
-                InternalEdges.Clear();
+                InternalOutgoingEdges.Clear();
+
+            if (InternalIncomingEdges == null)
+                InternalIncomingEdges = new List<DirectedWeightedEdge<TData, TWeight>>();
+            else
+                InternalIncomingEdges.Clear();
         }
 
         /// <summary>
@@ -52,29 +57,47 @@ namespace FreezingArcher.DataStructures.Graphs
         public TData Data { get; set; }
 
         /// <summary>
-        /// Gets the edges.
+        /// Gets the outgoing edges.
         /// </summary>
         /// <value>The edges.</value>
-        public IReadOnlyCollection<Edge<TData, TWeight>> Edges
+        public ReadOnlyList<DirectedWeightedEdge<TData, TWeight>> OutgoingEdges
         {
             get
             {
-                return InternalEdges;
+                return InternalOutgoingEdges;
             }
         }
 
         /// <summary>
-        /// The internal edges.
+        /// The internal outgoing edges.
         /// </summary>
-        internal List<Edge<TData, TWeight>> InternalEdges;
+        internal List<DirectedWeightedEdge<TData, TWeight>> InternalOutgoingEdges;
+
+        /// <summary>
+        /// Gets the incoming edges.
+        /// </summary>
+        /// <value>The incoming edges.</value>
+        public ReadOnlyList<DirectedWeightedEdge<TData, TWeight>> IncomingEdges
+        {
+            get
+            {
+                return InternalIncomingEdges;
+            }
+        }
+
+        /// <summary>
+        /// The internal incoming edges.
+        /// </summary>
+        internal List<DirectedWeightedEdge<TData, TWeight>> InternalIncomingEdges;
 
         /// <summary>
         /// Destroy this instance.
         /// </summary>
         public override void Destroy()
         {
+            InternalOutgoingEdges.Clear();
+            InternalIncomingEdges.Clear();
             Data = default(TData);
-            InternalEdges.Clear();
             base.Destroy();
         }
     }

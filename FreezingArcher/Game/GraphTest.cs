@@ -51,20 +51,20 @@ namespace FreezingArcher.Game
 
 	    var node1 = graph.AddNode("Node 1");
 
-	    var node2 = graph.AddNode("Node 2", null, new Pair<DirectedNode<string, uint>, uint>[] {
-		new Pair<DirectedNode<string, uint>, uint>(node1, 19)
+	    var node2 = graph.AddNode("Node 2", null, new Pair<DirectedWeightedNode<string, uint>, uint>[] {
+		new Pair<DirectedWeightedNode<string, uint>, uint>(node1, 19)
 	    });
 
-	    var node3 = graph.AddNode("Node 3", new Pair<DirectedNode<string, uint>, uint>[] {
-		new Pair<DirectedNode<string, uint>, uint>(node2, 12)
-	    }, new Pair<DirectedNode<string, uint>, uint>[] {
-		new Pair<DirectedNode<string, uint>, uint>(node1, 1)
+	    var node3 = graph.AddNode("Node 3", new Pair<DirectedWeightedNode<string, uint>, uint>[] {
+		new Pair<DirectedWeightedNode<string, uint>, uint>(node2, 12)
+	    }, new Pair<DirectedWeightedNode<string, uint>, uint>[] {
+		new Pair<DirectedWeightedNode<string, uint>, uint>(node1, 1)
 	    });
 
-	    graph.AddNode("Node 4", new Pair<DirectedNode<string, uint>, uint>[] {
-		new Pair<DirectedNode<string, uint>, uint>(node1, 42)
-	    }, new Pair<DirectedNode<string, uint>, uint>[] {
-		new Pair<DirectedNode<string, uint>, uint>(node3, 4)
+	    graph.AddNode("Node 4", new Pair<DirectedWeightedNode<string, uint>, uint>[] {
+		new Pair<DirectedWeightedNode<string, uint>, uint>(node1, 42)
+	    }, new Pair<DirectedWeightedNode<string, uint>, uint>[] {
+		new Pair<DirectedWeightedNode<string, uint>, uint>(node3, 4)
 	    });
 
 	    foreach (var node in graph.Nodes)
@@ -85,31 +85,31 @@ namespace FreezingArcher.Game
 		return false;
 	    });
 
-	    foreach (var n in (IEnumerable<DirectedNode<string, uint>>) graph)
+	    foreach (var n in (IEnumerable<DirectedWeightedNode<string, uint>>) graph)
 		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "FOR#   Node: {0}", n.GetHashCode());
 
 	    foreach (var s in (IEnumerable<string>) graph)
 		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "FOR#   Data: {0}", s);
 
-	    foreach (var e in (IEnumerable<DirectedEdge<string, uint>>) graph)
+	    foreach (var e in (IEnumerable<DirectedWeightedEdge<string, uint>>) graph)
 		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "FOR# Weight: {0}", e.Weight);
 
-	    foreach (var n in (IEnumerable<DirectedNode<string, uint>>) graph.AsBreadthFirstEnumerable)
+	    foreach (var n in (IEnumerable<DirectedWeightedNode<string, uint>>) graph.AsBreadthFirstEnumerable)
 		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "BFS#   Node: {0}", n.GetHashCode());
 
 	    foreach (var s in (IEnumerable<string>) graph.AsBreadthFirstEnumerable)
 		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "BFS#   Data: {0}", s);
 
-	    foreach (var e in (IEnumerable<DirectedEdge<string, uint>>) graph.AsBreadthFirstEnumerable)
+	    foreach (var e in (IEnumerable<DirectedWeightedEdge<string, uint>>) graph.AsBreadthFirstEnumerable)
 		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "BFS# Weight: {0}", e.Weight);
 
-	    foreach (var n in (IEnumerable<DirectedNode<string, uint>>) graph.AsDepthFirstEnumerable)
+	    foreach (var n in (IEnumerable<DirectedWeightedNode<string, uint>>) graph.AsDepthFirstEnumerable)
 		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "DFS#   Node: {0}", n.GetHashCode());
 
 	    foreach (var s in (IEnumerable<string>) graph.AsDepthFirstEnumerable)
 		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "DFS#   Data: {0}", s);
 
-	    foreach (var e in (IEnumerable<DirectedEdge<string, uint>>) graph.AsDepthFirstEnumerable)
+	    foreach (var e in (IEnumerable<DirectedWeightedEdge<string, uint>>) graph.AsDepthFirstEnumerable)
 		Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "DFS# Weight: {0}", e.Weight);
 
 	    Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "Graph tests finished!");

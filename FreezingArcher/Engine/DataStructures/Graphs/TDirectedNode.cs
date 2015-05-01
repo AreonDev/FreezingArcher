@@ -1,5 +1,5 @@
 ﻿//
-//  TDirectedWeightedNode.cs
+//  TDirectedNode.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,16 +20,15 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System;
 using FreezingArcher.Core;
 using System.Collections.Generic;
 
 namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
-    /// Node for use in directed and weighted graphs.
+    /// Node for use in directed graphs.
     /// </summary>
-    public sealed class DirectedWeightedNode<TData, TWeight> : FAObject where TWeight : IComparable
+    public sealed class DirectedNode<TData> : FAObject
     {
         /// <summary>
         /// Initialize this node with data.
@@ -40,12 +39,12 @@ namespace FreezingArcher.DataStructures.Graphs
             Data = data;
 
             if (InternalOutgoingEdges == null)
-                InternalOutgoingEdges = new List<DirectedWeightedEdge<TData, TWeight>>();
+                InternalOutgoingEdges = new List<DirectedEdge<TData>>();
             else
                 InternalOutgoingEdges.Clear();
 
             if (InternalIncomingEdges == null)
-                InternalIncomingEdges = new List<DirectedWeightedEdge<TData, TWeight>>();
+                InternalIncomingEdges = new List<DirectedEdge<TData>>();
             else
                 InternalIncomingEdges.Clear();
         }
@@ -60,7 +59,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Gets the outgoing edges.
         /// </summary>
         /// <value>The edges.</value>
-        public ReadOnlyList<DirectedWeightedEdge<TData, TWeight>> OutgoingEdges
+        public ReadOnlyList<DirectedEdge<TData>> OutgoingEdges
         {
             get
             {
@@ -71,13 +70,13 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <summary>
         /// The internal outgoing edges.
         /// </summary>
-        internal List<DirectedWeightedEdge<TData, TWeight>> InternalOutgoingEdges;
+        internal List<DirectedEdge<TData>> InternalOutgoingEdges;
 
         /// <summary>
         /// Gets the incoming edges.
         /// </summary>
         /// <value>The incoming edges.</value>
-        public ReadOnlyList<DirectedWeightedEdge<TData, TWeight>> IncomingEdges
+        public ReadOnlyList<DirectedEdge<TData>> IncomingEdges
         {
             get
             {
@@ -88,7 +87,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <summary>
         /// The internal incoming edges.
         /// </summary>
-        internal List<DirectedWeightedEdge<TData, TWeight>> InternalIncomingEdges;
+        internal List<DirectedEdge<TData>> InternalIncomingEdges;
 
         /// <summary>
         /// Destroy this instance.

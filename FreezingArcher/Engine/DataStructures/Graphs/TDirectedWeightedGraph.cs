@@ -33,7 +33,7 @@ namespace FreezingArcher.DataStructures.Graphs
     /// Directed weighted graph.
     /// </summary>
     public sealed class DirectedWeightedGraph<TData, TWeight> : FAObject, IEnumerable<DirectedNode<TData, TWeight>>,
-    IEnumerable<DirectedEdge<TData, TWeight>> where TWeight : IComparable
+    IEnumerable<DirectedEdge<TData, TWeight>>, IEnumerable<TData> where TWeight : IComparable
     {
         /// <summary>
         /// The name of the module.
@@ -54,6 +54,12 @@ namespace FreezingArcher.DataStructures.Graphs
                 InternalNodes = new List<DirectedNode<TData, TWeight>>();
             else
                 InternalEdges.Clear();
+
+            if (AsBreadthFirstEnumerable == null)
+                AsBreadthFirstEnumerable = new BreadthFirstEnumerable(this);
+
+            if (AsDepthFirstEnumerable == null)
+                AsDepthFirstEnumerable = new DepthFirstEnumerable(this);
         }
 
         /// <summary>
@@ -321,6 +327,15 @@ namespace FreezingArcher.DataStructures.Graphs
 
         #endregion
 
+        #region IEnumerable<TData> implementation
+
+        IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
+        {
+            return Nodes.Select(n => n.Data).GetEnumerator();
+        }
+
+        #endregion
+
         #region IEnumerable implementation
 
         /// <summary>
@@ -368,6 +383,359 @@ namespace FreezingArcher.DataStructures.Graphs
             } while (stack.Count > 0);
 
             return stack.Count < 1 ? null : edge.DestinationNode;
+        }
+
+        /// <summary>
+        /// Do breadth-first-search on this graph.
+        /// </summary>
+        /// <returns>The node matching the predicate.</returns>
+        /// <param name="startNode">Start node.</param>
+        /// <param name="predicate">Predicate.</param>
+        public DirectedNode<TData, TWeight> BreadthFirstSearch (DirectedNode<TData, TWeight> startNode,
+            Predicate<DirectedNode<TData, TWeight>> predicate)
+        {
+            Queue<DirectedNode<TData, TWeight>> queue = new Queue<DirectedNode<TData, TWeight>>();
+            List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+            DirectedNode<TData, TWeight> node;
+            IOrderedEnumerable<DirectedEdge<TData, TWeight>> children;
+
+            queue.Enqueue(startNode);
+            reachedNodes.Add(startNode);
+
+            while (queue.Count > 0)
+            {
+                node = queue.Dequeue();
+
+                if (predicate(node))
+                {
+                    return node;
+                }
+
+                children = node.OutgoingEdges.OrderBy(j => j.Weight);
+
+                foreach (var child in children)
+                {
+                    if (!reachedNodes.Contains(child.DestinationNode))
+                    {
+                        queue.Enqueue(child.DestinationNode);
+                        reachedNodes.Add(child.DestinationNode);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets an enumerable doing a depth first search through the entire graph.
+        /// </summary>
+        /// <value>The depth first enumerable.</value>
+        public DepthFirstEnumerable AsDepthFirstEnumerable { get; private set; }
+
+        /// <summary>
+        /// Gets an enumerable doing a breadth first search through the entire graph.
+        /// </summary>
+        /// <value>As breadth first enumerable.</value>
+        public BreadthFirstEnumerable AsBreadthFirstEnumerable { get; private set; }
+
+        /// <summary>
+        /// Depth first enumerable class.
+        /// Creates enumerators doing a depth first search through a given directed and weighted graph.
+        /// </summary>
+        public sealed class DepthFirstEnumerable : IEnumerable<TData>, IEnumerable<DirectedNode<TData, TWeight>>,
+        IEnumerable<DirectedEdge<TData, TWeight>>
+        {
+            readonly DirectedWeightedGraph<TData, TWeight> graph;
+
+            /// <summary>
+            /// Initializes a new instance of the DepthFirstEnumerable with a given directed and weighted graph.
+            /// </summary>
+            /// <param name="graph">Graph.</param>
+            internal DepthFirstEnumerable(DirectedWeightedGraph<TData, TWeight> graph)
+            {
+                this.graph = graph;
+            }
+
+            #region IEnumerable<TData> implementation
+            /// <summary>
+            /// Gets the enumerator enumerating over the node data.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
+            {
+                DirectedEdge<TData, TWeight> edge;
+                Stack<DirectedEdge<TData, TWeight>> stack = new Stack<DirectedEdge<TData, TWeight>>();
+                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+
+                yield return graph.Nodes[0].Data;
+
+                reachedNodes.Add(graph.Nodes[0]);
+                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+
+                do
+                {
+                    edge = stack.Pop();
+
+                    if (!reachedNodes.Contains(edge.DestinationNode))
+                    {
+                        yield return edge.DestinationNode.Data;
+
+                        reachedNodes.Add(edge.DestinationNode);
+                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                    }
+                } while (stack.Count > 0);
+            }
+            #endregion
+
+            #region IEnumerable<DirectedNode<TData, TWeight>> implementation
+            /// <summary>
+            /// Gets the enumerator enumerating over the nodes.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            IEnumerator<DirectedNode<TData, TWeight>> IEnumerable<DirectedNode<TData, TWeight>>.GetEnumerator()
+            {
+                DirectedEdge<TData, TWeight> edge;
+                Stack<DirectedEdge<TData, TWeight>> stack = new Stack<DirectedEdge<TData, TWeight>>();
+                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+
+                yield return graph.Nodes[0];
+
+                reachedNodes.Add(graph.Nodes[0]);
+                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+
+                do
+                {
+                    edge = stack.Pop();
+
+                    if (!reachedNodes.Contains(edge.DestinationNode))
+                    {
+                        yield return edge.DestinationNode;
+
+                        reachedNodes.Add(edge.DestinationNode);
+                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                    }
+                } while (stack.Count > 0);
+            }
+            #endregion
+
+            #region IEnumerable<DirectedEdge<TData, TWeight>> implementation
+            /// <summary>
+            /// Gets the enumerator enumerating over the edges.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            IEnumerator<DirectedEdge<TData, TWeight>> IEnumerable<DirectedEdge<TData, TWeight>>.GetEnumerator()
+            {
+                DirectedEdge<TData, TWeight> edge;
+                Stack<DirectedEdge<TData, TWeight>> stack = new Stack<DirectedEdge<TData, TWeight>>();
+                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+
+                reachedNodes.Add(graph.Nodes[0]);
+                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+
+                do
+                {
+                    edge = stack.Pop();
+
+                    yield return edge;
+
+                    if (!reachedNodes.Contains(edge.DestinationNode))
+                    {
+                        reachedNodes.Add(edge.DestinationNode);
+                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                    }
+                } while (stack.Count > 0);
+            }
+            #endregion
+
+            #region IEnumerable implementation
+            /// <summary>
+            /// Gets the enumerator enumerating over the nodes.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                DirectedEdge<TData, TWeight> edge;
+                Stack<DirectedEdge<TData, TWeight>> stack = new Stack<DirectedEdge<TData, TWeight>>();
+                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+
+                yield return graph.Nodes[0];
+
+                reachedNodes.Add(graph.Nodes[0]);
+                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+
+                do
+                {
+                    edge = stack.Pop();
+
+                    if (!reachedNodes.Contains(edge.DestinationNode))
+                    {
+                        yield return edge.DestinationNode;
+
+                        reachedNodes.Add(edge.DestinationNode);
+                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                    }
+                } while (stack.Count > 0);
+            }
+            #endregion
+        }
+
+        /// <summary>
+        /// Breadth first enumerable class.
+        /// Creates enumerators doing a breadth first search through a given directed and weighted graph.
+        /// </summary>
+        public sealed class BreadthFirstEnumerable : IEnumerable<TData>, IEnumerable<DirectedNode<TData, TWeight>>,
+        IEnumerable<DirectedEdge<TData, TWeight>>
+        {
+            readonly DirectedWeightedGraph<TData, TWeight> graph;
+
+            /// <summary>
+            /// Initializes a new instance of the BreadthFirstEnumerable class with a given directed and weighted graph.
+            /// </summary>
+            /// <param name="graph">Graph.</param>
+            internal BreadthFirstEnumerable(DirectedWeightedGraph<TData, TWeight> graph)
+            {
+                this.graph = graph;
+            }
+
+            #region IEnumerable<TData> implementation
+            /// <summary>
+            /// Gets the enumerator enumerating over node data.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
+            {
+                Queue<DirectedNode<TData, TWeight>> queue = new Queue<DirectedNode<TData, TWeight>>();
+                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+                DirectedNode<TData, TWeight> node;
+                IOrderedEnumerable<DirectedEdge<TData, TWeight>> children;
+
+                queue.Enqueue(graph.Nodes[0]);
+                reachedNodes.Add(graph.Nodes[0]);
+
+                while (queue.Count > 0)
+                {
+                    node = queue.Dequeue();
+
+                    yield return node.Data;
+
+                    children = node.OutgoingEdges.OrderBy(j => j.Weight);
+
+                    foreach (var child in children)
+                    {
+                        if (!reachedNodes.Contains(child.DestinationNode))
+                        {
+                            queue.Enqueue(child.DestinationNode);
+                            reachedNodes.Add(child.DestinationNode);
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region IEnumerable<DirectedNode<TData, TWeight>> implementation
+            /// <summary>
+            /// Gets the enumerator enumerating over the nodes.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            IEnumerator<DirectedNode<TData, TWeight>> IEnumerable<DirectedNode<TData, TWeight>>.GetEnumerator()
+            {
+                Queue<DirectedNode<TData, TWeight>> queue = new Queue<DirectedNode<TData, TWeight>>();
+                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+                DirectedNode<TData, TWeight> node;
+                IOrderedEnumerable<DirectedEdge<TData, TWeight>> children;
+
+                queue.Enqueue(graph.Nodes[0]);
+                reachedNodes.Add(graph.Nodes[0]);
+
+                while (queue.Count > 0)
+                {
+                    node = queue.Dequeue();
+
+                    yield return node;
+
+                    children = node.OutgoingEdges.OrderBy(j => j.Weight);
+
+                    foreach (var child in children)
+                    {
+                        if (!reachedNodes.Contains(child.DestinationNode))
+                        {
+                            queue.Enqueue(child.DestinationNode);
+                            reachedNodes.Add(child.DestinationNode);
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region IEnumerable<DirectedEdge<TData, TWeight>> implementation
+            /// <summary>
+            /// Gets the enumerator enumerating over the edges.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            IEnumerator<DirectedEdge<TData, TWeight>> IEnumerable<DirectedEdge<TData, TWeight>>.GetEnumerator()
+            {
+                Queue<DirectedNode<TData, TWeight>> queue = new Queue<DirectedNode<TData, TWeight>>();
+                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+                DirectedNode<TData, TWeight> node;
+                IOrderedEnumerable<DirectedEdge<TData, TWeight>> children;
+
+                queue.Enqueue(graph.Nodes[0]);
+                reachedNodes.Add(graph.Nodes[0]);
+
+                while (queue.Count > 0)
+                {
+                    node = queue.Dequeue();
+
+                    children = node.OutgoingEdges.OrderBy(j => j.Weight);
+
+                    foreach (var child in children)
+                    {
+                        yield return child;
+
+                        if (!reachedNodes.Contains(child.DestinationNode))
+                        {
+                            queue.Enqueue(child.DestinationNode);
+                            reachedNodes.Add(child.DestinationNode);
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region IEnumerable implementation
+            /// <summary>
+            /// Gets the enumerator enumerating over the nodes.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                Queue<DirectedNode<TData, TWeight>> queue = new Queue<DirectedNode<TData, TWeight>>();
+                List<DirectedNode<TData, TWeight>> reachedNodes = new List<DirectedNode<TData, TWeight>>();
+                DirectedNode<TData, TWeight> node;
+                IOrderedEnumerable<DirectedEdge<TData, TWeight>> children;
+
+                queue.Enqueue(graph.Nodes[0]);
+                reachedNodes.Add(graph.Nodes[0]);
+
+                while (queue.Count > 0)
+                {
+                    node = queue.Dequeue();
+
+                    yield return node;
+
+                    children = node.OutgoingEdges.OrderBy(j => j.Weight);
+
+                    foreach (var child in children)
+                    {
+                        if (!reachedNodes.Contains(child.DestinationNode))
+                        {
+                            queue.Enqueue(child.DestinationNode);
+                            reachedNodes.Add(child.DestinationNode);
+                        }
+                    }
+                }
+            }
+            #endregion
         }
     }
 }

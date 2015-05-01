@@ -205,6 +205,9 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="DataStructures\Graphs\TWeightedEdge.cs" />
     <Compile Include="DataStructures\Graphs\TDirectedWeightedNode.cs" />
     <Compile Include="DataStructures\Graphs\TWeightedNode.cs" />
+    <Compile Include="DataStructures\Graphs\TEdge.cs" />
+    <Compile Include="DataStructures\Graphs\TNode.cs" />
+    <Compile Include="DataStructures\Graphs\TGraph.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

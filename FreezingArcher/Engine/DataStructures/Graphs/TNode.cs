@@ -1,5 +1,5 @@
 ﻿//
-//  TDirectedWeightedEdge.cs
+//  TNode.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,56 +20,60 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System;
 using FreezingArcher.Core;
+using System.Collections.Generic;
 
 namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
-    /// Directed edge for use in graphs.
+    /// Node for use in graphs.
     /// </summary>
-    public sealed class DirectedWeightedEdge<TData, TWeight> : FAObject where TWeight : IComparable
+    public sealed class Node<TData> : FAObject
     {
         /// <summary>
-        /// Initialize this edge with the given data.
+        /// Initialize this node with data.
         /// </summary>
-        /// <param name="weight">Edge weight.</param>
-        /// <param name="sourceNode">Source node.</param>
-        /// <param name="destinationNode">Destination node.</param>
-        internal void Init (TWeight weight, DirectedWeightedNode<TData, TWeight> sourceNode,
-            DirectedWeightedNode<TData, TWeight> destinationNode)
+        /// <param name="data">Data this node should hold.</param>
+        internal void Init (TData data)
         {
-            Weight = weight;
-            SourceNode = sourceNode;
-            DestinationNode = destinationNode;
+            Data = data;
+
+            if (InternalEdges == null)
+                InternalEdges = new List<Edge<TData>>();
+            else
+                InternalEdges.Clear();
         }
 
         /// <summary>
-        /// Gets or sets the weight.
+        /// Gets or sets the data.
         /// </summary>
-        /// <value>The weight.</value>
-        public TWeight Weight { get; set; }
+        /// <value>The data.</value>
+        public TData Data { get; set; }
 
         /// <summary>
-        /// Gets the source node.
+        /// Gets the edges.
         /// </summary>
-        /// <value>The source node.</value>
-        public DirectedWeightedNode<TData, TWeight> SourceNode { get; internal set; }
+        /// <value>The edges.</value>
+        public ReadOnlyList<Edge<TData>> Edges
+        {
+            get
+            {
+                return InternalEdges;
+            }
+        }
 
         /// <summary>
-        /// Gets the destination node.
+        /// The internal edges.
         /// </summary>
-        /// <value>The destination node.</value>
-        public DirectedWeightedNode<TData, TWeight> DestinationNode { get; internal set; }
+        internal List<Edge<TData>> InternalEdges;
 
         /// <summary>
         /// Destroy this instance.
         /// </summary>
         public override void Destroy()
         {
-            Weight = default(TWeight);
-            SourceNode = null;
-            DestinationNode = null;
+            Data = default(TData);
+            InternalEdges.Clear();
             base.Destroy();
         }
     }

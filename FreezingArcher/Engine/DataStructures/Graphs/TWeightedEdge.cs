@@ -1,5 +1,5 @@
 ﻿//
-//  TEdge.cs
+//  TWeightedEdge.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>

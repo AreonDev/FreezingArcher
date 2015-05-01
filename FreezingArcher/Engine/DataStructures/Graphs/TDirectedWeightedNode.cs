@@ -1,5 +1,5 @@
 ﻿//
-//  TDirectedNode.cs
+//  TDirectedWeightedNode.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>

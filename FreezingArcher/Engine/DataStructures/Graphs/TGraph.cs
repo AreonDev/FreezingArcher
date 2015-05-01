@@ -1,5 +1,5 @@
 ﻿//
-//  TWeightedGraph.cs
+//  TGraph.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -30,15 +30,14 @@ using System.Linq;
 namespace FreezingArcher.DataStructures.Graphs
 {
     /// <summary>
-    /// Weighted graph.
+    /// Graph.
     /// </summary>
-    public sealed class WeightedGraph<TData, TWeight> : FAObject, IEnumerable<WeightedNode<TData, TWeight>>,
-    IEnumerable<WeightedEdge<TData, TWeight>>, IEnumerable<TData> where TWeight : IComparable
+    public sealed class Graph<TData> : FAObject, IEnumerable<Node<TData>>, IEnumerable<Edge<TData>>, IEnumerable<TData>
     {
         /// <summary>
         /// The name of the module.
         /// </summary>
-        public const string ModuleName = "WeightedGraph";
+        public const string ModuleName = "Graph";
 
         /// <summary>
         /// Initialize the graph.
@@ -46,12 +45,12 @@ namespace FreezingArcher.DataStructures.Graphs
         public void Init ()
         {
             if (InternalEdges == null)
-                InternalEdges = new List<WeightedEdge<TData, TWeight>>();
+                InternalEdges = new List<Edge<TData>>();
             else
                 InternalEdges.Clear();
 
             if (InternalNodes == null)
-                InternalNodes = new List<WeightedNode<TData, TWeight>>();
+                InternalNodes = new List<Node<TData>>();
             else
                 InternalEdges.Clear();
 
@@ -65,18 +64,18 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <summary>
         /// The real edges are stored here for internal use.
         /// </summary>
-        List<WeightedEdge<TData, TWeight>> InternalEdges;
+        List<Edge<TData>> InternalEdges;
 
         /// <summary>
         /// The real nodes are stored here for internal use.
         /// </summary>
-        List<WeightedNode<TData, TWeight>> InternalNodes;
+        List<Node<TData>> InternalNodes;
 
         /// <summary>
         /// Get a read only collection of all registered edges.
         /// </summary>
         /// <value>The edges.</value>
-        public ReadOnlyList<WeightedEdge<TData, TWeight>> Edges
+        public ReadOnlyList<Edge<TData>> Edges
         {
             get
             {
@@ -88,7 +87,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// Get a read only collection of all registered nodes.
         /// </summary>
         /// <value>The nodes.</value>
-        public ReadOnlyList<WeightedNode<TData, TWeight>> Nodes
+        public ReadOnlyList<Node<TData>> Nodes
         {
             get
             {
@@ -113,13 +112,11 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if node was added, <c>false</c> otherwise.</returns>
         /// <param name="data">The data the node should hold.</param>
-        /// <param name="edgeNodes">Collection of edges to be created. The pair consists of a
-        /// neighbour node and an edge weight.</param>
-        public WeightedNode<TData, TWeight> AddNode (TData data,
-            ICollection<Pair<WeightedNode<TData, TWeight>, TWeight>> edgeNodes = null)
+        /// <param name="edgeNodes">Collection of edges to be created.</param>
+        public Node<TData> AddNode (TData data, ICollection<Node<TData>> edgeNodes = null)
         {
             // create new node with object recycler
-            WeightedNode<TData, TWeight> node = ObjectManager.CreateOrRecycle<WeightedNode<TData, TWeight>> ();
+            Node<TData> node = ObjectManager.CreateOrRecycle<Node<TData>> ();
 
             // initialize new node with data
             node.Init (data);
@@ -130,10 +127,10 @@ namespace FreezingArcher.DataStructures.Graphs
                 foreach (var edgeNode in edgeNodes)
                 {
                     // does destination node exist? If not adding this node to the graph will fail
-                    if (edgeNode.A == null)
+                    if (edgeNode == null)
                     {
                         Logger.Log.AddLogEntry (LogLevel.Severe, ModuleName,
-                            "Failed to create edge to nonexistent node {0}, skipping...", edgeNode.A);
+                            "Failed to create edge to nonexistent node {0}, skipping...", edgeNode);
 
                         node.Destroy();
 
@@ -142,7 +139,7 @@ namespace FreezingArcher.DataStructures.Graphs
                     }
 
                     // add new edge
-                    var edge = AddEdge(node, edgeNode.A, edgeNode.B);
+                    var edge = AddEdge(node, edgeNode);
 
                     if (edge == null)
                     {
@@ -166,7 +163,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if node was removed, <c>false</c> otherwise.</returns>
         /// <param name="node">Node identifier.</param>
-        public bool RemoveNode (WeightedNode<TData, TWeight> node)
+        public bool RemoveNode (Node<TData> node)
         {
             // print error if remove failed
             if (InternalNodes.Remove(node))
@@ -194,14 +191,12 @@ namespace FreezingArcher.DataStructures.Graphs
         }
 
         /// <summary>
-        /// Adds an edge from a given source node to a given destination node with a given edge weight.
+        /// Adds an edge from a given source node to a given destination node.
         /// </summary>
         /// <returns><c>true</c>, if edge was added, <c>false</c> otherwise.</returns>
         /// <param name="firstNode">The first node.</param>
         /// <param name="secondNode">The second node.</param>
-        /// <param name="weight">The edge weight.</param>
-        public WeightedEdge<TData, TWeight> AddEdge (WeightedNode<TData, TWeight> firstNode,
-            WeightedNode<TData, TWeight> secondNode, TWeight weight)
+        public Edge<TData> AddEdge (Node<TData> firstNode, Node<TData> secondNode)
         {
             // fail if one of the nodes is null
             if (firstNode == null || secondNode == null)
@@ -211,10 +206,10 @@ namespace FreezingArcher.DataStructures.Graphs
             }
 
             // create new edge with object recycler
-            WeightedEdge<TData, TWeight> edge = ObjectManager.CreateOrRecycle<WeightedEdge<TData, TWeight>>();
+            Edge<TData> edge = ObjectManager.CreateOrRecycle<Edge<TData>>();
 
             // initialize edge with data
-            edge.Init(weight, firstNode, secondNode);
+            edge.Init(firstNode, secondNode);
 
             // add created edge to source and destination nodes
             firstNode.InternalEdges.Add(edge);
@@ -232,7 +227,7 @@ namespace FreezingArcher.DataStructures.Graphs
         /// </summary>
         /// <returns><c>true</c>, if edge was removed, <c>false</c> otherwise.</returns>
         /// <param name="edge">The edge.</param>
-        public bool RemoveEdge (WeightedEdge<TData, TWeight> edge)
+        public bool RemoveEdge (Edge<TData> edge)
         {
             // fail if edge is null
             if (edge == null)
@@ -262,26 +257,26 @@ namespace FreezingArcher.DataStructures.Graphs
             return true;
         }
 
-        #region IEnumerable<Node<TData, TWeight>> implementation
+        #region IEnumerable<Node<TData>> implementation
 
         /// <summary>
         /// Gets the enumerator for nodes.
         /// </summary>
         /// <returns>The node enumerator.</returns>
-        IEnumerator<WeightedNode<TData, TWeight>> IEnumerable<WeightedNode<TData, TWeight>>.GetEnumerator()
+        IEnumerator<Node<TData>> IEnumerable<Node<TData>>.GetEnumerator()
         {
             return Nodes.GetEnumerator();
         }
 
         #endregion
 
-        #region IEnumerable<WeightedEdge<TData, TWeight>> implementation
+        #region IEnumerable<Edge<TData>> implementation
 
         /// <summary>
         /// Gets the enumerator for edge.
         /// </summary>
         /// <returns>The edge enumerator.</returns>
-        IEnumerator<WeightedEdge<TData, TWeight>> IEnumerable<WeightedEdge<TData, TWeight>>.GetEnumerator()
+        IEnumerator<Edge<TData>> IEnumerable<Edge<TData>>.GetEnumerator()
         {
             return Edges.GetEnumerator();
         }
@@ -320,18 +315,17 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <returns>The node matching the predicate.</returns>
         /// <param name="startNode">Start node.</param>
         /// <param name="predicate">Predicate.</param>
-        public WeightedNode<TData, TWeight> DepthFirstSearch (WeightedNode<TData, TWeight> startNode,
-            Predicate<WeightedNode<TData, TWeight>> predicate)
+        public Node<TData> DepthFirstSearch (Node<TData> startNode, Predicate<Node<TData>> predicate)
         {
-            WeightedNode<TData, TWeight> node;
-            Stack<WeightedNode<TData, TWeight>> stack = new Stack<WeightedNode<TData, TWeight>>();
-            List<WeightedNode<TData, TWeight>> reachedNodes = new List<WeightedNode<TData, TWeight>>();
+            Node<TData> node;
+            Stack<Node<TData>> stack = new Stack<Node<TData>>();
+            List<Node<TData>> reachedNodes = new List<Node<TData>>();
 
             if (predicate(startNode))
                 return startNode;
 
             reachedNodes.Add(startNode);
-            startNode.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
+            startNode.Edges.ForEach(e => {
                 if (startNode == e.SecondNode)
                     stack.Push(e.FirstNode);
                 else
@@ -348,7 +342,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         return node;
 
                     reachedNodes.Add(node);
-                    node.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
+                    node.Edges.ForEach(e => {
                         if (startNode == e.SecondNode)
                             stack.Push(e.FirstNode);
                         else
@@ -366,13 +360,12 @@ namespace FreezingArcher.DataStructures.Graphs
         /// <returns>The node matching the predicate.</returns>
         /// <param name="startNode">Start node.</param>
         /// <param name="predicate">Predicate.</param>
-        public WeightedNode<TData, TWeight> BreadthFirstSearch (WeightedNode<TData, TWeight> startNode,
-            Predicate<WeightedNode<TData, TWeight>> predicate)
+        public Node<TData> BreadthFirstSearch (Node<TData> startNode, Predicate<Node<TData>> predicate)
         {
-            Queue<WeightedNode<TData, TWeight>> queue = new Queue<WeightedNode<TData, TWeight>>();
-            List<WeightedNode<TData, TWeight>> reachedNodes = new List<WeightedNode<TData, TWeight>>();
-            WeightedNode<TData, TWeight> node;
-            IEnumerable<WeightedNode<TData, TWeight>> children;
+            Queue<Node<TData>> queue = new Queue<Node<TData>>();
+            List<Node<TData>> reachedNodes = new List<Node<TData>>();
+            Node<TData> node;
+            IEnumerable<Node<TData>> children;
 
             queue.Enqueue(startNode);
             reachedNodes.Add(startNode);
@@ -384,9 +377,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 if (predicate(node))
                     return node;
 
-                children = node.Edges.OrderBy(j => j.Weight).Select(
-                    e => e.SecondNode == node ? e.FirstNode : e.SecondNode
-                );
+                children = node.Edges.Select(e => e.SecondNode == node ? e.FirstNode : e.SecondNode);
 
                 foreach (var child in children)
                 {
@@ -415,18 +406,17 @@ namespace FreezingArcher.DataStructures.Graphs
 
         /// <summary>
         /// Depth first enumerable class.
-        /// Creates enumerators doing a depth first search through a given weighted graph.
+        /// Creates enumerators doing a depth first search through a given graph.
         /// </summary>
-        public sealed class DepthFirstEnumerable : IEnumerable<TData>, IEnumerable<WeightedNode<TData, TWeight>>,
-        IEnumerable<WeightedEdge<TData, TWeight>>
+        public sealed class DepthFirstEnumerable : IEnumerable<TData>, IEnumerable<Node<TData>>, IEnumerable<Edge<TData>>
         {
-            readonly WeightedGraph<TData, TWeight> graph;
+            readonly Graph<TData> graph;
 
             /// <summary>
-            /// Initializes a new instance of the DepthFirstEnumerable with a given weighted graph.
+            /// Initializes a new instance of the DepthFirstEnumerable with a given graph.
             /// </summary>
             /// <param name="graph">Graph.</param>
-            internal DepthFirstEnumerable(WeightedGraph<TData, TWeight> graph)
+            internal DepthFirstEnumerable(Graph<TData> graph)
             {
                 this.graph = graph;
             }
@@ -438,14 +428,14 @@ namespace FreezingArcher.DataStructures.Graphs
             /// <returns>The enumerator.</returns>
             IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
             {
-                WeightedNode<TData, TWeight> node;
-                Stack<WeightedNode<TData, TWeight>> stack = new Stack<WeightedNode<TData, TWeight>>();
-                List<WeightedNode<TData, TWeight>> reachedNodes = new List<WeightedNode<TData, TWeight>>();
+                Node<TData> node;
+                Stack<Node<TData>> stack = new Stack<Node<TData>>();
+                List<Node<TData>> reachedNodes = new List<Node<TData>>();
 
                 yield return graph.Nodes[0].Data;
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].Edges.OrderByDescending(j => j.Weight).ForEach(e => {
+                graph.Nodes[0].Edges.ForEach(e => {
                     if (graph.Nodes[0] == e.SecondNode)
                         stack.Push(e.FirstNode);
                     else
@@ -461,7 +451,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         yield return node.Data;
 
                         reachedNodes.Add(node);
-                        node.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
+                        node.Edges.ForEach(e => {
                             if (graph.Nodes[0] == e.SecondNode)
                                 stack.Push(e.FirstNode);
                             else
@@ -472,21 +462,21 @@ namespace FreezingArcher.DataStructures.Graphs
             }
             #endregion
 
-            #region IEnumerable<WeightedNode<TData, TWeight>> implementation
+            #region IEnumerable<Node<TData>> implementation
             /// <summary>
             /// Gets the enumerator enumerating over the nodes.
             /// </summary>
             /// <returns>The enumerator.</returns>
-            IEnumerator<WeightedNode<TData, TWeight>> IEnumerable<WeightedNode<TData, TWeight>>.GetEnumerator()
+            IEnumerator<Node<TData>> IEnumerable<Node<TData>>.GetEnumerator()
             {
-                WeightedNode<TData, TWeight> node;
-                Stack<WeightedNode<TData, TWeight>> stack = new Stack<WeightedNode<TData, TWeight>>();
-                List<WeightedNode<TData, TWeight>> reachedNodes = new List<WeightedNode<TData, TWeight>>();
+                Node<TData> node;
+                Stack<Node<TData>> stack = new Stack<Node<TData>>();
+                List<Node<TData>> reachedNodes = new List<Node<TData>>();
 
                 yield return graph.Nodes[0];
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].Edges.OrderByDescending(j => j.Weight).ForEach(e => {
+                graph.Nodes[0].Edges.ForEach(e => {
                     if (graph.Nodes[0] == e.SecondNode)
                         stack.Push(e.FirstNode);
                     else
@@ -502,7 +492,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         yield return node;
 
                         reachedNodes.Add(node);
-                        node.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
+                        node.Edges.ForEach(e => {
                             if (graph.Nodes[0] == e.SecondNode)
                                 stack.Push(e.FirstNode);
                             else
@@ -513,21 +503,21 @@ namespace FreezingArcher.DataStructures.Graphs
             }
             #endregion
 
-            #region IEnumerable<WeightedEdge<TData, TWeight>> implementation
+            #region IEnumerable<Edge<TData>> implementation
             /// <summary>
             /// Gets the enumerator enumerating over the edges.
             /// </summary>
             /// <returns>The enumerator.</returns>
-            IEnumerator<WeightedEdge<TData, TWeight>> IEnumerable<WeightedEdge<TData, TWeight>>.GetEnumerator()
+            IEnumerator<Edge<TData>> IEnumerable<Edge<TData>>.GetEnumerator()
             {
-                WeightedNode<TData, TWeight> node;
-                WeightedEdge<TData, TWeight> edge;
-                Stack<WeightedNode<TData, TWeight>> stack = new Stack<WeightedNode<TData, TWeight>>();
-                Stack<WeightedEdge<TData, TWeight>> estack = new Stack<WeightedEdge<TData, TWeight>>();
-                List<WeightedNode<TData, TWeight>> reachedNodes = new List<WeightedNode<TData, TWeight>>();
+                Node<TData> node;
+                Edge<TData> edge;
+                Stack<Node<TData>> stack = new Stack<Node<TData>>();
+                Stack<Edge<TData>> estack = new Stack<Edge<TData>>();
+                List<Node<TData>> reachedNodes = new List<Node<TData>>();
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].Edges.OrderByDescending(j => j.Weight).ForEach(e => {
+                graph.Nodes[0].Edges.ForEach(e => {
                     estack.Push(e);
                     if (graph.Nodes[0] == e.SecondNode)
                         stack.Push(e.FirstNode);
@@ -545,7 +535,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         yield return edge;
 
                         reachedNodes.Add(node);
-                        node.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
+                        node.Edges.ForEach(e => {
                             estack.Push(e);
                             if (graph.Nodes[0] == e.SecondNode)
                                 stack.Push(e.FirstNode);
@@ -564,14 +554,14 @@ namespace FreezingArcher.DataStructures.Graphs
             /// <returns>The enumerator.</returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                WeightedNode<TData, TWeight> node;
-                Stack<WeightedNode<TData, TWeight>> stack = new Stack<WeightedNode<TData, TWeight>>();
-                List<WeightedNode<TData, TWeight>> reachedNodes = new List<WeightedNode<TData, TWeight>>();
+                Node<TData> node;
+                Stack<Node<TData>> stack = new Stack<Node<TData>>();
+                List<Node<TData>> reachedNodes = new List<Node<TData>>();
 
                 yield return graph.Nodes[0];
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].Edges.OrderByDescending(j => j.Weight).ForEach(e => {
+                graph.Nodes[0].Edges.ForEach(e => {
                     if (graph.Nodes[0] == e.SecondNode)
                         stack.Push(e.FirstNode);
                     else
@@ -587,7 +577,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         yield return node;
 
                         reachedNodes.Add(node);
-                        node.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
+                        node.Edges.ForEach(e => {
                             if (graph.Nodes[0] == e.SecondNode)
                                 stack.Push(e.FirstNode);
                             else
@@ -601,18 +591,18 @@ namespace FreezingArcher.DataStructures.Graphs
 
         /// <summary>
         /// Breadth first enumerable class.
-        /// Creates enumerators doing a breadth first search through a given weighted graph.
+        /// Creates enumerators doing a breadth first search through a given graph.
         /// </summary>
-        public sealed class BreadthFirstEnumerable : IEnumerable<TData>, IEnumerable<WeightedNode<TData, TWeight>>,
-        IEnumerable<WeightedEdge<TData, TWeight>>
+        public sealed class BreadthFirstEnumerable : IEnumerable<TData>, IEnumerable<Node<TData>>,
+        IEnumerable<Edge<TData>>
         {
-            readonly WeightedGraph<TData, TWeight> graph;
+            readonly Graph<TData> graph;
 
             /// <summary>
-            /// Initializes a new instance of the BreadthFirstEnumerable class with a given weighted graph.
+            /// Initializes a new instance of the BreadthFirstEnumerable class with a given graph.
             /// </summary>
             /// <param name="graph">Graph.</param>
-            internal BreadthFirstEnumerable(WeightedGraph<TData, TWeight> graph)
+            internal BreadthFirstEnumerable(Graph<TData> graph)
             {
                 this.graph = graph;
             }
@@ -624,10 +614,10 @@ namespace FreezingArcher.DataStructures.Graphs
             /// <returns>The enumerator.</returns>
             IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
             {
-                Queue<WeightedNode<TData, TWeight>> queue = new Queue<WeightedNode<TData, TWeight>>();
-                List<WeightedNode<TData, TWeight>> reachedNodes = new List<WeightedNode<TData, TWeight>>();
-                WeightedNode<TData, TWeight> node;
-                IEnumerable<WeightedNode<TData, TWeight>> children;
+                Queue<Node<TData>> queue = new Queue<Node<TData>>();
+                List<Node<TData>> reachedNodes = new List<Node<TData>>();
+                Node<TData> node;
+                IEnumerable<Node<TData>> children;
 
                 queue.Enqueue(graph.Nodes[0]);
                 reachedNodes.Add(graph.Nodes[0]);
@@ -638,9 +628,7 @@ namespace FreezingArcher.DataStructures.Graphs
 
                     yield return node.Data;
 
-                    children = node.Edges.OrderBy(j => j.Weight).Select(
-                        e => e.SecondNode == node ? e.FirstNode : e.SecondNode
-                    );
+                    children = node.Edges.Select(e => e.SecondNode == node ? e.FirstNode : e.SecondNode);
 
                     foreach (var child in children)
                     {
@@ -654,17 +642,17 @@ namespace FreezingArcher.DataStructures.Graphs
             }
             #endregion
 
-            #region IEnumerable<WeightedNode<TData, TWeight>> implementation
+            #region IEnumerable<Node<TData>> implementation
             /// <summary>
             /// Gets the enumerator enumerating over the nodes.
             /// </summary>
             /// <returns>The enumerator.</returns>
-            IEnumerator<WeightedNode<TData, TWeight>> IEnumerable<WeightedNode<TData, TWeight>>.GetEnumerator()
+            IEnumerator<Node<TData>> IEnumerable<Node<TData>>.GetEnumerator()
             {
-                Queue<WeightedNode<TData, TWeight>> queue = new Queue<WeightedNode<TData, TWeight>>();
-                List<WeightedNode<TData, TWeight>> reachedNodes = new List<WeightedNode<TData, TWeight>>();
-                WeightedNode<TData, TWeight> node;
-                IEnumerable<WeightedNode<TData, TWeight>> children;
+                Queue<Node<TData>> queue = new Queue<Node<TData>>();
+                List<Node<TData>> reachedNodes = new List<Node<TData>>();
+                Node<TData> node;
+                IEnumerable<Node<TData>> children;
 
                 queue.Enqueue(graph.Nodes[0]);
                 reachedNodes.Add(graph.Nodes[0]);
@@ -675,9 +663,7 @@ namespace FreezingArcher.DataStructures.Graphs
 
                     yield return node;
 
-                    children = node.Edges.OrderBy(j => j.Weight).Select(
-                        e => e.SecondNode == node ? e.FirstNode : e.SecondNode
-                    );
+                    children = node.Edges.Select(e => e.SecondNode == node ? e.FirstNode : e.SecondNode);
 
                     foreach (var child in children)
                     {
@@ -691,18 +677,18 @@ namespace FreezingArcher.DataStructures.Graphs
             }
             #endregion
 
-            #region IEnumerable<WeightedEdge<TData, TWeight>> implementation
+            #region IEnumerable<Edge<TData>> implementation
             /// <summary>
             /// Gets the enumerator enumerating over the edges.
             /// </summary>
             /// <returns>The enumerator.</returns>
-            IEnumerator<WeightedEdge<TData, TWeight>> IEnumerable<WeightedEdge<TData, TWeight>>.GetEnumerator()
+            IEnumerator<Edge<TData>> IEnumerable<Edge<TData>>.GetEnumerator()
             {
-                Queue<WeightedNode<TData, TWeight>> queue = new Queue<WeightedNode<TData, TWeight>>();
-                List<WeightedEdge<TData, TWeight>> edges = new List<WeightedEdge<TData, TWeight>>();
-                List<WeightedNode<TData, TWeight>> reachedNodes = new List<WeightedNode<TData, TWeight>>();
-                WeightedNode<TData, TWeight> node;
-                IEnumerable<WeightedNode<TData, TWeight>> children;
+                Queue<Node<TData>> queue = new Queue<Node<TData>>();
+                List<Edge<TData>> edges = new List<Edge<TData>>();
+                List<Node<TData>> reachedNodes = new List<Node<TData>>();
+                Node<TData> node;
+                IEnumerable<Node<TData>> children;
 
                 queue.Enqueue(graph.Nodes[0]);
                 reachedNodes.Add(graph.Nodes[0]);
@@ -713,8 +699,8 @@ namespace FreezingArcher.DataStructures.Graphs
 
                     edges.Clear();
 
-                    children = node.Edges.OrderBy(j => j.Weight).Select(e => {
-                        edges.Add(e); 
+                    children = node.Edges.Select(e => {
+                        edges.Add(e);
                         return e.SecondNode == node ? e.FirstNode : e.SecondNode;
                     });
 
@@ -740,10 +726,10 @@ namespace FreezingArcher.DataStructures.Graphs
             /// <returns>The enumerator.</returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                Queue<WeightedNode<TData, TWeight>> queue = new Queue<WeightedNode<TData, TWeight>>();
-                List<WeightedNode<TData, TWeight>> reachedNodes = new List<WeightedNode<TData, TWeight>>();
-                WeightedNode<TData, TWeight> node;
-                IEnumerable<WeightedNode<TData, TWeight>> children;
+                Queue<Node<TData>> queue = new Queue<Node<TData>>();
+                List<Node<TData>> reachedNodes = new List<Node<TData>>();
+                Node<TData> node;
+                IEnumerable<Node<TData>> children;
 
                 queue.Enqueue(graph.Nodes[0]);
                 reachedNodes.Add(graph.Nodes[0]);
@@ -754,9 +740,7 @@ namespace FreezingArcher.DataStructures.Graphs
 
                     yield return node;
 
-                    children = node.Edges.OrderBy(j => j.Weight).Select(
-                        e => e.SecondNode == node ? e.FirstNode : e.SecondNode
-                    );
+                    children = node.Edges.Select(e => e.SecondNode == node ? e.FirstNode : e.SecondNode);
 
                     foreach (var child in children)
                     {

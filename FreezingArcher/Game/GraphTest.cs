@@ -46,6 +46,19 @@ namespace FreezingArcher.Game
 	    Logger.Log.AddLogEntry(LogLevel.Debug, "GraphTest", "Starting graph tests...");
 
 	    var objectManager = new ObjectManager();
+
+	    // [1]---19--->[2]
+	    //  A \         A
+	    //  |  \        |
+	    //  |   \       |
+	    //  |    \      |
+	    //  42    1     12
+	    //  |      \    |
+	    //  |       \   |
+	    //  |        \  |
+	    //  |        _\ |
+	    // [4]<---4----[3]
+
 	    var graph = objectManager.CreateOrRecycle<DirectedWeightedGraph<string, uint>>();
 	    graph.Init();
 

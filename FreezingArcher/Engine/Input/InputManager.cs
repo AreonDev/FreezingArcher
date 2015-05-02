@@ -53,7 +53,7 @@ namespace FreezingArcher.Input
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Input.InputManager"/> class.
         /// </summary>
-        public InputManager (MessageManager messageManager)
+        internal InputManager (MessageManager messageManager)
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new input manager");
             Keys = new List<KeyboardInput> ();
@@ -61,7 +61,7 @@ namespace FreezingArcher.Input
             MouseMovement = Vector2.Zero;
             MouseScroll = Vector2.Zero;
             OldMousePosition = Vector2.Zero;
-            KeyRegistry.Instance = new KeyRegistry ();
+            KeyRegistry.Instance = new KeyRegistry (messageManager);
             Stopwatch = new Stopwatch();
             messageManager += this;
         }
@@ -104,7 +104,7 @@ namespace FreezingArcher.Input
         /// <param name="scancode">Scancode.</param>
         /// <param name="action">Action.</param>
         /// <param name="modifier">Modifier.</param>
-        public void HandleKeyboardInput (GlfwWindowPtr window, Key key, int scancode,
+        internal void HandleKeyboardInput (GlfwWindowPtr window, Key key, int scancode,
                                          KeyAction action, KeyModifiers modifier)
         {
             Keys.Add (new KeyboardInput (key, scancode, action, modifier));
@@ -116,7 +116,7 @@ namespace FreezingArcher.Input
         /// <param name="window">Window.</param>
         /// <param name="button">Button.</param>
         /// <param name="action">Action.</param>
-        public void HandleMouseButton (GlfwWindowPtr window, MouseButton button, KeyAction action)
+        internal void HandleMouseButton (GlfwWindowPtr window, MouseButton button, KeyAction action)
         {
             Mouse.Add (new MouseInput (button, action));
         }
@@ -127,7 +127,7 @@ namespace FreezingArcher.Input
         /// <param name="window">Window.</param>
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
-        public void HandleMouseMove (GlfwWindowPtr window, double x, double y)
+        internal void HandleMouseMove (GlfwWindowPtr window, double x, double y)
         {
             MouseMovement += new Vector2 ((float) x - OldMousePosition.X, (float) y - OldMousePosition.Y);
             OldMousePosition = new Vector2 ((float) x, (float) y);
@@ -139,7 +139,7 @@ namespace FreezingArcher.Input
         /// <param name="window">Window.</param>
         /// <param name="xoffs">Xoffs.</param>
         /// <param name="yoffs">Yoffs.</param>
-        public void HandleMouseScroll (GlfwWindowPtr window, double xoffs, double yoffs)
+        internal void HandleMouseScroll (GlfwWindowPtr window, double xoffs, double yoffs)
         {
             MouseScroll += new Vector2 ((float) xoffs, (float) yoffs);
         }
@@ -147,7 +147,7 @@ namespace FreezingArcher.Input
         /// <summary>
         /// Generates the input message.
         /// </summary>
-        public void GenerateInputMessage ()
+        internal void GenerateInputMessage ()
         {
             InputMessage id =
                 KeyRegistry.Instance.GenerateInputMessage (Keys, Mouse, MouseMovement, MouseScroll, Stopwatch.Elapsed);

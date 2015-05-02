@@ -60,9 +60,11 @@ namespace FreezingArcher.Input
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Input.KeyRegistry"/> class.
         /// </summary>
-        public KeyRegistry ()
+        /// <param name="messageManager">The message manager.</param>
+        internal KeyRegistry (MessageManager messageManager)
         {
             ValidMessages = new int[] { (int) MessageId.ConfigFileValueSet };
+            messageManager += this;
             RecacheConfig ();
         }
 
@@ -75,7 +77,7 @@ namespace FreezingArcher.Input
         /// <param name="mouseMovement">Mouse movement.</param>
         /// <param name="mouseScroll">Mouse scroll.</param>
         /// <param name="deltaTime">Delta time.</param>
-        public InputMessage GenerateInputMessage (List<KeyboardInput> keys, List<MouseInput> mouse,
+        internal InputMessage GenerateInputMessage (List<KeyboardInput> keys, List<MouseInput> mouse,
             Vector2 mouseMovement, Vector2 mouseScroll, TimeSpan deltaTime)
         {
             string s;

@@ -43,6 +43,7 @@
 
 section#wiki {
     margin: auto;
+    float: inherit;
 }
 
 #tocbar {

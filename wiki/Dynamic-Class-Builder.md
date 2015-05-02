@@ -5,8 +5,11 @@ wikiPageName: Dynamic-Class-Builder
 menu: wiki
 ---
 
-DynamicClassBuilder is a really great helper to make static libraries more dynamic.
+```c#
+namespace FreezingArcher.Reflection
+```
 
+DynamicClassBuilder is a really great helper to make static libraries more dynamic.
 
 What you can do is basically create new Classes with Properties, Fields and Methods on the fly,
 without the need to save them to disk. Awesome, huh?
@@ -68,7 +71,8 @@ var method = new Method("DoFoo", implementation);
 classBuilder.AddMethod(method);
 ```
 
-The dynamic class builder will analyze the signature of your given implementation, create a new method, save the delegate into a static field, and add a call to the given implementation. 
+The dynamic class builder will analyze the signature of your given implementation, create a new method, save the
+delegate into a static field, and add a call to the given implementation. 
 
 Looks easy? It is!
 

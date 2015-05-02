@@ -44,45 +44,77 @@
 section#wiki {
     margin: auto;
     float: inherit;
+    padding-left: 40px;
+    padding-right: 80px;
 }
 
 #tocbar {
     position: fixed;
-    padding-top: 100px;
     top: 0;
     right: 0;
-    width: 320px;
     bottom: 0;
+    width: 320px;
     overflow: auto;
     background: #f5f5f5;
+    z-index: 999;
     transition: right 0.2s ease;
+    display: block;
 }
 
 #tocbar.col {
     right: -280px;
 }
 
-#tocbar #toc {
-    padding-left: 40px;
+#tocbar-wrapper > ul {
+    padding-top: 60px;
+    margin: 0;
+}
+
+#tocbar-wrapper > ul li {
+    width: 50%;
+    text-align: center;
+}
+
+@media(min-width:768px) {
+    #tocbar-wrapper > ul {
+        padding-top: 110px;
+    }
+}
+
+#tocbar .tab-content {
+    padding: 1em;
+    overflow: auto;
+}
+
+#tocbar .tab-content > div {
+    overflow: auto;
+}
+
+#tocbar #tocbar-wrapper {
+    display: table;
+    height: 100%;
+    width: 100%;
 }
 
 #tocbar #bartoggle {
-    display: block;
-    position: fixed;
+    display: table-cell;
     height: 100%;
     width: 40px;
     background: #e0e2e5;
-    top: 0;
-    bottom: 0;
-    padding-top: 80px;
     cursor: pointer;
+    vertical-align: middle;
+    padding-top: 60px;
+}
+
+@media(min-width:768px) {
+    #tocbar #bartoggle {
+        padding-top: 110px;
+    }
 }
 
 #tocbar #bartoggle .fa {
-    top: 50%;
     width: 40px;
     height: 40px;
-    margin-top: -25%;
     position: relative;
     cursor: pointer;
     text-align: center;
@@ -95,10 +127,11 @@ section#wiki {
     transform: rotate(0deg);
 }
 
-@media(min-width:1600px) {
+@media(min-width:1200px) {
     #tocbar {
         background: none;
         transition: none;
+        border-left: 1px solid #eee;
     }
 
     #tocbar.col {

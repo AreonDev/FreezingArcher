@@ -8,15 +8,35 @@
 
       {% include wiki/header.html %}
 
-      <div id="tocbar" class="col"><div id="bartoggle"><div class="fa fa-angle-left"></div></div><div id="toc"></div></div>
-      
       <div class="row">
-        <section id="wiki" class="col-lg-9">
+        <section id="wiki" class="col-lg-7">
           <h1>{{ page.title }}</h1>
           {{ content }}
         </section>
       </div>
 
+      <div id="tocbar" class="col">
+        <div id="tocbar-wrapper">
+          <div id="bartoggle">
+            <div class="fa fa-angle-left"></div>
+          </div>
+          <ul class="nav nav-tabs">
+            <li class="active">
+              <a data-toggle="tab" href="#sidebar">Sidebar</a>
+            </li>
+            <li>
+              <a data-toggle="tab" href="#toc">Outline</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div id="toc" class="tab-pane"></div>
+            <div id="sidebar" class="tab-pane active">
+              {% include wiki/sidebar.html %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {% include wiki/footer.html %}
       {% include wiki/js.html %}
 

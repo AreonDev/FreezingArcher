@@ -5,11 +5,17 @@ wikiPageName: Object-recycling-and-fast-comparisons
 menu: wiki
 ---
 
-To reduce or prevent garbage collections we introduced an all new technique (which is not this new, but anyway, it's great!)
+```c#
+namespace FreezingArcher.Core
+```
 
-### Object recycling
+To reduce or prevent garbage collections we introduced an all new technique (which is not this new, but anyway,
+it's great!)
 
-The idea behind is, that you don't create new (potentially large) objects when you need them, but instead create a pool and keep used instances as reference and just clean them up and re-use them.
+## Object recycling
+
+The idea behind is, that you don't create new (potentially large) objects when you need them, but instead create a pool
+and keep used instances as reference and just clean them up and re-use them.
 
 This is done in our framework with the ObjectManager and the FAObject classes which play together quite nicely.
 As code is worth 1000 words, just get started:
@@ -61,3 +67,4 @@ Important:
 * by calling Destroy you should clean all fields, properties, etc. as later callers will get the same physical object
 * you replace all calls to new() by objectManager.CreateOrRecycle
 * objectManager is thread-safe
+

@@ -41,10 +41,9 @@
     background-color: #222;
 }
 
-/*section#wiki {
-    width: 60%;
+section#wiki {
     margin: auto;
-}*/
+}
 
 #tocbar {
     position: fixed;

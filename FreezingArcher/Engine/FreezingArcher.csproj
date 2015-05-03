@@ -104,15 +104,28 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Core\Interfaces\IManageable.cs" />
     <Compile Include="Core\Interfaces\IManager.cs" />
     <Compile Include="Core\Interfaces\IResource.cs" />
+    <Compile Include="Renderer\BasicEffect.cs" />
+    <Compile Include="Renderer\Effect.cs" />
+    <Compile Include="Renderer\FrameBuffer.cs" />
+    <Compile Include="Renderer\HelperClasses\SimpleCube.cs" />
+    <Compile Include="Renderer\IndexBuffer.cs" />
     <Compile Include="Renderer\RendererCore.cs" />
     <Compile Include="Renderer\GraphicsResource.cs" />
     <Compile Include="Renderer\GraphicsResourceManager.cs" />
+    <Compile Include="Renderer\Sampler.cs" />
+    <Compile Include="Renderer\Scene\Implementation\BasicCamera.cs" />
+    <Compile Include="Renderer\Scene\Implementation\InteractivePerspectiveCamera.cs" />
+    <Compile Include="Renderer\Scene\Implementation\MoveablePerspectiveCamera.cs" />
+    <Compile Include="Renderer\Scene\Interfaces\ICamera.cs" />
+    <Compile Include="Renderer\Scene\Light.cs" />
     <Compile Include="Renderer\Shader.cs" />
     <Compile Include="Renderer\ShaderProgram.cs" />
+    <Compile Include="Renderer\Sprite.cs" />
     <Compile Include="Renderer\Texture.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\KeyboardInput.cs" />
     <Compile Include="Input\MouseInput.cs" />
+    <Compile Include="Renderer\UniformBuffer.cs" />
     <Compile Include="Renderer\VertexBuffer.cs" />
     <Compile Include="Content\Game.cs" />
     <Compile Include="Content\Level.cs" />
@@ -213,7 +226,14 @@ echo Successfully finished!</PostBuildEvent>
   <Target Name="AfterClean">
     <RemoveDir Directories="$(TargetDir)" />
   </Target>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Renderer\TestGraphics\texture.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Renderer\TestGraphics\texture2.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
@@ -239,14 +259,37 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="CommandLine.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Audio\test.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Audio\test2.ogg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\Effects\2D\PixelShader.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\Effects\2D\VertexShader.vs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\Effects\BasicEffect\PixelShader.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\Effects\BasicEffect\VertexShader.vs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Renderer\Compositor\" />
+  </ItemGroup>
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\assimp\AssimpNet\AssimpNet.csproj">
       <Project>{3415FF29-C0BE-44FC-AD34-94796118E690}</Project>
       <Name>AssimpNet</Name>
+    <ProjectReference Include="..\Math\Math.csproj">
+      <Project>{6ea025ba-db6f-40aa-b970-069a104d2659}</Project>
+      <Name>Math</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pencil.Gaming\Pencil.Gaming\Pencil.Gaming.csproj">
       <Project>{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}</Project>
@@ -261,8 +304,5 @@ echo Successfully finished!</PostBuildEvent>
       <Name>Math</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DataStructures\" />
-    <Folder Include="DataStructures\Trees\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

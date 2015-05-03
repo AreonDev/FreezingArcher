@@ -32,7 +32,9 @@ using FreezingArcher.Input;
 using FreezingArcher.Localization;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Math;
 using FreezingArcher.Output;
+using FreezingArcher.Renderer;
 using Pencil.Gaming;
 using Pencil.Gaming.Audio;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
@@ -194,8 +196,10 @@ namespace FreezingArcher.Core
                 WriteAt (9, 5, "        ");
                 WriteAt (9, 5, height.ToString ());
                 #endif
+
                 Window.MSize = new Vector2i(width, height);
                 //Renderer.RendererCore.WindowResize (width, height);//FIXME
+
                 if (MessageCreated != null)
                     MessageCreated (new WindowResizeMessage (Window, width, height));
             };
@@ -345,6 +349,164 @@ namespace FreezingArcher.Core
 
         private Stopwatch updateStopwatch;
 
+        #region RendererTest
+        RendererCore rc;
+        FreezingArcher.Renderer.HelperClasses.SimpleCube cube;
+        Renderer.Scene.MoveablePerspectiveCamera bc;
+
+        IndexBuffer ib;
+
+        Texture2D tex2d1;
+        TextureDepthStencil texds;
+
+        Texture2D fb_tex1;
+        Texture2D fb_tex2;
+        FrameBuffer fb;
+
+        float rotation = 0.0f;
+
+        private void RendererTestInit()
+        {
+            rc = new RendererCore(MessageManager);
+
+            rc.Init();
+
+            cube = new Renderer.HelperClasses.SimpleCube();
+            cube.Init(rc);
+
+            bc = new Renderer.Scene.MoveablePerspectiveCamera(Window.Size.X, Window.Size.Y, MessageManager);
+            bc.MovementSpeed = 10.0f;
+
+            tex2d1 = rc.CreateTexture2D("TestTexture1", true, "Renderer/TestGraphics/texture.jpg");
+            tex2d1.Sampler.EdgeBehaviorX = EdgeBehaviour.MirroredRepeat;
+
+            texds = rc.CreateTextureDepthStencil("DepthStencilTest", 480, 480, IntPtr.Zero, false);
+
+            fb = rc.CreateFrameBuffer("FrameBufferTest");
+
+            fb_tex1 = rc.CreateTexture2D("FrameBufferTestTexture", 480, 480, false, IntPtr.Zero, false);
+            fb_tex2 = rc.CreateTexture2D("FrameBufferTestTexture2", 480, 480, false, IntPtr.Zero, false);
+
+
+            fb.BeginPrepare();
+            fb.AddTexture(fb_tex1, FrameBuffer.AttachmentUsage.Color0);
+            fb.AddTexture(fb_tex2, FrameBuffer.AttachmentUsage.Color1);
+            fb.AddTexture(texds, FrameBuffer.AttachmentUsage.DepthStencil);
+            fb.UseAttachments(new FrameBuffer.AttachmentUsage[] { FrameBuffer.AttachmentUsage.Color0, FrameBuffer.AttachmentUsage.Color1 });
+            fb.EndPrepare();
+        }
+
+
+
+        void Draw()
+        {
+
+            //rc.MakeDrawContextCurrent();
+
+            rc.Begin();
+
+            rotation += 0.02f;
+
+            bc.AutomaticSize = false;
+
+            //render to window
+            if (!Window.Fullscreen)
+            {
+                rc.ViewportResize(0, 0, Window.Size.X, Window.Size.Y);
+
+                bc.Width = Window.Size.X;
+                bc.Height = Window.Size.Y;
+            }
+            else
+            {
+                rc.ViewportResize(0, 0, Window.Resolution.X, Window.Resolution.Y);
+
+                bc.Width = Window.Resolution.X;
+                bc.Height = Window.Resolution.Y;
+            }
+
+            rc.Clear(Color4.DodgerBlue);
+
+            #region Wuerfel 1
+            rc.BasicEffect.View = bc.ViewMatrix;
+            rc.BasicEffect.World = FreezingArcher.Math.Matrix.CreateRotationY(rotation) * FreezingArcher.Math.Matrix.CreateTranslation(new Vector3(-2.5f, 0.0f, -5.0f));
+            rc.BasicEffect.Projection = bc.ProjectionMatrix;
+            rc.BasicEffect.Texture1 = tex2d1;
+
+            rc.BasicEffect.Update();
+            rc.BasicEffect.Use();
+
+            cube.Draw(rc);
+            #endregion
+
+            #region Wuerfel
+            rc.BasicEffect.View = bc.ViewMatrix;
+            rc.BasicEffect.World = Matrix.CreateRotationY(rotation) * Matrix.CreateTranslation(new Vector3(2.5f, 0.0f, -5.0f));
+            rc.BasicEffect.Projection = bc.ProjectionMatrix;
+            rc.BasicEffect.Texture1 = tex2d1;
+
+            rc.BasicEffect.Update();
+            rc.BasicEffect.Use();
+
+            cube.Draw(rc);
+            #endregion
+
+            Sprite spr = new Sprite();
+            spr.Init(tex2d1);
+
+            spr.AbsolutePosition = new Vector2(500.0f, 500.0f);
+            spr.Rotation = rotation;
+            spr.RotationPoint = new Vector2(0.7f, 0.9f);
+
+            rc.DrawSpriteAbsolute(spr);
+
+            //Rectangle
+            Vector2 position = new Vector2(0.5f, 0.5f);
+            Vector2 size = new Vector2(300.0f, 300.0f);
+            Color4 col = new Color4(0.4f, 0.0f, 0.8f, 0.3f);
+
+            rc.DrawFilledRectangleAbsolute(ref position, ref size, ref col);
+
+            Vector2 position2 = new Vector2(1.0f, 1.0f);
+            Color4 col2 = Color4.Bisque;
+            rc.DrawLineRelative(ref position, ref position2, 1.0f, ref col2);
+
+            Color4 col3 = Color4.DarkOrchid;
+            Vector2 position3 = new Vector2(300.0f, 300.0f);
+
+            rc.DrawPointAbsolute(ref position3, 10.0f, ref col3);
+
+            //Last rectangle
+            Vector2 rect_pos = new Vector2(100.0f, 100.0f);
+            Vector2 rect_size = new Vector2(300.0f, 300.0f);
+
+            rc.DrawRectangleAbsolute(ref rect_pos, ref rect_size, 5.0f, ref col2);
+
+            rc.End();
+        }
+
+        void Shutdown()
+        {
+            rc.BasicEffect.ClearTextures();
+
+            cube.Destroy(rc);
+
+            fb.DeleteTexture(FrameBuffer.AttachmentUsage.Color0);
+            fb.DeleteTexture(FrameBuffer.AttachmentUsage.Color1);
+            fb.DeleteTexture(FrameBuffer.AttachmentUsage.DepthStencil);
+
+            rc.DeleteGraphicsResource(tex2d1);
+            rc.DeleteGraphicsResource(texds);
+
+            rc.DeleteGraphicsResource(fb_tex1);
+            rc.DeleteGraphicsResource(fb_tex2);
+            rc.DeleteGraphicsResource(fb);
+
+            rc.Shutdown();
+        }
+
+        #endregion
+
         /// <summary>
         /// Run this instance.
         /// </summary>
@@ -352,6 +514,8 @@ namespace FreezingArcher.Core
         {
             if (Cli)
                 return;
+
+            RendererTestInit();
 
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Running application '{0}' ...", Name);
             MessageManager.StartProcessing ();
@@ -378,9 +542,8 @@ namespace FreezingArcher.Core
                     Loader.ExecJobsSequential ();
                     LoadAgain = false;
                 }
-                
-                Renderer.RendererCore.Clear (Color4.DodgerBlue);
-                Renderer.RendererCore.Draw ();
+
+                Draw();
 
                 Window.SwapBuffers ();
                 Window.PollEvents ();

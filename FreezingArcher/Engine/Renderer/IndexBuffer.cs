@@ -7,34 +7,34 @@ using System.Threading.Tasks;
 using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 
-
 namespace FreezingArcher.Renderer
 {
-    public class VertexBuffer : GraphicsResource
+    public class IndexBuffer : GraphicsResource
     {
         public int SizeInBytes { get; private set; }
         public RendererBufferUsage BufferUsage { get; private set; }
 
-        internal VertexBuffer(string name, int id, int sizeinbytes, RendererBufferUsage rbu) : base(name, id, GraphicsResourceType.VertexBuffer)
+        internal IndexBuffer(string name, int id, int sizeinbytes, RendererBufferUsage rbu) : base(name, id, GraphicsResourceType.IndexBuffer)
         {
             SizeInBytes = sizeinbytes;
             BufferUsage = rbu;
         }
 
+
         public void BindBuffer()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ID);
         }
 
         public void UnbindBuffer()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         }
 
         public void UnmapBuffer()
         {
-            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.UnmapBuffer(BufferTarget.ElementArrayBuffer);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         }
 
         public IntPtr MapBuffer(int offset, int size, RendererBufferAccess rba)
@@ -57,9 +57,9 @@ namespace FreezingArcher.Renderer
                 bam &= ~BufferAccessMask.MapUnsynchronizedBit;
             }
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ID);
 
-            return GL.MapBufferRange(BufferTarget.ArrayBuffer, (IntPtr)offset, (IntPtr)size, bam);
+            return GL.MapBufferRange(BufferTarget.ElementArrayBuffer, (IntPtr)offset, (IntPtr)size, bam);
         }
 
         public void UpdateBuffer<T>(T[] data, int size) where T : struct
@@ -70,12 +70,12 @@ namespace FreezingArcher.Renderer
             if (size != SizeInBytes)
                 throw new Exception("Size does not match buffer size!");
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ID);
 
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)SizeInBytes, IntPtr.Zero, BufferUsageHint.StreamDraw);
-            GL.BufferData<T>(BufferTarget.ArrayBuffer, (IntPtr)SizeInBytes, data, BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)SizeInBytes, IntPtr.Zero, BufferUsageHint.StreamDraw);
+            GL.BufferData<T>(BufferTarget.ElementArrayBuffer, (IntPtr)SizeInBytes, data, BufferUsageHint.StreamDraw);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         }
     }
 }

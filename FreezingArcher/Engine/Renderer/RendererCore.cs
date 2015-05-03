@@ -275,6 +275,7 @@ namespace FreezingArcher.Renderer
             //Do shutdown
             //Delete all resources!!
             GraphicsResource[] all_resources = _GraphicsResourceManager.GetAllResources();
+
             foreach (GraphicsResource r in all_resources)
             {
                 _GraphicsResourceManager.DeleteResource(r);
@@ -371,6 +372,7 @@ namespace FreezingArcher.Renderer
         public Shader CreateShader(ShaderType st, string shadersource, string name)
         {
             uint shader_id = 0;
+
             switch (st)
             {
                 case ShaderType.VertexShader:
@@ -778,6 +780,7 @@ namespace FreezingArcher.Renderer
         private unsafe void GenerateBuffer(FreezingArcher.Math.Color4 color)
         {
             Vertex2D[] v2d = new Vertex2D[9];
+
             v2d[0] = new Vertex2D(new Vector3(0.0f, 0.0f, -5.0f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 0.0f));
             v2d[1] = new Vertex2D(new Vector3(1.0f, 0.0f, -5.0f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(1.0f, 0.0f));
             v2d[2] = new Vertex2D(new Vector3(0.0f, 1.0f, -5.0f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 1.0f));
@@ -945,8 +948,6 @@ namespace FreezingArcher.Renderer
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             GL.Disable(EnableCap.DepthTest);
-
-
 
             GL.Enable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Blend);

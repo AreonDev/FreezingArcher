@@ -219,7 +219,7 @@ namespace FreezingArcher.Renderer
 
         public void BindPipeline()
         {
-            GL.BindProgramPipeline(ID);
+            GL.BindProgramPipeline(ID)
             ActualBoundEffect = this;
         }
 

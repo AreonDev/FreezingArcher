@@ -436,7 +436,7 @@ namespace FreezingArcher.Core
             rc.BasicEffect.Update();
             rc.BasicEffect.Use();
 
-            cube.Draw(rc);
+            //cube.Draw(rc);
             #endregion
 
             #region Wuerfel
@@ -448,7 +448,7 @@ namespace FreezingArcher.Core
             rc.BasicEffect.Update();
             rc.BasicEffect.Use();
 
-            cube.Draw(rc);
+            //cube.Draw(rc);
             #endregion
 
             Sprite spr = new Sprite();
@@ -458,29 +458,28 @@ namespace FreezingArcher.Core
             spr.Rotation = rotation;
             spr.RotationPoint = new Vector2(0.7f, 0.9f);
 
-            rc.DrawSpriteAbsolute(spr);
+            //rc.DrawSpriteAbsolute(spr);
 
             //Rectangle
             Vector2 position = new Vector2(0.5f, 0.5f);
             Vector2 size = new Vector2(300.0f, 300.0f);
             Color4 col = new Color4(0.4f, 0.0f, 0.8f, 0.3f);
 
-            rc.DrawFilledRectangleAbsolute(ref position, ref size, ref col);
+            //rc.DrawFilledRectangleAbsolute(ref position, ref size, ref col);
 
             Vector2 position2 = new Vector2(1.0f, 1.0f);
             Color4 col2 = Color4.Bisque;
-            rc.DrawLineRelative(ref position, ref position2, 1.0f, ref col2);
+            //rc.DrawLineRelative(ref position, ref position2, 1.0f, ref col2);
 
             Color4 col3 = Color4.DarkOrchid;
             Vector2 position3 = new Vector2(300.0f, 300.0f);
 
-            rc.DrawPointAbsolute(ref position3, 10.0f, ref col3);
+            //rc.DrawPointAbsolute(ref position3, 10.0f, ref col3);
 
             //Last rectangle
-            Vector2 rect_pos = new Vector2(100.0f, 100.0f);
-            Vector2 rect_size = new Vector2(300.0f, 300.0f);
+            Vector2 rect_pos = new Vector2(0.5f, 0.5f);
 
-            rc.DrawRectangleAbsolute(ref rect_pos, ref rect_size, 5.0f, ref col2);
+            rc.DrawFilledCircleRelative(ref rect_pos, 0.5f, 360.0f, ref col2);
 
             rc.End();
         }

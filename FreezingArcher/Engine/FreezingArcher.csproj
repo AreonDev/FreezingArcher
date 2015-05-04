@@ -109,6 +109,8 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\FrameBuffer.cs" />
     <Compile Include="Renderer\HelperClasses\SimpleCube.cs" />
     <Compile Include="Renderer\IndexBuffer.cs" />
+    <Compile Include="Renderer\Mesh.cs" />
+    <Compile Include="Renderer\Model.cs" />
     <Compile Include="Renderer\RendererCore.cs" />
     <Compile Include="Renderer\GraphicsResource.cs" />
     <Compile Include="Renderer\GraphicsResourceManager.cs" />

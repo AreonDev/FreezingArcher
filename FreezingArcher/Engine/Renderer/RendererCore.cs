@@ -51,6 +51,15 @@ namespace FreezingArcher.Renderer
         DynamicCopy = 35050,
     }
 
+    internal class SomeResources
+    {
+        public static Assimp.AssimpContext AssimpCnt;
+        static SomeResources()
+        {
+            AssimpCnt = new Assimp.AssimpContext();
+        }
+    }
+
     public class RendererCore : Messaging.Interfaces.IMessageConsumer
     {
         private struct MatricesBlock2D
@@ -179,7 +188,7 @@ namespace FreezingArcher.Renderer
             public int X { get; private set; }
             public int Y { get; private set; }
             public int Width { get; private set; }
-            public int Height {get; private set;}
+            public int Height { get; private set; }
         }
 
         #endregion
@@ -258,7 +267,7 @@ namespace FreezingArcher.Renderer
             //Do shutdown
             //Delete all resources!!
             GraphicsResource[] all_resources = _GraphicsResourceManager.GetAllResources();
-            foreach(GraphicsResource r in all_resources)
+            foreach (GraphicsResource r in all_resources)
             {
                 _GraphicsResourceManager.DeleteResource(r);
 
@@ -306,7 +315,7 @@ namespace FreezingArcher.Renderer
             return ib;
         }
 
-        public unsafe UniformBuffer CreateUniformBuffer<T>(T data, int size, string name) where T : struct 
+        public unsafe UniformBuffer CreateUniformBuffer<T>(T data, int size, string name) where T : struct
         {
             int ubo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.UniformBuffer, ubo);
@@ -348,7 +357,7 @@ namespace FreezingArcher.Renderer
         public Shader CreateShader(ShaderType st, string shadersource, string name)
         {
             uint shader_id = 0;
-            switch(st)
+            switch (st)
             {
                 case ShaderType.VertexShader:
                     shader_id = GL.CreateShader(Pencil.Gaming.Graphics.ShaderType.VertexShader);
@@ -386,9 +395,9 @@ namespace FreezingArcher.Renderer
         {
             uint shader_program = 0;
 
-            string[] codes = {source};
+            string[] codes = { source };
 
-            switch(st)
+            switch (st)
             {
                 case ShaderType.VertexShader:
                     shader_program = GL.CreateShaderProgram(Pencil.Gaming.Graphics.ShaderType.VertexShader, 1, codes);
@@ -411,7 +420,7 @@ namespace FreezingArcher.Renderer
                     break;
             }
 
-            ShaderProgram sp = new ShaderProgram(name, (int) shader_program);
+            ShaderProgram sp = new ShaderProgram(name, (int)shader_program);
             _GraphicsResourceManager.AddResource(sp);
 
             return sp;
@@ -452,7 +461,7 @@ namespace FreezingArcher.Renderer
 
             string error = GL.GetProgramInfoLog((int)shader_program);
 
-            if(error.Length > 0)
+            if (error.Length > 0)
                 Logger.Log.AddLogEntry(LogLevel.Fatal, "RendererCore", GL.GetProgramInfoLog((int)shader_program) + " in " + file);
 
             ShaderProgram sp = new ShaderProgram(name, (int)shader_program);
@@ -593,7 +602,7 @@ namespace FreezingArcher.Renderer
             if (data != null)
             {
                 System.Drawing.Imaging.BitmapData bmp_data = data.LockBits(new System.Drawing.Rectangle(0, 0, data.Width, data.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                
+
                 int id = GL.GenTexture();
 
                 GL.BindTexture(TextureTarget.Texture2D, id);
@@ -720,9 +729,9 @@ namespace FreezingArcher.Renderer
 
         public void Begin()
         {
-            lock(_RendererCoreActionsListLock)
+            lock (_RendererCoreActionsListLock)
             {
-                foreach(RCAction rca in _RendererCoreActionsList)
+                foreach (RCAction rca in _RendererCoreActionsList)
                 {
                     RCActionViewportSizeChange rcavsc = rca as RCActionViewportSizeChange;
                     if (rcavsc != null)
@@ -754,13 +763,17 @@ namespace FreezingArcher.Renderer
 
         private unsafe void GenerateBuffer(FreezingArcher.Math.Color4 color)
         {
-            Vertex2D[] v2d = new Vertex2D[6];
+            Vertex2D[] v2d = new Vertex2D[9];
             v2d[0] = new Vertex2D(new Vector3(0.0f, 0.0f, -5.0f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 0.0f));
             v2d[1] = new Vertex2D(new Vector3(1.0f, 0.0f, -5.0f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(1.0f, 0.0f));
             v2d[2] = new Vertex2D(new Vector3(0.0f, 1.0f, -5.0f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 1.0f));
             v2d[3] = new Vertex2D(new Vector3(0.0f, 1.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 1.0f));
             v2d[4] = new Vertex2D(new Vector3(1.0f, 0.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(1.0f, 0.0f));
             v2d[5] = new Vertex2D(new Vector3(1.0f, 1.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(1.0f, 1.0f));
+
+            v2d[6] = new Vertex2D(new Vector3(0.0f, 0.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 0.0f));
+            v2d[7] = new Vertex2D(new Vector3(-1.0f, -1.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 0.0f));
+            v2d[8] = new Vertex2D(new Vector3(1.0f, -1.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 0.0f));
 
             VertexBufferLayoutKind[] vblk = new VertexBufferLayoutKind[3];
             vblk[0].AttributeID = 0;
@@ -784,7 +797,7 @@ namespace FreezingArcher.Renderer
             vblk[2].Offset = sizeof(Vector3) + sizeof(Vector4);
             vblk[2].Stride = Vertex2D.SIZE;
 
-            _2DVertexBuffer = CreateVertexBuffer<Vertex2D>(v2d, Vertex2D.SIZE * 6, RendererBufferUsage.StaticDraw, "Internal2DVertexBuffer");
+            _2DVertexBuffer = CreateVertexBuffer<Vertex2D>(v2d, Vertex2D.SIZE * 9, RendererBufferUsage.StaticDraw, "Internal2DVertexBuffer");
             _2DVertexBufferArray = CreateVertexBufferArray(_2DVertexBuffer, vblk, "Internal2DVertexBufferArray");
         }
 
@@ -792,6 +805,59 @@ namespace FreezingArcher.Renderer
         {
             DeleteGraphicsResource(_2DVertexBufferArray);
             DeleteGraphicsResource(_2DVertexBuffer);
+        }
+
+        private void DrawFilledCircle(ref Vector2 position, ref Vector2 screen_size, float radius, float max_angle, ref FreezingArcher.Math.Color4 color, bool relative = false)
+        {
+            float log = (float) System.Math.Log(radius) / MathHelper.Pi;
+            uint segments = (uint)(radius / (log * log));
+
+            Logger.Log.AddLogEntry(LogLevel.Severe, "RendererCore", Core.Status.ChuckNorrisGotYou);
+
+            if(radius < 0.0f)
+            {
+                Logger.Log.AddLogEntry(LogLevel.Severe, "RendererCore", Core.Status.ConfoundedByPonies);
+
+                return;
+            }
+
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+            GL.CullFace(CullFaceMode.FrontAndBack);
+            GL.Disable(EnableCap.DepthTest);
+
+            MatricesBlock2D md = new MatricesBlock2D();
+
+            md.Projection = Matrix.CreateOrthographicOffCenter(0.0f, screen_size.X, screen_size.Y, 0.0f, 1.0f, 100.0f);
+
+            float angle = 0;
+
+            float _scale_factor = 1.0f * (float)System.Math.Tan(MathHelper.ToRadians(180.0f / (double)segments));
+
+            for (int i = 0; i < segments; i++)
+            {
+                md.World = Matrix.CreateScale(_scale_factor * radius, radius, 1.0f) * Matrix.CreateRotationZ(angle) * Matrix.CreateTranslation(new Vector3(position));
+               
+                angle += MathHelper.ToRadians(360.0f / (float)segments);
+                if (MathHelper.ToDegrees(angle) >= max_angle + 1.0f)
+                    break;
+
+                _2DUniformBuffer.UpdateBuffer<MatricesBlock2D>(md, sizeof(float) * 4 * 4 * 2);
+                _2DVertexBufferArray.BindVertexBufferArray();
+
+                _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("UseTexture"), 0.0f);
+                _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("DrawColor"), new Pencil.Gaming.MathUtils.Vector4(color.R, color.G, color.B, color.A));
+
+                _2DEffect.BindPipeline();
+
+                DrawArrays(6, 3, RendererBeginMode.Triangles);
+            }
+
+            _2DVertexBuffer.UnbindBuffer();
+
+            GL.Enable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.Blend);
         }
 
         private void DrawSprite(ref Vector2 screen_size, Sprite spr, bool relative = false)
@@ -854,7 +920,21 @@ namespace FreezingArcher.Renderer
 
             DrawArrays(0, 6, RendererBeginMode.Triangles);
 
-            _2DVertexBuffer.UnbindBuffer();
+            _2DUniformBuffer.UnbindBuffer();
+
+            GL.Enable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.Blend);
+        }
+
+        private void DrawCircle(ref Vector2 position, ref Vector2 size, ref Vector2 screen_size, ref FreezingArcher.Math.Color4 color, bool relative = false)
+        {
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            GL.Disable(EnableCap.DepthTest);
+
+
 
             GL.Enable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Blend);
@@ -865,7 +945,7 @@ namespace FreezingArcher.Renderer
             Vector2 position1 = position + new Vector2(line_width / 2, 0.0f);
             Vector2 position2 = position + new Vector2(size.X, 0.0f);
             Vector2 position3 = position + new Vector2(line_width / 2, size.Y);
-            Vector2 position4 = position + size + new Vector2(line_width / 2, - line_width / 2);
+            Vector2 position4 = position + size + new Vector2(line_width / 2, -line_width / 2);
             Vector2 position5 = position3 - new Vector2(0.0f, line_width / 2);
             Vector2 position6 = position + new Vector2(size.X, -line_width / 2);
             Vector2 position7 = position + size;
@@ -873,7 +953,7 @@ namespace FreezingArcher.Renderer
             DrawLine(ref position, ref position2, ref screen_size, line_width, ref color, relative);
             DrawLine(ref position1, ref position3, ref screen_size, line_width, ref color, relative);
             DrawLine(ref position5, ref position4, ref screen_size, line_width, ref color, relative);
-           // DrawLine(ref position6, ref position7, ref screen_size, line_width, ref color, relative);
+            // DrawLine(ref position6, ref position7, ref screen_size, line_width, ref color, relative);
             DrawLine(ref position7, ref position6, ref screen_size, line_width, ref color, relative);
         }
 
@@ -910,7 +990,7 @@ namespace FreezingArcher.Renderer
 
             DrawArrays(0, 2, RendererBeginMode.Lines);
 
-            _2DVertexBuffer.UnbindBuffer();
+            _2DUniformBuffer.UnbindBuffer();
 
             GL.Enable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Blend);
@@ -940,7 +1020,7 @@ namespace FreezingArcher.Renderer
 
             DrawArrays(0, 1, RendererBeginMode.Points);
 
-            _2DVertexBuffer.UnbindBuffer();
+            _2DUniformBuffer.UnbindBuffer();
 
             GL.Enable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Blend);
@@ -1011,9 +1091,23 @@ namespace FreezingArcher.Renderer
 
         public void DrawPointRelative(ref Vector2 Position, float PointWidth, ref FreezingArcher.Math.Color4 color)
         {
-            Vector2 vs = new Vector2(1.0f, 1.0f);
+            Vector2 vs = new Vector2(ViewportSize.X, ViewportSize.Y);
 
             DrawPoint(ref Position, ref vs, PointWidth, ref color);
+        }
+
+        public void DrawFilledCircleAbsolute(ref Vector2 Position, float radius, float max_angle, ref FreezingArcher.Math.Color4 color)
+        {
+            Vector2 vs = new Vector2(ViewportSize.X, ViewportSize.Y);
+
+            DrawFilledCircle(ref Position, ref vs, radius, max_angle, ref color);
+        }
+
+        public void DrawFilledCircleRelative(ref Vector2 Position, float radius, float max_angle, ref FreezingArcher.Math.Color4 color)
+        {
+            Vector2 vs = new Vector2(1.0f, 1.0f);
+
+            DrawFilledCircle(ref Position, ref vs, radius, max_angle, ref color);
         }
 
         public void DrawPointsAbsolute(Vector2[] position, float[] PointWidth, FreezingArcher.Math.Color4[] color)
@@ -1028,11 +1122,11 @@ namespace FreezingArcher.Renderer
 
         public void DeleteGraphicsResource(GraphicsResource gr)
         {
-            if(gr.Created)
+            if (gr.Created)
             {
                 _GraphicsResourceManager.DeleteResource(gr);
 
-                switch(gr.Type)
+                switch (gr.Type)
                 {
                     case GraphicsResourceType.Shader:
                         GL.DeleteShader(gr.ID);
@@ -1040,7 +1134,7 @@ namespace FreezingArcher.Renderer
 
                     case GraphicsResourceType.ShaderProgram:
                         Shader[] shaders = ((ShaderProgram)gr).Shaders;
-                        foreach(Shader sh in shaders)
+                        foreach (Shader sh in shaders)
                             ((ShaderProgram)gr).DeleteShader(sh);
 
                         GL.DeleteProgram(gr.ID);
@@ -1062,7 +1156,9 @@ namespace FreezingArcher.Renderer
                         GL.DeleteSampler(gr.ID);
                         break;
 
-                    case GraphicsResourceType.Texture2D: case GraphicsResourceType.Texture3D: case GraphicsResourceType.Texture1D:
+                    case GraphicsResourceType.Texture2D:
+                    case GraphicsResourceType.Texture3D:
+                    case GraphicsResourceType.Texture1D:
                         ((Texture2D)gr).Sampler = null;
                         GL.DeleteTexture(gr.ID);
                         break;

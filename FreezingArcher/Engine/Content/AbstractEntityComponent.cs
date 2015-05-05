@@ -21,12 +21,24 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Core;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Content
 {
     /// <summary>
     /// Abstract entity component.
     /// </summary>
-    public abstract class AbstractEntityComponent : FAObject
-    {}
+    public abstract class AbstractEntityComponent : FAObject, IMessageConsumer
+    {
+        /// <summary>
+        /// This field may contain a list of type id's describing the components this
+        /// component depends on. The components type id may be received with
+        /// Component.GetType().GetHashCode()
+        /// </summary>
+        public readonly int[] DependingOn = {};
+
+        public abstract void ConsumeMessage(IMessage msg);
+
+        public abstract int[] ValidMessages { get; }
+    }
 }

@@ -89,6 +89,7 @@ namespace FreezingArcher.Content
             }
 
             Components.Add(typeid, component);
+            MessageManager += component;
 
             return true;
         }

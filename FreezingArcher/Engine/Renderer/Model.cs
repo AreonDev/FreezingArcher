@@ -41,7 +41,6 @@ namespace FreezingArcher.Renderer
                 mdl.Meshes.Add(new Mesh(rc, path, actual_mesh.MaterialIndex, indices, 
                     actual_mesh.Vertices.ToArray(), actual_mesh.Normals.ToArray(), actual_mesh.Tangents.ToArray(), actual_mesh.BiTangents.ToArray(),
                     actual_mesh.TextureCoordinateChannels, actual_mesh.VertexColorChannels));
-
             }
                 
             //Materials??? Ulalalala xD

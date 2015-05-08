@@ -19,8 +19,6 @@ namespace FreezingArcher.Renderer
 
             Assimp.Scene scn = SomeResources.AssimpCnt.ImportFile(path);
 
-
-
             return mdl;
         }
     }

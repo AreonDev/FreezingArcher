@@ -290,7 +290,7 @@ echo Successfully finished!</PostBuildEvent>
       <Project>{3415FF29-C0BE-44FC-AD34-94796118E690}</Project>
       <Name>AssimpNet</Name>
     <ProjectReference Include="..\Math\Math.csproj">
-      <Project>{6ea025ba-db6f-40aa-b970-069a104d2659}</Project>
+      <Project>{6EA025BA-DB6F-40AA-B970-069A104D2659}</Project>
       <Name>Math</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pencil.Gaming\Pencil.Gaming\Pencil.Gaming.csproj">
@@ -300,11 +300,6 @@ echo Successfully finished!</PostBuildEvent>
     <ProjectReference Include="..\PostProcessor\PostProcessor.csproj">
       <Project>{F2D91778-AD1F-4433-A451-2016B873064B}</Project>
       <Name>PostProcessor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Math\Math.csproj">
-      <Project>{6EA025BA-DB6F-40AA-B970-069A104D2659}</Project>
-      <Name>Math</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
 </Project>

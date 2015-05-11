@@ -60,11 +60,11 @@ namespace FreezingArcher.Renderer
 
     internal class SomeResources
     {
-        public static Assimp.AssimpContext AssimpCnt;
+        //public static Assimp.AssimpContext AssimpCnt;
 
         static SomeResources()
         {
-            AssimpCnt = new Assimp.AssimpContext();
+            //AssimpCnt = new Assimp.AssimpContext();
         }
     }
 
@@ -825,8 +825,6 @@ namespace FreezingArcher.Renderer
         {
             float log = (float) System.Math.Log(radius) / MathHelper.Pi;
             uint segments = (uint)(radius / (log * log));
-
-            Logger.Log.AddLogEntry(LogLevel.Severe, "RendererCore", Core.Status.ChuckNorrisGotYou);
 
             if(radius < 0.0f)
             {

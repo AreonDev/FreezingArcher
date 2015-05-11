@@ -397,7 +397,7 @@ namespace FreezingArcher.Core
             fb.UseAttachments(new FrameBuffer.AttachmentUsage[] { FrameBuffer.AttachmentUsage.Color0, FrameBuffer.AttachmentUsage.Color1 });
             fb.EndPrepare();
 
-            mdl = Model.LoadModel(rc, "Renderer/TestGraphics/Rabbit/Rabbit.obj");
+            //mdl = Model.LoadModel(rc, "Renderer/TestGraphics/Rabbit/Rabbit.obj");
         }
 
 
@@ -452,7 +452,7 @@ namespace FreezingArcher.Core
             rc.BasicEffect.Update();
             rc.BasicEffect.Use();
 
-            mdl.Draw(rc);
+            //mdl.Draw(rc);
 
             //cube.Draw(rc);
             #endregion
@@ -483,9 +483,9 @@ namespace FreezingArcher.Core
             //rc.DrawPointAbsolute(ref position3, 10.0f, ref col3);
 
             //Last rectangle
-            Vector2 rect_pos = new Vector2(0.5f, 0.5f);
+            Vector2 rect_pos = new Vector2(0.1f, 0.1f);
 
-            rc.DrawFilledCircleRelative(ref rect_pos, 0.5f, 360.0f, ref col2);
+            rc.DrawFilledCircleRelative(ref rect_pos, 0.1f, 360.0f, ref col2);
 
             rc.End();
         }

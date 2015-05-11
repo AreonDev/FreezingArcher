@@ -4,7 +4,6 @@
 //####################################################
 layout(location = 0) in vec3 InPosition;
 layout(location = 1) in vec3 InNormal;
-
 layout(location = 2) in vec3 InTangent;
 layout(location = 3) in vec3 InBiTangent;
 
@@ -37,7 +36,6 @@ layout(location = 3) out vec4 OutColor1;
 layout(location = 4) out vec4 OutColor2;
 layout(location = 5) out vec4 OutColor3;
 //####################################################
-
 uniform MatricesBlock
 {
         mat4 WorldMatrix;

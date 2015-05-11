@@ -302,9 +302,25 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Renderer\Effects\BasicEffect\VertexShader.vs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Renderer\TestGraphics\Rabbit\Rabbit.mtl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\Rabbit\Rabbit.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_D.tga">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_N.tga">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_S.tga">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />
+    <Folder Include="Renderer\TestGraphics\Rabbit\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />

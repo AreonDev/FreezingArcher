@@ -61,6 +61,7 @@ namespace FreezingArcher.Renderer
     internal class SomeResources
     {
         public static Assimp.AssimpContext AssimpCnt;
+
         static SomeResources()
         {
             AssimpCnt = new Assimp.AssimpContext();

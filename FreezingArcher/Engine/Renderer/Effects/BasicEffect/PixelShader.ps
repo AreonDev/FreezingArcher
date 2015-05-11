@@ -2,13 +2,13 @@
 
 //Input format
 //####################################################
-layout(location = 0) out vec3 InTexCoord1;
-layout(location = 1) out vec3 InTexCoord2;
-layout(location = 2) out vec3 InTexCoord3;
+layout(location = 0) in vec3 InTexCoord1;
+layout(location = 1) in vec3 InTexCoord2;
+layout(location = 2) in vec3 InTexCoord3;
 
-layout(location = 3) out vec4 InColor1;
-layout(location = 4) out vec4 InColor2;
-layout(location = 5) out vec4 InColor3;
+layout(location = 3) in vec4 InColor1;
+layout(location = 4) in vec4 InColor2;
+layout(location = 5) in vec4 InColor3;
 //####################################################
 
 layout(location = 0) out vec4 frag_colour;
@@ -21,7 +21,7 @@ void main()
 {
     vec4 without_light_color =  vec4(1.0, 1.0, 1.0, 1.0);
 
-    without_light_color = texture2D(Texture1, InTexCoord1);
+    without_light_color = texture2D(Texture1, InTexCoord1.xy) * InTexCoord1.z;
 
     frag_colour = without_light_color;
 }

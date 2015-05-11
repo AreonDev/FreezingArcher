@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Assimp;
 using Assimp.Configs;
+using Assimp.Unmanaged;
 
 namespace FreezingArcher.Renderer
 {
@@ -16,9 +17,13 @@ namespace FreezingArcher.Renderer
 
         public static Model LoadModel(RendererCore rc, string path)
         {
+            AssimpContext cnt = new AssimpContext();
+
             Model mdl = new Model();
 
-            Assimp.Scene scn = SomeResources.AssimpCnt.ImportFile(path);
+            Assimp.Scene scn = cnt.ImportFile(path);
+            NormalSmoothingAngleConfig config = new NormalSmoothingAngleConfig(66.0f);
+            cnt.SetConfig(config);
 
             //Copy mesh data to model
             mdl.Meshes = new List<Mesh>();
@@ -42,6 +47,8 @@ namespace FreezingArcher.Renderer
             //Materials??? Ulalalala xD
             // FIXME: Please, HERE!
             mdl.Materials = new List<Material>();
+
+            cnt.Dispose();
 
             //Hopefully, everything went right....
             return mdl;

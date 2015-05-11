@@ -31,6 +31,13 @@ namespace FreezingArcher.Renderer
         Patches = 14,
     }
 
+    public enum RendererIndexType
+    {
+        UnsignedByte = ((int)0x1401)            ,
+        UnsignedShort = ((int)0x1403)           ,
+        UnsignedInt = ((int)0x1405)             
+    }
+
     public enum RendererBufferAccess
     {
         ReadOnly = 35000,
@@ -296,6 +303,9 @@ namespace FreezingArcher.Renderer
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             VertexBuffer vb = new VertexBuffer(name, vbo, size, rbu);
+
+            vb.VertexCount = data.Length;
+
             _GraphicsResourceManager.AddResource(vb);
 
             return vb;
@@ -310,6 +320,9 @@ namespace FreezingArcher.Renderer
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 
             IndexBuffer ib = new IndexBuffer(name, ibo, size, rbu);
+
+            ib.IndexCount = data.Length;
+
             _GraphicsResourceManager.AddResource(ib);
 
             return ib;
@@ -752,9 +765,9 @@ namespace FreezingArcher.Renderer
             GL.DrawArrays((BeginMode)bm, offset, count);
         }
 
-        public void DrawElements(int offset, int count, DrawElementsType det, RendererBeginMode bm)
+        public void DrawElements(int offset, int count, RendererIndexType det, RendererBeginMode bm)
         {
-            GL.DrawElements((BeginMode)bm, count, det, offset);
+            GL.DrawElements((BeginMode)bm, count, (DrawElementsType)det, offset);
         }
 
 

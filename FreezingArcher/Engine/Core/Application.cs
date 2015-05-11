@@ -363,6 +363,8 @@ namespace FreezingArcher.Core
         Texture2D fb_tex2;
         FrameBuffer fb;
 
+        Model mdl;
+
         float rotation = 0.0f;
 
         private void RendererTestInit()
@@ -394,6 +396,8 @@ namespace FreezingArcher.Core
             fb.AddTexture(texds, FrameBuffer.AttachmentUsage.DepthStencil);
             fb.UseAttachments(new FrameBuffer.AttachmentUsage[] { FrameBuffer.AttachmentUsage.Color0, FrameBuffer.AttachmentUsage.Color1 });
             fb.EndPrepare();
+
+            mdl = Model.LoadModel(rc, "Renderer/TestGraphics/Rabbit/Rabbit.obj");
         }
 
 
@@ -443,10 +447,12 @@ namespace FreezingArcher.Core
             rc.BasicEffect.View = bc.ViewMatrix;
             rc.BasicEffect.World = Matrix.CreateRotationY(rotation) * Matrix.CreateTranslation(new Vector3(2.5f, 0.0f, -5.0f));
             rc.BasicEffect.Projection = bc.ProjectionMatrix;
-            rc.BasicEffect.Texture1 = tex2d1;
+            //rc.BasicEffect.Texture1 = tex2d1;
 
             rc.BasicEffect.Update();
             rc.BasicEffect.Use();
+
+            mdl.Draw(rc);
 
             //cube.Draw(rc);
             #endregion

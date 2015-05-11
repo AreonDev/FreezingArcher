@@ -13,28 +13,46 @@ namespace FreezingArcher.Renderer
     public class VertexBuffer : GraphicsResource
     {
         public int SizeInBytes { get; private set; }
+        public int VertexCount{ get; internal set;}
+
         public RendererBufferUsage BufferUsage { get; private set; }
 
         internal VertexBuffer(string name, int id, int sizeinbytes, RendererBufferUsage rbu) : base(name, id, GraphicsResourceType.VertexBuffer)
         {
             SizeInBytes = sizeinbytes;
             BufferUsage = rbu;
+
+            SetCreated(true);
+        }
+
+        public VertexBuffer()
+            : base("Empty_VertexBuffer", 0, GraphicsResourceType.VertexBuffer)
+        {
+            SizeInBytes = 0;
+            VertexCount = 0;
+
+            SetCreated(false);
         }
 
         public void BindBuffer()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            if(Created)
+                GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
         }
 
         public void UnbindBuffer()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            if(Created)
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
         public void UnmapBuffer()
         {
-            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            if (Created)
+            {
+                GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            }
         }
 
         public IntPtr MapBuffer(int offset, int size, RendererBufferAccess rba)
@@ -69,6 +87,8 @@ namespace FreezingArcher.Renderer
 
             if (size != SizeInBytes)
                 throw new Exception("Size does not match buffer size!");
+
+            VertexCount = data.Length;
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
 

@@ -114,8 +114,11 @@ namespace FreezingArcher.Renderer
             sh.SetUseCount(sh.InternalUseCount - 1);
         }
 
-        public void UseProgram()
+        void UseProgram()
         {
+            if (Effect.ActualBoundEffect != null)
+                Effect.ActualBoundEffect.UnbindPipeline();
+
             GL.UseProgram(ID);
         }
     }

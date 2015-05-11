@@ -23,6 +23,8 @@ namespace FreezingArcher.Renderer
         public bool HasTesselationEvaluationProgram { get; set; }
         public bool HasGeometryProgram { get; set; }
 
+        public static Effect ActualBoundEffect = null;
+
         public ShaderProgram VertexProgram
         {
             get
@@ -218,6 +220,13 @@ namespace FreezingArcher.Renderer
         public void BindPipeline()
         {
             GL.BindProgramPipeline(ID);
+            ActualBoundEffect = this;
+        }
+
+        public void UnbindPipeline()
+        {
+            GL.BindProgramPipeline(0);
+            ActualBoundEffect = null;
         }
 
         public void SetActiveProgram(ShaderType st)

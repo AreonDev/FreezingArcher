@@ -12,12 +12,14 @@ namespace FreezingArcher.Renderer
     public class IndexBuffer : GraphicsResource
     {
         public int SizeInBytes { get; private set; }
+        public int IndexCount{ get; internal set;}
         public RendererBufferUsage BufferUsage { get; private set; }
 
         internal IndexBuffer(string name, int id, int sizeinbytes, RendererBufferUsage rbu) : base(name, id, GraphicsResourceType.IndexBuffer)
         {
             SizeInBytes = sizeinbytes;
             BufferUsage = rbu;
+            IndexCount = 0;
         }
 
 
@@ -69,6 +71,8 @@ namespace FreezingArcher.Renderer
 
             if (size != SizeInBytes)
                 throw new Exception("Size does not match buffer size!");
+
+            IndexCount = data.Length;
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ID);
 

@@ -81,22 +81,25 @@ namespace FreezingArcher.Renderer
                 GL.BindVertexArray(ID);
             }
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vb.ID);
-
-            for (int i = 0; i < vblk.Length; i++)
+            if (vb.Created)
             {
-                GL.EnableVertexAttribArray(vblk[i].AttributeID);
-                GL.VertexAttribPointer(vblk[i].AttributeID, vblk[i].AttributeSize, (VertexAttribPointerType)vblk[i].AttributeType,
-                    vblk[i].Normalized, vblk[i].Stride, (IntPtr)vblk[i].Offset);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, vb.ID);
+
+                for (int i = 0; i < vblk.Length; i++)
+                {
+                    GL.EnableVertexAttribArray(vblk[i].AttributeID);
+                    GL.VertexAttribPointer(vblk[i].AttributeID, vblk[i].AttributeSize, (VertexAttribPointerType)vblk[i].AttributeType,
+                        vblk[i].Normalized, vblk[i].Stride, (IntPtr)vblk[i].Offset);
+                }
+
+                VertexBufferLayoutKind[] layout = new VertexBufferLayoutKind[vblk.Length];
+                Array.Copy(vblk, layout, layout.Length);
+
+                _LayoutElements.Add(layout);
+
+                _InternalBuffers.Add(vb);
+                vb.SetUseCount(vb.InternalUseCount + 1);
             }
-
-            VertexBufferLayoutKind[] layout = new VertexBufferLayoutKind[vblk.Length];
-            Array.Copy(vblk, layout, layout.Length);
-
-            _LayoutElements.Add(layout);
-
-            _InternalBuffers.Add(vb);
-            vb.SetUseCount(vb.InternalUseCount + 1);
 
             if(!m_PrepareMode)
             {

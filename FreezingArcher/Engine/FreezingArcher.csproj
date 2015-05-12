@@ -65,6 +65,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
 xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Debug $(TargetDir)
+xcopy /Y $(SolutionDir)assimp\AssimpNet\bin\Debug $(TargetDir)
 echo Successfully finished!</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
@@ -81,6 +82,7 @@ echo Successfully finished!</PostBuildEvent>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
 xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
+xcopy /Y $(SolutionDir)assimp\AssimpNet\bin\Release $(TargetDir)
 echo Successfully finished!</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>

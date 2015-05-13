@@ -11,18 +11,42 @@ layout(location = 4) in vec4 InColor2;
 layout(location = 5) in vec4 InColor3;
 //####################################################
 
+layout(location = 10) in vec3 InNormal;
+layout(location = 11) in vec3 InEye;
+layout(location = 12) in vec3 InLightDir;
+
 layout(location = 0) out vec4 frag_colour;
 
 uniform sampler2D Texture1;
 uniform sampler2D Texture2;
 uniform sampler2D Texture3;
     
+uniform float UseColor;
+
 void main() 
 {
+    float shininess = 1.0;
+    vec4 specular = vec4(0.4, 0.4, 0.4, 1);
+    vec4 ambient = vec4(0.3, 0.3, 0.3, 1.0);
+
+    vec4 spec = vec4(0.0);
+
+    vec3 n = normalize(InNormal);
+    vec3 l = normalize(InLightDir);
+    vec3 e = normalize(InEye);
+
+    float intensity = max(dot(n, l), 0.0);
+    if(intensity > 0.0)
+    {
+        vec3 h = normalize(l + e);
+        float intSpec = max(dot(h, n), 0.0);
+        spec = specular * pow(intSpec, shininess);
+    }
+
     vec4 without_light_color =  vec4(1.0, 1.0, 1.0, 1.0);
 
-    without_light_color = texture2D(Texture1, InTexCoord1.xy) * InTexCoord1.z;
+    without_light_color = (1-UseColor) * texture2D(Texture1, InTexCoord1.xy) * InTexCoord1.z + UseColor*InColor1;
 
-    frag_colour = without_light_color;
+    frag_colour = max(intensity * without_light_color + spec, ambient * without_light_color);
 }
                                     

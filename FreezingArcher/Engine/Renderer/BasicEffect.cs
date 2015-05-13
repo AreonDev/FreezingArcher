@@ -135,7 +135,7 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        public uint LocationInTexCoord1
+        public uint LocationInTangent
         {
             get
             {
@@ -143,7 +143,7 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        public uint LocationInTexCoord2
+        public uint LocationInBiTangent
         {
             get
             {
@@ -151,7 +151,7 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        public uint LocationInTexCoord3
+        public uint LocationInTexCoord1
         {
             get
             {
@@ -159,7 +159,7 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        public uint LocationInTexCoord4
+        public uint LocationInTexCoord2
         {
             get
             {
@@ -167,7 +167,7 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        public uint LocationInTexCoord5
+        public uint LocationInTexCoord3
         {
             get
             {
@@ -180,46 +180,6 @@ namespace FreezingArcher.Renderer
             get
             {
                 return 7;
-            }
-        }
-
-        public uint LocationInTexCoordIntensity1
-        {
-            get
-            {
-                return 8;
-            }
-        }
-
-        public uint LocationInTexCoordIntensity2
-        {
-            get
-            {
-                return 9;
-            }
-        }
-
-        public uint LocationInTexCoordIntensity3
-        {
-            get
-            {
-                return 10;
-            }
-        }
-
-        public uint LocationInTexCoordIntensity4
-        {
-            get
-            {
-                return 11;
-            }
-        }
-
-        public uint LocationInTexCoordIntensity5
-        {
-            get
-            {
-                return 12;
             }
         }
 
@@ -291,47 +251,18 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        public Texture Texture4
+        private bool m_UseColor;
+        public bool UseColor
         {
             get
             {
-                return m_Texture4;
+                return m_UseColor;
             }
+
             set
             {
-                if (m_Texture4 != null)
-                    m_Texture4.SetUseCount(m_Texture4.InternalUseCount - 1);
-
-                m_Texture4 = value;
-
-                if (value != null)
-                {
-                    m_Texture4.SetUseCount(m_Texture4.InternalUseCount + 1);
-                    m_Texture4.Bind(3);
-                    PixelProgram.SetUniform(PixelProgram.GetUniformLocation("Texture4"), 3);
-                }
-            }
-        }
-
-        public Texture Texture5
-        {
-            get
-            {
-                return m_Texture5;
-            }
-            set
-            {
-                if (m_Texture5 != null)
-                    m_Texture5.SetUseCount(m_Texture5.InternalUseCount - 1);
-
-                m_Texture5 = value;
-
-                if (value != null)
-                {
-                    m_Texture5.SetUseCount(m_Texture5.InternalUseCount + 1);
-                    m_Texture5.Bind(4);
-                    PixelProgram.SetUniform(PixelProgram.GetUniformLocation("Texture5"), 4);
-                }
+                m_UseColor = value;
+                PixelProgram.SetUniform(PixelProgram.GetUniformLocation("UseColor"), m_UseColor ? 1.0f : 0.0f);
             }
         }
 
@@ -351,8 +282,6 @@ namespace FreezingArcher.Renderer
             Texture1 = null;
             Texture2 = null;
             Texture3 = null;
-            Texture4 = null;
-            Texture5 = null;
         }
 
         public void Use()

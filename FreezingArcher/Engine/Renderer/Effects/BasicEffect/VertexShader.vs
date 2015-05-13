@@ -44,8 +44,16 @@ uniform MatricesBlock
         mat4 ProjectionMatrix;
 };
 
+//uniform vec4 PointLightPosition;
+
+layout(location = 10) out vec3 OutNormal;
+layout(location = 11) out vec3 OutEye;
+layout(location = 12) out vec3 OutLightDir;
+
 void main() 
 {
+        vec4 PointLightPosition = vec4(5, 20.0, -20, 0.0);
+
 	gl_Position = ProjectionMatrix * ViewMatrix * WorldMatrix * vec4(InPosition, 1.0);
 
         OutTexCoord1 = InTexCoord1;
@@ -55,4 +63,10 @@ void main()
         OutColor1 = InColor1;
         OutColor2 = InColor2;
         OutColor3 = InColor3;
+
+        vec4 pos = ViewMatrix * WorldMatrix * vec4(InPosition, 1.0);
+
+        OutNormal = normalize(InNormal);
+        OutLightDir = vec3(PointLightPosition - pos);
+        OutEye = vec3(-pos);
 }

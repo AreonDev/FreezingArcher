@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Pencil.Gaming.MathUtils;
-using Pencil.Gaming.Graphics;
+using FreezingArcher.Math;
 
 using FreezingArcher.Renderer;
 using System.Runtime.InteropServices;
@@ -23,9 +22,9 @@ namespace FreezingArcher.Renderer.HelperClasses
         [StructLayout(LayoutKind.Sequential)]
         private unsafe struct CubeVertex
         {
-            public static int SIZE = sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector2) + sizeof(float);
+            public static int SIZE = sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector4);
 
-            public CubeVertex(Vector3 position, Vector3 normal, Vector2 tex_coord, float intensity = 1.0f)
+            public CubeVertex(Vector3 position, Vector3 normal, Vector3 tex_coord, Color4 color)
             {
                 _PositionX = position.X;
                 _PositionY = position.Y;
@@ -37,8 +36,12 @@ namespace FreezingArcher.Renderer.HelperClasses
 
                 _TexCoordU = tex_coord.X;
                 _TexCoordV = tex_coord.Y;
+                _TexCoordIntensity = tex_coord.Z;
 
-                _TexCoordIntensity = intensity;
+                _ColorR = color.R;
+                _ColorG = color.G;
+                _ColorB = color.B;
+                _ColorA = color.A;
             }
 
             private float _PositionX;
@@ -51,8 +54,12 @@ namespace FreezingArcher.Renderer.HelperClasses
 
             private float _TexCoordU;
             private float _TexCoordV;
-
             private float _TexCoordIntensity;
+
+            private float _ColorR;
+            private float _ColorG;
+            private float _ColorB;
+            private float _ColorA;
 
             public Vector3 Position
             {
@@ -107,67 +114,83 @@ namespace FreezingArcher.Renderer.HelperClasses
                     _TexCoordIntensity = value;
                 }
             }
+
+            public Color4 Color
+            {
+                get
+                {
+                    return new Color4(_ColorR, _ColorG, _ColorB, _ColorA);
+                }
+
+                set
+                {
+                    _ColorR = value.R;
+                    _ColorG = value.G;
+                    _ColorB = value.B;
+                    _ColorA = value.A;
+                }
+            }
         }
 
-        public SimpleCube()
+        public SimpleCube(Color4 color)
         {
             m_VertexBufferLayoutKind = new VertexBufferLayoutKind[4];
             
             m_Vertices = new CubeVertex[36];
 
             //Fläche, die nach vorne!
-            m_Vertices[0] = new CubeVertex(new Vector3(-1.0f, -1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector2(0.0f, 0.0f));
-            m_Vertices[1] = new CubeVertex(new Vector3(1.0f, -1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[2] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector2(0.0f, 1.0f));
+            m_Vertices[0] = new CubeVertex(new Vector3(-1.0f, -1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), color);
+            m_Vertices[1] = new CubeVertex(new Vector3(1.0f, -1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[2] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
 
-            m_Vertices[3] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector2(0.0f, 1.0f));
-            m_Vertices[4] = new CubeVertex(new Vector3(1.0f, -1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[5] = new CubeVertex(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector2(1.0f, 1.0f));
+            m_Vertices[3] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
+            m_Vertices[4] = new CubeVertex(new Vector3(1.0f, -1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[5] = new CubeVertex(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(1.0f, 1.0f, 1.0f), color);
 
             //Fläche, die nach rechts zeigt!
-            m_Vertices[6] = new CubeVertex(new Vector3(1.0f, -1.0f, 1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(0.0f, 0.0f));
-            m_Vertices[7] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[8] = new CubeVertex(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(0.0f, 1.0f));
+            m_Vertices[6] = new CubeVertex(new Vector3(1.0f, -1.0f, 1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 1.0f), color);
+            m_Vertices[7] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[8] = new CubeVertex(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
 
-            m_Vertices[9] = new CubeVertex(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(0.0f, 1.0f));
-            m_Vertices[10] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[11] = new CubeVertex(new Vector3(1.0f, 1.0f, -1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector2(1.0f, 1.0f));
+            m_Vertices[9] = new CubeVertex(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
+            m_Vertices[10] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[11] = new CubeVertex(new Vector3(1.0f, 1.0f, -1.0f), new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), color);
 
             //Fläche, die nach hinten zeigt!
-            m_Vertices[12] = new CubeVertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector2(0.0f, 0.0f));
-            m_Vertices[13] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[14] = new CubeVertex(new Vector3(-1.0f, 1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector2(0.0f, 1.0f));
+            m_Vertices[12] = new CubeVertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 0.0f, 1.0f), color);
+            m_Vertices[13] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[14] = new CubeVertex(new Vector3(-1.0f, 1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
 
-            m_Vertices[15] = new CubeVertex(new Vector3(-1.0f, 1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector2(0.0f, 1.0f));
-            m_Vertices[16] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[17] = new CubeVertex(new Vector3(1.0f, 1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector2(1.0f, 1.0f));
+            m_Vertices[15] = new CubeVertex(new Vector3(-1.0f, 1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
+            m_Vertices[16] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[17] = new CubeVertex(new Vector3(1.0f, 1.0f, -1.0f), new Vector3(0.0f, 0.0f, -1.0f), new Vector3(1.0f, 1.0f, 1.0f), color);
 
             //Fläche, die nach links zeigt!
-            m_Vertices[18] = new CubeVertex(new Vector3(-1.0f, -1.0f, 1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector2(0.0f, 0.0f));
-            m_Vertices[19] = new CubeVertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[20] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector2(0.0f, 1.0f));
+            m_Vertices[18] = new CubeVertex(new Vector3(-1.0f, -1.0f, 1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 1.0f), color);
+            m_Vertices[19] = new CubeVertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[20] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
 
-            m_Vertices[21] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector2(0.0f, 1.0f));
-            m_Vertices[22] = new CubeVertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[23] = new CubeVertex(new Vector3(-1.0f, 1.0f, -1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector2(1.0f, 1.0f));
+            m_Vertices[21] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
+            m_Vertices[22] = new CubeVertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[23] = new CubeVertex(new Vector3(-1.0f, 1.0f, -1.0f), new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), color);
 
             //Fläche, die nach unten zeigt
-            m_Vertices[24] = new CubeVertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector2(0.0f, 0.0f));
-            m_Vertices[25] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[26] = new CubeVertex(new Vector3(-1.0f, -1.0f, 1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector2(0.0f, 1.0f));
+            m_Vertices[24] = new CubeVertex(new Vector3(-1.0f, -1.0f, -1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector3(0.0f, 0.0f, 1.0f), color);
+            m_Vertices[25] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[26] = new CubeVertex(new Vector3(-1.0f, -1.0f, 1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
 
-            m_Vertices[27] = new CubeVertex(new Vector3(-1.0f, -1.0f, 1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector2(0.0f, 1.0f));
-            m_Vertices[28] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[29] = new CubeVertex(new Vector3(1.0f, -1.0f, 1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector2(1.0f, 1.0f));
+            m_Vertices[27] = new CubeVertex(new Vector3(-1.0f, -1.0f, 1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
+            m_Vertices[28] = new CubeVertex(new Vector3(1.0f, -1.0f, -1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[29] = new CubeVertex(new Vector3(1.0f, -1.0f, 1.0f), new Vector3(0.0f, -1.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), color);
 
             //Fläche die nach oben zeigt!
-            m_Vertices[30] = new CubeVertex(new Vector3(-1.0f, 1.0f, -1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector2(0.0f, 0.0f));
-            m_Vertices[31] = new CubeVertex(new Vector3(1.0f, 1.0f, -1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[32] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector2(0.0f, 1.0f));
+            m_Vertices[30] = new CubeVertex(new Vector3(-1.0f, 1.0f, -1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 0.0f, 1.0f), color);
+            m_Vertices[31] = new CubeVertex(new Vector3(1.0f, 1.0f, -1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[32] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
 
-            m_Vertices[33] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector2(0.0f, 1.0f));
-            m_Vertices[34] = new CubeVertex(new Vector3(1.0f, 1.0f, -1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector2(1.0f, 0.0f));
-            m_Vertices[35] = new CubeVertex(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector2(1.0f, 1.0f));
+            m_Vertices[33] = new CubeVertex(new Vector3(-1.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), color);
+            m_Vertices[34] = new CubeVertex(new Vector3(1.0f, 1.0f, -1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 0.0f, 1.0f), color);
+            m_Vertices[35] = new CubeVertex(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), color);
 
         }
 
@@ -188,21 +211,23 @@ namespace FreezingArcher.Renderer.HelperClasses
             m_VertexBufferLayoutKind[1].Stride = CubeVertex.SIZE;
 
             m_VertexBufferLayoutKind[2].AttributeID = rc.BasicEffect.LocationInTexCoord1;
-            m_VertexBufferLayoutKind[2].AttributeSize = 2;
+            m_VertexBufferLayoutKind[2].AttributeSize = 3;
             m_VertexBufferLayoutKind[2].AttributeType = RendererVertexAttribType.Float;
             m_VertexBufferLayoutKind[2].Normalized = false;
             m_VertexBufferLayoutKind[2].Offset = sizeof(Vector3) + sizeof(Vector3);
             m_VertexBufferLayoutKind[2].Stride = CubeVertex.SIZE;
 
-            m_VertexBufferLayoutKind[3].AttributeID = rc.BasicEffect.LocationInTexCoordIntensity1;
-            m_VertexBufferLayoutKind[3].AttributeSize = 1;
+            m_VertexBufferLayoutKind[3].AttributeID = rc.BasicEffect.LocationInColor;
+            m_VertexBufferLayoutKind[3].AttributeSize = 4;
             m_VertexBufferLayoutKind[3].AttributeType = RendererVertexAttribType.Float;
             m_VertexBufferLayoutKind[3].Normalized = false;
-            m_VertexBufferLayoutKind[3].Offset = sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector2);
+            m_VertexBufferLayoutKind[3].Offset = sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector3);
             m_VertexBufferLayoutKind[3].Stride = CubeVertex.SIZE;
 
-            m_VertexBuffer = rc.CreateVertexBuffer<CubeVertex>(m_Vertices, m_Vertices.Length * CubeVertex.SIZE, RendererBufferUsage.StaticDraw, "CubeVertexVertexBuffer");
-            m_VertexBufferArray = rc.CreateVertexBufferArray(m_VertexBuffer, m_VertexBufferLayoutKind, "CubeVertexVertexBufferArray");
+            Int64 next = System.DateTime.Now.Ticks;
+
+            m_VertexBuffer = rc.CreateVertexBuffer<CubeVertex>(m_Vertices, m_Vertices.Length * CubeVertex.SIZE, RendererBufferUsage.StaticDraw, "CubeVertexVertexBuffer_" + next);
+            m_VertexBufferArray = rc.CreateVertexBufferArray(m_VertexBuffer, m_VertexBufferLayoutKind, "CubeVertexVertexBufferArray_" + next);
 
             return true;
         }
@@ -214,7 +239,7 @@ namespace FreezingArcher.Renderer.HelperClasses
 
         public void Draw(RendererCore rc)
         {
-            GL.Enable(EnableCap.DepthTest);
+            Pencil.Gaming.Graphics.GL.Enable(Pencil.Gaming.Graphics.EnableCap.DepthTest);
 
             m_VertexBufferArray.BindVertexBufferArray();
 

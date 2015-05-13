@@ -36,7 +36,6 @@ namespace FreezingArcher.Renderer.HelperClasses
 
                 _TexCoordU = tex_coord.X;
                 _TexCoordV = tex_coord.Y;
-
                 _TexCoordIntensity = tex_coord.Z;
 
                 _ColorR = color.R;
@@ -55,7 +54,6 @@ namespace FreezingArcher.Renderer.HelperClasses
 
             private float _TexCoordU;
             private float _TexCoordV;
-
             private float _TexCoordIntensity;
 
             private float _ColorR;

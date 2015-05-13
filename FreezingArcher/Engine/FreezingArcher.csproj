@@ -13,7 +13,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>True</Optimize>
-    <OutputPath>..\Build\Debug</OutputPath>
+    <OutputPath>..\Build\Debug\lib</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -21,11 +21,11 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <DocumentationFile>..\Build\Debug\FreezingArcher.xml</DocumentationFile>
+    <DocumentationFile>..\Build\Debug\lib\FreezingArcher.xml</DocumentationFile>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
-        <Command type="AfterBuild" command="cp -r &quot;${SolutionDir}/Pencil.Gaming/Pencil.Gaming/bin/Debug/.&quot; &quot;${TargetDir}/&quot;" />
+        <Command type="AfterBuild" command="${TargetDir}/../../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="" />
+        <Command type="AfterBuild" command="rm -rf ${TargetDir}/lib32 ${TargetDir}/lib64" />
       </CustomCommands>
     </CustomCommands>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -33,14 +33,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
     <Optimize>True</Optimize>
-    <OutputPath>..\Build\Release</OutputPath>
+    <OutputPath>..\Build\Release\lib</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>True</Externalconsole>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
-        <Command type="AfterBuild" command="cp -r &quot;${SolutionDir}/Pencil.Gaming/Pencil.Gaming/bin/Release/.&quot; &quot;${TargetDir}/&quot;" />
+        <Command type="AfterBuild" command="${TargetDir}/../../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="" />
+        <Command type="AfterBuild" command="rm -rf ${TargetDir}/lib32 ${TargetDir}/lib64" />
       </CustomCommands>
     </CustomCommands>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
@@ -53,7 +53,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Build\Debug</OutputPath>
+    <OutputPath>..\Build\Debug\lib</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -70,7 +70,7 @@ echo Successfully finished!</PostBuildEvent>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Build\Release</OutputPath>
+    <OutputPath>..\Build\Release\lib</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\Build\Release\FreezingArcher.xml</DocumentationFile>
@@ -86,21 +86,13 @@ echo Successfully finished!</PostBuildEvent>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
-    <Reference Include="AssimpNet">
-      <HintPath>lib\AssimpNet.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="CommandLine">
       <HintPath>lib\CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Package>xbuild12</Package>
-    </Reference>
-    <Reference Include="NVorbis">
-      <HintPath>lib\NVorbis.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -237,40 +229,27 @@ echo Successfully finished!</PostBuildEvent>
   </ProjectExtensions>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="lib\AssimpNet.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="lib\CommandLine.dll" />
-    <None Include="lib\CommandLine.XML">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Localization\en_US.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Localization\de_DE.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="lib\NVorbis.dll">
+    <None Include="lib\NVorbis.dll" />
+    <None Include="CommandLine.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Audio\test.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Audio\test2.ogg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\PostProcessor\PostProcessor.csproj">
-      <Project>{F2D91778-AD1F-4433-A451-2016B873064B}</Project>
-      <Name>PostProcessor</Name>
+    <ProjectReference Include="..\assimp\AssimpNet\AssimpNet.csproj">
+      <Project>{3415FF29-C0BE-44FC-AD34-94796118E690}</Project>
+      <Name>AssimpNet</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pencil.Gaming\Pencil.Gaming\Pencil.Gaming.csproj">
       <Project>{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}</Project>
       <Name>Pencil.Gaming</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PostProcessor\PostProcessor.csproj">
+      <Project>{F2D91778-AD1F-4433-A451-2016B873064B}</Project>
+      <Name>PostProcessor</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

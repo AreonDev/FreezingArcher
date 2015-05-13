@@ -24,6 +24,7 @@ using System;
 using System.Reflection;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PostProcessor
 {
@@ -38,8 +39,11 @@ namespace PostProcessor
             List<IPostProcessingStep> postProcessingSteps = new List<IPostProcessingStep> ();
             var file = new FileInfo (args [1]);
 
-            postProcessingSteps.Add (new TypeIdentifierPostProcStep (args[0]));
-
+            var types = AppDomain.CurrentDomain.GetAssemblies ().Select (j => j.GetTypes ());
+            foreach (var tArr in types) {
+                var pps = tArr.Where (j => !j.IsInterface && !j.IsAbstract && typeof(IPostProcessingStep).IsAssignableFrom (j)).Select(Activator.CreateInstance).Cast<IPostProcessingStep>();
+                postProcessingSteps.AddRange (pps);
+            }
 
             if (file.Extension != ".dll" && file.Extension != ".exe")
                 return -1;

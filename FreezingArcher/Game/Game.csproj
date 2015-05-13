@@ -19,8 +19,7 @@
     <WarningLevel>4</WarningLevel>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
-        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/&quot;" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="" />
       </CustomCommands>
     </CustomCommands>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
@@ -38,8 +37,7 @@
     <WarningLevel>4</WarningLevel>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="${TargetDir}" />
-        <Command type="AfterBuild" command="bash -c &quot;mv *.dll* *.xml lib/&quot;" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="" />
       </CustomCommands>
     </CustomCommands>
     <ConsolePause>False</ConsolePause>
@@ -94,6 +92,30 @@ move /Y *.xml lib\
 echo Successfully finished!</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Localization\de_DE.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Localization\en_US.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Audio\test.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Audio\test2.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
       <Project>{E430674D-98AB-474A-BC42-A6DDE78623C7}</Project>
@@ -106,16 +128,8 @@ echo Successfully finished!</PostBuildEvent>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
-        </Policies>
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
   <ItemGroup>
-    <None Include="app.config" />
+    <Folder Include="Audio\" />
+    <Folder Include="Localization\" />
   </ItemGroup>
 </Project>

@@ -216,7 +216,7 @@ namespace FreezingArcher.Renderer
         public RendererCore(Messaging.MessageManager mssgmngr)
         {
             ValidMessages = new int[] { (int)Messaging.MessageId.WindowResizeMessage };
-            //mssgmngr += this;
+            mssgmngr += this;
 
             _RendererCoreActionsListLock = new object();
             _RendererCoreActionsList = new List<RCAction>();

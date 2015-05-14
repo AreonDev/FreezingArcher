@@ -35,34 +35,49 @@ using FreezingArcher.Math;
 
 namespace FreezingArcher.Game
 {
-    public class FurryLanaTest : FreezingArcher.Messaging.Interfaces.IMessageConsumer
-    {
-        #region IMessageConsumer Implementation
+	public class FurryLanaTest : FreezingArcher.Messaging.Interfaces.IMessageConsumer
+	{
+		#region IMessageConsumer Implementation
 
-        public FurryLanaTest (MessageManager mssgmngr)
-        {
-            ValidMessages = new int[] { (int)MessageId.Input };
-            mssgmngr += this;
-        }
+		public FurryLanaTest(MessageManager mssgmngr)
+		{
+			ValidMessages = new int[] { (int)MessageId.Input };
+			mssgmngr += this;
+		}
 
-        public virtual int[] ValidMessages { get; protected set; }
+		public virtual int[] ValidMessages { get; protected set; }
 
-        public virtual void ConsumeMessage (Messaging.Interfaces.IMessage msg)
-        {
-            InputMessage im = msg as InputMessage;
-            if (im != null)
-            {
-                //if (im.IsKeyPressed ("left")) 
-                //{
-                //Cube_X -= 0.001f;
-                //}
-            }
-        }
+		public virtual void ConsumeMessage(Messaging.Interfaces.IMessage msg)
+		{
+			InputMessage im = msg as InputMessage;
+			if (im != null) 
+			{
+				if (im.IsKeyPressed ("left")) 
+				{
+					Cube_X -= 0.05f;
+				}
 
-        #endregion
+				if (im.IsKeyPressed ("right")) 
+				{
+					Cube_X += 0.05f;
+				}
+
+				if (im.IsKeyPressed ("forward")) 
+				{
+					Cube_Z -= 0.05f;
+				}
+
+				if (im.IsKeyPressed ("backward")) 
+				{
+					Cube_Z += 0.05f;
+				}
+			}
+		}
+
+		#endregion
 
 
-        /*
+		/*
 		 * AUFGABE 1
 		 * Grundlegende Kameras schreiben und mit API vertraut machen!
 		 * Zeit: Maximal 2 Stunden...

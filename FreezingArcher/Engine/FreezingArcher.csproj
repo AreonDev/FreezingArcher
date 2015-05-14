@@ -290,37 +290,6 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Renderer\TestGraphics\Rabbit\Rabbit_S.tga">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Renderer\Effects\2D\PixelShader.ps">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\Effects\2D\VertexShader.vs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\Effects\BasicEffect\PixelShader.ps">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\Effects\BasicEffect\VertexShader.vs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit.mtl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit.obj">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_D.tga">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_N.tga">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_S.tga">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Renderer\Compositor\" />
-    <Folder Include="Renderer\TestGraphics\Rabbit\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />
@@ -336,7 +305,6 @@ echo Successfully finished!</PostBuildEvent>
     <ProjectReference Include="..\Math\Math.csproj">
       <Project>{6EA025BA-DB6F-40AA-B970-069A104D2659}</Project>
       <Name>Math</Name>
-
     </ProjectReference>
     <ProjectReference Include="..\Pencil.Gaming\Pencil.Gaming\Pencil.Gaming.csproj">
       <Project>{DDB6DB6D-E5DE-4BDB-8AC8-26DF800E9FF0}</Project>

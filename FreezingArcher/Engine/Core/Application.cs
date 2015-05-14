@@ -338,48 +338,6 @@ namespace FreezingArcher.Core
             };
         }
 
-        class MessageTest : IMessageConsumer
-        {
-            public MessageTest(MessageManager msgmnr)
-            {
-                msgmnr += this;
-            }
-
-            #region IMessageConsumer implementation
-
-            public void ConsumeMessage(IMessage msg)
-            {
-                Logger.Log.AddLogEntry(LogLevel.Debug, "MessageTest", ((MessageId) msg.MessageId).ToString());
-            }
-
-            public int[] ValidMessages
-            {
-                get
-                {
-                    return new int[] {
-                        (int) MessageId.ConfigFileSaved,
-                        (int) MessageId.ConfigFileValueSet,
-                        (int) MessageId.ConfigManagerItemAdded,
-                        (int) MessageId.ConfigManagerItemRemoved,
-                        (int) MessageId.Input,
-                        (int) MessageId.Update,
-                        (int) MessageId.UpdateLocale,
-                        (int) MessageId.WindowCloseMessage,
-                        (int) MessageId.WindowErrorMessage,
-                        (int) MessageId.WindowFocusMessage,
-                        (int) MessageId.WindowMinimizeMessage,
-                        (int) MessageId.WindowMouseOverMessage,
-                        (int) MessageId.WindowMoveMessage,
-                        (int) MessageId.WindowResizeMessage
-                    };
-                }
-            }
-
-            #endregion
-
-
-        }
-
         /// <summary>
         /// The periodic update task.
         /// </summary>
@@ -496,7 +454,6 @@ namespace FreezingArcher.Core
             Loaded = false;
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing application '{0}' ...", Name);
-            msgtest = new MessageTest(MessageManager);
             InputManager = new InputManager (MessageManager);
             updateStopwatch = new Stopwatch();
             PeriodicUpdateTask = new PeriodicTask (32, () => {
@@ -516,8 +473,6 @@ namespace FreezingArcher.Core
             Loader.DoReexec += () => { LoadAgain = true; };
             Initer.ExecJobsParallel (Environment.ProcessorCount);
         }
-
-        MessageTest msgtest;
 
         /// <summary>
         /// Gets the init jobs.

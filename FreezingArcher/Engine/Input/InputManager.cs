@@ -150,7 +150,9 @@ namespace FreezingArcher.Input
         internal void GenerateInputMessage ()
         {
             InputMessage id =
-                KeyRegistry.Instance.GenerateInputMessage (Keys, Mouse, MouseMovement, MouseScroll, Stopwatch.Elapsed);
+                KeyRegistry.Instance.GenerateInputMessage (
+                    new List<KeyboardInput>(Keys), new List<MouseInput>(Mouse),
+                    MouseMovement, MouseScroll, Stopwatch.Elapsed);
             Keys.Clear ();
             Mouse.Clear ();
             MouseMovement = Vector2.Zero;

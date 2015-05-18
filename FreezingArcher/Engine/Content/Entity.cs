@@ -31,7 +31,7 @@ namespace FreezingArcher.Content
     /// <summary>
     /// Component based Entity.
     /// </summary>
-    public class Entity : FAObject, IManageable
+    public sealed class Entity : FAObject, IManageable
     {
         /// <summary>
         /// The name of the module.
@@ -49,7 +49,7 @@ namespace FreezingArcher.Content
             MessageManager = messageManager;
 
             if (Components == null)
-                Components = new Dictionary<int, AbstractEntityComponent>();
+                Components = new Dictionary<int, EntityComponent>();
             else
                 Components.Clear();
         }
@@ -57,16 +57,16 @@ namespace FreezingArcher.Content
         /// <summary>
         /// The component storage.
         /// </summary>
-        protected Dictionary<int, AbstractEntityComponent> Components;
+        protected Dictionary<int, EntityComponent> Components;
 
         /// <summary>
         /// Gets the component by generic parameter.
         /// </summary>
         /// <returns>The component.</returns>
         /// <typeparam name="T">The type of the component you would like to have.</typeparam>
-        public T GetComponent<T> () where T : AbstractEntityComponent
+        public T GetComponent<T> () where T : EntityComponent
         {
-            AbstractEntityComponent component;
+            EntityComponent component;
             Components.TryGetValue (typeof(T).GetHashCode(), out component);
             return component as T;
         }
@@ -77,7 +77,7 @@ namespace FreezingArcher.Content
         /// <returns><c>true</c>, if component was added, <c>false</c> otherwise.</returns>
         /// <param name="component">Component.</param>
         /// <typeparam name="T">The type of the component.</typeparam>
-        public bool AddComponent<T>(T component) where T : AbstractEntityComponent
+        public bool AddComponent<T>(T component) where T : EntityComponent
         {
             int typeid = typeof(T).GetHashCode();
 
@@ -99,7 +99,7 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <returns><c>true</c>, if component was removed, <c>false</c> otherwise.</returns>
         /// <typeparam name="T">The type of the component which should be removed.</typeparam>
-        public bool RemoveComponent<T> () where T : AbstractEntityComponent
+        public bool RemoveComponent<T> () where T : EntityComponent
         {
             int typeid = typeof(T).GetHashCode();
 

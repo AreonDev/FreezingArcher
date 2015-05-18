@@ -30,12 +30,14 @@ namespace PostProcessor
 {
     class MainClass
     {
+        public static DirectoryInfo workingDirectory;
         public static int Main (string[] args)
         {
 
             if (args.Length < 2)
                 return 1;
-
+            Console.WriteLine ("Post processing started:\nWorking dir: {0}\nAssembly: {1}", args [0], args [1]);
+            workingDirectory = new DirectoryInfo (args [0]);
             List<IPostProcessingStep> postProcessingSteps = new List<IPostProcessingStep> ();
             var file = new FileInfo (args [1]);
 

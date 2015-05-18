@@ -40,7 +40,7 @@ namespace PostProcessor
 
         #region IPostProcessingStep implementation
 
-        public int DoPostProcessing (System.Reflection.Assembly asm)
+        public int DoPostProcessing (Assembly asm)
         {
             var bc = asm.GetTypes ().Where (j => j.BaseType == baseCompnent);
             foreach (var item in bc)

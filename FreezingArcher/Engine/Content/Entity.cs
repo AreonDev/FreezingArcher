@@ -57,7 +57,7 @@ namespace FreezingArcher.Content
         /// <summary>
         /// The component storage.
         /// </summary>
-        protected Dictionary<int, EntityComponent> Components;
+        Dictionary<int, EntityComponent> Components;
 
         /// <summary>
         /// Gets the component by generic parameter.
@@ -118,7 +118,7 @@ namespace FreezingArcher.Content
         /// <summary>
         /// The message manager.
         /// </summary>
-        protected MessageManager MessageManager;
+        MessageManager MessageManager;
 
         #region IManageable implementation
         /// <summary>

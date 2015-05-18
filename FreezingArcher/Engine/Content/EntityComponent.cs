@@ -26,7 +26,11 @@ using FreezingArcher.Messaging.Interfaces;
 namespace FreezingArcher.Content
 {
     /// <summary>
-    /// Abstract entity component.
+    /// Abstract entity component. Classes of this type are used to hold the data for entities. Those classes may hold
+    /// only data (no methods).
+    /// Inheritance of this class must be sealed, contain only properties and fields and all
+    /// access modifiers must be internal or higher. If any of the constraints listed above is not met the build will
+    /// fail on post processing.
     /// </summary>
     public abstract class EntityComponent : FAObject
     {}

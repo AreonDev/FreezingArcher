@@ -34,7 +34,7 @@ namespace PostProcessor
         public EntityComponentCheck ()
         {
             var asm = Assembly.LoadFile (Path.Combine (MainClass.workingDirectory.FullName, "lib", "FreezingArcher.dll"));
-            baseCompnent = asm.GetType ("FreezingArcher.Content.AbstractEntityComponent");
+            baseCompnent = asm.GetType ("FreezingArcher.Content.EntityComponent");
         }
 
 
@@ -48,7 +48,7 @@ namespace PostProcessor
                 Console.WriteLine ("Processing type: {0}", item.FullName);
                 if (!item.IsSealed)
                 {
-                    Console.WriteLine ("Error: Type {0} inherits from AbstractEntityComponent but is not sealed!", item.FullName);
+                    Console.WriteLine ("Error: Type {0} inherits from EntityComponent but is not sealed!", item.FullName);
                     return 1;
                 }
 

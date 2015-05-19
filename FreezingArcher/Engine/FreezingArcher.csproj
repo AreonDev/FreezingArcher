@@ -225,6 +225,9 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\TransformComponent.cs" />
     <Compile Include="Content\EntitySystem.cs" />
     <Compile Include="Content\ComponentRegistry.cs" />
+    <Compile Include="Renderer\Material.cs" />
+    <Compile Include="Renderer\RendererContext.cs" />
+    <Compile Include="Renderer\VertexBufferArray.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

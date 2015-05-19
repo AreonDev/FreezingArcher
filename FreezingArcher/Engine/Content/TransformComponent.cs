@@ -30,7 +30,7 @@ namespace FreezingArcher.Content
     public class TransformComponent : EntityComponent
     {
         // has to pass cause of FAObject
-        public override void Init()
+        public override void Init(Entity entity)
         {
 
         }

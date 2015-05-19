@@ -34,6 +34,11 @@ namespace FreezingArcher.Content
     /// </summary>
     public abstract class EntityComponent : FAObject
     {
-        public abstract void Init();
+        /// <summary>
+        /// Initialize this component. Within this method all properties may be reseted and reloaded from the attribute
+        /// manager.
+        /// </summary>
+        /// <param name="entity">The entity this component is bounded to.</param>
+        public abstract void Init(Entity entity);
     }
 }

@@ -179,7 +179,7 @@ namespace FreezingArcher.Output
         /// <param name="moduleName">Module name.</param>
         public void RegisterLogModule(string moduleName)
         {
-            maxModNameLength = Math.Max (maxModNameLength, moduleName.Length);
+            maxModNameLength = System.Math.Max (maxModNameLength, moduleName.Length);
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace FreezingArcher.Output
         /// <param name="x">The line to add.</param>
         public void AddLogEntry (LogLine x)
         {
-            maxModNameLength = Math.Max (maxModNameLength, x.ModuleName.Length);
+            maxModNameLength = System.Math.Max (maxModNameLength, x.ModuleName.Length);
             lock (linesToProcess) 
                 linesToProcess.Enqueue (x);
 

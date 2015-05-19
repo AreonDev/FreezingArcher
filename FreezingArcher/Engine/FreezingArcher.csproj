@@ -205,9 +205,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="DataStructures\Graphs\TDirectedNode.cs" />
     <Compile Include="DataStructures\Graphs\TDirectedGraph.cs" />
     <Compile Include="Content\EntityComponent.cs" />
-    <Compile Include="Renderer\VertexBufferArray.cs" />
-    <Compile Include="Renderer\Material.cs" />
-    <Compile Include="Renderer\RendererContext.cs" />
     <Compile Include="Content\TransformComponent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -256,6 +253,10 @@ echo Successfully finished!</PostBuildEvent>
     <ProjectReference Include="..\PostProcessor\PostProcessor.csproj">
       <Project>{F2D91778-AD1F-4433-A451-2016B873064B}</Project>
       <Name>PostProcessor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Math\Math.csproj">
+      <Project>{6EA025BA-DB6F-40AA-B970-069A104D2659}</Project>
+      <Name>Math</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

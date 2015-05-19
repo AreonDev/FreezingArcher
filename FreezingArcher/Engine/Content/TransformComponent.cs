@@ -1,5 +1,5 @@
-//
-//  Entity.cs
+﻿//
+//  PositionComponen.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -20,20 +20,40 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using FreezingArcher.Core;
-using FreezingArcher.Messaging.Interfaces;
+using System;
+using FreezingArcher.Math;
+using System.Threading;
 
 namespace FreezingArcher.Content
 {
-    /// <summary>
-    /// Abstract entity component. Classes of this type are used to hold the data for entities. Those classes may hold
-    /// only data (no methods).
-    /// Inheritance of this class must be sealed, contain only properties and fields and all
-    /// access modifiers must be internal or higher. If any of the constraints listed above is not met the build will
-    /// fail on post processing.
-    /// </summary>
-    public abstract class EntityComponent : FAObject
+    // must be sealed
+    public class TransformComponent : EntityComponent
     {
-        public abstract void Init();
+        // has to pass cause of FAObject
+        public override void Init()
+        {
+
+        }
+
+        // must fail cause its private
+        private int foo;
+
+        // has to pass
+        public Vector3 Position { get; set; }
+
+        // has to fail
+        public Quaternion Rotation { get; private set; }
+
+        // has to pass
+        internal Vector3 Scale { get; set; }
+
+        // must fail
+        protected int bar;
+
+        // fail
+        int asdf () {return 0;}
+
+        // fail
+        protected internal void qwert() {}
     }
 }

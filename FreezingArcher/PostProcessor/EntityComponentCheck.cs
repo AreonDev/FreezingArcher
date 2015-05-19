@@ -24,6 +24,8 @@ using System;
 using System.Reflection;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.ComponentModel;
 
 namespace PostProcessor
 {
@@ -42,6 +44,7 @@ namespace PostProcessor
 
         public int DoPostProcessing (Assembly asm)
         {
+	    ComponentError error = ComponentError.NoError;
             var bc = asm.GetTypes ().Where (j => j.BaseType == baseCompnent);
             foreach (var item in bc)
             {
@@ -49,7 +52,7 @@ namespace PostProcessor
                 if (!item.IsSealed)
                 {
                     Console.WriteLine ("Error: Type {0} inherits from EntityComponent but is not sealed!", item.FullName);
-                    return 1;
+		    error |= ComponentError.NotSealed;
                 }
 
                 var methods = item.GetMethods (
@@ -59,7 +62,7 @@ namespace PostProcessor
                                   BindingFlags.Instance |
                                   BindingFlags.DeclaredOnly);
                 
-                var methods2 = methods.Where (k => !k.IsSpecialName).ToArray ();
+		var methods2 = methods.Where (k => !k.IsSpecialName && k.GetBaseDefinition() == k).ToArray ();
 
                 if (methods2.Length > 0)
                 {
@@ -68,8 +71,38 @@ namespace PostProcessor
                     {
                         Console.WriteLine (getStringSignature (method));
                     }
-                    return 2;
+		    error |= ComponentError.MethodError;
                 }
+
+		var fields = item.GetFields(
+		    BindingFlags.NonPublic |
+		    BindingFlags.Public |
+		    BindingFlags.Static |
+		    BindingFlags.Instance |
+		    BindingFlags.DeclaredOnly);
+
+		var fields2 = fields.Where(k => (k.IsPrivate || k.IsFamily || k.IsFamilyOrAssembly)
+		    && !k.IsDefined(typeof(CompilerGeneratedAttribute), false)).ToArray();
+
+		if (fields2.Length > 0)
+		{
+		    Console.WriteLine("Error: Type {0} has {1} fields with disallowed access modifiers", item.Name,
+			fields2.Length);
+		    foreach (var field in fields2)
+		    {
+			string access_modifier = null;
+			if (field.IsPrivate)
+			    access_modifier = "private";
+			if (field.IsFamily)
+			    access_modifier = "protected";
+			if (field.IsFamilyOrAssembly)
+			    access_modifier = "protected internal";
+
+			Console.WriteLine("Error: Field {0} is {1} but should be at least internal", field.Name,
+			    access_modifier);
+		    }
+		    error |= ComponentError.FieldError;
+		}
                     
                 var props = item.GetProperties (
                                 BindingFlags.NonPublic |
@@ -84,7 +117,7 @@ namespace PostProcessor
                         if((int)getAmFromMethod (prop.GetGetMethod (true)) < 4)
                         {
                             Console.WriteLine ("Error: getter of property {0} is {1}, should be at least internal", prop.Name, getAmFromMethod (prop.GetGetMethod (true)).ToString ().Replace ('_', ' '));
-                            return 3;
+			    error |= ComponentError.PropertyError;
                         }
                     }
                     if(prop.CanWrite)
@@ -92,7 +125,7 @@ namespace PostProcessor
                         if((int)getAmFromMethod (prop.GetSetMethod (true)) < 4)
                         {
                             Console.WriteLine ("Error: setter of property {0} is {1}, should be at least internal", prop.Name, getAmFromMethod (prop.GetSetMethod (true)).ToString ().Replace ('_', ' '));
-                            return 3;
+			    error |= ComponentError.PropertyError;
                         }
                     }    
                 }
@@ -109,12 +142,16 @@ namespace PostProcessor
                     {
                         Console.WriteLine ("Error: constructor is {0}, should be at least internal (listed below)", am.ToString ().Replace ('_', ' '));
                         Console.WriteLine (getStringSignature (@const));
-                        return 4;
-
+			error |= ComponentError.ConstructorError;
                     }
+		    if (@const.GetParameters().Length > 0)
+		    {
+			Console.WriteLine("Error: constructor needs to be default constructor");
+			error |= ComponentError.ConstructorError;
+		    }
                 }
             }   
-            return 0;
+	    return (int) error;
         }
 
         #endregion
@@ -161,6 +198,17 @@ namespace PostProcessor
         protected_internal = 3,
         @internal = 4,
         @public = 5,
+    }
+
+    [Flags]
+    public enum ComponentError
+    {
+	NoError = 0,
+	NotSealed = 1,
+	MethodError = 2,
+	FieldError = 4,
+	PropertyError = 8,
+	ConstructorError = 16
     }
 }
 

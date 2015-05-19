@@ -27,8 +27,10 @@ using System.Threading;
 namespace FreezingArcher.Content
 {
     // must be sealed
-    public class TransformComponent : EntityComponent
+    public sealed class TransformComponent : EntityComponent
     {
+        internal TransformComponent(){}
+
         // has to pass cause of FAObject
         public override void Init(Entity entity)
         {
@@ -36,24 +38,24 @@ namespace FreezingArcher.Content
         }
 
         // must fail cause its private
-        private int foo;
+        //private int foo;
 
         // has to pass
         public Vector3 Position { get; set; }
 
         // has to fail
-        public Quaternion Rotation { get; private set; }
+        public Quaternion Rotation { get; set; }
 
         // has to pass
         internal Vector3 Scale { get; set; }
 
         // must fail
-        protected int bar;
+        //protected int bar;
 
         // fail
-        int asdf () {return 0;}
+        //int asdf () {return 0;}
 
         // fail
-        protected internal void qwert() {}
+        //protected internal void qwert() {}
     }
 }

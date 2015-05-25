@@ -94,9 +94,7 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Package>xbuild12</Package>
-    </Reference>
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -240,6 +238,12 @@ echo Successfully finished!</PostBuildEvent>
     <Content Include="Renderer\TestGraphics\texture2.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Renderer\Effects\BasicEffect\PixelShader.ps">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Renderer\Effects\BasicEffect\VertexShader.vs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -271,12 +275,6 @@ echo Successfully finished!</PostBuildEvent>
     </None>
     <None Include="Renderer\Effects\2D\VertexShader.vs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\Effects\BasicEffect\PixelShader.ps">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\Effects\BasicEffect\VertexShader.vs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Renderer\TestGraphics\Rabbit\Rabbit.mtl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

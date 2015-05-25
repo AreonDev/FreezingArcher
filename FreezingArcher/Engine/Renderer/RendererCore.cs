@@ -512,10 +512,10 @@ namespace FreezingArcher.Renderer
             GL.UseProgramStages(id, ProgramStageMask.AllShaderBits, 0);
 
             //Create VertexShader
-            ShaderProgram sp_Vertex = CreateShaderProgramFromFile("Internal_Basic_Effect_Vertex_Shader", ShaderType.VertexShader, "Renderer/Effects/BasicEffect/VertexShader.vs");
+            ShaderProgram sp_Vertex = CreateShaderProgramFromFile("Internal_Basic_Effect_Vertex_Shader", ShaderType.VertexShader, "lib/Renderer/Effects/BasicEffect/VertexShader.vs");
 
             //Create PixelShader
-            ShaderProgram sp_Pixel = CreateShaderProgramFromFile("Internal_Basic_Effect_Pixel_Sahder", ShaderType.PixelShader, "Renderer/Effects/BasicEffect/PixelShader.ps");
+            ShaderProgram sp_Pixel = CreateShaderProgramFromFile("Internal_Basic_Effect_Pixel_Sahder", ShaderType.PixelShader, "lib/Renderer/Effects/BasicEffect/PixelShader.ps");
 
             BasicEffect.VertexProgram = sp_Vertex;
             BasicEffect.PixelProgram = sp_Pixel;
@@ -534,10 +534,10 @@ namespace FreezingArcher.Renderer
             GL.UseProgramStages(id, ProgramStageMask.AllShaderBits, 0);
 
             //Create VertexShader
-            ShaderProgram sp_Vertex = CreateShaderProgramFromFile("Internal_2D_Effect_Vertex_Shader", ShaderType.VertexShader, "Renderer/Effects/2D/VertexShader.vs");
+            ShaderProgram sp_Vertex = CreateShaderProgramFromFile("Internal_2D_Effect_Vertex_Shader", ShaderType.VertexShader, "lib/Renderer/Effects/2D/VertexShader.vs");
 
             //Create PixelShader
-            ShaderProgram sp_Pixel = CreateShaderProgramFromFile("Internal_2D_Effect_Pixel_Shader", ShaderType.PixelShader, "Renderer/Effects/2D/PixelShader.ps");
+            ShaderProgram sp_Pixel = CreateShaderProgramFromFile("Internal_2D_Effect_Pixel_Shader", ShaderType.PixelShader, "lib/Renderer/Effects/2D/PixelShader.ps");
 
             _2DEffect.VertexProgram = sp_Vertex;
             _2DEffect.PixelProgram = sp_Pixel;

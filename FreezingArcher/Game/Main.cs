@@ -35,18 +35,38 @@ using FreezingArcher.Math;
 
 namespace FreezingArcher.Game
 {
+	/// <summary>
+	/// Furry lana test.
+	/// </summary>
 	public class FurryLanaTest : FreezingArcher.Messaging.Interfaces.IMessageConsumer
 	{
 		#region IMessageConsumer Implementation
 
+		/// <summary>
+		/// The cam.
+		/// </summary>
+		public MyFirstFreezingArcherCam Cam = new MyFirstFreezingArcherCam(new Vector3(1.0f, 10.0f, 10.0f), new Vector3 ( 1.0f, 0.0f, -1.0f));
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="FreezingArcher.Game.FurryLanaTest"/> class.
+		/// </summary>
+		/// <param name="mssgmngr">Mssgmngr.</param>
 		public FurryLanaTest(MessageManager mssgmngr)
 		{
 			ValidMessages = new int[] { (int)MessageId.Input };
 			mssgmngr += this;
 		}
 
+		/// <summary>
+		/// Gets the valid messages which can be used in the ConsumeMessage method
+		/// </summary>
+		/// <value>The valid messages</value>
 		public virtual int[] ValidMessages { get; protected set; }
 
+		/// <summary>
+		/// Processes the invoming message
+		/// </summary>
+		/// <param name="msg">Message to process</param>
 		public virtual void ConsumeMessage(Messaging.Interfaces.IMessage msg)
 		{
 			InputMessage im = msg as InputMessage;
@@ -97,21 +117,25 @@ namespace FreezingArcher.Game
 		 * Ich wünsche mir aber ein Feature, oder eine Möglichkeit, zwischen den Kameras zu wechseln.....
 		 */
 
-        public void Draw ()
-        {
-            RendererContext rctx = Application.Instance.RendererContext;
-            rctx.Begin ();
+		/// <summary>
+		/// Draw this instance.
+		/// </summary>
+		public void Draw()
+		{
+			RendererContext rctx = Application.Instance.RendererContext;
+			rctx.Begin ();
 
             rctx.Clear (Color4.AliceBlue);
 
             rctx.BasicEffect.Use ();
 
-            //TODO: Hier soll dann die Kamera benutzt und gesetzt werden
-            //Sprich: ViewMatrix der Kamera in BasicEffect.View
-            //und ProjectionMatrix in BasicEffect.Projection
-            rctx.BasicEffect.View = Matrix.LookAt (new Vector3 (_width / 1.0f, 10.0f, 10.0f), new Vector3 (_width / 1.0f, 0.0f, -_height / 1.0f), Vector3.UnitY); 
-            rctx.BasicEffect.Projection = Matrix.CreatePerspectiveFieldOfView ((float)System.Math.PI / 4.0f, 
-                (float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y, 0.1f, 100.0f); 
+			//TODO: Hier soll dann die Kamera benutzt und gesetzt werden
+			//Sprich: ViewMatrix der Kamera in BasicEffect.View
+			//und ProjectionMatrix in BasicEffect.Projection
+			//rctx.BasicEffect.View = Matrix.LookAt (new Vector3(_width / 1.0f, 10.0f, 10.0f), new Vector3 (_width / 1.0f, 0.0f, -_height / 1.0f), Vector3.UnitY); 
+			rctx.BasicEffect.View = Cam.ViewMatrix;
+			rctx.BasicEffect.Projection = Matrix.CreatePerspectiveFieldOfView ((float)System.Math.PI / 4.0f, 
+				(float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y, 0.1f, 100.0f);
 
             rctx.BasicEffect.UseColor = true;
 
@@ -140,10 +164,15 @@ namespace FreezingArcher.Game
         int _width, _height;
         float Cube_X, Cube_Z;
 
-        public void InitCubes (int width, int height)
-        {
-            Cube_X = width;
-            Cube_Z = -height;
+		/// <summary>
+		/// Inits the cubes.
+		/// </summary>
+		/// <param name="width">Width.</param>
+		/// <param name="height">Height.</param>
+		public void InitCubes(int width, int height)
+		{
+			Cube_X = width;
+			Cube_Z = -height;
 
             this._width = width;
             this._height = height;

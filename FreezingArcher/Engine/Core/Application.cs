@@ -371,7 +371,7 @@ namespace FreezingArcher.Core
             var re = AudioManager.Routing.AddAudioRouting(AudioManager.GetSource("test"), slot, 1f, null); /* Routing entry will be cached in Source, is used to break em up when cleared. */
             // openal test
             AudioManager.GetSource ("test").Loop = true;
-            AudioManager.PlaySource ("test");
+            //AudioManager.PlaySource ("test");
 
             updateStopwatch.Start ();
             PeriodicUpdateTask.Start ();

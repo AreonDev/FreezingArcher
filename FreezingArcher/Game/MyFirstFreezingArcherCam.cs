@@ -23,6 +23,7 @@
 using System;
 
 using FreezingArcher.Math;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Game
 {
@@ -42,18 +43,193 @@ namespace FreezingArcher.Game
 	 * Achtung: Da gibt es einen fiesen gemeinen BUG, aber das muss sich fin angucken
 	 */
 
-//	public class MyFirstFreezingArcherCam : FreezingArcher.Renderer.Scene.ICamera
-//	{
-//		public MyFirstFreezingArcherCam ()
-//		{
-//
-//		}
-//
-//		Matrix ProjectionMatrix { get; }
-//		Matrix ViewMatrix { get; }
-//
-//		int Width { get; set; }
-//		int Height { get; set; }
-//	}
+	/// <summary>
+	/// My first freezing archer cam.
+	/// </summary>
+	public class MyFirstFreezingArcherCam : FreezingArcher.Renderer.Scene.ICamera
+	{
+		Vector3 cameraPosition { get; set;}
+		Vector3 currentRotation { get; set;}
+		Vector3 cameraReference;
+		Vector3 transformedReference;
+		Vector3 cameraLookat;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="FreezingArcher.Game.MyFirstFreezingArcherCam"/> class.
+		/// </summary>
+		public MyFirstFreezingArcherCam(){
+			cameraPosition = new Vector3(0,0,30);
+			currentRotation = new Vector3(0,0,0);
+			cameraReference = new Vector3(0, 0, -1);
+			UpdateCamera ();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="FreezingArcher.Game.MyFirstFreezingArcherCam"/> class.
+		/// </summary>
+		/// <param name="_cameraPosition">Camera position.</param>
+		public MyFirstFreezingArcherCam(Vector3 _cameraPosition){
+			cameraPosition = _cameraPosition;
+			currentRotation = new Vector3(0,0,0);
+			cameraReference = new Vector3(1, 0, 0);
+			UpdateCamera ();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="FreezingArcher.Game.MyFirstFreezingArcherCam"/> class.
+		/// </summary>
+		/// <param name="_cameraPosition">Camera position.</param>
+		/// <param name="_currentRotation">Current rotation.</param>
+		public MyFirstFreezingArcherCam(Vector3 _cameraPosition, Vector3 _currentRotation){
+			cameraPosition = _cameraPosition;
+			currentRotation = _currentRotation;
+			cameraReference = new Vector3(0, 0, -1);
+			UpdateCamera ();
+		}
+
+		/// <summary>
+		/// Gets or sets the projection matrix.
+		/// </summary>
+		/// <value>The projection matrix.</value>
+		public Matrix ProjectionMatrix { get; protected set;}
+
+		/// <summary>
+		/// Gets or sets the view matrix.
+		/// </summary>
+		/// <value>The view matrix.</value>
+		public Matrix ViewMatrix { get; protected set;}
+
+		/// <summary>
+		/// Gets or sets the width.
+		/// </summary>
+		/// <value>The width.</value>
+		public int Width { get; set; }
+
+		/// <summary>
+		/// Gets or sets the height.
+		/// </summary>
+		/// <value>The height.</value>
+		public int Height { get; set; }
+
+		private void UpdateCamera(){
+			Matrix rotationPosition =
+				Matrix.CreateRotationX (currentRotation.X)
+				* Matrix.CreateRotationY (currentRotation.Y)
+				* Matrix.CreateRotationZ (currentRotation.Z);
+
+			transformedReference = Vector3.Transform (cameraReference, rotationPosition);
+
+			cameraLookat = cameraPosition + transformedReference;
+
+			ViewMatrix = Matrix.LookAt (cameraPosition, cameraLookat, new Vector3(0.0f, 1.0f, 0.0f));
+		}
+
+		/// <summary>
+		/// Rotates the x.
+		/// </summary>
+		/// <param name="_rotation">Rotation.</param>
+		public void rotateX(float _rotation){
+			var tmp = currentRotation;
+			tmp.X += _rotation;
+			currentRotation = tmp;
+			UpdateCamera ();
+		}
+
+		/// <summary>
+		/// Rotates the y.
+		/// </summary>
+		/// <param name="_rotation">Rotation.</param>
+		public void rotateY(float _rotation){
+			var tmp = currentRotation;
+			tmp.Y += _rotation;
+			currentRotation = tmp;
+			UpdateCamera ();
+		}
+
+		/// <summary>
+		/// Rotates the z.
+		/// </summary>
+		/// <param name="_rotation">Rotation.</param>
+		public void rotateZ(float _rotation){
+			var tmp = currentRotation;
+			tmp.Z += _rotation;
+			currentRotation = tmp;
+			UpdateCamera ();
+		}
+
+		/// <summary>
+		/// Moves the x.
+		/// </summary>
+		/// <param name="_position">Posotion.</param>
+		public void moveX(float _position){
+			var tmp = cameraPosition;
+			tmp.X += _position;
+			cameraPosition=tmp;
+			UpdateCamera ();
+		}
+
+		/// <summary>
+		/// Moves the y.
+		/// </summary>
+		/// <param name="_position">Posotion.</param>
+		public void moveY(float _position){
+			var tmp = cameraPosition;
+			tmp.Y += _position;
+			cameraPosition=tmp;
+			UpdateCamera ();
+		}
+
+		/// <summary>
+		/// Moves the z.
+		/// </summary>
+		/// <param name="_position">Posotion.</param>
+		public void moveZ(float _position){
+			var tmp = cameraPosition;
+			tmp.Z += _position;
+			cameraPosition=tmp;
+			UpdateCamera ();
+		}
+
+		/// <summary>
+		/// Consumes the message.
+		/// </summary>
+		/// <param name="msg">Message.</param>
+		public virtual void ConsumeMessage(Messaging.Interfaces.IMessage msg)
+		{
+			InputMessage im = msg as InputMessage;
+			if (im != null) 
+			{
+				if (im.IsKeyPressed ("up")) 
+				{
+					moveX (1);
+				}
+
+				if (im.IsKeyPressed ("down")) 
+				{
+					moveX (-1);
+				}
+
+				if (im.IsKeyPressed ("forward")) 
+				{
+					moveZ (1);
+				}
+
+				if (im.IsKeyPressed ("backword")) 
+				{
+					moveZ (-1);
+				}
+
+				if (im.IsKeyPressed ("left")) 
+				{
+					moveY (1);
+				}
+
+				if (im.IsKeyPressed ("right")) 
+				{
+					moveY (-1);
+				}
+			}
+		}
+	}
 }
 

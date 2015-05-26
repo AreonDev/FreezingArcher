@@ -1,9 +1,8 @@
-//
-//  IMessageConsumer.cs
+﻿//
+//  EntitySystem.cs
 //
 //  Author:
-//       Martin Koppehel <martin.koppehel@st.ovgu.de>
-//       Willy Failla <>
+//       Fin Christensen <christensen.fin@gmail.com>
 //
 //  Copyright (c) 2015 Fin Christensen
 //
@@ -21,23 +20,38 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-namespace FreezingArcher.Messaging.Interfaces
+using System;
+using FreezingArcher.Core;
+using FreezingArcher.Messaging.Interfaces;
+
+namespace FreezingArcher.Content
 {
     /// <summary>
-    /// Defines an interface for objects which can consume messages.
+    /// Abstract entity system. Classes of this type are used modify the data of entities stored in components.
+    /// Those classes may hold be a message consumer only and may not hold any additional data or have any additional
+    /// methods.
+    /// Inheritance of this class must be sealed, only overriden fields and methods may be contained in this class.
+    /// If any of the constraints listed above is not met the build will fail on post processing.
     /// </summary>
-    public interface IMessageConsumer
+    public abstract class EntitySystem : FAObject, IMessageConsumer
     {
+        /// <summary>
+        /// Initialize this system. This may be used as a constructor replacement.
+        /// </summary>
+        public abstract void Init();
+
+        #region IMessageConsumer implementation
         /// <summary>
         /// Processes the incoming message
         /// </summary>
         /// <param name="msg">Message to process</param>
-        void ConsumeMessage (IMessage msg);
+        public abstract void ConsumeMessage(IMessage msg);
 
         /// <summary>
         /// Gets the valid messages which can be used in the ConsumeMessage method
         /// </summary>
         /// <value>The valid messages</value>
-        int[] ValidMessages { get; }
+        public abstract int[] ValidMessages { get; }
+        #endregion
     }
 }

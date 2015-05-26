@@ -29,7 +29,7 @@ using System.ComponentModel;
 
 namespace PostProcessor
 {
-    public class EntityComponentCheck : IPostProcessingStep
+    public sealed class EntityComponentCheck : IPostProcessingStep
     {
         readonly Type baseCompnent;
 
@@ -44,7 +44,7 @@ namespace PostProcessor
 
         public int DoPostProcessing (Assembly asm)
         {
-	    ComponentError error = ComponentError.NoError;
+	    PostProcessingError error = PostProcessingError.NoError;
             var bc = asm.GetTypes ().Where (j => j.BaseType == baseCompnent);
             foreach (var item in bc)
             {
@@ -52,7 +52,7 @@ namespace PostProcessor
                 if (!item.IsSealed)
                 {
                     Console.WriteLine ("Error: Type {0} inherits from EntityComponent but is not sealed!", item.FullName);
-		    error |= ComponentError.NotSealed;
+		    error |= PostProcessingError.NotSealed;
                 }
 
                 var methods = item.GetMethods (
@@ -71,7 +71,7 @@ namespace PostProcessor
                     {
                         Console.WriteLine (getStringSignature (method));
                     }
-		    error |= ComponentError.MethodError;
+		    error |= PostProcessingError.MethodError;
                 }
 
 		var fields = item.GetFields(
@@ -101,7 +101,7 @@ namespace PostProcessor
 			Console.WriteLine("Error: Field {0} is {1} but should be at least internal", field.Name,
 			    access_modifier);
 		    }
-		    error |= ComponentError.FieldError;
+		    error |= PostProcessingError.FieldError;
 		}
                     
                 var props = item.GetProperties (
@@ -117,7 +117,7 @@ namespace PostProcessor
                         if((int)getAmFromMethod (prop.GetGetMethod (true)) < 4)
                         {
                             Console.WriteLine ("Error: getter of property {0} is {1}, should be at least internal", prop.Name, getAmFromMethod (prop.GetGetMethod (true)).ToString ().Replace ('_', ' '));
-			    error |= ComponentError.PropertyError;
+			    error |= PostProcessingError.PropertyError;
                         }
                     }
                     if(prop.CanWrite)
@@ -125,7 +125,7 @@ namespace PostProcessor
                         if((int)getAmFromMethod (prop.GetSetMethod (true)) < 4)
                         {
                             Console.WriteLine ("Error: setter of property {0} is {1}, should be at least internal", prop.Name, getAmFromMethod (prop.GetSetMethod (true)).ToString ().Replace ('_', ' '));
-			    error |= ComponentError.PropertyError;
+			    error |= PostProcessingError.PropertyError;
                         }
                     }    
                 }
@@ -142,12 +142,12 @@ namespace PostProcessor
                     {
                         Console.WriteLine ("Error: constructor is {0}, should be at least internal (listed below)", am.ToString ().Replace ('_', ' '));
                         Console.WriteLine (getStringSignature (@const));
-			error |= ComponentError.ConstructorError;
+			error |= PostProcessingError.ConstructorError;
                     }
 		    if (@const.GetParameters().Length > 0)
 		    {
 			Console.WriteLine("Error: constructor needs to be default constructor");
-			error |= ComponentError.ConstructorError;
+			error |= PostProcessingError.ConstructorError;
 		    }
                 }
             }   
@@ -156,17 +156,17 @@ namespace PostProcessor
 
         #endregion
 
-        static AccessModifierEnum getAmFromMethod (MethodBase mi)
+        static AccessModifier getAmFromMethod (MethodBase mi)
         {
             if (mi.IsPublic)
-                return AccessModifierEnum.@public;
+                return AccessModifier.Public;
             if (mi.IsPrivate)
-                return AccessModifierEnum.@private;
+                return AccessModifier.Private;
             if (mi.IsFamilyOrAssembly)
-                return AccessModifierEnum.protected_internal;
+                return AccessModifier.ProtectedInternal;
             if (mi.IsFamily)
-                return AccessModifierEnum.@protected;
-            return AccessModifierEnum.@internal;
+                return AccessModifier.Protected;
+            return AccessModifier.Internal;
         }
 
         static string getStringSignature (MethodBase mi)
@@ -190,25 +190,4 @@ namespace PostProcessor
             return res;
         }
     }
-
-    public enum AccessModifierEnum
-    {
-        @private = 1,
-        @protected = 2,
-        protected_internal = 3,
-        @internal = 4,
-        @public = 5,
-    }
-
-    [Flags]
-    public enum ComponentError
-    {
-	NoError = 0,
-	NotSealed = 1,
-	MethodError = 2,
-	FieldError = 4,
-	PropertyError = 8,
-	ConstructorError = 16
-    }
 }
-

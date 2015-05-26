@@ -206,6 +206,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="DataStructures\Graphs\TDirectedGraph.cs" />
     <Compile Include="Content\EntityComponent.cs" />
     <Compile Include="Content\TransformComponent.cs" />
+    <Compile Include="Content\EntitySystem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

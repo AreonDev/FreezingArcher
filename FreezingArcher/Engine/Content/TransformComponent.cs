@@ -26,36 +26,37 @@ using System.Threading;
 
 namespace FreezingArcher.Content
 {
-    // must be sealed
+    /// <summary>
+    /// Transformation component. This component describes the transformation of an entity.
+    /// </summary>
     public sealed class TransformComponent : EntityComponent
     {
-        internal TransformComponent(){}
-
-        // has to pass cause of FAObject
+        /// <summary>
+        /// Initialize this component. Within this method all properties may be reseted and reloaded from the attribute
+        /// manager.
+        /// </summary>
+        /// <param name="entity">The entity this component is bounded to.</param>
         public override void Init(Entity entity)
         {
-
+            // TODO
         }
 
-        // must fail cause its private
-        //private int foo;
-
-        // has to pass
+        /// <summary>
+        /// Gets or sets the position.
+        /// </summary>
+        /// <value>The position.</value>
         public Vector3 Position { get; set; }
 
-        // has to fail
+        /// <summary>
+        /// Gets or sets the rotation.
+        /// </summary>
+        /// <value>The rotation.</value>
         public Quaternion Rotation { get; set; }
 
-        // has to pass
-        internal Vector3 Scale { get; set; }
-
-        // must fail
-        //protected int bar;
-
-        // fail
-        //int asdf () {return 0;}
-
-        // fail
-        //protected internal void qwert() {}
+        /// <summary>
+        /// Gets or sets the scale.
+        /// </summary>
+        /// <value>The scale.</value>
+        public Vector3 Scale { get; set; }
     }
 }

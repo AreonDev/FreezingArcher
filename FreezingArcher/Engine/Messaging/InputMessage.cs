@@ -128,7 +128,7 @@ namespace FreezingArcher.Messaging
         public bool IsActionPressed (string action)
         {
             var key = Keys.Find (k => k.KeyAction == action);
-            return key.Action == KeyAction.Press || key.Action == KeyAction.Repeat;
+            return key != null && (key.Action == KeyAction.Press || key.Action == KeyAction.Repeat);
         }
 
         /// <summary>
@@ -139,6 +139,9 @@ namespace FreezingArcher.Messaging
         public bool IsActionDown (string action)
         {
             var key = Keys.Find(k => k.KeyAction == action);
+
+            if (key == null)
+                return false;
 
             if (key.Action == KeyAction.Press && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
                 Application.Instance.InputManager.CurrentlyDownKeys.Add(action);

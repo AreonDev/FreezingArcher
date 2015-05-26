@@ -282,13 +282,13 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Renderer\TestGraphics\Rabbit\Rabbit.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_D.tga">
+    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_D.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_N.tga">
+    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_N.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_S.tga">
+    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_S.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

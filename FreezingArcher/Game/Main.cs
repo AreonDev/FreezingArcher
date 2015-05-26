@@ -117,11 +117,16 @@ namespace FreezingArcher.Game
 		 * Ich wünsche mir aber ein Feature, oder eine Möglichkeit, zwischen den Kameras zu wechseln.....
 		 */
 
+
+		float angle = 0.0f;
+
 		/// <summary>
 		/// Draw this instance.
 		/// </summary>
 		public void Draw()
 		{
+			angle += 0.01f;
+
 			RendererContext rctx = Application.Instance.RendererContext;
 			rctx.Begin ();
 
@@ -152,17 +157,33 @@ namespace FreezingArcher.Game
 
             //Draw red Cube
 
-            rctx.BasicEffect.World = Matrix.CreateTranslation (new Vector3 (Cube_X, 2.0f, Cube_Z));
-            rctx.BasicEffect.Update ();
+			rctx.BasicEffect.World = Matrix.CreateRotationY(angle) * Matrix.CreateScale(5.0f) * Matrix.CreateTranslation (new Vector3 (Cube_X, 2.0f, Cube_Z));
 
-            cubes [_width * _height].Draw (rctx);
+			//texture.Sampler.EdgeBehaviorX = EdgeBehaviour.Repeat;
+			//texture.Sampler.EdgeBehaviorY = EdgeBehaviour.Repeat;
+
+			rctx.BasicEffect.Texture1 = texture;
+			rctx.BasicEffect.UseColor = false;
+
+			rctx.BasicEffect.Update ();
+
+			rctx.BasicEffect.Use ();
+
+			//cubes [_width * _height].Draw (rctx);
+
+			Application.Instance.RendererContext.SetCullMode (RendererCullMode.FrontAndBack);
+			Application.Instance.RendererContext.EnableDepthTest (true);
+
+			Application.Instance.RendererContext.DrawModel (mdl);
 
             rctx.End ();
         }
 
-        Renderer.HelperClasses.SimpleCube[] cubes;
-        int _width, _height;
-        float Cube_X, Cube_Z;
+		Renderer.HelperClasses.SimpleCube[] cubes;
+		Model mdl;
+		Texture2D texture;
+		int _width, _height;
+		float Cube_X, Cube_Z;
 
 		/// <summary>
 		/// Inits the cubes.
@@ -195,8 +216,8 @@ namespace FreezingArcher.Game
 
 		public void LoadModel()
 		{
-			Model mdl = Model.LoadModel (Application.Instance.RendererContext, "lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
-			mdl.Draw (Application.Instance.RendererContext);
+			mdl = Application.Instance.RendererContext.LoadModel ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
+			texture = Application.Instance.RendererContext.CreateTexture2D ("Rabbit_Texture", true, (string)"lib/Renderer/TestGraphics/Rabbit/Rabbit_D.png");
 		}
 	}
 

@@ -58,6 +58,13 @@ namespace FreezingArcher.Renderer
         DynamicCopy = 35050,
     }
 
+    public enum RendererCullMode
+    {
+        Front = ((int)0x0404)           ,
+        Back = ((int)0x0405)            ,
+        FrontAndBack = ((int)0x0408)            ,
+    }
+
     internal class SomeResources
     {
         //public static Assimp.AssimpContext AssimpCnt;
@@ -646,12 +653,14 @@ namespace FreezingArcher.Renderer
 
             return null;
         }
-
+            
         public Texture2D CreateTexture2D(string name, bool generateMipMaps, string data)
         {
             if (data != null)
             {
                 System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromFile(data);
+               
+                bmp.RotateFlip(System.Drawing.RotateFlipType.RotateNoneFlipY);
 
                 System.Drawing.Imaging.BitmapData bmp_data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
@@ -1201,6 +1210,19 @@ namespace FreezingArcher.Renderer
         #endregion
 
         #region Waste
+
+        public void SetCullMode(RendererCullMode rcm)
+        {
+            GL.CullFace((CullFaceMode)rcm);
+        }
+
+        public void EnableDepthTest(bool enable)
+        {
+            if (enable)
+                GL.Enable(EnableCap.DepthTest);
+            else
+                GL.Disable(EnableCap.DepthTest);
+        }
 
         public void Clear(FreezingArcher.Math.Color4 color)
         {

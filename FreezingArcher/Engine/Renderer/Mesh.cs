@@ -11,20 +11,28 @@ namespace FreezingArcher.Renderer
 {
     public class Mesh
     {
-        private VertexBufferArray m_VertexBufferArray;
+        public enum PrimitiveType
+        {
+            Points = 1,
+            Lines = 2,
+            Triangles = 4
+        }
 
-        private IndexBuffer m_Indices;
+        internal VertexBufferArray m_VertexBufferArray;
 
-        private VertexBuffer m_VertexPosition;
-        private VertexBuffer m_VertexNormal;
-        private VertexBuffer m_VertexTangent;
-        private VertexBuffer m_VertexBiTangent;
+        internal IndexBuffer m_Indices;
 
-        private VertexBuffer[] m_VertexTexCoords;
+        internal VertexBuffer m_VertexPosition;
+        internal VertexBuffer m_VertexNormal;
+        internal VertexBuffer m_VertexTangent;
+        internal VertexBuffer m_VertexBiTangent;
 
-        private VertexBuffer[] m_VertexColors;
+        internal VertexBuffer[] m_VertexTexCoords;
 
-        private int   m_MaterialIndex;
+        internal VertexBuffer[] m_VertexColors;
+
+        internal int   m_MaterialIndex;
+        internal PrimitiveType m_PrimitiveType;
 
         #region Properties
         public int MaterialIndex
@@ -106,8 +114,8 @@ namespace FreezingArcher.Renderer
 
         #endregion
 
-        public Mesh(RendererCore rc, string name, int matidx, int[] indices, Vector3[] positions, Vector3[] normals,
-            Vector3[] tangents, Vector3[] bitangents, List<Vector3>[] texcoords, List<Color4>[] colors)
+        internal Mesh(RendererCore rc, string name, int matidx, int[] indices, Vector3[] positions, Vector3[] normals,
+            Vector3[] tangents, Vector3[] bitangents, List<Vector3>[] texcoords, List<Color4>[] colors, PrimitiveType type)
         {
             if (rc == null || indices == null || positions == null || name == null)
             {
@@ -116,6 +124,7 @@ namespace FreezingArcher.Renderer
             }
 
             m_MaterialIndex = matidx;
+            m_PrimitiveType = type;
 
             //Init buffers
 
@@ -142,11 +151,22 @@ namespace FreezingArcher.Renderer
 
             if (texcoords != null && texcoords.Length > 0)
             {
-                m_VertexTexCoords = new VertexBuffer[texcoords.Length];
+                int count = 0;
+                //check, which arrays are empty
+                foreach (List<Vector3> texcs in texcoords)
+                    if (texcs.Count > 0)
+                        count++;
 
-                for (int i = 0; i < texcoords.Length; i++)
-                    m_VertexTexCoords[i] = 
-                        rc.CreateVertexBuffer(texcoords[i].ToArray(), texcoords[i].ToArray().Length * 2 * 4, RendererBufferUsage.StaticDraw, name + "_TexCoord" + i);
+                m_VertexTexCoords = new VertexBuffer[count];
+
+                for (int i = 0; i < count; i++)
+                {
+                    if (texcoords[i].Count > 0)
+                    {
+                        m_VertexTexCoords[i] = 
+                        rc.CreateVertexBuffer(texcoords[i].ToArray(), texcoords[i].ToArray().Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_TexCoord" + i);
+                    }
+                }
 
             }
 
@@ -212,19 +232,23 @@ namespace FreezingArcher.Renderer
             {
                 foreach (VertexBuffer vb in m_VertexTexCoords)
                 {
-                    vblk[0].AttributeID = (uint)4 + foo_bla_counter;
-                    vblk[0].AttributeSize = 3;
-                    vblk[0].AttributeType = RendererVertexAttribType.Float;
-                    vblk[0].Normalized = false;
-                    vblk[0].Offset = 0;
-                    vblk[0].Stride = 3 * 4;
+                    if (foo_bla_counter < 3)
+                    {
+                        vblk[0].AttributeID = (uint)4 + foo_bla_counter;
+                        vblk[0].AttributeSize = 3;
+                        vblk[0].AttributeType = RendererVertexAttribType.Float;
+                        vblk[0].Normalized = false;
+                        vblk[0].Offset = 0;
+                        vblk[0].Stride = 3 * 4;
 
-                    m_VertexBufferArray.AddVertexBuffer(vblk, vb);
+                        m_VertexBufferArray.AddVertexBuffer(vblk, vb);
 
-                    foo_bla_counter++;
+                        foo_bla_counter++;
+                    }
                 }
             }
 
+            /*
             //Colors
             foo_bla_counter = 0;
 
@@ -232,31 +256,23 @@ namespace FreezingArcher.Renderer
             {
                 foreach (VertexBuffer vb in m_VertexColors)
                 {
-                    vblk[0].AttributeID = (uint)7 + foo_bla_counter;
-                    vblk[0].AttributeSize = 4;
-                    vblk[0].AttributeType = RendererVertexAttribType.Float;
-                    vblk[0].Normalized = false;
-                    vblk[0].Offset = 0;
-                    vblk[0].Stride = 4 * 4;
+                    if (foo_bla_counter < 3)
+                    {
+                        vblk[0].AttributeID = (uint)7 + foo_bla_counter;
+                        vblk[0].AttributeSize = 4;
+                        vblk[0].AttributeType = RendererVertexAttribType.Float;
+                        vblk[0].Normalized = false;
+                        vblk[0].Offset = 0;
+                        vblk[0].Stride = 4 * 4;
 
-                    m_VertexBufferArray.AddVertexBuffer(vblk, vb);
+                        m_VertexBufferArray.AddVertexBuffer(vblk, vb);
 
-                    foo_bla_counter++;
+                        foo_bla_counter++;
+                    }
                 }
-            }
+            }*/
 
             m_VertexBufferArray.EndPrepare();
-        }
-
-        public void Draw(RendererCore rc)
-        {
-            //Materials and Matrices should be correctly set
-
-            m_VertexBufferArray.BindVertexBufferArray();
-
-            rc.DrawElements(0, m_Indices.IndexCount, RendererIndexType.UnsignedInt, RendererBeginMode.Triangles);
-
-            m_VertexBufferArray.UnbindVertexBufferArray();
         }
     }
 }

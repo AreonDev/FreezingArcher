@@ -25,7 +25,7 @@ uniform float UseColor;
 
 void main() 
 {
-    float shininess = 1.0;
+    float shininess = 5.0;
     vec4 specular = vec4(0.4, 0.4, 0.4, 1);
     vec4 ambient = vec4(0.3, 0.3, 0.3, 1.0);
 
@@ -43,9 +43,9 @@ void main()
         spec = specular * pow(intSpec, shininess);
     }
 
-    vec4 without_light_color =  vec4(1.0, 1.0, 1.0, 1.0);
+    vec4 without_light_color = vec4(1.0, 1.0, 1.0, 1.0);
 
-    without_light_color = (1-UseColor) * texture2D(Texture1, InTexCoord1.xy) * InTexCoord1.z + UseColor*InColor1;
+    without_light_color = (1-UseColor) * texture2D(Texture1, InTexCoord1.xy) + UseColor*InColor1;
 
     frag_colour = max(intensity * without_light_color + spec, ambient * without_light_color);
 }

@@ -10,7 +10,7 @@ using Assimp.Unmanaged;
 
 namespace FreezingArcher.Renderer
 {
-    class Model
+    public class Model
     {
         public List<Mesh> Meshes { get; private set; }
         public List<Material> Materials { get; private set;}

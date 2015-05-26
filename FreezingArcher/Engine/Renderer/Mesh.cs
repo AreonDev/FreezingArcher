@@ -9,7 +9,7 @@ using FreezingArcher.Output;
 
 namespace FreezingArcher.Renderer
 {
-    class Mesh
+    public class Mesh
     {
         private VertexBufferArray m_VertexBufferArray;
 

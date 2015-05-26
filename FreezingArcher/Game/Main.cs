@@ -160,10 +160,16 @@ namespace FreezingArcher.Game
                 cubes [i].Init (Application.Instance.RendererContext);
             }
 
-            cubes [width * height] = new FreezingArcher.Renderer.HelperClasses.SimpleCube (red);
-            cubes [width * height].Init (Application.Instance.RendererContext);
-        }
-    }
+			cubes [width * height] = new FreezingArcher.Renderer.HelperClasses.SimpleCube (red);
+			cubes [width * height].Init (Application.Instance.RendererContext);
+		}
+
+		public void LoadModel()
+		{
+			Model mdl = Model.LoadModel (Application.Instance.RendererContext, "lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
+			mdl.Draw (Application.Instance.RendererContext);
+		}
+	}
 
     /// <summary>
     /// FurryLana static main class.
@@ -193,8 +199,9 @@ namespace FreezingArcher.Game
             new LabyrinthGenerator(Application.Instance.ObjectManager, Application.Instance.MessageManager, new Random().Next());
             transComp = test.GetComponent<TransformComponent> ();
 	    
-            FurryLanaTest frln = new FurryLanaTest (Application.Instance.MessageManager);
-            frln.InitCubes (20, 20);
+			FurryLanaTest frln = new FurryLanaTest (Application.Instance.MessageManager);
+			frln.InitCubes (20, 20);
+			frln.LoadModel ();
 
             Application.Instance.Draw += frln.Draw;
 

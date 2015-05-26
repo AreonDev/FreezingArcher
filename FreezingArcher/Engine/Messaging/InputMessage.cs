@@ -149,6 +149,10 @@ namespace FreezingArcher.Messaging
             if (key.Action == KeyAction.Release && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
                 Application.Instance.InputManager.CurrentlyDownKeys.Remove(action);
 
+            if (key.Action != KeyAction.Repeat && key.Action != KeyAction.Press
+                && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
+                Application.Instance.InputManager.CurrentlyDownKeys.Remove(action);
+
             return Application.Instance.InputManager.CurrentlyDownKeys.Contains(action);
         }
     }

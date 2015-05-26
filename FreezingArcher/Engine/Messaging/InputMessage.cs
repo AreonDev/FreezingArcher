@@ -141,7 +141,7 @@ namespace FreezingArcher.Messaging
             var key = Keys.Find(k => k.KeyAction == action);
 
             if (key == null)
-                return false;
+                return Application.Instance.InputManager.CurrentlyDownKeys.Contains(action);
 
             if (key.Action == KeyAction.Press && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
                 Application.Instance.InputManager.CurrentlyDownKeys.Add(action);

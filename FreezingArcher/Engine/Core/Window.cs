@@ -27,8 +27,8 @@ using System.Collections.Generic;
 using FreezingArcher.Configuration;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
+using FreezingArcher.Math;
 using Pencil.Gaming;
-using Pencil.Gaming.MathUtils;
 
 namespace FreezingArcher.Core
 {

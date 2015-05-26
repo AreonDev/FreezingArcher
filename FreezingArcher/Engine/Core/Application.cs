@@ -35,10 +35,10 @@ using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming;
 using Pencil.Gaming.Audio;
-using Pencil.Gaming.Graphics;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
 using FreezingArcher.Audio;
 using System.Diagnostics;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Core
 {
@@ -192,7 +192,7 @@ namespace FreezingArcher.Core
                 WriteAt (9, 5, "        ");
                 WriteAt (9, 5, height.ToString ());
                 #endif
-
+                Window.Size = new Vector2i(width, height);
                 Renderer.RendererCore.WindowResize (width, height);//FIXME
                 if (MessageCreated != null)
                     MessageCreated (new WindowResizeMessage (Window, width, height));

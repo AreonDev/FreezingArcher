@@ -15,9 +15,10 @@ namespace FreezingArcher.Renderer
             //throw new NotImplementedException();
         }
 
-        public static void Clear(Color4 color)
+        public static void Clear(FreezingArcher.Math.Color4 color)
         {
-            GL.ClearColor(color);
+            Color4 col = new Color4(color.R, color.G, color.B, color.A);
+            GL.ClearColor(col);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         }
 

@@ -22,7 +22,7 @@
 //
 using System.Text.RegularExpressions;
 using FreezingArcher.Output;
-using Pencil.Gaming.MathUtils;
+using FreezingArcher.Math;
 using FreezingArcher.Core;
 
 namespace FreezingArcher.Configuration

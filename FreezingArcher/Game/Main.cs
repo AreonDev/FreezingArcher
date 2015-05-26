@@ -52,22 +52,22 @@ namespace FreezingArcher.Game
 			InputMessage im = msg as InputMessage;
 			if (im != null) 
 			{
-				if (im.IsKeyPressed ("left")) 
+				if (im.IsActionDown ("left")) 
 				{
 					Cube_X -= 0.05f;
 				}
 
-				if (im.IsKeyPressed ("right")) 
+				if (im.IsActionDown ("right")) 
 				{
 					Cube_X += 0.05f;
 				}
 
-				if (im.IsKeyPressed ("forward")) 
+				if (im.IsActionDown ("forward")) 
 				{
 					Cube_Z -= 0.05f;
 				}
 
-				if (im.IsKeyPressed ("backward")) 
+				if (im.IsActionDown ("backward")) 
 				{
 					Cube_Z += 0.05f;
 				}

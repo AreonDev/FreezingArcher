@@ -159,5 +159,10 @@ namespace FreezingArcher.Input
                 MessageCreated (id);
             Stopwatch.Start();
         }
+
+        /// <summary>
+        /// Internal use only. Do not modify.
+        /// </summary>
+        internal List<string> CurrentlyDownKeys = new List<string>();
     }
 }

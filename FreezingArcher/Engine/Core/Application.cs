@@ -567,7 +567,7 @@ namespace FreezingArcher.Core
         /// <summary>
         /// The input manager.
         /// </summary>
-        protected InputManager InputManager;
+        internal InputManager InputManager;
 
         #if DEBUG_EVENTS
         /// <summary>

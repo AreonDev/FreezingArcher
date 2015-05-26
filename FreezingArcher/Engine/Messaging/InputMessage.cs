@@ -120,8 +120,6 @@ namespace FreezingArcher.Messaging
         /// <value>The delta time.</value>
         public TimeSpan DeltaTime { get; protected set; }
 
-        private List<string> keysDown = new List<string>();
-
         /// <summary>
         /// Determines whether a key is pressed.
         /// </summary>
@@ -130,7 +128,7 @@ namespace FreezingArcher.Messaging
         public bool IsActionPressed (string action)
         {
             var key = Keys.Find (k => k.KeyAction == action);
-            return key.Action == Pencil.Gaming.KeyAction.Press || key.Action == Pencil.Gaming.KeyAction.Repeat;
+            return key.Action == KeyAction.Press || key.Action == KeyAction.Repeat;
         }
 
         /// <summary>
@@ -142,13 +140,13 @@ namespace FreezingArcher.Messaging
         {
             var key = Keys.Find(k => k.KeyAction == action);
 
-            if (key.Action == KeyAction.Press && keysDown.Contains(action))
-                keysDown.Add(action);
+            if (key.Action == KeyAction.Press && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
+                Application.Instance.InputManager.CurrentlyDownKeys.Add(action);
 
-            if (key.Action == KeyAction.Release && keysDown.Contains(action))
-                keysDown.Remove(action);
+            if (key.Action == KeyAction.Release && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
+                Application.Instance.InputManager.CurrentlyDownKeys.Remove(action);
 
-            return keysDown.Contains(action);
+            return Application.Instance.InputManager.CurrentlyDownKeys.Contains(action);
         }
     }
 }

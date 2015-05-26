@@ -445,7 +445,7 @@ namespace FreezingArcher.Core
         /// <summary>
         /// The window size member variable.
         /// </summary>
-	protected Vector2i      MSize;
+	internal Vector2i       MSize;
 
         /// <summary>
         /// The window.

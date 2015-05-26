@@ -192,7 +192,7 @@ namespace FreezingArcher.Core
                 WriteAt (9, 5, "        ");
                 WriteAt (9, 5, height.ToString ());
                 #endif
-                Window.Size = new Vector2i(width, height);
+                Window.MSize = new Vector2i(width, height);
                 Renderer.RendererCore.WindowResize (width, height);//FIXME
                 if (MessageCreated != null)
                     MessageCreated (new WindowResizeMessage (Window, width, height));

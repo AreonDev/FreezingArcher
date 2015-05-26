@@ -29,6 +29,7 @@ using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Input;
 using FreezingArcher.Output;
 using FreezingArcher.Core;
+using Pencil.Gaming;
 
 namespace FreezingArcher.Messaging
 {
@@ -119,15 +120,35 @@ namespace FreezingArcher.Messaging
         /// <value>The delta time.</value>
         public TimeSpan DeltaTime { get; protected set; }
 
+        private List<string> keysDown = new List<string>();
+
         /// <summary>
         /// Determines whether a key is pressed.
         /// </summary>
         /// <returns><c>true</c> key is pressed; otherwise, <c>false</c>.</returns>
         /// <param name="action">The action name associated with the key.</param>
-        public bool IsKeyPressed (string action)
+        public bool IsActionPressed (string action)
         {
             var key = Keys.Find (k => k.KeyAction == action);
             return key.Action == Pencil.Gaming.KeyAction.Press || key.Action == Pencil.Gaming.KeyAction.Repeat;
+        }
+
+        /// <summary>
+        /// Is an action button currently in down state.
+        /// </summary>
+        /// <returns><c>true</c> if key is down; otherwise, <c>false</c>.</returns>
+        /// <param name="action">Action name.</param>
+        public bool IsActionDown (string action)
+        {
+            var key = Keys.Find(k => k.KeyAction == action);
+
+            if (key.Action == KeyAction.Press && keysDown.Contains(action))
+                keysDown.Add(action);
+
+            if (key.Action == KeyAction.Release && keysDown.Contains(action))
+                keysDown.Remove(action);
+
+            return keysDown.Contains(action);
         }
     }
 }

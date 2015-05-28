@@ -24,6 +24,10 @@ using System;
 
 using FreezingArcher.Math;
 using FreezingArcher.Messaging;
+using FreezingArcher.Input;
+using FreezingArcher.Core;
+using FreezingArcher.Output;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Game
 {
@@ -46,8 +50,14 @@ namespace FreezingArcher.Game
 	/// <summary>
 	/// My first freezing archer cam.
 	/// </summary>
-	public class MyFirstFreezingArcherCam : FreezingArcher.Renderer.Scene.ICamera
+	public class MyFirstFreezingArcherCam : FreezingArcher.Renderer.Scene.ICamera, IMessageConsumer
 	{
+		/// <summary>
+		/// Gets the valid messages which can be used in the ConsumeMessage method
+		/// </summary>
+		/// <value>The valid messages</value>
+		public int[] ValidMessages { get; protected set; }
+
 		Vector3 cameraPosition { get; set;}
 		Vector3 currentRotation { get; set;}
 		Vector3 cameraReference;
@@ -57,34 +67,17 @@ namespace FreezingArcher.Game
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FreezingArcher.Game.MyFirstFreezingArcherCam"/> class.
 		/// </summary>
-		public MyFirstFreezingArcherCam(){
-			cameraPosition = new Vector3(0,0,30);
-			currentRotation = new Vector3(0,0,0);
-			cameraReference = new Vector3(0, 0, -1);
-			UpdateCamera ();
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreezingArcher.Game.MyFirstFreezingArcherCam"/> class.
-		/// </summary>
-		/// <param name="_cameraPosition">Camera position.</param>
-		public MyFirstFreezingArcherCam(Vector3 _cameraPosition){
-			cameraPosition = _cameraPosition;
-			currentRotation = new Vector3(0,0,0);
-			cameraReference = new Vector3(1, 0, 0);
-			UpdateCamera ();
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreezingArcher.Game.MyFirstFreezingArcherCam"/> class.
-		/// </summary>
 		/// <param name="_cameraPosition">Camera position.</param>
 		/// <param name="_currentRotation">Current rotation.</param>
-		public MyFirstFreezingArcherCam(Vector3 _cameraPosition, Vector3 _currentRotation){
+		public MyFirstFreezingArcherCam(MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3), Vector3 _currentRotation = default(Vector3)){
 			cameraPosition = _cameraPosition;
 			currentRotation = _currentRotation;
 			cameraReference = new Vector3(0, 0, -1);
+			//KeyRegistry.Instance.RegisterOrUpdateKey ();
 			UpdateCamera ();
+			Logger.Log.AddLogEntry (LogLevel.Debug, "CAM", Status.Computing);
+			ValidMessages = new int[] { (int) MessageId.Input };
+			mssgmngr += this;
 		}
 
 		/// <summary>
@@ -121,7 +114,7 @@ namespace FreezingArcher.Game
 
 			cameraLookat = cameraPosition + transformedReference;
 
-			ViewMatrix = Matrix.LookAt (cameraPosition, cameraLookat, new Vector3(0.0f, 1.0f, 0.0f));
+			ViewMatrix = Matrix.LookAt (cameraPosition, cameraLookat, Vector3.UnitY);
 		}
 
 		/// <summary>
@@ -133,6 +126,7 @@ namespace FreezingArcher.Game
 			tmp.X += _rotation;
 			currentRotation = tmp;
 			UpdateCamera ();
+			Logger.Log.AddLogEntry (LogLevel.Debug, "Rotate X", Status.Computing);
 		}
 
 		/// <summary>
@@ -144,6 +138,7 @@ namespace FreezingArcher.Game
 			tmp.Y += _rotation;
 			currentRotation = tmp;
 			UpdateCamera ();
+			Logger.Log.AddLogEntry (LogLevel.Debug, "Rotate Y", Status.Computing);
 		}
 
 		/// <summary>
@@ -155,6 +150,7 @@ namespace FreezingArcher.Game
 			tmp.Z += _rotation;
 			currentRotation = tmp;
 			UpdateCamera ();
+			Logger.Log.AddLogEntry (LogLevel.Debug, "Rotate Z", Status.Computing);
 		}
 
 		/// <summary>
@@ -166,6 +162,7 @@ namespace FreezingArcher.Game
 			tmp.X += _position;
 			cameraPosition=tmp;
 			UpdateCamera ();
+			Logger.Log.AddLogEntry (LogLevel.Debug, "MoveX", Status.Computing);
 		}
 
 		/// <summary>
@@ -177,6 +174,7 @@ namespace FreezingArcher.Game
 			tmp.Y += _position;
 			cameraPosition=tmp;
 			UpdateCamera ();
+			Logger.Log.AddLogEntry (LogLevel.Debug, "MoveY", Status.Computing);
 		}
 
 		/// <summary>
@@ -188,6 +186,7 @@ namespace FreezingArcher.Game
 			tmp.Z += _position;
 			cameraPosition=tmp;
 			UpdateCamera ();
+			Logger.Log.AddLogEntry (LogLevel.Debug, "MoveZ", Status.Computing);
 		}
 
 		/// <summary>
@@ -199,32 +198,32 @@ namespace FreezingArcher.Game
 			InputMessage im = msg as InputMessage;
 			if (im != null) 
 			{
-				if (im.IsKeyPressed ("up")) 
+				if (im.IsActionDown ("up")) 
 				{
 					moveX (1);
 				}
 
-				if (im.IsKeyPressed ("down")) 
+				if (im.IsActionDown ("down")) 
 				{
 					moveX (-1);
 				}
 
-				if (im.IsKeyPressed ("forward")) 
+				if (im.IsActionDown ("forward")) 
 				{
 					moveZ (1);
 				}
 
-				if (im.IsKeyPressed ("backword")) 
+				if (im.IsActionDown ("backword")) 
 				{
 					moveZ (-1);
 				}
 
-				if (im.IsKeyPressed ("left")) 
+				if (im.IsActionDown ("left")) 
 				{
 					moveY (1);
 				}
 
-				if (im.IsKeyPressed ("right")) 
+				if (im.IsActionDown ("right")) 
 				{
 					moveY (-1);
 				}

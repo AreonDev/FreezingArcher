@@ -254,7 +254,7 @@ namespace FreezingArcher.Output
         public void AddLogEntry(LogLevel level, string moduleName, Status status, string additionalMessage = null, params object[] args)
         {
             var fd = StatusDescription.Descriptions[status];
-            var x = new LogLine{ LogLevel = level, ModuleName = moduleName, Format = (additionalMessage ?? "Code:" + (int)status + "\n" + fd), Param = args, Timestamp = DateTime.Now };
+            var x = new LogLine{ LogLevel = level, ModuleName = moduleName, Format = (additionalMessage ?? "Code: Status." + status + "\n" + fd), Param = args, Timestamp = DateTime.Now };
             AddLogEntry(x);
         }
 

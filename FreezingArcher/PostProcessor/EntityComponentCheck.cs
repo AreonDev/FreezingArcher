@@ -79,18 +79,20 @@ namespace PostProcessor
 		    BindingFlags.Public |
 		    BindingFlags.Static |
 		    BindingFlags.Instance |
-		    BindingFlags.DeclaredOnly);
+		    BindingFlags.DeclaredOnly).ToList();
 
 		var fields2 = fields.Where(k => (k.IsPrivate || k.IsFamily || k.IsFamilyOrAssembly)
-		    && !k.IsDefined(typeof(CompilerGeneratedAttribute), false)).ToArray();
+		    && !k.IsDefined(typeof(CompilerGeneratedAttribute), false) &&
+		    !k.Name.StartsWith("Default", StringComparison.InvariantCulture)).ToList();
 
-		if (fields2.Length > 0)
+		if (fields2.Count > 0)
 		{
 		    Console.WriteLine("Error: Type {0} has {1} fields with disallowed access modifiers", item.Name,
-			fields2.Length);
+			fields2.Count);
 		    foreach (var field in fields2)
 		    {
 			string access_modifier = null;
+
 			if (field.IsPrivate)
 			    access_modifier = "private";
 			if (field.IsFamily)
@@ -98,10 +100,63 @@ namespace PostProcessor
 			if (field.IsFamilyOrAssembly)
 			    access_modifier = "protected internal";
 
-			Console.WriteLine("Error: Field {0} is {1} but should be at least internal", field.Name,
+			Console.WriteLine("Error: Field {0} is {1} but should be at least internal!", field.Name,
 			    access_modifier);
 		    }
 		    error |= PostProcessingError.FieldError;
+		}
+
+		var fields3 = fields.Where(k => (!k.IsPrivate || !k.IsStatic || !k.IsInitOnly) &&
+		    k.Name.StartsWith("Default", StringComparison.InvariantCulture)).ToList();
+
+		if (fields3.Count > 0)
+		{
+		    Console.WriteLine("Error: {0} default fields have some invalid modifiers!", fields3.Count);
+		    foreach (var field in fields3)
+		    {
+			string access_modifier = null;
+
+			if (field.IsFamily)
+			    access_modifier = "protected";
+			if (field.IsFamilyOrAssembly)
+			    access_modifier = "protected internal";
+			if (field.IsAssembly)
+			    access_modifier = "internal";
+			if (field.IsPublic)
+			    access_modifier = "public";
+
+			if (!field.IsPrivate)
+			{
+			    Console.WriteLine("Error: Default field {0} is {1} but should be private!", field.Name,
+				access_modifier);
+			    error |= PostProcessingError.FieldError;
+			}
+
+			if (!field.IsStatic)
+			{
+			    Console.WriteLine("Error: Default field {0} is not static but should be!", field.Name);
+			    error |= PostProcessingError.FieldError;
+			}
+
+			if (!field.IsInitOnly)
+			{
+			    Console.WriteLine("Error: Default field {0} is not readonly but should be!", field.Name);
+			    error |= PostProcessingError.FieldError;
+			}
+		    }
+		}
+
+		foreach (var field in fields)
+		{
+		    if (!field.IsStatic && !field.IsDefined(typeof(CompilerGeneratedAttribute), false))
+		    {
+			if (fields.FindIndex(f => f.Name == "Default" + field.Name) < 0)
+			{
+			    Console.WriteLine("Error: Field {0} has no default value specified via a static field!",
+				field.Name);
+			    error |= PostProcessingError.FieldError;
+			}
+		    }
 		}
                     
                 var props = item.GetProperties (
@@ -128,6 +183,13 @@ namespace PostProcessor
 			    error |= PostProcessingError.PropertyError;
                         }
                     }    
+
+		    if (fields.FindIndex(f => f.Name == "Default" + prop.Name) < 0)
+		    {
+			Console.WriteLine("Error: Field {0} has no default value specified via a static field!",
+			    prop.Name);
+			error |= PostProcessingError.PropertyError;
+		    }
                 }
 
                 var constr = item.GetConstructors (

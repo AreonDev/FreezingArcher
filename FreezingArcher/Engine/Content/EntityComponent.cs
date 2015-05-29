@@ -20,8 +20,10 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using System;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using FreezingArcher.Core;
-using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Content
 {
@@ -39,6 +41,29 @@ namespace FreezingArcher.Content
         /// manager.
         /// </summary>
         /// <param name="entity">The entity this component is bounded to.</param>
-        public abstract void Init(Entity entity);
+        public virtual void Init(Entity entity)
+        {
+            // set type based default parameters for fields and properties
+            Type t = GetType();
+            var fields = t.GetFields().Where(f => !f.IsDefined(typeof(CompilerGeneratedAttribute), false) &&
+                !f.Name.StartsWith("Default", StringComparison.InvariantCulture)).ToList();
+            var props = t.GetProperties();
+
+            foreach(var field in fields)
+            {
+                field.SetValue(this, t.GetField("Default" + field.Name).GetValue(this));
+            }
+
+            foreach (var prop in props)
+            {
+                prop.SetValue(this, t.GetField("Default" + prop.Name).GetValue(this));
+            }
+
+            // set blueprint based default parameters for fields and properties
+            // TODO
+
+            // set instance based default parameters for fields and properties
+            // TODO
+        }
     }
 }

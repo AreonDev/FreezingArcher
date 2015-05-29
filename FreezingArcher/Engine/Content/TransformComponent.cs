@@ -31,15 +31,21 @@ namespace FreezingArcher.Content
     /// </summary>
     public sealed class TransformComponent : EntityComponent
     {
-        /// <summary>
-        /// Initialize this component. Within this method all properties may be reseted and reloaded from the attribute
-        /// manager.
-        /// </summary>
-        /// <param name="entity">The entity this component is bounded to.</param>
-        public override void Init(Entity entity)
+        #region default values
+
+        static readonly Vector3 DefaultPosition = Vector3.Zero;
+
+        static readonly Quaternion DefaultRotation;
+
+        static readonly Vector3 DefaultScale = Vector3.One;
+
+        static TransformComponent ()
         {
-            // TODO
+            Vector3 axis = Vector3.UnitY;
+            Quaternion.CreateFromAxisAngle(ref axis, 0, out DefaultRotation);
         }
+
+        #endregion
 
         /// <summary>
         /// Gets or sets the position.

@@ -23,7 +23,7 @@
 using System;
 using System.Collections.Generic;
 using FreezingArcher.Output;
-using FreezingArcher.Reflection;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Core
 {
@@ -118,24 +118,6 @@ namespace FreezingArcher.Core
         /// Creates a new object or recycles a destroyed object
         /// </summary>
         /// <returns>new or recycled object</returns>
-        /// <param name="type">Type of object to recycle</param>
-        /// <typeparam name="T">Return Type</typeparam>
-        public T CreateOrRecycle<T>(Type type) where T: FAObject, new()
-        {
-            var hc = type.GetHashCode();
-            ObjectTypeManager mgr;
-            if(!objectTypes.TryGetValue(hc, out mgr))
-            {
-                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", typeof(T).GetFriendlyName());
-                objectTypes.Add(hc, mgr = new ObjectTypeManager(this, () => new T()));
-            }
-            return mgr.CreateNewOrRecycle() as T;
-        }
-
-        /// <summary>
-        /// Creates a new object or recycles a destroyed object
-        /// </summary>
-        /// <returns>new or recycled object</returns>
         /// <param name="hc">HashCode of the type of the object</param>
         /// <typeparam name="T">Return Type</typeparam>
         public T CreateOrRecycle<T>(int hc) where T : FAObject, new()
@@ -148,6 +130,22 @@ namespace FreezingArcher.Core
             }
             return mgr.CreateNewOrRecycle() as T;
         }
+
+        /// <summary>
+        /// Creates a new object or recycles a destroyed object.
+        /// </summary>
+        /// <returns>new or recycled object</returns>
+        /// <param name="type">Type of object to recycle</param>
+        public FAObject CreateOrRecycle(Type type)
+        {
+            var hc = type.GetHashCode();
+            ObjectTypeManager mgr;
+            if (!objectTypes.TryGetValue(hc, out mgr))
+            {
+                Logger.Log.AddLogEntry(LogLevel.Fine, "ObjectManager", "Creating new factory for type {0}", type.GetFriendlyName());
+                objectTypes.Add(hc, mgr = new ObjectTypeManager(this, () => Activator.CreateInstance(type) as FAObject));
+            }
+            return mgr.CreateNewOrRecycle();
+        }
     }
 }
-

@@ -34,7 +34,7 @@ namespace FreezingArcher.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.FAObject"/> class.
         /// </summary>
-        public FAObject()
+        protected FAObject()
         {
             TypeId = GetType().GetHashCode();
         }

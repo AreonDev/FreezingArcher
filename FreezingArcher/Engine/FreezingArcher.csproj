@@ -207,6 +207,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\EntityComponent.cs" />
     <Compile Include="Content\TransformComponent.cs" />
     <Compile Include="Content\EntitySystem.cs" />
+    <Compile Include="Content\ComponentRegistry.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

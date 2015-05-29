@@ -35,70 +35,70 @@ using FreezingArcher.Math;
 
 namespace FreezingArcher.Game
 {
-	/// <summary>
-	/// Furry lana test.
-	/// </summary>
-	public class FurryLanaTest : FreezingArcher.Messaging.Interfaces.IMessageConsumer
-	{
-		#region IMessageConsumer Implementation
+    /// <summary>
+    /// Furry lana test.
+    /// </summary>
+    public class FurryLanaTest : FreezingArcher.Messaging.Interfaces.IMessageConsumer
+    {
+        #region IMessageConsumer Implementation
 
-		/// <summary>
-		/// The cam.
-		/// </summary>
-		public MyFirstFreezingArcherCam Cam;
+        /// <summary>
+        /// The cam.
+        /// </summary>
+        public MyFirstFreezingArcherCam Cam;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreezingArcher.Game.FurryLanaTest"/> class.
-		/// </summary>
-		/// <param name="mssgmngr">Mssgmngr.</param>
-		public FurryLanaTest(MessageManager mssgmngr)
-		{
-			ValidMessages = new int[] { (int)MessageId.Input };
-			mssgmngr += this;
-			Cam = new MyFirstFreezingArcherCam(mssgmngr, new Vector3(1.0f, 10.0f, 10.0f), Vector3.Zero);
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Game.FurryLanaTest"/> class.
+        /// </summary>
+        /// <param name="mssgmngr">Mssgmngr.</param>
+        public FurryLanaTest (MessageManager mssgmngr)
+        {
+            ValidMessages = new int[] { (int)MessageId.Input };
+            mssgmngr += this;
+            Cam = new MyFirstFreezingArcherCam (mssgmngr, new Vector3 (1.0f, 10.0f, 10.0f), Vector3.Zero);
+        }
 
-		/// <summary>
-		/// Gets the valid messages which can be used in the ConsumeMessage method
-		/// </summary>
-		/// <value>The valid messages</value>
-		public virtual int[] ValidMessages { get; protected set; }
+        /// <summary>
+        /// Gets the valid messages which can be used in the ConsumeMessage method
+        /// </summary>
+        /// <value>The valid messages</value>
+        public virtual int[] ValidMessages { get; protected set; }
 
-		/// <summary>
-		/// Processes the invoming message
-		/// </summary>
-		/// <param name="msg">Message to process</param>
-		public virtual void ConsumeMessage(Messaging.Interfaces.IMessage msg)
-		{
-			InputMessage im = msg as InputMessage;
-			if (im != null) 
-			{
-				if (im.IsActionDown ("left")) 
-				{
-					Cube_X -= 0.05f;
-				}
+        /// <summary>
+        /// Processes the invoming message
+        /// </summary>
+        /// <param name="msg">Message to process</param>
+        public virtual void ConsumeMessage (Messaging.Interfaces.IMessage msg)
+        {
+            InputMessage im = msg as InputMessage;
+            if (im != null)
+            {
+                if (im.IsActionDown ("left"))
+                {
+                    Cube_X -= 0.05f;
+                }
 
-				if (im.IsActionDown ("right")) 
-				{
-					Cube_X += 0.05f;
-				}
+                if (im.IsActionDown ("right"))
+                {
+                    Cube_X += 0.05f;
+                }
 
-				if (im.IsActionDown ("forward")) 
-				{
-					Cube_Z -= 0.05f;
-				}
+                if (im.IsActionDown ("forward"))
+                {
+                    Cube_Z -= 0.05f;
+                }
 
-				if (im.IsActionDown ("backward")) 
-				{
-					Cube_Z += 0.05f;
-				}
-			}
-		}
+                if (im.IsActionDown ("backward"))
+                {
+                    Cube_Z += 0.05f;
+                }
+            }
+        }
 
-		#endregion
+        #endregion
 
 
-		/*
+        /*
 		 * AUFGABE 1
 		 * Grundlegende Kameras schreiben und mit API vertraut machen!
 		 * Zeit: Maximal 2 Stunden...
@@ -119,30 +119,30 @@ namespace FreezingArcher.Game
 		 */
 
 
-		float angle = 0.0f;
+        float angle = 0.0f;
 
-		/// <summary>
-		/// Draw this instance.
-		/// </summary>
-		public void Draw()
-		{
-			angle += 0.01f;
+        /// <summary>
+        /// Draw this instance.
+        /// </summary>
+        public void Draw ()
+        {
+            angle += 0.01f;
 
-			RendererContext rctx = Application.Instance.RendererContext;
-			rctx.Begin ();
+            RendererContext rctx = Application.Instance.RendererContext;
+            rctx.Begin ();
 
             rctx.Clear (Color4.AliceBlue);
 
             rctx.BasicEffect.Use ();
 
-			//TODO: Hier soll dann die Kamera benutzt und gesetzt werden
-			//Sprich: ViewMatrix der Kamera in BasicEffect.View
-			//und ProjectionMatrix in BasicEffect.Projection
-			//rctx.BasicEffect.View = Matrix.LookAt (new Vector3(_width / 1.0f, 10.0f, 10.0f), new Vector3 (_width / 1.0f, 0.0f, -_height / 1.0f), Vector3.UnitY); 
-			rctx.BasicEffect.View = Cam.ViewMatrix;
+            //TODO: Hier soll dann die Kamera benutzt und gesetzt werden
+            //Sprich: ViewMatrix der Kamera in BasicEffect.View
+            //und ProjectionMatrix in BasicEffect.Projection
+            //rctx.BasicEffect.View = Matrix.LookAt (new Vector3(_width / 1.0f, 10.0f, 10.0f), new Vector3 (_width / 1.0f, 0.0f, -_height / 1.0f), Vector3.UnitY); 
+            rctx.BasicEffect.View = Cam.ViewMatrix;
 //			rctx.BasicEffect.Projection = Cam.ProjectionMatrix;
-			rctx.BasicEffect.Projection = Matrix.CreatePerspectiveFieldOfView ((float)System.Math.PI / 4.0f, 
-				(float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y, 0.1f, 100.0f);
+            rctx.BasicEffect.Projection = Matrix.CreatePerspectiveFieldOfView ((float)System.Math.PI / 4.0f, 
+                (float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y, 0.1f, 100.0f);
 
             rctx.BasicEffect.UseColor = true;
 
@@ -159,43 +159,43 @@ namespace FreezingArcher.Game
 
             //Draw red Cube
 
-			rctx.BasicEffect.World = Matrix.CreateRotationY(angle) * Matrix.CreateScale(5.0f) * Matrix.CreateTranslation (new Vector3 (Cube_X, 2.0f, Cube_Z));
+            rctx.BasicEffect.World = Matrix.CreateRotationY (angle) * Matrix.CreateScale (5.0f) * Matrix.CreateTranslation (new Vector3 (Cube_X, 2.0f, Cube_Z));
 
-			//texture.Sampler.EdgeBehaviorX = EdgeBehaviour.Repeat;
-			//texture.Sampler.EdgeBehaviorY = EdgeBehaviour.Repeat;
+            //texture.Sampler.EdgeBehaviorX = EdgeBehaviour.Repeat;
+            //texture.Sampler.EdgeBehaviorY = EdgeBehaviour.Repeat;
 
-			rctx.BasicEffect.Texture1 = texture;
-			rctx.BasicEffect.UseColor = false;
+            rctx.BasicEffect.Texture1 = texture;
+            rctx.BasicEffect.UseColor = false;
 
-			rctx.BasicEffect.Update ();
+            rctx.BasicEffect.Update ();
 
-			rctx.BasicEffect.Use ();
+            rctx.BasicEffect.Use ();
 
-			//cubes [_width * _height].Draw (rctx);
+            //cubes [_width * _height].Draw (rctx);
 
-			Application.Instance.RendererContext.SetCullMode (RendererCullMode.FrontAndBack);
-			Application.Instance.RendererContext.EnableDepthTest (true);
+            Application.Instance.RendererContext.SetCullMode (RendererCullMode.FrontAndBack);
+            Application.Instance.RendererContext.EnableDepthTest (true);
 
-			Application.Instance.RendererContext.DrawModel (mdl);
+            Application.Instance.RendererContext.DrawModel (mdl);
 
             rctx.End ();
         }
 
-		Renderer.HelperClasses.SimpleCube[] cubes;
-		Model mdl;
-		Texture2D texture;
-		int _width, _height;
-		float Cube_X, Cube_Z;
+        Renderer.HelperClasses.SimpleCube[] cubes;
+        Model mdl;
+        Texture2D texture;
+        int _width, _height;
+        float Cube_X, Cube_Z;
 
-		/// <summary>
-		/// Inits the cubes.
-		/// </summary>
-		/// <param name="width">Width.</param>
-		/// <param name="height">Height.</param>
-		public void InitCubes(int width, int height)
-		{
-			Cube_X = width;
-			Cube_Z = -height;
+        /// <summary>
+        /// Inits the cubes.
+        /// </summary>
+        /// <param name="width">Width.</param>
+        /// <param name="height">Height.</param>
+        public void InitCubes (int width, int height)
+        {
+            Cube_X = width;
+            Cube_Z = -height;
 
             this._width = width;
             this._height = height;
@@ -212,16 +212,16 @@ namespace FreezingArcher.Game
                 cubes [i].Init (Application.Instance.RendererContext);
             }
 
-			cubes [width * height] = new FreezingArcher.Renderer.HelperClasses.SimpleCube (red);
-			cubes [width * height].Init (Application.Instance.RendererContext);
-		}
+            cubes [width * height] = new FreezingArcher.Renderer.HelperClasses.SimpleCube (red);
+            cubes [width * height].Init (Application.Instance.RendererContext);
+        }
 
-		public void LoadModel()
-		{
-			mdl = Application.Instance.RendererContext.LoadModel ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
-			texture = Application.Instance.RendererContext.CreateTexture2D ("Rabbit_Texture", true, (string)"lib/Renderer/TestGraphics/Rabbit/Rabbit_D.png");
-		}
-	}
+        public void LoadModel ()
+        {
+            mdl = Application.Instance.RendererContext.LoadModel ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
+            texture = Application.Instance.RendererContext.CreateTexture2D ("Rabbit_Texture", true, (string)"lib/Renderer/TestGraphics/Rabbit/Rabbit_D.png");
+        }
+    }
 
     /// <summary>
     /// FurryLana static main class.
@@ -251,9 +251,9 @@ namespace FreezingArcher.Game
             new LabyrinthGenerator(Application.Instance.ObjectManager, Application.Instance.MessageManager, new Random().Next());
             transComp = test.GetComponent<TransformComponent> ();
 	    
-			FurryLanaTest frln = new FurryLanaTest (Application.Instance.MessageManager);
-			frln.InitCubes (20, 20);
-			frln.LoadModel ();
+            FurryLanaTest frln = new FurryLanaTest (Application.Instance.MessageManager);
+            frln.InitCubes (20, 20);
+            frln.LoadModel ();
 
             Application.Instance.Draw += frln.Draw;
 

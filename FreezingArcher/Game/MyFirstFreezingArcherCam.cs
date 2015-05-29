@@ -32,7 +32,7 @@ using FreezingArcher.Messaging.Interfaces;
 namespace FreezingArcher.Game
 {
 
-	/*
+    /*
 	 * Dies wird deine allererste Kamera... 
 	 * Hier sollst du dich mit dem aktuellen FreezingArcher auseinandersetzen,
 	 * das heißt, du wirst UNSERE API benutzen und kennenlernen.
@@ -47,188 +47,199 @@ namespace FreezingArcher.Game
 	 * Achtung: Da gibt es einen fiesen gemeinen BUG, aber das muss sich fin angucken
 	 */
 
+    /// <summary>
+    /// My first freezing archer cam.
+    /// </summary>
+    public class MyFirstFreezingArcherCam : FreezingArcher.Renderer.Scene.ICamera, IMessageConsumer
+    {
 	/// <summary>
-	/// My first freezing archer cam.
+	/// Gets the valid messages which can be used in the ConsumeMessage method
 	/// </summary>
-	public class MyFirstFreezingArcherCam : FreezingArcher.Renderer.Scene.ICamera, IMessageConsumer
+	/// <value>The valid messages</value>
+	public int[] ValidMessages { get; protected set; }
+
+	Vector3 cameraPosition { get; set; }
+
+	Vector3 currentRotation { get; set; }
+
+	Vector3 cameraReference;
+	Vector3 transformedReference;
+	Vector3 cameraLookat;
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="FreezingArcher.Game.MyFirstFreezingArcherCam"/> class.
+	/// </summary>
+	/// <param name="_cameraPosition">Camera position.</param>
+	/// <param name="_currentRotation">Current rotation.</param>
+	public MyFirstFreezingArcherCam (MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3),
+	                                 Vector3 _currentRotation = default(Vector3))
 	{
-		/// <summary>
-		/// Gets the valid messages which can be used in the ConsumeMessage method
-		/// </summary>
-		/// <value>The valid messages</value>
-		public int[] ValidMessages { get; protected set; }
-
-		Vector3 cameraPosition { get; set;}
-		Vector3 currentRotation { get; set;}
-		Vector3 cameraReference;
-		Vector3 transformedReference;
-		Vector3 cameraLookat;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreezingArcher.Game.MyFirstFreezingArcherCam"/> class.
-		/// </summary>
-		/// <param name="_cameraPosition">Camera position.</param>
-		/// <param name="_currentRotation">Current rotation.</param>
-		public MyFirstFreezingArcherCam(MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3), Vector3 _currentRotation = default(Vector3)){
-			cameraPosition = _cameraPosition;
-			currentRotation = _currentRotation;
-			cameraReference = new Vector3(0, 0, -1);
-			//KeyRegistry.Instance.RegisterOrUpdateKey ();
-			UpdateCamera ();
-			Logger.Log.AddLogEntry (LogLevel.Debug, "CAM", Status.Computing);
-			ValidMessages = new int[] { (int) MessageId.Input };
-			mssgmngr += this;
-		}
-
-		/// <summary>
-		/// Gets or sets the projection matrix.
-		/// </summary>
-		/// <value>The projection matrix.</value>
-		public Matrix ProjectionMatrix { get; protected set;}
-
-		/// <summary>
-		/// Gets or sets the view matrix.
-		/// </summary>
-		/// <value>The view matrix.</value>
-		public Matrix ViewMatrix { get; protected set;}
-
-		/// <summary>
-		/// Gets or sets the width.
-		/// </summary>
-		/// <value>The width.</value>
-		public int Width { get; set; }
-
-		/// <summary>
-		/// Gets or sets the height.
-		/// </summary>
-		/// <value>The height.</value>
-		public int Height { get; set; }
-
-		private void UpdateCamera(){
-			Matrix rotationPosition =
-				Matrix.CreateRotationX (currentRotation.X)
-				* Matrix.CreateRotationY (currentRotation.Y)
-				* Matrix.CreateRotationZ (currentRotation.Z);
-
-			transformedReference = Vector3.Transform (cameraReference, rotationPosition);
-
-			cameraLookat = cameraPosition + transformedReference;
-
-			ViewMatrix = Matrix.LookAt (cameraPosition, cameraLookat, Vector3.UnitY);
-		}
-
-		/// <summary>
-		/// Rotates the x.
-		/// </summary>
-		/// <param name="_rotation">Rotation.</param>
-		public void rotateX(float _rotation){
-			var tmp = currentRotation;
-			tmp.X += _rotation;
-			currentRotation = tmp;
-			UpdateCamera ();
-			Logger.Log.AddLogEntry (LogLevel.Debug, "Rotate X", Status.Computing);
-		}
-
-		/// <summary>
-		/// Rotates the y.
-		/// </summary>
-		/// <param name="_rotation">Rotation.</param>
-		public void rotateY(float _rotation){
-			var tmp = currentRotation;
-			tmp.Y += _rotation;
-			currentRotation = tmp;
-			UpdateCamera ();
-			Logger.Log.AddLogEntry (LogLevel.Debug, "Rotate Y", Status.Computing);
-		}
-
-		/// <summary>
-		/// Rotates the z.
-		/// </summary>
-		/// <param name="_rotation">Rotation.</param>
-		public void rotateZ(float _rotation){
-			var tmp = currentRotation;
-			tmp.Z += _rotation;
-			currentRotation = tmp;
-			UpdateCamera ();
-			Logger.Log.AddLogEntry (LogLevel.Debug, "Rotate Z", Status.Computing);
-		}
-
-		/// <summary>
-		/// Moves the x.
-		/// </summary>
-		/// <param name="_position">Posotion.</param>
-		public void moveX(float _position){
-			var tmp = cameraPosition;
-			tmp.X += _position;
-			cameraPosition=tmp;
-			UpdateCamera ();
-			Logger.Log.AddLogEntry (LogLevel.Debug, "MoveX", Status.Computing);
-		}
-
-		/// <summary>
-		/// Moves the y.
-		/// </summary>
-		/// <param name="_position">Posotion.</param>
-		public void moveY(float _position){
-			var tmp = cameraPosition;
-			tmp.Y += _position;
-			cameraPosition=tmp;
-			UpdateCamera ();
-			Logger.Log.AddLogEntry (LogLevel.Debug, "MoveY", Status.Computing);
-		}
-
-		/// <summary>
-		/// Moves the z.
-		/// </summary>
-		/// <param name="_position">Posotion.</param>
-		public void moveZ(float _position){
-			var tmp = cameraPosition;
-			tmp.Z += _position;
-			cameraPosition=tmp;
-			UpdateCamera ();
-			Logger.Log.AddLogEntry (LogLevel.Debug, "MoveZ", Status.Computing);
-		}
-
-		/// <summary>
-		/// Consumes the message.
-		/// </summary>
-		/// <param name="msg">Message.</param>
-		public virtual void ConsumeMessage(Messaging.Interfaces.IMessage msg)
-		{
-			InputMessage im = msg as InputMessage;
-			if (im != null) 
-			{
-				if (im.IsActionDown ("up")) 
-				{
-					moveX (1);
-				}
-
-				if (im.IsActionDown ("down")) 
-				{
-					moveX (-1);
-				}
-
-				if (im.IsActionDown ("forward")) 
-				{
-					moveZ (1);
-				}
-
-				if (im.IsActionDown ("backword")) 
-				{
-					moveZ (-1);
-				}
-
-				if (im.IsActionDown ("left")) 
-				{
-					moveY (1);
-				}
-
-				if (im.IsActionDown ("right")) 
-				{
-					moveY (-1);
-				}
-			}
-		}
+	    cameraPosition = _cameraPosition;
+	    currentRotation = _currentRotation;
+	    cameraReference = new Vector3 (0, 0, -1);
+	    //KeyRegistry.Instance.RegisterOrUpdateKey ();
+	    UpdateCamera ();
+	    Logger.Log.AddLogEntry (LogLevel.Debug, "CAM", Status.Computing);
+	    ValidMessages = new int[] { (int)MessageId.Input };
+	    mssgmngr += this;
 	}
+
+	/// <summary>
+	/// Gets or sets the projection matrix.
+	/// </summary>
+	/// <value>The projection matrix.</value>
+	public Matrix ProjectionMatrix { get; protected set; }
+
+	/// <summary>
+	/// Gets or sets the view matrix.
+	/// </summary>
+	/// <value>The view matrix.</value>
+	public Matrix ViewMatrix { get; protected set; }
+
+	/// <summary>
+	/// Gets or sets the width.
+	/// </summary>
+	/// <value>The width.</value>
+	public int Width { get; set; }
+
+	/// <summary>
+	/// Gets or sets the height.
+	/// </summary>
+	/// <value>The height.</value>
+	public int Height { get; set; }
+
+	private void UpdateCamera ()
+	{
+	    Matrix rotationPosition =
+		Matrix.CreateRotationX (currentRotation.X)
+		* Matrix.CreateRotationY (currentRotation.Y)
+		* Matrix.CreateRotationZ (currentRotation.Z);
+
+	    transformedReference = Vector3.Transform (cameraReference, rotationPosition);
+
+	    cameraLookat = cameraPosition + transformedReference;
+
+	    ViewMatrix = Matrix.LookAt (cameraPosition, cameraLookat, Vector3.UnitY);
+	}
+
+	/// <summary>
+	/// Rotates the x.
+	/// </summary>
+	/// <param name="_rotation">Rotation.</param>
+	public void rotateX (float _rotation)
+	{
+	    var tmp = currentRotation;
+	    tmp.X += _rotation;
+	    currentRotation = tmp;
+	    UpdateCamera ();
+	    Logger.Log.AddLogEntry (LogLevel.Debug, "Rotate X", Status.Computing);
+	}
+
+	/// <summary>
+	/// Rotates the y.
+	/// </summary>
+	/// <param name="_rotation">Rotation.</param>
+	public void rotateY (float _rotation)
+	{
+	    var tmp = currentRotation;
+	    tmp.Y += _rotation;
+	    currentRotation = tmp;
+	    UpdateCamera ();
+	    Logger.Log.AddLogEntry (LogLevel.Debug, "Rotate Y", Status.Computing);
+	}
+
+	/// <summary>
+	/// Rotates the z.
+	/// </summary>
+	/// <param name="_rotation">Rotation.</param>
+	public void rotateZ (float _rotation)
+	{
+	    var tmp = currentRotation;
+	    tmp.Z += _rotation;
+	    currentRotation = tmp;
+	    UpdateCamera ();
+	    Logger.Log.AddLogEntry (LogLevel.Debug, "Rotate Z", Status.Computing);
+	}
+
+	/// <summary>
+	/// Moves the x.
+	/// </summary>
+	/// <param name="_position">Posotion.</param>
+	public void moveX (float _position)
+	{
+	    var tmp = cameraPosition;
+	    tmp.X += _position;
+	    cameraPosition = tmp;
+	    UpdateCamera ();
+	    Logger.Log.AddLogEntry (LogLevel.Debug, "MoveX", Status.Computing);
+	}
+
+	/// <summary>
+	/// Moves the y.
+	/// </summary>
+	/// <param name="_position">Posotion.</param>
+	public void moveY (float _position)
+	{
+	    var tmp = cameraPosition;
+	    tmp.Y += _position;
+	    cameraPosition = tmp;
+	    UpdateCamera ();
+	    Logger.Log.AddLogEntry (LogLevel.Debug, "MoveY", Status.Computing);
+	}
+
+	/// <summary>
+	/// Moves the z.
+	/// </summary>
+	/// <param name="_position">Posotion.</param>
+	public void moveZ (float _position)
+	{
+	    var tmp = cameraPosition;
+	    tmp.Z += _position;
+	    cameraPosition = tmp;
+	    UpdateCamera ();
+	    Logger.Log.AddLogEntry (LogLevel.Debug, "MoveZ", Status.Computing);
+	}
+
+	/// <summary>
+	/// Consumes the message.
+	/// </summary>
+	/// <param name="msg">Message.</param>
+	public virtual void ConsumeMessage (Messaging.Interfaces.IMessage msg)
+	{
+	    InputMessage im = msg as InputMessage;
+	    if (im != null)
+	    {
+		if (im.IsActionDown ("up"))
+		{
+		    moveY (1);
+		}
+
+		if (im.IsActionDown ("down"))
+		{
+		    moveY (-1);
+		}
+
+		if (im.IsActionDown ("forward"))
+		{
+		    moveZ (-1);
+		}
+
+		if (im.IsActionDown ("backward"))
+		{
+		    moveZ (1);
+		}
+
+		if (im.IsActionDown ("left"))
+		{
+		    moveX (-1);
+		}
+
+		if (im.IsActionDown ("right"))
+		{
+		    moveX (1);
+		}
+	    }
+	}
+    }
 }
 

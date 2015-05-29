@@ -140,9 +140,9 @@ namespace FreezingArcher.Game
 			//und ProjectionMatrix in BasicEffect.Projection
 			//rctx.BasicEffect.View = Matrix.LookAt (new Vector3(_width / 1.0f, 10.0f, 10.0f), new Vector3 (_width / 1.0f, 0.0f, -_height / 1.0f), Vector3.UnitY); 
 			rctx.BasicEffect.View = Cam.ViewMatrix;
-			rctx.BasicEffect.Projection = Cam.ProjectionMatrix;
-//			rctx.BasicEffect.Projection = Matrix.CreatePerspectiveFieldOfView ((float)System.Math.PI / 4.0f, 
-//				(float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y, 0.1f, 100.0f);
+//			rctx.BasicEffect.Projection = Cam.ProjectionMatrix;
+			rctx.BasicEffect.Projection = Matrix.CreatePerspectiveFieldOfView ((float)System.Math.PI / 4.0f, 
+				(float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y, 0.1f, 100.0f);
 
             rctx.BasicEffect.UseColor = true;
 

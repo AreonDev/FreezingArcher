@@ -36,10 +36,19 @@ namespace FreezingArcher.Content
         // ommit warning: variable assigned but never used
         #pragma warning disable 414
 
+        /// <summary>
+        /// The default position.
+        /// </summary>
         public static readonly Vector3 DefaultPosition = Vector3.Zero;
 
+        /// <summary>
+        /// The default rotation.
+        /// </summary>
         public static readonly Quaternion DefaultRotation;
 
+        /// <summary>
+        /// The default scale.
+        /// </summary>
         public static readonly Vector3 DefaultScale = Vector3.One;
 
         static TransformComponent ()

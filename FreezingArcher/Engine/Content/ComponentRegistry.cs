@@ -33,6 +33,9 @@ namespace FreezingArcher.Content
     /// </summary>
     public sealed class ComponentRegistry
     {
+        /// <summary>
+        /// Global instance of the component registry.
+        /// </summary>
         public static ComponentRegistry Instance;
 
         /// <summary>

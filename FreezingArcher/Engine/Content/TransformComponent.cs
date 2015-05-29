@@ -32,6 +32,8 @@ namespace FreezingArcher.Content
     public sealed class TransformComponent : EntityComponent
     {
         #region default values
+        // ommit warning: variable assigned but never used
+        #pragma warning disable 414
 
         static readonly Vector3 DefaultPosition = Vector3.Zero;
 
@@ -45,6 +47,7 @@ namespace FreezingArcher.Content
             Quaternion.CreateFromAxisAngle(ref axis, 0, out DefaultRotation);
         }
 
+        #pragma warning restore 414
         #endregion
 
         /// <summary>

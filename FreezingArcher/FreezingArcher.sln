@@ -222,6 +222,9 @@ Global
 		$25.NamingStyle = PascalCase
 		$25.IncludeInstanceMembers = True
 		$25.IncludeStaticEntities = True
+		$0.DotNetNamingPolicy = $27
+		$27.DirectoryNamespaceAssociation = PrefixedHierarchical
+		$27.ResourceNamePolicy = FileFormatDefault
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -105,7 +105,7 @@ namespace PostProcessor
 		    error |= PostProcessingError.FieldError;
 		}
 
-		var fields3 = fields.Where(k => (!k.IsPrivate || !k.IsStatic || !k.IsInitOnly) &&
+		var fields3 = fields.Where(k => (!k.IsPublic || !k.IsStatic || !k.IsInitOnly) &&
 		    k.Name.StartsWith("Default", StringComparison.InvariantCulture)).ToList();
 
 		if (fields3.Count > 0)
@@ -115,18 +115,18 @@ namespace PostProcessor
 		    {
 			string access_modifier = null;
 
+			if (field.IsPrivate)
+			    access_modifier = "private";
 			if (field.IsFamily)
 			    access_modifier = "protected";
 			if (field.IsFamilyOrAssembly)
 			    access_modifier = "protected internal";
 			if (field.IsAssembly)
 			    access_modifier = "internal";
-			if (field.IsPublic)
-			    access_modifier = "public";
 
-			if (!field.IsPrivate)
+			if (!field.IsPublic)
 			{
-			    Console.WriteLine("Error: Default field {0} is {1} but should be private!", field.Name,
+			    Console.WriteLine("Error: Default field {0} is {1} but should be public!", field.Name,
 				access_modifier);
 			    error |= PostProcessingError.FieldError;
 			}

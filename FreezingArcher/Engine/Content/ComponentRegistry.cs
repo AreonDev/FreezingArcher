@@ -33,6 +33,8 @@ namespace FreezingArcher.Content
     /// </summary>
     public sealed class ComponentRegistry
     {
+        public static ComponentRegistry Instance;
+
         /// <summary>
         /// The name of this module.
         /// </summary>

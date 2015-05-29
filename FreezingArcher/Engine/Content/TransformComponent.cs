@@ -32,14 +32,15 @@ namespace FreezingArcher.Content
     public sealed class TransformComponent : EntityComponent
     {
         #region default values
+
         // ommit warning: variable assigned but never used
         #pragma warning disable 414
 
-        static readonly Vector3 DefaultPosition = Vector3.Zero;
+        public static readonly Vector3 DefaultPosition = Vector3.Zero;
 
-        static readonly Quaternion DefaultRotation;
+        public static readonly Quaternion DefaultRotation;
 
-        static readonly Vector3 DefaultScale = Vector3.One;
+        public static readonly Vector3 DefaultScale = Vector3.One;
 
         static TransformComponent ()
         {
@@ -48,6 +49,7 @@ namespace FreezingArcher.Content
         }
 
         #pragma warning restore 414
+
         #endregion
 
         /// <summary>

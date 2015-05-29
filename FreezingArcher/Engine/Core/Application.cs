@@ -113,6 +113,8 @@ namespace FreezingArcher.Core
         {
             Name = name;
             Logger.Initialize (name);
+            ObjectManager = new ObjectManager();
+            ComponentRegistry.Instance = new ComponentRegistry(ObjectManager);
             MessageManager = new MessageManager ();
             MessageManager += this;
             ConfigManager.Initialize (MessageManager);
@@ -411,6 +413,11 @@ namespace FreezingArcher.Core
         /// </summary>
         /// <value>The message manager.</value>
         public MessageManager MessageManager { get; set; }
+
+        /// <summary>
+        /// Global object manager instance.
+        /// </summary>
+        public readonly ObjectManager ObjectManager;
 
         /// <summary>
         /// Gets or sets the audio manager.

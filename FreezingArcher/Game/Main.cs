@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Core;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Game
 {
@@ -39,6 +40,18 @@ namespace FreezingArcher.Game
 	    Application.Instance.Init();
 	    Application.Instance.Load();
 	    GraphTest.Test();
+
+	    ComponentRegistry.Instance.Register<TransformComponent>();
+
+	    Entity test = Application.Instance.ObjectManager.CreateOrRecycle<Entity>();
+	    test.Init("Test Entity", Application.Instance.MessageManager);
+
+	    var transComp = ComponentRegistry.Instance.Instantiate<TransformComponent>();
+	    transComp.Init(test);
+	    test.AddComponent(transComp);
+
+	    transComp = test.GetComponent<TransformComponent>();
+
 	    Application.Instance.Run();
 	    Application.Instance.Destroy();
         }

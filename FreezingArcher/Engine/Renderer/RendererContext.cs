@@ -46,6 +46,8 @@ namespace FreezingArcher.Renderer
         {
             Model mdl = new Model();
 
+            string folder_path = System.IO.Path.GetDirectoryName(path);
+
             Assimp.Scene scn = m_AssimpContext.ImportFile(path);
             NormalSmoothingAngleConfig config = new NormalSmoothingAngleConfig(66.0f);
             m_AssimpContext.SetConfig(config);
@@ -71,6 +73,58 @@ namespace FreezingArcher.Renderer
             //Materials??? Ulalalala xD
             // FIXME: Please, HERE!
             mdl.Materials = new List<Material>();
+            foreach (Assimp.Material mat in scn.Materials)
+            {
+                if (mat.Name == "DefaultMaterial")
+                    continue;
+
+                Material material = new Material();
+
+                material.Name = mat.Name;
+
+                material.Shininess = mat.Shininess;
+                material.ShininessStrength = mat.ShininessStrength;
+
+                material.TwoSided = mat.IsTwoSided;
+                material.WireFramed = mat.IsWireFrameEnabled;
+
+                //Copy all colors
+                material.ColorAmbient = mat.ColorAmbient;
+                material.ColorDiffuse = mat.ColorDiffuse;
+                material.ColorEmmissive = mat.ColorEmissive;
+                material.ColorReflective = mat.ColorReflective;
+                material.ColorSpecular = mat.ColorSpecular;
+
+                //Load all textures
+                material.TextureAmbient = mat.HasTextureAmbient ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureAmbient", true,
+                    folder_path + "/" + mat.TextureAmbient.FilePath) : null;
+
+                material.TextureDiffuse = mat.HasTextureDiffuse ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureDiffuse", true,
+                    folder_path + "/" + mat.TextureDiffuse.FilePath) : null;
+
+                material.TextureEmissive = mat.HasTextureEmissive ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureEmissive", true,
+                    folder_path + "/" + mat.TextureEmissive.FilePath) : null;
+
+                material.TextureLightMap = mat.HasTextureLightMap ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureLightMap", true,
+                    folder_path + "/" + mat.TextureLightMap.FilePath) : null;
+
+                material.TextureNormal = mat.HasTextureNormal ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureNormal", true,
+                    folder_path + "/" + mat.TextureNormal.FilePath) : null;
+
+                material.TextureOpacity = mat.HasTextureOpacity ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureOpacity", true,
+                    folder_path + "/" + mat.TextureOpacity.FilePath) : null;
+
+                material.TextureReflection = mat.HasTextureReflection ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureReflection", true,
+                    folder_path + "/" + mat.TextureReflection.FilePath) : null;
+
+                material.TextureReflective = null;
+
+
+                material.TextureSpecular = mat.HasTextureSpecular ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureSpecular", true,
+                    folder_path + "/" + mat.TextureSpecular.FilePath) : null;
+
+                mdl.Materials.Add(material);
+            }
 
             //Hopefully, everything went right....
             return mdl;

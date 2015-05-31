@@ -75,22 +75,22 @@ namespace FreezingArcher.Game
             {
                 if (im.IsActionDown ("left"))
                 {
-                    Cube_X -= 0.05f;
+                    Cube_X -= 1.1f;
                 }
 
                 if (im.IsActionDown ("right"))
                 {
-                    Cube_X += 0.05f;
+                    Cube_X += 1.1f;
                 }
 
                 if (im.IsActionDown ("forward"))
                 {
-                    Cube_Z -= 0.05f;
+                    Cube_Z -= 1.1f;
                 }
 
                 if (im.IsActionDown ("backward"))
                 {
-                    Cube_Z += 0.05f;
+                    Cube_Z += 1.1f;
                 }
             }
         }
@@ -164,7 +164,7 @@ namespace FreezingArcher.Game
             //texture.Sampler.EdgeBehaviorX = EdgeBehaviour.Repeat;
             //texture.Sampler.EdgeBehaviorY = EdgeBehaviour.Repeat;
 
-            rctx.BasicEffect.Texture1 = texture;
+            rctx.BasicEffect.Texture1 = mdl.Materials[0].TextureDiffuse;
             rctx.BasicEffect.UseColor = false;
 
             rctx.BasicEffect.Update ();
@@ -183,7 +183,6 @@ namespace FreezingArcher.Game
 
         Renderer.HelperClasses.SimpleCube[] cubes;
         Model mdl;
-        Texture2D texture;
         int _width, _height;
         float Cube_X, Cube_Z;
 
@@ -219,7 +218,6 @@ namespace FreezingArcher.Game
         public void LoadModel ()
         {
             mdl = Application.Instance.RendererContext.LoadModel ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
-            texture = Application.Instance.RendererContext.CreateTexture2D ("Rabbit_Texture", true, (string)"lib/Renderer/TestGraphics/Rabbit/Rabbit_D.png");
         }
     }
 

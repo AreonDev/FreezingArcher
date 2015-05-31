@@ -28,68 +28,126 @@ namespace FreezingArcher.Renderer
 {
     public class Material
     {
-//        #region Diffuse
-//        public List<Texture2D> Textures {get; private set;}
-//        public List<Color4> Colors{ get; private set;}
-//        #endregion
-//
-//        #region Parallax
-//        public Texture2D ParallaxMap {get; private set;}
-//
-//        public bool HasParallaxMap
-//        {
-//            get
-//            {
-//                return ParallaxMap != null;
-//            }
-//        }
-//        #endregion
-//
-//        #region Specular
-//        public Color4 SpecularColor{ get; private set;}
-//        public Texture2D SpecularTexture{ get; private set;}
-//
-//        public bool HasSpecularTexture
-//        {
-//            get
-//            {
-//                return SpecularTexture != null;
-//            }
-//        }
-//        #endregion
-//
-//        #region Ambient Occlusion
-//        public Texture2D AmbientOcclusionTexture{ get; private set;}
-//
-//        public bool HasAmbientOcclusionTexture
-//        {
-//            get
-//            {
-//                return AmbientOcclusionTexture != null;
-//            }
-//        }
-//        #endregion
-//
-//        #region Mirror
-//        public Color4 MirrorColor { get; private set;}
-//        public Texture2D MirrorTexture{ get; private set;}
-//
-//        public bool HasMirrorTexture
-//        {
-//            get
-//            {
-//                return MirrorTexture != null;
-//            }
-//        }
-//        #endregion
-//
-//        public Effect OptionalEffect { get; private set;}
-//        public bool HasOptionalEffect{ get; private set;}
-//
-//        public Material()
-//        {
-//            
-//        }
+        public string Name { get; internal set;}
+
+        #region Colors
+        public Color4 ColorAmbient { get; internal set;}
+        public Color4 ColorDiffuse { get; internal set;}
+        public Color4 ColorEmmissive { get; internal set;}
+        public Color4 ColorSpecular{ get; internal set;}
+        public Color4 ColorReflective{ get; internal set;}
+        #endregion
+
+        #region Other
+        public bool TwoSided{ get; internal set;}
+        public bool WireFramed{ get; internal set;}
+        #endregion
+
+        #region Shininess
+        public float Shininess { get; internal set;}
+        public float ShininessStrength{ get; internal set;}
+        #endregion
+
+        #region Textures 
+        public Texture2D TextureAmbient { get; internal set;}
+        public Texture2D TextureDiffuse{ get; internal set;}
+        public Texture2D TextureEmissive{ get; internal set;}
+        public Texture2D TextureSpecular{ get; internal set;}
+        public Texture2D TextureReflective { get; internal set;}
+        public Texture2D TextureReflection { get; internal set;}
+        public Texture2D TextureNormal { get; internal set;}
+        public Texture2D TextureDisplacement{ get; internal set;}
+        public Texture2D TextureLightMap { get; internal set;}
+        public Texture2D TextureOpacity{ get; internal set;}
+
+        public bool HasTextureAmbient
+        {
+            get
+            {
+                return TextureAmbient != null;
+            }
+        }
+
+        public bool HasTextureDiffuse
+        {
+            get
+            {
+                return TextureDiffuse != null;
+            }
+        }
+
+        public bool HasTextureEmissive
+        {
+            get
+            {
+                return TextureEmissive != null;
+            }
+        }
+
+        public bool HasTextureSpecular
+        {
+            get
+            {
+                return TextureSpecular != null;
+            }
+        }
+
+        public bool HasTextureReflective
+        {
+            get
+            {
+                return TextureReflective != null;
+            }
+        }
+
+        public bool HasTextureReflection
+        {
+            get
+            {
+                return TextureReflection != null;
+            }
+        }
+
+        public bool HasTextureNormal
+        {
+            get
+            {
+                return TextureNormal != null;
+            }
+        }
+
+        public bool HasTextureDisplacement
+        {
+            get
+            {
+                return TextureDisplacement != null;
+            }
+        }
+
+        public bool HasTextureOpacity
+        {
+            get
+            {
+                return TextureOpacity != null;
+            }
+        }
+
+        public bool HasTextureLightMap
+        {
+            get
+            {
+                return TextureLightMap != null;
+            }
+        }
+        #endregion
+
+        public Effect OptionalEffect { get; private set;}
+        public bool HasOptionalEffect{ get; private set;}
+
+        public Material()
+        {
+            
+        }
     }
 }
 

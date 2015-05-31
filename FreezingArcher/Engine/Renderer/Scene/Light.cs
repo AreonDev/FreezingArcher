@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using FreezingArcher.Math;
+
 namespace FreezingArcher.Renderer.Scene
 {
-    class Light
+    public class Light
     {
+
     }
 }

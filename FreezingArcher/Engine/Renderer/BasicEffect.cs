@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
-using Pencil.Gaming.MathUtils;
-using Pencil.Gaming.Graphics;
 using FreezingArcher.Math;
 
 using FreezingArcher.Output;
@@ -24,12 +22,28 @@ namespace FreezingArcher.Renderer
         }
 
         //[StructLayout(LayoutKind.Sequential)]
-        private struct ConfigurationBlock
+        private struct LightBlock1
         {
-            public static int SIZE = 8;  
+            public static int SIZE = sizeof(float) * 4 + sizeof(float)*3;
 
-            public int unfug;
-            public int unfug2;
+            public float LightColorR;
+            public float LightColorG;
+            public float LightColorB;
+            public float LightColorA;
+
+            public float LightPositionX;
+            public float LightPositionY;
+            public float LightPositionZ;
+        }
+
+        private struct MaterialBlock
+        {
+            public static int SIZE = sizeof(float) * 4 * 3 + sizeof(float);
+
+            public Color4 Ambient;
+            public Color4 Diffuse;
+            public Color4 Specular;
+            public float Shininess;
         }
 
         #region Internal
@@ -44,9 +58,17 @@ namespace FreezingArcher.Renderer
 
             m_MatricesBlockUniformBuffer = null;
 
-            m_ConfigurationBlock = new ConfigurationBlock();
+            m_LightBlock = new LightBlock1();
+            m_LightBlock.LightColorA = 1.0f;
+            m_LightBlock.LightColorB = 1.0f;
+            m_LightBlock.LightColorG = 1.0f;
+            m_LightBlock.LightColorR = 1.0f;
 
-            m_ConfigurationUniformBuffer = null;
+            m_MaterialBlock = new MaterialBlock();
+
+            m_LightBlockUniformBuffer = null;
+
+            m_MaterialBlockUniformBuffer = null;
         }
 
         internal bool Init(RendererCore rc)
@@ -56,12 +78,16 @@ namespace FreezingArcher.Renderer
             this.VertexProgram.SetUniformBlockBinding("MatricesBlock", 10);
             m_MatricesBlockUniformBuffer.SetBufferBase(10);
 
-            m_ConfigurationUniformBuffer = rc.CreateUniformBuffer<ConfigurationBlock>(m_ConfigurationBlock, ConfigurationBlock.SIZE, "Internal_Basic_Effect_Vertex_Pixel_Shader_ConfigurationBlock");
+            m_LightBlockUniformBuffer = rc.CreateUniformBuffer<LightBlock1>(m_LightBlock, LightBlock1.SIZE, "Internal_Basic_Effect_Vertex_Pixel_Shader_LightBlock");
 
-            //this.VertexProgram.SetUniformBlockBinding("ConfigurationBlock", 5);
-            //this.PixelProgram.SetUniformBlockBinding("ConfigurationBlock", 5);
+            this.VertexProgram.SetUniformBlockBinding("LightBlock", 4);
 
-            //m_ConfigurationUniformBuffer.SetBufferBase(5);
+            m_LightBlockUniformBuffer.SetBufferBase(4);
+
+            m_MaterialBlockUniformBuffer = rc.CreateUniformBuffer<MaterialBlock>(m_MaterialBlock, MaterialBlock.SIZE, "Internal_Basic_Effect_MaterialBlock");
+
+            this.PixelProgram.SetUniformBlockBinding("MaterialBlock", 6);
+            m_MaterialBlockUniformBuffer.SetBufferBase(6);
 
             return true;
         }
@@ -71,8 +97,12 @@ namespace FreezingArcher.Renderer
         private MatricesBlock m_MatricesBlock;
         private UniformBuffer m_MatricesBlockUniformBuffer;
 
-        private ConfigurationBlock m_ConfigurationBlock;
-        private UniformBuffer m_ConfigurationUniformBuffer;
+        private LightBlock1 m_LightBlock;
+        private UniformBuffer m_LightBlockUniformBuffer;
+
+        private MaterialBlock m_MaterialBlock;
+        private UniformBuffer m_MaterialBlockUniformBuffer;
+       
 
         private Texture m_Texture1;
         private Texture m_Texture2;
@@ -266,6 +296,90 @@ namespace FreezingArcher.Renderer
             }
         }
 
+        public Color4 LightColor
+        {
+            get
+            {
+                return new Color4(m_LightBlock.LightColorR, m_LightBlock.LightColorG,
+                    m_LightBlock.LightColorB, m_LightBlock.LightColorA);
+            }
+            set
+            {
+                m_LightBlock.LightColorR = value.R;
+                m_LightBlock.LightColorG = value.G;
+                m_LightBlock.LightColorB = value.B;
+                m_LightBlock.LightColorA = value.A;
+            }
+        }
+
+        public Vector3 LightPosition
+        {
+            get
+            {
+                return new Vector3(m_LightBlock.LightPositionX, 
+                    m_LightBlock.LightPositionY, m_LightBlock.LightPositionZ);
+            }
+                
+            set
+            {
+                m_LightBlock.LightPositionX = value.X;
+                m_LightBlock.LightPositionY = value.Y;
+                m_LightBlock.LightPositionZ = value.Z;
+            }
+        }
+
+        public Color4 Ambient
+        {
+            get
+            {
+                return m_MaterialBlock.Ambient;
+            }
+
+            set
+            {
+                m_MaterialBlock.Ambient = value;
+            }
+        }
+
+        public Color4 Diffuse
+        {
+            get
+            {
+                return m_MaterialBlock.Diffuse;
+            }
+
+            set
+            {
+                m_MaterialBlock.Diffuse = value;
+            }
+        }
+
+        public Color4 Specular
+        {
+            get
+            {
+                return m_MaterialBlock.Specular;
+            }
+
+            set
+            {
+                m_MaterialBlock.Specular = value;
+            }
+        }
+
+        public float Shininess
+        {
+            get
+            {
+                return m_MaterialBlock.Shininess;
+            }
+
+            set
+            {
+                m_MaterialBlock.Shininess = value;
+            }
+        }
+
         #endregion
 
 
@@ -274,7 +388,9 @@ namespace FreezingArcher.Renderer
         {
             m_MatricesBlockUniformBuffer.UpdateBuffer<MatricesBlock>(m_MatricesBlock, MatricesBlock.SIZE);
 
-            m_ConfigurationUniformBuffer.UpdateBuffer<ConfigurationBlock>(m_ConfigurationBlock, ConfigurationBlock.SIZE);
+            m_LightBlockUniformBuffer.UpdateBuffer<LightBlock1>(m_LightBlock, LightBlock1.SIZE);
+
+            m_MaterialBlockUniformBuffer.UpdateBuffer<MaterialBlock>(m_MaterialBlock, MaterialBlock.SIZE);
         }
 
         public void ClearTextures()

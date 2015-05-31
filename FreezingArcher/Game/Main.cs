@@ -75,22 +75,22 @@ namespace FreezingArcher.Game
             {
                 if (im.IsActionDown ("left"))
                 {
-                    Cube_X -= 1.1f;
+                    Cube_X -= 0.1f;
                 }
 
                 if (im.IsActionDown ("right"))
                 {
-                    Cube_X += 1.1f;
+                    Cube_X += 0.1f;
                 }
 
                 if (im.IsActionDown ("forward"))
                 {
-                    Cube_Z -= 1.1f;
+                    Cube_Z -= 0.1f;
                 }
 
                 if (im.IsActionDown ("backward"))
                 {
-                    Cube_Z += 1.1f;
+                    Cube_Z += 0.1f;
                 }
             }
         }
@@ -135,12 +135,20 @@ namespace FreezingArcher.Game
 
             rctx.BasicEffect.Use ();
 
+            rctx.BasicEffect.LightPosition = new Vector3 (Cube_X, 1.0f, Cube_Z);
+            rctx.BasicEffect.LightColor = Color4.White;
+
+            rctx.BasicEffect.Ambient = new Color4(0.1f, 0.1f, 0.1f, 1.0f);
+            rctx.BasicEffect.Diffuse = Color4.White;
+            rctx.BasicEffect.Specular = Color4.White;
+            rctx.BasicEffect.Shininess = 10f;
+
             //TODO: Hier soll dann die Kamera benutzt und gesetzt werden
             //Sprich: ViewMatrix der Kamera in BasicEffect.View
             //und ProjectionMatrix in BasicEffect.Projection
-            //rctx.BasicEffect.View = Matrix.LookAt (new Vector3(_width / 1.0f, 10.0f, 10.0f), new Vector3 (_width / 1.0f, 0.0f, -_height / 1.0f), Vector3.UnitY); 
-            rctx.BasicEffect.View = Cam.ViewMatrix;
-//			rctx.BasicEffect.Projection = Cam.ProjectionMatrix;
+            rctx.BasicEffect.View = Matrix.LookAt (new Vector3(_width / 1.0f, 10.0f, 10.0f), new Vector3 (_width / 1.0f, 0.0f, -_height / 1.0f), Vector3.UnitY); 
+            //rctx.BasicEffect.View = Cam.ViewMatrix;
+	    rctx.BasicEffect.Projection = Cam.ProjectionMatrix;
             rctx.BasicEffect.Projection = Matrix.CreatePerspectiveFieldOfView ((float)System.Math.PI / 4.0f, 
                 (float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y, 0.1f, 100.0f);
 
@@ -161,10 +169,13 @@ namespace FreezingArcher.Game
 
             rctx.BasicEffect.World = Matrix.CreateRotationY (angle) * Matrix.CreateScale (5.0f) * Matrix.CreateTranslation (new Vector3 (Cube_X, 2.0f, Cube_Z));
 
-            //texture.Sampler.EdgeBehaviorX = EdgeBehaviour.Repeat;
-            //texture.Sampler.EdgeBehaviorY = EdgeBehaviour.Repeat;
-
             rctx.BasicEffect.Texture1 = mdl.Materials[0].TextureDiffuse;
+
+            rctx.BasicEffect.Ambient = new Color4(0.1f, 0.1f, 0.1f, 1.0f);
+            rctx.BasicEffect.Diffuse = Color4.White;
+            rctx.BasicEffect.Specular = mdl.Materials[0].ColorSpecular;
+            rctx.BasicEffect.Shininess = mdl.Materials[0].Shininess;
+
             rctx.BasicEffect.UseColor = false;
 
             rctx.BasicEffect.Update ();

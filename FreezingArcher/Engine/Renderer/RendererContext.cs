@@ -117,6 +117,9 @@ namespace FreezingArcher.Renderer
                 material.TextureReflection = mat.HasTextureReflection ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureReflection", true,
                     folder_path + "/" + mat.TextureReflection.FilePath) : null;
 
+                material.TextureDisplacement = mat.HasTextureDisplacement ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureDisplacement", true,
+                    folder_path + "/" + mat.TextureDisplacement.FilePath) : null;
+
                 material.TextureReflective = null;
 
 

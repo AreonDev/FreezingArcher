@@ -23,10 +23,12 @@
 using System;
 
 using FreezingArcher.Math;
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Game
 {
-	/*
+    /*
 	 * Du sollst hier eine Kamera implementieren, die sich komplett frei im Raum bewegen kann
 	 * Sie kann um ALLE ihre Achsen rotieren!
 	 * Mit Tastatur und Maus ist sie zu steuern.
@@ -35,19 +37,85 @@ namespace FreezingArcher.Game
 	 * 
 	 * Hinweis2: Gimbal-Locks sind böse ;)
 	 */
-//
-//	public class FreeCamera : Renderer.Scene.ICamera
-//	{
-//		public FreeCamera ()
-//		{
-//
-//		}
-//
-//		Matrix ProjectionMatrix { get; }
-//		Matrix ViewMatrix { get; }
-//
-//		int Width { get; set; }
-//		int Height { get; set; }
-//	}
-}
 
+    public class FreeCamera : SimpleCam, IMessageConsumer
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Game.FreeCamera"/> class.
+        /// </summary>
+        /// <param name="mssgmngr">Mssgmngr.</param>
+        /// <param name="_cameraPosition">Camera position.</param>
+        /// <param name="_currentRotation">Current rotation.</param>
+        /// <param name="near">Near.</param>
+        /// <param name="far">Far.</param>
+        /// <param name="fov">Fov.</param>
+        public FreeCamera (MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3),
+                                   Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
+                                   float fov = (float)System.Math.PI / 4.0f) : base (mssgmngr, _cameraPosition,
+                                                                           _currentRotation, near, far, fov)
+        {
+        }
+
+        /// <summary>
+        /// Consumes the message.
+        /// </summary>
+        /// <param name="msg">Message.</param>
+        public virtual void ConsumeMessage (Messaging.Interfaces.IMessage msg)
+        {
+            InputMessage im = msg as InputMessage;
+            if (im != null) {
+                if (im.IsActionDown ("forward")) {
+                    moveX (1 * fak);
+                }
+
+                if (im.IsActionDown ("backward")) {
+                    moveX (-1 * fak);
+                }
+
+                if (im.IsActionDown ("left")) {
+                    moveZ (-1 * fak);
+                }
+
+                if (im.IsActionDown ("right")) {
+                    moveZ (1 * fak);
+                }
+
+                if (im.IsActionDown ("up")) {
+                    moveY (-1 * fak);
+                }
+
+                if (im.IsActionDown ("down")) {
+                    moveY (1 * fak);
+                }
+                if (im.IsActionDown ("sneek") && im.IsActionDown ("left")) {
+                    rotateX (-1 * fak);
+                }
+
+                if (im.IsActionDown ("sneek") && im.IsActionDown ("right")) {
+                    rotateX (1 * fak);
+                }
+
+                if (im.IsActionDown ("sneek") && im.IsActionDown ("forward")) {
+                    rotateZ (-1 * fak);
+                }
+
+                if (im.IsActionDown ("sneek") && im.IsActionDown ("backward")) {
+                    rotateZ (1 * fak);
+                }
+
+                if (im.IsActionDown ("sneek") && im.IsActionDown ("up")) {
+                    rotateY (1 * fak);
+                }
+
+                if (im.IsActionDown ("sneek") && im.IsActionDown ("down")) {
+                    rotateY (-1 * fak);
+                }
+            }
+
+            WindowResizeMessage wrm = msg as WindowResizeMessage;
+            if (wrm != null) {
+                UpdateProjectionMatrix (wrm);
+            }
+        }
+    }
+}

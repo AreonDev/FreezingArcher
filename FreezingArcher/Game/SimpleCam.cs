@@ -50,7 +50,7 @@ namespace FreezingArcher.Game
     /// <summary>
     /// My first freezing archer cam.
     /// </summary>
-    public class MyFirstFreezingArcherCam : FreezingArcher.Renderer.Scene.ICamera, IMessageConsumer
+    abstract public class SimpleCam : FreezingArcher.Renderer.Scene.ICamera
     {
         /// <summary>
         /// Gets the valid messages which can be used in the ConsumeMessage method
@@ -66,14 +66,15 @@ namespace FreezingArcher.Game
         float zFar { get; set;}
         float fovY { get; set;}
 
-        const float fak = 0.1f;
+        internal const float fak = 0.1f;
 
         Vector3 cameraReference;
         Vector3 transformedReference;
         Vector3 cameraLookat;
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Game.MyFirstFreezingArcherCam"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Game.SimpleCam"/> class.
         /// </summary>
         /// <param name="mssgmngr">Mssgmngr.</param>
         /// <param name="_cameraPosition">Camera position.</param>
@@ -81,7 +82,7 @@ namespace FreezingArcher.Game
         /// <param name="near">Near.</param>
         /// <param name="far">Far.</param>
         /// <param name="fov">Fov.</param>
-        public MyFirstFreezingArcherCam (MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3),
+        internal SimpleCam (MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3),
             Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
             float fov = (float)System.Math.PI / 4.0f)
         {
@@ -227,74 +228,12 @@ namespace FreezingArcher.Game
         /// <summary>
         /// Updates the projection matrix.
         /// </summary>
-        void UpdateProjectionMatrix (WindowResizeMessage msg)
+        internal void UpdateProjectionMatrix (WindowResizeMessage msg)
         {
             ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (fovY, 
                 (float)msg.Width / (float)msg.Height, zNear, zFar); 
         }
 
-        /// <summary>
-        /// Consumes the message.
-        /// </summary>
-        /// <param name="msg">Message.</param>
-        public virtual void ConsumeMessage (Messaging.Interfaces.IMessage msg)
-        {
-            InputMessage im = msg as InputMessage;
-            if (im != null) {
-                if (im.IsActionDown ("left")) {
-                    moveX (-1 * fak);
-                }
-
-                if (im.IsActionDown ("right")) {
-                    moveX (1 * fak);
-                }
-
-                if (im.IsActionDown ("forward")) {
-                    moveZ (-1 * fak);
-                }
-
-                if (im.IsActionDown ("backward")) {
-                    moveZ (1 * fak);
-                }
-
-                if (im.IsActionDown ("up")) {
-                    moveY (1 * fak);
-                }
-
-                if (im.IsActionDown ("down")) {
-                    moveY (-1 * fak);
-                }
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("left")) {
-                    rotateX (-1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("right")) {
-                    rotateX (1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("forward")) {
-                    rotateZ (-1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("backward")) {
-                    rotateZ (1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("up")) {
-                    rotateY (1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("down")) {
-                    rotateY (-1 * fak);
-                }
-            }
-
-            WindowResizeMessage wrm = msg as WindowResizeMessage;
-            if (wrm != null)
-            {
-                UpdateProjectionMatrix (wrm);
-            }
-        }
     }
 }
 

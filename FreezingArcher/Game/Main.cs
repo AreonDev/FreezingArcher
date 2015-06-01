@@ -30,6 +30,7 @@ using System.Dynamic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using FreezingArcher.Renderer;
 using FreezingArcher.Messaging;
+using FreezingArcher.DataStructures.Trees;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
 
@@ -45,7 +46,7 @@ namespace FreezingArcher.Game
         /// <summary>
         /// The cam.
         /// </summary>
-        public MyFirstFreezingArcherCam Cam;
+        public FreeCamera Cam;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.FurryLanaTest"/> class.
@@ -55,7 +56,7 @@ namespace FreezingArcher.Game
         {
             ValidMessages = new int[] { (int)MessageId.Input };
             mssgmngr += this;
-            Cam = new MyFirstFreezingArcherCam (mssgmngr, new Vector3 (1.0f, 10.0f, 10.0f), Vector3.Zero);
+            Cam = new FreeCamera (mssgmngr, new Vector3 (1.0f, 10.0f, 10.0f), Vector3.Zero);
         }
 
         /// <summary>
@@ -268,6 +269,14 @@ namespace FreezingArcher.Game
 
             Application.Instance.Run ();
             Application.Instance.Destroy ();
+
+            Tree<int> t = new Tree<int>();
+
+            t.AddChild (5).AddChild (4);
+
+            Logger.Log.AddLogEntry (LogLevel.Debug, "tree:", Status.Computing);
+            Logger.Log.AddLogEntry (LogLevel.Debug, t.ToString (), Status.Computing);
+
         }
     }
 }

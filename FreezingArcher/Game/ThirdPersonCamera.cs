@@ -23,30 +23,36 @@
 using System;
 
 using FreezingArcher.Math;
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Game
 {
-	/*
+    /*
 	 * Diese Kamera soll den roten Würfel mitten auf der grün, blau karierten Fläche verfolgen und 
 	 * mit der Maus soll man um diesen Würfel rotieren
 	 * Auch hier wirst du unsere API benutzen und dich schonmal mit FreezingArcher.Math auseinandersetzen
 	 * Diese Aufgabe ist etwas schwieriger ;)
 	 */
 
-//
-//	public class ThirdPersonCamera : Renderer.Scene.ICamera
-//	{
-//
-//		public ThirdPersonCamera ()
-//		{
-//
-//		}
-//
-//		Matrix ProjectionMatrix { get; }
-//		Matrix ViewMatrix { get; }
-//
-//		int Width { get; set; }
-//		int Height { get; set; }
-//	}
+
+//    public class ThirdPersonCamera : SimpleCam, IMessageConsumer
+//    {
+//        /// <summary>
+//        /// Initializes a new instance of the <see cref="FreezingArcher.Game.FreeCamera"/> class.
+//        /// </summary>
+//        /// <param name="mssgmngr">Mssgmngr.</param>
+//        /// <param name="_cameraPosition">Camera position.</param>
+//        /// <param name="_currentRotation">Current rotation.</param>
+//        /// <param name="near">Near.</param>
+//        /// <param name="far">Far.</param>
+//        /// <param name="fov">Fov.</param>
+//        public ThirdPersonCamera (MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3),
+//                                  Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
+//                                  float fov = (float)System.Math.PI / 4.0f) : base (mssgmngr, _cameraPosition,
+//                                                              _currentRotation, near, far, fov)
+//        {
+//        }
+//    }
 }
 

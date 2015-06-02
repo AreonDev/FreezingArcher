@@ -67,11 +67,11 @@ namespace FreezingArcher.Renderer.Scene
             InputMessage im = msg as InputMessage;
             if (im != null) {
                 if (im.IsActionDown ("forward")) {
-                    moveX (1 * fak);
+                    moveX (-1 * fak);
                 }
 
                 if (im.IsActionDown ("backward")) {
-                    moveX (-1 * fak);
+                    moveX (1 * fak);
                 }
 
                 if (im.IsActionDown ("left")) {

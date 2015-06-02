@@ -69,7 +69,7 @@ namespace FreezingArcher.Renderer.Scene
         internal const float fak = 0.1f;
 
         Vector3 cameraReference;
-        Vector3 transformedReference;
+        Vector3 transformedReference = Vector3.UnitX;
         Vector3 cameraLookat;
 
         public string Name { get; set; }
@@ -138,8 +138,6 @@ namespace FreezingArcher.Renderer.Scene
             float sinz = (float) System.Math.Sin (currentRotation.Z);
             float cosz = (float) System.Math.Cos (currentRotation.Z);
 
-            transformedReference = Vector3.UnitX;
-
             cameraLookat = cameraPosition + transformedReference;
 
             ViewMatrix = Matrix.LookAt (cameraPosition, cameraLookat, Vector3.UnitY);
@@ -194,9 +192,10 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="_position">Posotion.</param>
         public void moveX (float _position)
         {
-            var tmp = cameraPosition;
-            tmp.X += _position;
-            cameraPosition = tmp;
+//            var tmp = cameraPosition;
+//            tmp.X += _position;
+//            cameraPosition = tmp;
+            cameraPosition += _position * new Vector3(ViewMatrix.Column2.X,ViewMatrix.Column2.Y,ViewMatrix.Column2.Z);
             UpdateCamera ();
 //            Logger.Log.AddLogEntry (LogLevel.Debug, "MoveX", Status.Computing);
         }
@@ -207,9 +206,10 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="_position">Posotion.</param>
         public void moveY (float _position)
         {
-            var tmp = cameraPosition;
-            tmp.Y += _position;
-            cameraPosition = tmp;
+//            var tmp = cameraPosition;
+//            tmp.Y += _position;
+//            cameraPosition = tmp;
+            cameraPosition += _position * new Vector3(ViewMatrix.Column1.X,ViewMatrix.Column1.Y,ViewMatrix.Column1.Z);
             UpdateCamera ();
 //            Logger.Log.AddLogEntry (LogLevel.Debug, "MoveY", Status.Computing);
         }
@@ -220,9 +220,10 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="_position">Posotion.</param>
         public void moveZ (float _position)
         {
-            var tmp = cameraPosition;
-            tmp.Z += _position;
-            cameraPosition = tmp;
+//            var tmp = cameraPosition;
+//            tmp.Z += _position;
+//            cameraPosition = tmp;
+            cameraPosition += _position * new Vector3(ViewMatrix.Column0.X,ViewMatrix.Column0.Y,ViewMatrix.Column0.Z);
             UpdateCamera ();
 //            Logger.Log.AddLogEntry (LogLevel.Debug, "MoveZ", Status.Computing);
         }

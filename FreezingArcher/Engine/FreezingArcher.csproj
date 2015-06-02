@@ -115,10 +115,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\GraphicsResource.cs" />
     <Compile Include="Renderer\GraphicsResourceManager.cs" />
     <Compile Include="Renderer\Sampler.cs" />
-    <Compile Include="Renderer\Scene\Implementation\BasicCamera.cs" />
-    <Compile Include="Renderer\Scene\Implementation\InteractivePerspectiveCamera.cs" />
-    <Compile Include="Renderer\Scene\Implementation\MoveablePerspectiveCamera.cs" />
-    <Compile Include="Renderer\Scene\Interfaces\ICamera.cs" />
     <Compile Include="Renderer\Scene\Light.cs" />
     <Compile Include="Renderer\Shader.cs" />
     <Compile Include="Renderer\ShaderProgram.cs" />
@@ -226,6 +222,10 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Material.cs" />
     <Compile Include="Renderer\RendererContext.cs" />
     <Compile Include="Renderer\VertexBufferArray.cs" />
+    <Compile Include="Renderer\Scene\Implementation\BaseCam.cs" />
+    <Compile Include="Renderer\Scene\Implementation\FreeCamera.cs" />
+    <Compile Include="Renderer\Scene\CameraManager.cs" />
+    <Compile Include="Renderer\Scene\Implementation\ThirdPersonCamera.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

@@ -29,7 +29,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging.Interfaces;
 
-namespace FreezingArcher.Game
+namespace FreezingArcher.Renderer.Scene
 {
 
     /*
@@ -50,7 +50,7 @@ namespace FreezingArcher.Game
     /// <summary>
     /// My first freezing archer cam.
     /// </summary>
-    abstract public class SimpleCam : FreezingArcher.Renderer.Scene.ICamera
+    abstract public class BaseCam
     {
         /// <summary>
         /// Gets the valid messages which can be used in the ConsumeMessage method
@@ -72,6 +72,8 @@ namespace FreezingArcher.Game
         Vector3 transformedReference;
         Vector3 cameraLookat;
 
+        public string Name { get; set; }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.SimpleCam"/> class.
@@ -82,10 +84,12 @@ namespace FreezingArcher.Game
         /// <param name="near">Near.</param>
         /// <param name="far">Far.</param>
         /// <param name="fov">Fov.</param>
-        internal SimpleCam (MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3),
+        internal BaseCam (string _name,
+            Vector3 _cameraPosition = default(Vector3),
             Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
             float fov = (float)System.Math.PI / 4.0f)
         {
+            Name = _name;
             cameraPosition = _cameraPosition;
             currentRotation = _currentRotation;
             cameraReference = new Vector3 (0, 0, -1);
@@ -98,9 +102,7 @@ namespace FreezingArcher.Game
                 zNear, zFar); 
             
             UpdateCamera ();
-            Logger.Log.AddLogEntry (LogLevel.Debug, "CAM", Status.Computing);
-            ValidMessages = new int[] { (int)MessageId.Input, (int) MessageId.WindowResizeMessage };
-            mssgmngr += this;
+            Logger.Log.AddLogEntry (LogLevel.Debug, "CAM " + Name, Status.Computing);
         }
 
         /// <summary>

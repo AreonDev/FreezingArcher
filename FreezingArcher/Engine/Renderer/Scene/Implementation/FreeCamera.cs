@@ -26,7 +26,7 @@ using FreezingArcher.Math;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 
-namespace FreezingArcher.Game
+namespace FreezingArcher.Renderer.Scene
 {
     /*
 	 * Du sollst hier eine Kamera implementieren, die sich komplett frei im Raum bewegen kann
@@ -38,7 +38,7 @@ namespace FreezingArcher.Game
 	 * Hinweis2: Gimbal-Locks sind böse ;)
 	 */
 
-    public class FreeCamera : SimpleCam, IMessageConsumer
+    public class FreeCamera : BaseCam, IMessageConsumer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.FreeCamera"/> class.
@@ -49,11 +49,13 @@ namespace FreezingArcher.Game
         /// <param name="near">Near.</param>
         /// <param name="far">Far.</param>
         /// <param name="fov">Fov.</param>
-        public FreeCamera (MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3),
+        public FreeCamera (string name, MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3),
                                    Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
-                                   float fov = (float)System.Math.PI / 4.0f) : base (mssgmngr, _cameraPosition,
+                                   float fov = (float)System.Math.PI / 4.0f) : base (name, _cameraPosition,
                                                                            _currentRotation, near, far, fov)
         {
+            ValidMessages = new int[] { (int)MessageId.Input, (int) MessageId.WindowResizeMessage };
+            mssgmngr += this;
         }
 
         /// <summary>

@@ -111,7 +111,7 @@ namespace FreezingArcher.DataStructures.Trees
         /// Gets the parent.
         /// </summary>
         /// <value>The parent.</value>
-        public Tree<TData> Parent { get; private set;}
+        public Tree<TData> Parent { get; set;}
 
         private List<Tree<TData>> children = new List<Tree<TData>>();
 
@@ -121,6 +121,11 @@ namespace FreezingArcher.DataStructures.Trees
         public Tree()
         {
 
+        }
+
+        public Tree(TData _Data)
+        {
+            Data = _Data;
         }
 
         /// <summary>

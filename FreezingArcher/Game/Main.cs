@@ -33,6 +33,7 @@ using FreezingArcher.Messaging;
 using FreezingArcher.DataStructures.Trees;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
+using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {
@@ -56,7 +57,7 @@ namespace FreezingArcher.Game
         {
             ValidMessages = new int[] { (int)MessageId.Input };
             mssgmngr += this;
-            Cam = new FreeCamera (mssgmngr, new Vector3 (1.0f, 10.0f, 10.0f), Vector3.Zero);
+            Cam = new FreeCamera ("testCam", mssgmngr, new Vector3 (1.0f, 10.0f, 10.0f), Vector3.Zero);
         }
 
         /// <summary>
@@ -147,8 +148,8 @@ namespace FreezingArcher.Game
             //TODO: Hier soll dann die Kamera benutzt und gesetzt werden
             //Sprich: ViewMatrix der Kamera in BasicEffect.View
             //und ProjectionMatrix in BasicEffect.Projection
-            rctx.BasicEffect.View = Matrix.LookAt (new Vector3(_width / 1.0f, 10.0f, 10.0f), new Vector3 (_width / 1.0f, 0.0f, -_height / 1.0f), Vector3.UnitY); 
-            //rctx.BasicEffect.View = Cam.ViewMatrix;
+            //rctx.BasicEffect.View = Matrix.LookAt (new Vector3(_width / 1.0f, 10.0f, 10.0f), new Vector3 (_width / 1.0f, 0.0f, -_height / 1.0f), Vector3.UnitY); 
+            rctx.BasicEffect.View = Cam.ViewMatrix;
 	    rctx.BasicEffect.Projection = Cam.ProjectionMatrix;
             rctx.BasicEffect.Projection = Matrix.CreatePerspectiveFieldOfView ((float)System.Math.PI / 4.0f, 
                 (float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y, 0.1f, 100.0f);

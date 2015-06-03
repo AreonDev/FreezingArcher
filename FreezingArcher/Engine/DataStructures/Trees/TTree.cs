@@ -123,6 +123,10 @@ namespace FreezingArcher.DataStructures.Trees
 
         }
 
+        /// <summary>
+        /// Initializes a new instance of the Tree class.
+        /// </summary>
+        /// <param name="_Data">Data.</param>
         public Tree(TData _Data)
         {
             Data = _Data;

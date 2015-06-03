@@ -27,26 +27,46 @@ using System.IO;
 using FreezingArcher.Core;
 using FreezingArcher.DataStructures.Graphs;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Threading;
-using Pencil.Gaming;
-using System.Linq.Expressions;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Game
 {
+    /// <summary>
+    /// Labyrinth generator.
+    /// </summary>
     public class LabyrinthGenerator : IMessageConsumer
     {
+        /// <summary>
+        /// Labyrinth item type.
+        /// </summary>
         public enum LabyrinthItemType
         {
+            /// <summary>
+            /// The undefined item.
+            /// </summary>
             Undefined,
+            /// <summary>
+            /// The ground item.
+            /// </summary>
 	    Ground,
+            /// <summary>
+            /// The wall item.
+            /// </summary>
             Wall
         }
 
+        /// <summary>
+        /// Map node.
+        /// </summary>
         public class MapNode
         {
+            /// <summary>
+            /// Initializes a new instance of the MapNode class.
+            /// </summary>
+            /// <param name="name">Name.</param>
+            /// <param name="weight">Weight.</param>
+            /// <param name="preview">If set to <c>true</c> preview.</param>
             public MapNode(string name, int weight, bool preview = false)
             {
                 Weight = weight;
@@ -55,15 +75,38 @@ namespace FreezingArcher.Game
                 Final = false;
             }
 
+            /// <summary>
+            /// The type of the labyrinth item.
+            /// </summary>
             public LabyrinthItemType LabyrinthType;
+
+            /// <summary>
+            /// The weight.
+            /// </summary>
             public int Weight;
+
+            /// <summary>
+            /// The preview flag.
+            /// </summary>
             public bool Preview;
+
+            /// <summary>
+            /// The final flag.
+            /// </summary>
             public bool Final;
+
+            /// <summary>
+            /// The name.
+            /// </summary>
             public string Name;
         }
 
         #region IMessageConsumer implementation
 
+        /// <summary>
+        /// Processes the incoming message
+        /// </summary>
+        /// <param name="msg">Message to process</param>
         public void ConsumeMessage (IMessage msg)
         {
             var im = msg as InputMessage;
@@ -74,10 +117,20 @@ namespace FreezingArcher.Game
             }
         }
 
+        /// <summary>
+        /// Gets the valid messages which can be used in the ConsumeMessage method
+        /// </summary>
+        /// <value>The valid messages</value>
         public int[] ValidMessages { get; private set; }
 
         #endregion
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Game.LabyrinthGenerator"/> class.
+        /// </summary>
+        /// <param name="objmnr">Objmnr.</param>
+        /// <param name="msgmnr">Msgmnr.</param>
+        /// <param name="seed">Seed.</param>
         public LabyrinthGenerator (ObjectManager objmnr, MessageManager msgmnr, int seed)
         {
             objectManager = objmnr;
@@ -98,6 +151,11 @@ namespace FreezingArcher.Game
 
         Random rand;
 
+        /// <summary>
+        /// Prints the map.
+        /// </summary>
+        /// <returns>The map.</returns>
+        /// <param name="x">The x coordinate.</param>
         public string PrintMap(uint x)
         {
             int cnt = 0;
@@ -128,6 +186,11 @@ namespace FreezingArcher.Game
         delegate void GenerationStep();
         GenerationStep generationStep;
 
+        /// <summary>
+        /// Generates the map.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
         public void GenerateMap(uint x, uint y)
         {
             CreateMap(x, y);
@@ -192,6 +255,11 @@ namespace FreezingArcher.Game
             };
         }
 
+        /// <summary>
+        /// Creates the map.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
         public void CreateMap(uint x, uint y)
         {
             graph = objectManager.CreateOrRecycle<WeightedGraph<MapNode, bool>>();
@@ -228,6 +296,9 @@ namespace FreezingArcher.Game
             }
         }
 
+        /// <summary>
+        /// Writes as SV.
+        /// </summary>
         public void WriteAsSVG()
         {
             var file = new StreamWriter("graph.dot");

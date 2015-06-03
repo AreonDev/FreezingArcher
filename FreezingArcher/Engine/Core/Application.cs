@@ -23,24 +23,21 @@
 //#define DEBUG_EVENTS
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
+using FreezingArcher.Audio;
 using FreezingArcher.Configuration;
 using FreezingArcher.Content;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Input;
 using FreezingArcher.Localization;
+using FreezingArcher.Math;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
-using FreezingArcher.Math;
 using FreezingArcher.Output;
 using FreezingArcher.Renderer;
 using Pencil.Gaming;
-using Pencil.Gaming.Audio;
 using Section = System.Collections.Generic.Dictionary<string, FreezingArcher.Configuration.Value>;
-using FreezingArcher.Audio;
-using System.Diagnostics;
-using FreezingArcher.Math;
 
 namespace FreezingArcher.Core
 {
@@ -199,7 +196,6 @@ namespace FreezingArcher.Core
                 #endif
 
                 Window.MSize = new Vector2i(width, height);
-                //Renderer.RendererCore.WindowResize (width, height);//FIXME
 
                 if (MessageCreated != null)
                     MessageCreated (new WindowResizeMessage (Window, width, height));
@@ -350,9 +346,6 @@ namespace FreezingArcher.Core
 
         private Stopwatch updateStopwatch;
 
-        public delegate void Draw_Delegate();
-        public event Draw_Delegate Draw;
-
         /// <summary>
         /// Run this instance.
         /// </summary>
@@ -363,15 +356,6 @@ namespace FreezingArcher.Core
 
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Running application '{0}' ...", Name);
             MessageManager.StartProcessing ();
-            FreezingArcher.Audio.Effects.Reverb effect = new FreezingArcher.Audio.Effects.Reverb();
-            AudioManager.GetSource("test").Gain = 1f;
-            var slot = AudioManager.Routing.GetFreeSlot();
-            slot.LoadedEffect = effect;
-
-            var re = AudioManager.Routing.AddAudioRouting(AudioManager.GetSource("test"), slot, 1f, null); /* Routing entry will be cached in Source, is used to break em up when cleared. */
-            // openal test
-            AudioManager.GetSource ("test").Loop = true;
-            //AudioManager.PlaySource ("test");
 
             updateStopwatch.Start ();
             PeriodicUpdateTask.Start ();
@@ -387,15 +371,13 @@ namespace FreezingArcher.Core
                     LoadAgain = false;
                 }
 
-                if(Draw != null)
-                    Draw();
+                //Draw
 
                 Window.SwapBuffers ();
                 Window.PollEvents ();
                 
                 Thread.Sleep (16);
             }
-            AudioManager.Routing.Remove(re);
         }
 
         /// <summary>
@@ -461,9 +443,7 @@ namespace FreezingArcher.Core
                 updateStopwatch.Restart();
             });
             PeriodicInputTask = new PeriodicTask (16, InputManager.GenerateInputMessage);
-            AudioManager.LoadSound ("test2", "Audio/test2.ogg");
-            AudioManager.LoadSound ("test", "Audio/test.wav");
-            AudioManager.CreateSource ("test", "test", "test2");
+
 
             Initer = new JobExecuter ();
             Initer.InsertJobs (GetInitJobs (new List<Action>()));

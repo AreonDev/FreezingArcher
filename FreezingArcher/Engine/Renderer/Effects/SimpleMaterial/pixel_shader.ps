@@ -1,0 +1,49 @@
+﻿#version 410
+
+//Input format
+//####################################################
+layout(location = 0) in vec3 InTexCoord1;
+layout(location = 1) in vec3 InTexCoord2;
+layout(location = 2) in vec3 InTexCoord3;
+
+layout(location = 3) in vec4 InColor1;
+layout(location = 4) in vec4 InColor2;
+layout(location = 5) in vec4 InColor3;
+
+layout(location = 6) in vec4 InNormal;
+layout(location = 7) in vec4 InTangent;
+layout(location = 8) in vec4 InBinormal;
+
+layout(location = 9) in mat4 InNormaMatrix;
+//####################################################
+
+layout(location = 0) out vec4 normal_colour;
+//layout(location = 1) out vec4 diffuse_colour;
+//layout(location = 2) out vec4 specular_colour;
+//layout(location = 3) out vec4 depth_colour;
+
+uniform sampler2D ColourTexture;
+uniform sampler2D NormalTexture;
+
+uniform float UseColor;
+
+uniform MaterialBlock
+{
+        vec4 Ambient;
+        vec4 Diffuse;
+        vec4 Specular;
+        float Shininess;
+};
+
+void main()
+{
+        vec4 colour_col = texture2D(ColourTexture, InTexCoord1.xy);
+        vec4 normal_col = texture2D(NormalTexture, InTexCoord1.xy);
+
+        //normal_colour = InNormalMatrix * (InNormal);
+        normal_colour = normal_colour;
+
+        //diffuse_colour = vec4(0, 0, 0, 0);
+        //specular_colour = diffuse_colour;
+        //depth_colour = diffuse_colour;
+}

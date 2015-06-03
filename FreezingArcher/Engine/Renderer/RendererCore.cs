@@ -519,10 +519,10 @@ namespace FreezingArcher.Renderer
             GL.UseProgramStages(id, ProgramStageMask.AllShaderBits, 0);
 
             //Create VertexShader
-            ShaderProgram sp_Vertex = CreateShaderProgramFromFile("Internal_Basic_Effect_Vertex_Shader", ShaderType.VertexShader, "lib/Renderer/Effects/BasicEffect/VertexShader.vs");
+            ShaderProgram sp_Vertex = CreateShaderProgramFromFile("Internal_Basic_Effect_Vertex_Shader", ShaderType.VertexShader, "lib/Renderer/Effects/SimpleMaterial/vertex_shader.vs");
 
             //Create PixelShader
-            ShaderProgram sp_Pixel = CreateShaderProgramFromFile("Internal_Basic_Effect_Pixel_Sahder", ShaderType.PixelShader, "lib/Renderer/Effects/BasicEffect/PixelShader.ps");
+            ShaderProgram sp_Pixel = CreateShaderProgramFromFile("Internal_Basic_Effect_Pixel_Sahder", ShaderType.PixelShader, "lib/Renderer/Effects/SimpleMaterial/pixel_shader.ps");
 
             BasicEffect.VertexProgram = sp_Vertex;
             BasicEffect.PixelProgram = sp_Pixel;

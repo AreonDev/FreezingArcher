@@ -109,7 +109,6 @@ namespace FreezingArcher.Renderer
         private Texture m_Texture3;
         private Texture m_Texture4;
         private Texture m_Texture5;
-
         #endregion
 
 

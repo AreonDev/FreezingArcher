@@ -23,6 +23,7 @@
 using System;
 using FreezingArcher.Core;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Content
 {
@@ -38,7 +39,10 @@ namespace FreezingArcher.Content
         /// <summary>
         /// Initialize this system. This may be used as a constructor replacement.
         /// </summary>
-        public abstract void Init();
+        public virtual void Init(MessageManager msgmnr)
+        {
+            msgmnr += this;
+        }
 
         #region IMessageConsumer implementation
         /// <summary>

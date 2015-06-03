@@ -428,37 +428,7 @@ namespace FreezingArcher.DataStructures.Graphs
             /// <returns>The enumerator.</returns>
             IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
             {
-                Node<TData> node;
-                Stack<Node<TData>> stack = new Stack<Node<TData>>();
-                List<Node<TData>> reachedNodes = new List<Node<TData>>();
-
-                yield return graph.Nodes[0].Data;
-
-                reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].Edges.ForEach(e => {
-                    if (graph.Nodes[0] == e.SecondNode)
-                        stack.Push(e.FirstNode);
-                    else
-                        stack.Push(e.SecondNode);
-                });
-
-                do
-                {
-                    node = stack.Pop();
-
-                    if (!reachedNodes.Contains(node))
-                    {
-                        yield return node.Data;
-
-                        reachedNodes.Add(node);
-                        node.Edges.ForEach(e => {
-                            if (graph.Nodes[0] == e.SecondNode)
-                                stack.Push(e.FirstNode);
-                            else
-                                stack.Push(e.SecondNode);
-                        });
-                    }
-                } while (stack.Count > 0);
+                return (this as IEnumerable<Node<TData>>).Select(i => i.Data).GetEnumerator();// #codeperle
             }
             #endregion
 
@@ -493,7 +463,7 @@ namespace FreezingArcher.DataStructures.Graphs
 
                         reachedNodes.Add(node);
                         node.Edges.ForEach(e => {
-                            if (graph.Nodes[0] == e.SecondNode)
+                            if (node == e.SecondNode)
                                 stack.Push(e.FirstNode);
                             else
                                 stack.Push(e.SecondNode);
@@ -537,7 +507,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         reachedNodes.Add(node);
                         node.Edges.ForEach(e => {
                             estack.Push(e);
-                            if (graph.Nodes[0] == e.SecondNode)
+                            if (node == e.SecondNode)
                                 stack.Push(e.FirstNode);
                             else
                                 stack.Push(e.SecondNode);
@@ -578,7 +548,7 @@ namespace FreezingArcher.DataStructures.Graphs
 
                         reachedNodes.Add(node);
                         node.Edges.ForEach(e => {
-                            if (graph.Nodes[0] == e.SecondNode)
+                            if (node == e.SecondNode)
                                 stack.Push(e.FirstNode);
                             else
                                 stack.Push(e.SecondNode);

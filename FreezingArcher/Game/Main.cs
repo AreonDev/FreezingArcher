@@ -22,6 +22,12 @@
 //
 using FreezingArcher.Core;
 using FreezingArcher.Content;
+using System;
+using System.Reflection.Emit;
+using System.Runtime.Remoting.Channels;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace FreezingArcher.Game
 {
@@ -46,11 +52,11 @@ namespace FreezingArcher.Game
 	    Entity test = Application.Instance.ObjectManager.CreateOrRecycle<Entity>();
 	    test.Init("Test Entity", Application.Instance.MessageManager);
 
-	    var transComp = ComponentRegistry.Instance.Instantiate<TransformComponent>();
-	    transComp.Init(test);
-	    test.AddComponent(transComp);
+            test.AddComponent<TransformComponent>();
 
-	    transComp = test.GetComponent<TransformComponent>();
+	    var transComp = test.GetComponent<TransformComponent>();
+
+            new LabyrinthGenerator(Application.Instance.ObjectManager, Application.Instance.MessageManager, new Random().Next());
 
 	    Application.Instance.Run();
 	    Application.Instance.Destroy();

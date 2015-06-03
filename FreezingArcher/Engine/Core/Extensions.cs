@@ -23,6 +23,7 @@
 //
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace FreezingArcher.Core
 {
@@ -257,5 +258,51 @@ namespace FreezingArcher.Core
             return friendlyName;
         }
 
+        /// <summary>
+        /// Get the minimal element of a collection by a selector which selects the minimal element by choosing
+        /// properties from this element.
+        /// </summary>
+        /// <returns>The element.</returns>
+        /// <param name="source">Source.</param>
+        /// <param name="selector">Selector.</param>
+        /// <typeparam name="TSource">The element type.</typeparam>
+        /// <typeparam name="TComp">The type of the comparable part of the element.</typeparam>
+        public static TSource MinElem<TSource, TComp>(this IEnumerable<TSource> source, Func<TSource, TComp> selector)
+            where TComp : IComparable
+        {
+            TSource src = default(TSource);
+            TComp comp = default(TComp);
+            TComp tmp;
+            foreach (var i in source)
+            {
+                tmp = selector(i);
+                if (comp.Equals(default(TComp)) || comp.CompareTo(tmp) < 0)
+                {
+                    src = i;
+                    comp = tmp;
+                }
+            }
+            return src;
+        }
+
+        /// <summary>
+        /// Select even elements of the enumerable.
+        /// </summary>
+        /// <param name="source">Source.</param>
+        /// <typeparam name="TSource">The source type of the enumerable.</typeparam>
+        public static IEnumerable<TSource> Even<TSource>(this IEnumerable<TSource> source)
+        {
+            return source.Where((c, i) => i % 2 == 0);
+        }
+
+        /// <summary>
+        /// Select odd elements of the enumerable.
+        /// </summary>
+        /// <param name="source">Source.</param>
+        /// <typeparam name="TSource">The source type of the enumerable.</typeparam>
+        public static IEnumerable<TSource> Odd<TSource>(this IEnumerable<TSource> source)
+        {
+            return source.Where((c, i) => i % 2 != 0);
+        }
     }
 }

@@ -33,9 +33,6 @@ namespace FreezingArcher.Content
     {
         #region default values
 
-        // ommit warning: variable assigned but never used
-        #pragma warning disable 414
-
         /// <summary>
         /// The default position.
         /// </summary>
@@ -56,8 +53,6 @@ namespace FreezingArcher.Content
             Vector3 axis = Vector3.UnitY;
             Quaternion.CreateFromAxisAngle(ref axis, 0, out DefaultRotation);
         }
-
-        #pragma warning restore 414
 
         #endregion
 

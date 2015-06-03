@@ -25,6 +25,7 @@ using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Messaging;
 using System.Collections.Generic;
 using FreezingArcher.Output;
+using System;
 
 namespace FreezingArcher.Content
 {
@@ -52,12 +53,22 @@ namespace FreezingArcher.Content
                 Components = new Dictionary<int, EntityComponent>();
             else
                 Components.Clear();
+
+            if (Systems == null)
+                Systems = new Dictionary<int, EntitySystem>();
+            else
+                Systems.Clear();
         }
 
         /// <summary>
         /// The component storage.
         /// </summary>
         Dictionary<int, EntityComponent> Components;
+
+        /// <summary>
+        /// The system storage.
+        /// </summary>
+        Dictionary<int, EntitySystem> Systems;
 
         /// <summary>
         /// Gets the component by generic parameter.
@@ -75,9 +86,8 @@ namespace FreezingArcher.Content
         /// Adds the component.
         /// </summary>
         /// <returns><c>true</c>, if component was added, <c>false</c> otherwise.</returns>
-        /// <param name="component">Component.</param>
         /// <typeparam name="T">The type of the component.</typeparam>
-        public bool AddComponent<T>(T component) where T : EntityComponent
+        public bool AddComponent<T>() where T : EntityComponent
         {
             int typeid = typeof(T).GetHashCode();
 
@@ -88,8 +98,10 @@ namespace FreezingArcher.Content
                 return false;
             }
 
+            var component = ComponentRegistry.Instance.Instantiate<T>();
+            component.Init(this);
+
             Components.Add(typeid, component);
-            MessageManager += component;
 
             return true;
         }
@@ -110,9 +122,50 @@ namespace FreezingArcher.Content
                 return false;
             }
 
-            Components.Remove(typeid);
+            return Components.Remove(typeid);
+        }
+
+        /// <summary>
+        /// Adds an entity system to this entity identified by the type parameter.
+        /// </summary>
+        /// <returns><c>true</c>, if system was added, <c>false</c> otherwise.</returns>
+        /// <typeparam name="T">The type of the system to add.</typeparam>
+        public bool AddSystem<T> () where T : EntitySystem
+        {
+            int typeid = typeof(T).GetHashCode();
+
+            if (Systems.ContainsKey(typeid))
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, ModuleName,
+                    "System {0} is already registered in this entity!", typeof(T).Name);
+                return false;
+            }
+
+            var system = ObjectManager.CreateOrRecycle(typeof(T)) as T;
+            system.Init(MessageManager);
+
+            Systems.Add(typeid, system);
 
             return true;
+        }
+
+        /// <summary>
+        /// Removes a registered entity system from this entity identified by the type parameter.
+        /// </summary>
+        /// <returns><c>true</c>, if system was removed, <c>false</c> otherwise.</returns>
+        /// <typeparam name="T">The type of the system to remove.</typeparam>
+        public bool RemoveSystem<T> () where T : EntitySystem
+        {
+            int typeid = typeof(T).GetHashCode();
+
+            if (!Systems.ContainsKey(typeid))
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, ModuleName,
+                    "System {0} is not registered in this entity and cannot be removed!", typeof(T).Name);
+                return false;
+            }
+
+            return Systems.Remove(typeid);
         }
 
         /// <summary>

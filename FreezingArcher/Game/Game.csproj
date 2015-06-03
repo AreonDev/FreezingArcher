@@ -55,10 +55,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="GraphTest.cs" />
     <Compile Include="LabyrinthGenerator.cs" />
-    <Compile Include="ThirdPersonCamera.cs" />
-    <Compile Include="FreeCamera.cs" />
-    <Compile Include="SimpleCam.cs" />
-    <Compile Include="CameraManager.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>

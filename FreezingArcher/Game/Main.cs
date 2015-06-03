@@ -34,6 +34,7 @@ using FreezingArcher.DataStructures.Trees;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer.Scene.SceneObjects;
 
 namespace FreezingArcher.Game
 {
@@ -255,6 +256,18 @@ namespace FreezingArcher.Game
             test.AddComponent<TransformComponent>();
 
             //new LabyrinthGenerator(Application.Instance.ObjectManager, Application.Instance.MessageManager, new Random().Next());
+
+            CoreScene scene = new CoreScene ();
+            scene.BackgroundColor = Color4.HotPink;
+
+            RectangleSceneObject obj = new RectangleSceneObject ();
+            obj.Color = Color4.WhiteSmoke;
+            obj.Position = new Vector3 (300.0f, 150.0f, 0.0f);
+            obj.Scaling = new Vector3 (300.0f, 300.0f, 0.0f);
+
+            scene.Objects.Add (obj);
+
+            Application.Instance.RendererContext.Scene = scene;
 
             Application.Instance.Run ();
             Application.Instance.Destroy ();

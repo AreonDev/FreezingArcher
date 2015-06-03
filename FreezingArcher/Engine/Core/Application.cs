@@ -372,6 +372,7 @@ namespace FreezingArcher.Core
                 }
 
                 //Draw
+                RendererContext.DrawScene();
 
                 Window.SwapBuffers ();
                 Window.PollEvents ();

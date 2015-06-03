@@ -31,7 +31,7 @@ namespace FreezingArcher.Renderer.Scene
 {
     public class CameraManager
     {
-        static internal Tree<Pair<string, BaseCam>> CamTree;
+        internal Tree<Pair<string, BaseCam>> CamTree;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.CameraManager"/> class.
@@ -47,7 +47,7 @@ namespace FreezingArcher.Renderer.Scene
         /// Adds the group.
         /// </summary>
         /// <param name="name">Name.</param>
-        public static void AddGroup(string name){
+        public  void AddGroup(string name){
             CamTree.AddChild (new Pair<string, BaseCam>(name, null));
         }
 
@@ -56,7 +56,7 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         /// <param name="cam">Cam.</param>
         /// <param name="groupID">Group I.</param>
-        public static void AddCam(BaseCam cam, string groupID="root")
+        public  void AddCam(BaseCam cam, string groupID="root")
         {
             ((IEnumerable<Tree<Pair<string, BaseCam>>>) CamTree.LevelOrder).First(i => i.Data.A == groupID)
                 .AddChild (new Pair<string, BaseCam>(cam.Name, cam));
@@ -66,7 +66,7 @@ namespace FreezingArcher.Renderer.Scene
         /// Toggles the cam.
         /// </summary>
         /// <param name="cam">Cam.</param>
-        public static void ToggleCam(BaseCam cam){
+        public  void ToggleCam(BaseCam cam){
             Tree<Pair<string, BaseCam>> TmpNode = ((IEnumerable<Tree<Pair<string, BaseCam>>>) CamTree.LevelOrder)
                 .First(i => i.Data.A == cam.Name);
 

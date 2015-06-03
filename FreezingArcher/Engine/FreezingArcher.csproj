@@ -227,6 +227,9 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Scene\CameraManager.cs" />
     <Compile Include="Renderer\Scene\Implementation\ThirdPersonCamera.cs" />
     <Compile Include="Renderer\DefferedShading.cs" />
+    <Compile Include="Renderer\Scene\SceneObjects\RectangleSceneObject.cs" />
+    <Compile Include="Renderer\Scene\ISceneObject.cs" />
+    <Compile Include="Renderer\Scene\CoreScene.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -305,6 +308,7 @@ echo Successfully finished!</PostBuildEvent>
     <Folder Include="Renderer\TestGraphics\Rabbit\" />
     <Folder Include="Renderer\Effects\DeferredShading\" />
     <Folder Include="Renderer\Effects\SimpleMaterial\" />
+    <Folder Include="Renderer\Scene\SceneObjects\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

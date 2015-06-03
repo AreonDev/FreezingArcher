@@ -26,11 +26,19 @@ using Assimp;
 using Assimp.Configs;
 using System.Collections.Generic;
 
+using FreezingArcher.Renderer.Scene;
+
 namespace FreezingArcher.Renderer
 {
     public class RendererContext : RendererCore
     {
         private AssimpContext m_AssimpContext;
+
+        /// <summary>
+        /// Gets or sets the scene.
+        /// </summary>
+        /// <value>The scene.</value>
+        public CoreScene Scene {get; set;}
 
         public RendererContext(MessageManager mssgmngr) : base(mssgmngr)
         {
@@ -166,6 +174,22 @@ namespace FreezingArcher.Renderer
                 (msh.m_PrimitiveType == Mesh.PrimitiveType.Triangles) ? RendererBeginMode.Triangles : RendererBeginMode.Points);
 
             msh.m_VertexBufferArray.UnbindVertexBufferArray();
+        }
+
+        /// <summary>
+        /// FOR THE FUCKING FIN
+        /// </summary>
+        public void DrawScene()
+        {
+            if (Scene != null)
+            {
+                this.Clear(Scene.BackgroundColor);
+
+                foreach (ISceneObject so in Scene.Objects)
+                {
+                    so.Draw(this);
+                }
+            }
         }
     }
 }

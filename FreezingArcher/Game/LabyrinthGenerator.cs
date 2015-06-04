@@ -29,6 +29,13 @@ using FreezingArcher.DataStructures.Graphs;
 using System.Collections.Generic;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
+using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.Math;
+using System.Drawing;
+using System.Security.Policy;
+using FreezingArcher.Output;
+using Pencil.Gaming.Audio;
 
 namespace FreezingArcher.Game
 {
@@ -99,6 +106,11 @@ namespace FreezingArcher.Game
             /// The name.
             /// </summary>
             public string Name;
+
+            /// <summary>
+            /// The position.
+            /// </summary>
+            public Vector2i Position;
         }
 
         #region IMessageConsumer implementation
@@ -128,28 +140,65 @@ namespace FreezingArcher.Game
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.LabyrinthGenerator"/> class.
         /// </summary>
-        /// <param name="objmnr">Objmnr.</param>
-        /// <param name="msgmnr">Msgmnr.</param>
+        /// <param name="objmnr">Object manager.</param>
+        /// <param name="scene">Scene.</param>
+        /// <param name="msgmnr">Message manager.</param>
         /// <param name="seed">Seed.</param>
-        public LabyrinthGenerator (ObjectManager objmnr, MessageManager msgmnr, int seed)
+        public LabyrinthGenerator (ObjectManager objmnr, CoreScene scene, MessageManager msgmnr, int seed)
         {
             objectManager = objmnr;
             ValidMessages = new int[]{ (int) MessageId.Input };
+            this.scene = scene;
             msgmnr += this;
             rand = new Random(seed);
             const uint size = 50;
             GenerateMap(size, size);
 
-            var file = new StreamWriter("graph.txt");
+            /*var file = new StreamWriter("graph.txt");
             file.Write(PrintMap(size));
-            file.Close();
+            file.Close();*/
         }
 
         ObjectManager objectManager;
 
+        CoreScene scene;
+
         WeightedGraph<MapNode, bool> graph;
 
         Random rand;
+
+        RectangleSceneObject[,] rectangles;
+
+        /// <summary>
+        /// Draws the labyrinth.
+        /// </summary>
+        /// <param name="maxX">Max x.</param>
+        /// <param name="maxY">Max y.</param>
+        public void DrawLabyrinth(uint maxX, uint maxY)
+        {
+            rectangles = new RectangleSceneObject[maxX, maxY];
+            int x = 0;
+            int y = 0;
+
+            Vector3 scale = new Vector3(10, 10, 0);
+
+            foreach(var node in (IEnumerable<MapNode>) graph)
+            {
+                rectangles[x, y] = new RectangleSceneObject ();
+
+                rectangles[x, y].Position = new Vector3 (x * scale.X, y * scale.Y, 0.0f);
+                rectangles[x, y].Scaling = scale;
+                rectangles[x, y].Color = Color4.Fuchsia;
+
+                scene.Objects.Add (rectangles[x, y]);
+
+                if (++x >= maxX)
+                {
+                    x = 0;
+                    y++;
+                }
+            }
+        }
 
         /// <summary>
         /// Prints the map.
@@ -189,20 +238,48 @@ namespace FreezingArcher.Game
         /// <summary>
         /// Generates the map.
         /// </summary>
-        /// <param name="x">The x coordinate.</param>
-        /// <param name="y">The y coordinate.</param>
-        public void GenerateMap(uint x, uint y)
+        /// <param name="maxX">The x coordinate.</param>
+        /// <param name="maxY">The y coordinate.</param>
+        public void GenerateMap(uint maxX, uint maxY)
         {
-            CreateMap(x, y);
+            CreateMap(maxX, maxY);
+
+            DrawLabyrinth(maxX, maxY);
 
             WeightedNode<MapNode, bool> node = null;
+            WeightedNode<MapNode, bool> lastNode = null;
             WeightedEdge<MapNode, bool> edge = graph.Edges[rand.Next(0, graph.Edges.Count)];
 
             generationStep = () => {
-                // get non-visited minimal edge and extract destination from it
-                node = edge.FirstNode != node ? edge.FirstNode : edge.SecondNode;
-                node.Data.LabyrinthType = LabyrinthItemType.Ground;
-                node.Data.Preview = false;
+                lastNode = node;
+
+                if (edge != null)
+                {
+                    node = edge.FirstNode != node ? edge.FirstNode : edge.SecondNode;
+
+                    if (node.Data.LabyrinthType != LabyrinthItemType.Ground)
+                    {
+                        node.Data.LabyrinthType = LabyrinthItemType.Ground;
+                        node.Data.Preview = false;
+                        rectangles[node.Data.Position.X, node.Data.Position.Y].Color = Color4.WhiteSmoke;
+                    }
+
+                    if (lastNode != null)
+                    {
+                        lastNode.Edges.ForEach(e => {
+                            var n = e.FirstNode != lastNode ? e.FirstNode : e.SecondNode;
+
+                            if (n.Data.LabyrinthType == LabyrinthItemType.Wall && !node.Edges.Any(e2 => {
+                                var n2 = e2.FirstNode != node ? e2.FirstNode : e2.SecondNode;
+                                return n == n2 && e2.Weight;
+                            }))
+                            {
+                                n.Data.Preview = false;
+                                rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.Chocolate;
+                            }
+                        });
+                    }
+                }
 
                 bool loop;
 
@@ -211,19 +288,10 @@ namespace FreezingArcher.Game
                     edge = node.Edges.Where (e => {
                         var n = e.FirstNode != node ? e.FirstNode : e.SecondNode;
 
-                        var p = n.Data.Preview;
-
-                        n.Data.Preview = false;
-
-                        if (!e.Weight)
+                        if (!e.Weight || n.Data.Final)
                             return false;
-                        
-                        var ret = n.Data.LabyrinthType == LabyrinthItemType.Undefined ||
-                            (e.Weight && p) || (e.Weight && n.Edges.Any(k => {
-                                var n2 = k.FirstNode != n ? k.FirstNode : k.SecondNode;
-                                return n2.Data.LabyrinthType == LabyrinthItemType.Undefined;
-                            }));//FIXME
-                        return ret;
+
+                        return n.Data.LabyrinthType == LabyrinthItemType.Undefined || n.Data.Preview;
                     }).MinElem (e => e.FirstNode != node ? e.FirstNode.Data.Weight : e.SecondNode.Data.Weight);
 
                     loop = false;
@@ -233,9 +301,28 @@ namespace FreezingArcher.Game
                         {
                             var n = e.FirstNode != node ? e.FirstNode : e.SecondNode;
                             node.Data.Final = true;
-                            if (n.Data.LabyrinthType == LabyrinthItemType.Ground && !n.Data.Final)
+                            if (n.Data.LabyrinthType == LabyrinthItemType.Ground && !n.Data.Final && e.Weight)
                             {
                                 node = n;
+                                node.Edges.FirstOrDefault(e2 => {
+                                    var n2 = e2.FirstNode != node ? e2.FirstNode : e2.SecondNode;
+
+                                    if (n2.Data.LabyrinthType == LabyrinthItemType.Wall && e2.Weight &&
+                                        n2.Edges.Any(e3 => {
+                                            var n3 = e3.FirstNode != n2 ? e3.FirstNode : e3.SecondNode;
+                                            bool tmp = n3.Edges.Count (e4 => 
+                                            {
+                                                var n4 = e4.FirstNode != n3 ? e4.FirstNode : e4.SecondNode;
+                                                return n4.Data.LabyrinthType == LabyrinthItemType.Ground;
+                                            }) <= 2;
+                                            return n3.Data.LabyrinthType == LabyrinthItemType.Undefined && e3.Weight && tmp;
+                                        }))
+                                    {
+                                        n2.Data.Preview = true;
+                                        return true;
+                                    }
+                                    return false;
+                                });
                                 loop = true;
                                 break;
                             }
@@ -243,13 +330,22 @@ namespace FreezingArcher.Game
                     }
                 }
                 while (loop);
-                node.Edges.Except (edge.ToCollection ()).ForEach (e => 
+
+                node.Edges.ForEach (e => 
                 {
                     var n = e.FirstNode != node ? e.FirstNode : e.SecondNode;
                     if (n.Data.LabyrinthType == LabyrinthItemType.Undefined)
                     {
                         n.Data.LabyrinthType = LabyrinthItemType.Wall;
-                        n.Data.Preview |= !e.Weight;
+                        n.Data.Preview = true;
+                    }
+
+                    if (n.Data.LabyrinthType == LabyrinthItemType.Wall)
+                    {
+                        if (n.Data.Preview)
+                            rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.DarkGoldenrod;
+                        else
+                            rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.Chocolate;
                     }
                 });
             };
@@ -290,6 +386,7 @@ namespace FreezingArcher.Game
                     }
 
                     nodes [i] = graph.AddNode (mapnode, edges);
+                    nodes [i].Data.Position = new Vector2i(i, k);
                 }
 
                 nodesLast = nodes;

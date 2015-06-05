@@ -7,31 +7,54 @@ using Henge3D.Physics;
 
 namespace Henge3D.Pipeline
 {
-	public class RigidBodyModel
-	{
-		private MassProperties _mass;
-		private CompiledPart[] _parts;
-		private Material[] _materials;
+    /// <summary>
+    /// Rigid body model.
+    /// </summary>
+    public class RigidBodyModel
+    {
+        private MassProperties _mass;
+        private CompiledPart[] _parts;
+        private Material[] _materials;
 
-		public MassProperties MassProperties { get { return _mass; } }
-		public CompiledPart[] Parts { get { return _parts; } }
-		public Material[] Materials { get { return _materials; } }
+        /// <summary>
+        /// Gets the mass properties.
+        /// </summary>
+        /// <value>The mass properties.</value>
+        public MassProperties MassProperties { get { return _mass; } }
 
-		private RigidBodyModel()
-		{
-		}
+        /// <summary>
+        /// Gets the parts.
+        /// </summary>
+        /// <value>The parts.</value>
+        public CompiledPart[] Parts { get { return _parts; } }
 
-		public RigidBodyModel(MassProperties mass, CompiledPart[] parts,
-			Material[] materials)
-		{
-			_mass = mass;
-			_parts = parts;
-			_materials = materials;
+        /// <summary>
+        /// Gets the materials.
+        /// </summary>
+        /// <value>The materials.</value>
+        public Material[] Materials { get { return _materials; } }
 
-			if (_parts.Length != _materials.Length)
-			{
-				throw new ArgumentException("The count of supplied mesh parts and materials do not match.");
-			}
-		}
-	}
+        private RigidBodyModel ()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Henge3D.Pipeline.RigidBodyModel"/> class.
+        /// </summary>
+        /// <param name="mass">Mass.</param>
+        /// <param name="parts">Parts.</param>
+        /// <param name="materials">Materials.</param>
+        public RigidBodyModel (MassProperties mass, CompiledPart[] parts,
+                        Material[] materials)
+        {
+            _mass = mass;
+            _parts = parts;
+            _materials = materials;
+
+            if (_parts.Length != _materials.Length)
+            {
+                throw new ArgumentException ("The count of supplied mesh parts and materials do not match.");
+            }
+        }
+    }
 }

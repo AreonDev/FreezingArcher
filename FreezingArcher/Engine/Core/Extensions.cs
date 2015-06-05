@@ -25,6 +25,9 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using FreezingArcher.DataStructures.Graphs;
+using FreezingArcher.Renderer;
+using FreezingArcher.Audio;
+using Pencil.Gaming.Graphics;
 
 namespace FreezingArcher.Core
 {
@@ -64,7 +67,7 @@ namespace FreezingArcher.Core
         }
 
         /// <summary>
-        /// Performs an action for each element in an IEnumerable
+        /// Performs an action for each element in an IEnumerable.
         /// </summary>
         /// <typeparam name="T">type of the enumerable</typeparam>
         /// <param name="enumerable">The enumerable.</param>
@@ -73,6 +76,98 @@ namespace FreezingArcher.Core
         {
             foreach (var item in enumerable)
                 func(item);
+        }
+
+        /// <summary>
+        /// Performs an action for each element in an IEnumerable.
+        /// </summary>
+        /// <param name="enumerable">Enumerable.</param>
+        /// <param name="func">Function to execute on each element.</param>
+        /// <typeparam name="T">Type of the enumerable.</typeparam>
+        public static void ForEach<T>(this IEnumerable<T> enumerable, Func<T, bool> func)
+        {
+            foreach (var item in enumerable)
+                if (!func(item))
+                    break;
+        }
+
+        /// <summary>
+        /// Performs an action for each element in an IEnumerable.
+        /// </summary>
+        /// <param name="enumerable">Enumerable.</param>
+        /// <param name="func">Function to execute on each element.</param>
+        /// <typeparam name="T1">Type of the first tuple item.</typeparam>
+        /// <typeparam name="T2">Type of the second tuple item.</typeparam>
+        public static void ForEach<T1, T2>(this IEnumerable<Tuple<T1, T2>> enumerable, Action<T1, T2> func)
+        {
+            foreach (var tuple in enumerable)
+                func(tuple.Item1, tuple.Item2);
+        }
+
+        /// <summary>
+        /// Performs an action for each element in an IEnumerable.
+        /// </summary>
+        /// <param name="enumerable">Enumerable.</param>
+        /// <param name="func">Function to execute on each element.</param>
+        /// <typeparam name="T1">Type of the first tuple item.</typeparam>
+        /// <typeparam name="T2">Type of the second tuple item.</typeparam>
+        public static void ForEach<T1, T2>(this IEnumerable<Tuple<T1, T2>> enumerable, Func<T1, T2, bool> func)
+        {
+            foreach (var tuple in enumerable)
+                if (!func(tuple.Item1, tuple.Item2))
+                    break;
+        }
+
+        /// <summary>
+        /// Returns if any of the elements in the given enumerable matches the given predicate.
+        /// </summary>
+        /// <param name="enumerable">Enumerable.</param>
+        /// <param name="predicate">Predicate.</param>
+        /// <typeparam name="T1">The 1st type parameter.</typeparam>
+        /// <typeparam name="T2">The 2nd type parameter.</typeparam>
+        public static bool Any<T1, T2>(this IEnumerable<Tuple<T1, T2>> enumerable, Func<T1, T2, bool> predicate)
+        {
+            return enumerable.Any(t => predicate(t.Item1, t.Item2));
+        }
+
+        /// <summary>
+        /// Returns an enumerable containing each element which matches the predicate.
+        /// </summary>
+        /// <param name="enumerable">Enumerable.</param>
+        /// <param name="predicate">Predicate.</param>
+        /// <typeparam name="T1">The 1st type parameter.</typeparam>
+        /// <typeparam name="T2">The 2nd type parameter.</typeparam>
+        public static IEnumerable<Tuple<T1, T2>>
+        Where<T1, T2>(this IEnumerable<Tuple<T1, T2>> enumerable, Func<T1, T2, bool> predicate)
+        {
+            return enumerable.Where(i => predicate(i.Item1, i.Item2));
+        }
+
+        /// <summary>
+        /// Returns the first or default element matching the given predicate.
+        /// </summary>
+        /// <returns>The or default.</returns>
+        /// <param name="enumerable">Enumerable.</param>
+        /// <param name="predicate">Predicate.</param>
+        /// <typeparam name="T1">The 1st type parameter.</typeparam>
+        /// <typeparam name="T2">The 2nd type parameter.</typeparam>
+        public static Tuple<T1, T2> FirstOrDefault<T1, T2>(this IEnumerable<Tuple<T1, T2>> enumerable,
+            Func<T1, T2, bool> predicate)
+        {
+            return enumerable.FirstOrDefault(i => predicate(i.Item1, i.Item2));
+        }
+
+        /// <summary>
+        /// Count the matches of the predicate in the given enumerable.
+        /// </summary>
+        /// <param name="enumerable">Enumerable.</param>
+        /// <param name="predicate">Predicate.</param>
+        /// <typeparam name="T1">The 1st type parameter.</typeparam>
+        /// <typeparam name="T2">The 2nd type parameter.</typeparam>
+        public static int Count<T1, T2>(this IEnumerable<Tuple<T1, T2>> enumerable,
+            Func<T1, T2, bool> predicate)
+        {
+            return enumerable.Count(i => predicate(i.Item1, i.Item2));
         }
 
         /// <summary>
@@ -267,23 +362,39 @@ namespace FreezingArcher.Core
         /// <param name="source">Source.</param>
         /// <param name="selector">Selector.</param>
         /// <typeparam name="TSource">The element type.</typeparam>
-        /// <typeparam name="TComp">The type of the comparable part of the element.</typeparam>
-        public static TSource MinElem<TSource, TComp>(this IEnumerable<TSource> source, Func<TSource, TComp> selector)
-            where TComp : IComparable
+        /// <typeparam name="TElem">The type of the comparable part of the element.</typeparam>
+        public static TSource MinElem<TSource, TElem>(this IEnumerable<TSource> source, Func<TSource, TElem> selector)
+            where TElem : IComparable
         {
             TSource src = default(TSource);
-            TComp comp = default(TComp);
-            TComp tmp;
+            TElem comp = default(TElem);
+            TElem tmp;
             foreach (var i in source)
             {
                 tmp = selector(i);
-                if (comp.Equals(default(TComp)) || comp.CompareTo(tmp) < 0)
+                if (comp.Equals(default(TElem)) || comp.CompareTo(tmp) < 0)
                 {
                     src = i;
                     comp = tmp;
                 }
             }
             return src;
+        }
+
+        /// <summary>
+        /// Minimum element from enumerable.
+        /// </summary>
+        /// <returns>The element.</returns>
+        /// <param name="source">Source.</param>
+        /// <param name="selector">Selector.</param>
+        /// <typeparam name="T1">The 1st type parameter.</typeparam>
+        /// <typeparam name="T2">The 2nd type parameter.</typeparam>
+        /// <typeparam name="TElem">The 3rd type parameter.</typeparam>
+        public static Tuple<T1, T2> MinElem<T1, T2, TElem>(this IEnumerable<Tuple<T1, T2>> source,
+            Func<T1, T2, TElem> selector) where TElem : IComparable
+        {
+            var t = source.MinElem(i => selector(i.Item1, i.Item2));
+            return t ?? new Tuple<T1, T2>(default(T1), default(T2));
         }
 
         /// <summary>

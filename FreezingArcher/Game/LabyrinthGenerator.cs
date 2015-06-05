@@ -20,6 +20,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+//#define DO_STEP
 using System;
 using System.Linq;
 using System.Diagnostics;
@@ -33,67 +34,31 @@ using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
 using FreezingArcher.Output;
+using System.Drawing;
 
 namespace FreezingArcher.Game
 {
+    /// <summary>
+    /// Extension methods.
+    /// </summary>
     public static class Extensions
     {
-        public static IEnumerable<WeightedNode<TData, TWeight>> GetNeighbours<TData, TWeight>(this WeightedNode<TData, TWeight> node)
+        /// <summary>
+        /// Gets the neighbour nodes.
+        /// </summary>
+        /// <returns>The neighbour nodes.</returns>
+        /// <param name="node">The node.</param>
+        /// <typeparam name="TData">Data type.</typeparam>
+        /// <typeparam name="TWeight">Weight type.</typeparam>
+        public static IEnumerable<Tuple<WeightedNode<TData, TWeight>, WeightedEdge<TData, TWeight>>>
+        GetNeighbours<TData, TWeight> (this WeightedNode<TData, TWeight> node)
             where TWeight : IComparable
         {
             foreach (var e in node.Edges)
-                yield return e.FirstNode != node ? e.FirstNode : e.SecondNode;
+                yield return e.FirstNode != node ?
+                    new Tuple<WeightedNode<TData, TWeight>, WeightedEdge<TData, TWeight>> (e.FirstNode, e) :
+                    new Tuple<WeightedNode<TData, TWeight>, WeightedEdge<TData, TWeight>> (e.SecondNode, e);
         }
-    }
-
-    /// <summary>
-    /// Map node.
-    /// </summary>
-    public class MapNode
-    {
-        /// <summary>
-        /// Initializes a new instance of the MapNode class.
-        /// </summary>
-        /// <param name="name">Name.</param>
-        /// <param name="weight">Weight.</param>
-        /// <param name="preview">If set to <c>true</c> preview.</param>
-        public MapNode(string name, int weight, bool preview = false)
-        {
-            Weight = weight;
-            Preview = preview;
-            Name = name;
-            Final = false;
-        }
-
-        /// <summary>
-        /// The type of the labyrinth item.
-        /// </summary>
-        public LabyrinthItemType LabyrinthType;
-
-        /// <summary>
-        /// The weight.
-        /// </summary>
-        public int Weight;
-
-        /// <summary>
-        /// The preview flag.
-        /// </summary>
-        public bool Preview;
-
-        /// <summary>
-        /// The final flag.
-        /// </summary>
-        public bool Final;
-
-        /// <summary>
-        /// The name.
-        /// </summary>
-        public string Name;
-
-        /// <summary>
-        /// The position.
-        /// </summary>
-        public Vector2i Position;
     }
 
     /// <summary>
@@ -120,6 +85,9 @@ namespace FreezingArcher.Game
     /// </summary>
     public class LabyrinthGenerator : IMessageConsumer
     {
+        static readonly uint size = 100;
+        static readonly uint scaling = 5;
+
         #region IMessageConsumer implementation
 
         /// <summary>
@@ -129,10 +97,10 @@ namespace FreezingArcher.Game
         public void ConsumeMessage (IMessage msg)
         {
             var im = msg as InputMessage;
-            if (im != null && generationStep != null)
+            if (im != null)
             {
                 if (im.IsActionPressed("jump"))
-                    generationStep();
+                    GenerateMap(size, size);
             }
         }
 
@@ -154,18 +122,13 @@ namespace FreezingArcher.Game
         public LabyrinthGenerator (ObjectManager objmnr, CoreScene scene, MessageManager msgmnr, int seed)
         {
             objectManager = objmnr;
-            ValidMessages = new int[]{ (int) MessageId.Input };
+            ValidMessages = new int[]{ (int)MessageId.Input };
             this.scene = scene;
             msgmnr += this;
-            rand = new Random(seed);
-            const uint size = 100;
-            GenerateMap(size, size);
-
-            Logger.Log.AddLogEntry(LogLevel.Debug, "LabGen", "Seed: {0}", seed);
-
-            /*var file = new StreamWriter("graph.txt");
-            file.Write(PrintMap(size));
-            file.Close();*/
+            rand = new Random (seed);
+            Logger.Log.AddLogEntry (LogLevel.Debug, "LabGen", "Seed: {0}", seed);
+            CreateMap (size, size);
+            DrawLabyrinth (size, size);
         }
 
         ObjectManager objectManager;
@@ -179,27 +142,186 @@ namespace FreezingArcher.Game
         RectangleSceneObject[,] rectangles;
 
         /// <summary>
+        /// Generates the map.
+        /// </summary>
+        /// <param name="maxX">The x coordinate.</param>
+        /// <param name="maxY">The y coordinate.</param>
+        public void GenerateMap (uint maxX, uint maxY)
+        {
+            WeightedNode<MapNode, bool> node = null;
+            WeightedNode<MapNode, bool> lastNode = null;
+            // set initial edge
+            WeightedEdge<MapNode, bool> edge = graph.Edges [rand.Next (0, graph.Edges.Count)];
+
+            do
+            {
+                // save last node
+                lastNode = node;
+
+                if (edge != null)
+                {
+                    // get new node from edge
+                    node = edge.FirstNode != node ? edge.FirstNode : edge.SecondNode;
+
+                    // if new node is not a ground set it to ground
+                    if (node.Data.LabyrinthType != LabyrinthItemType.Ground)
+                    {
+                        node.Data.LabyrinthType = LabyrinthItemType.Ground;
+                        node.Data.Preview = false;
+                    }
+
+                    // set walls surrounding last node to non-preview
+                    if (lastNode != null)
+                    {
+                        lastNode.GetNeighbours ().ForEach ((n, e) =>
+                        {
+                            if (n.Data.LabyrinthType == LabyrinthItemType.Wall &&
+                                    !node.GetNeighbours ().Any ((n2, e2) => n == n2 && e2.Weight))
+                                n.Data.Preview = false;
+                        });
+                    }
+                }
+
+                // build walls around new node and set correct preview state on those
+                node.GetNeighbours ().ForEach ((n, e) =>
+                {
+                    if (n.Data.LabyrinthType == LabyrinthItemType.Undefined)
+                    {
+                        n.Data.LabyrinthType = LabyrinthItemType.Wall;
+                        n.Data.Preview = true;
+                    }
+                });
+
+                // bool indicating wether to do backtracking or not
+                bool backtrack;
+
+                do
+                {
+                    // get next edge
+                    edge = node.GetNeighbours ().Where ((n, e) =>
+                        (n.Data.LabyrinthType == LabyrinthItemType.Undefined || n.Data.Preview)
+                    && !n.Data.Final && e.Weight).MinElem ((n, e) => n.Data.Weight).Item2;
+                    
+                    // backtracking
+                    backtrack = false;
+                    if (edge == null)
+                    {
+                        // iterate over all surrounding nodes
+                        node.GetNeighbours ().ForEach ((n, e) =>
+                        {
+                            node.Data.Final = true;
+                            // can we go back?
+                            if (n.Data.LabyrinthType == LabyrinthItemType.Ground && !n.Data.Final && e.Weight)
+                            {
+                                // set walls of current node to non-preview to avoid artifacts
+                                node.GetNeighbours ().ForEach ((n_old, e_old) => 
+                                    n_old.GetNeighbours ().ForEach ((n2_old, e2_old) =>
+                                {
+                                    if (n2_old.Data.LabyrinthType == LabyrinthItemType.Wall && n2_old.Data.Preview)
+                                        n2_old.Data.Preview = false;
+                                }));
+                                // go to next node
+                                node = n;
+
+                                // search for a wall which has undefined cells around it
+                                node.GetNeighbours ().FirstOrDefault ((n2, e2) =>
+                                {
+                                    if (n2.Data.LabyrinthType == LabyrinthItemType.Wall && e2.Weight &&
+                                            n2.GetNeighbours ().Any ((n3, e3) =>
+                                            n3.Data.LabyrinthType == LabyrinthItemType.Undefined && e3.Weight &&
+                                            n3.GetNeighbours ().Count ((n4, e4) =>
+                                                n4.Data.LabyrinthType == LabyrinthItemType.Ground) <= 2))
+                                    {
+                                        n2.Data.Preview = true;
+                                        return true;
+                                    }
+                                    return false;
+                                });
+                                // if we have not returned yet continue backtracking
+                                backtrack = true;
+                                // stop this loop
+                                return false;
+                            }
+                            // continue this loop
+                            return true;
+                        });
+                    }
+                } while (backtrack);
+            } while (graph.Nodes.Count (n => n.Data.LabyrinthType == LabyrinthItemType.Ground && !n.Data.Final) != 0);
+
+            // set undefined cells to walls
+            graph.Nodes.ForEach (n =>
+            {
+                if (n.Data.LabyrinthType == LabyrinthItemType.Undefined)
+                    n.Data.LabyrinthType = LabyrinthItemType.Wall;
+            });
+        }
+
+        /// <summary>
+        /// Creates the map.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
+        public void CreateMap (uint x, uint y)
+        {
+            rectangles = new RectangleSceneObject[x, y];
+            graph = objectManager.CreateOrRecycle<WeightedGraph<MapNode, bool>> ();
+            graph.Init ();
+
+            var nodesLast = new WeightedNode<MapNode, bool>[x];
+            MapNode mapnode;
+            var edges = new List<Pair<WeightedNode<MapNode, bool>, bool>> ();
+
+            for (int k = 0; k < y; k++)
+            {
+                var nodes = new WeightedNode<MapNode, bool>[x];
+
+                for (int i = 0; i < x; i++)
+                {
+                    mapnode = new MapNode (k + "." + i, new Vector2i (i, k), rand.Next (), rectangles);
+
+                    edges.Clear ();
+
+                    if (k > 0)
+                        edges.Add (new Pair<WeightedNode<MapNode, bool>, bool> (nodesLast [i], true));
+
+                    if (i > 0)
+                        edges.Add (new Pair<WeightedNode<MapNode, bool>, bool> (nodes [i - 1], true));
+
+                    if (i > 0 && k > 0)
+                    {
+                        edges.Add (new Pair<WeightedNode<MapNode, bool>, bool> (nodesLast [i - 1], false));
+                        graph.AddEdge (nodesLast [i], nodes [i - 1], false);
+                    }
+
+                    nodes [i] = graph.AddNode (mapnode, edges);
+                }
+
+                nodesLast = nodes;
+            }
+        }
+
+        /// <summary>
         /// Draws the labyrinth.
         /// </summary>
         /// <param name="maxX">Max x.</param>
         /// <param name="maxY">Max y.</param>
-        public void DrawLabyrinth(uint maxX, uint maxY)
+        public void DrawLabyrinth (uint maxX, uint maxY)
         {
-            rectangles = new RectangleSceneObject[maxX, maxY];
             int x = 0;
             int y = 0;
 
-            Vector3 scale = new Vector3(4, 4, 0);
+            Vector3 scale = new Vector3 (scaling, scaling, 0);
 
-            foreach(var node in (IEnumerable<MapNode>) graph)
+            foreach (var node in (IEnumerable<MapNode>) graph)
             {
-                rectangles[x, y] = new RectangleSceneObject ();
+                rectangles [x, y] = new RectangleSceneObject ();
 
-                rectangles[x, y].Position = new Vector3 (x * scale.X, y * scale.Y, 0.0f);
-                rectangles[x, y].Scaling = scale;
-                rectangles[x, y].Color = Color4.Fuchsia;
+                rectangles [x, y].Position = new Vector3 (x * scale.X, y * scale.Y, 0.0f);
+                rectangles [x, y].Scaling = scale;
+                node.Init ();
 
-                scene.Objects.Add (rectangles[x, y]);
+                scene.Objects.Add (rectangles [x, y]);
 
                 if (++x >= maxX)
                 {
@@ -210,247 +332,33 @@ namespace FreezingArcher.Game
         }
 
         /// <summary>
-        /// Prints the map.
-        /// </summary>
-        /// <returns>The map.</returns>
-        /// <param name="x">The x coordinate.</param>
-        public string PrintMap(uint x)
-        {
-            int cnt = 0;
-            string s = "";
-            foreach(var node in (IEnumerable<MapNode>) graph)
-            {
-                switch (node.LabyrinthType)
-                {
-                case LabyrinthItemType.Ground:
-                    s += ' ';
-                    break;
-                case LabyrinthItemType.Wall:
-                    s += '#';
-                    break;
-                default:
-                    s += '?';
-                    break;
-                }
-                if (++cnt >= x)
-                {
-                    s += '\n';
-                    cnt = 0;
-                }
-            }
-            return s;
-        }
-
-        delegate void GenerationStep();
-        GenerationStep generationStep;
-
-        /// <summary>
-        /// Generates the map.
-        /// </summary>
-        /// <param name="maxX">The x coordinate.</param>
-        /// <param name="maxY">The y coordinate.</param>
-        public void GenerateMap(uint maxX, uint maxY)
-        {
-            CreateMap(maxX, maxY);
-
-            DrawLabyrinth(maxX, maxY);
-
-            WeightedNode<MapNode, bool> node = null;
-            WeightedNode<MapNode, bool> lastNode = null;
-            WeightedEdge<MapNode, bool> edge = graph.Edges[rand.Next(0, graph.Edges.Count)];
-
-            //generationStep = () => {
-            do
-            {
-                lastNode = node;
-
-                if (edge != null)
-                {
-                    node = edge.FirstNode != node ? edge.FirstNode : edge.SecondNode;
-
-                    if (node.Data.LabyrinthType != LabyrinthItemType.Ground)
-                    {
-                        node.Data.LabyrinthType = LabyrinthItemType.Ground;
-                        node.Data.Preview = false;
-                        rectangles[node.Data.Position.X, node.Data.Position.Y].Color = Color4.WhiteSmoke;
-                    }
-
-                    if (lastNode != null)
-                    {
-                        lastNode.Edges.ForEach(e => {
-                            var n = e.FirstNode != lastNode ? e.FirstNode : e.SecondNode;
-
-                            if (n.Data.LabyrinthType == LabyrinthItemType.Wall && !node.Edges.Any(e2 => {
-                                var n2 = e2.FirstNode != node ? e2.FirstNode : e2.SecondNode;
-                                return n == n2 && e2.Weight;
-                            }))
-                            {
-                                n.Data.Preview = false;
-                                rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.Chocolate;
-                            }
-                        });
-                    }
-                }
-
-                node.Edges.ForEach (e => 
-                {
-                    var n = e.FirstNode != node ? e.FirstNode : e.SecondNode;
-                    if (n.Data.LabyrinthType == LabyrinthItemType.Undefined)
-                    {
-                        n.Data.LabyrinthType = LabyrinthItemType.Wall;
-                        n.Data.Preview = true;
-                    }
-                    if (n.Data.LabyrinthType == LabyrinthItemType.Wall)
-                    {   
-                        if (n.Data.Preview)
-                            rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.DarkGoldenrod;
-                        else
-                            rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.Chocolate;
-                    }
-                });
-
-                bool loop;
-
-                do
-                {
-                    edge = node.Edges.Where (e => {
-                        var n = e.FirstNode != node ? e.FirstNode : e.SecondNode;
-
-                        if (!e.Weight || n.Data.Final)
-                            return false;
-
-                        return n.Data.LabyrinthType == LabyrinthItemType.Undefined || n.Data.Preview;
-                    }).MinElem (e => e.FirstNode != node ? e.FirstNode.Data.Weight : e.SecondNode.Data.Weight);
-
-                    loop = false;
-                    if (edge == null)
-                    {
-                        foreach(var e in node.Edges)
-                        {
-                            var n = e.FirstNode != node ? e.FirstNode : e.SecondNode;
-                            node.Data.Final = true;
-                            if (n.Data.LabyrinthType == LabyrinthItemType.Ground && !n.Data.Final && e.Weight)
-                            {
-                                node.Edges.ForEach(e_old => {
-                                    var n_old = e_old.FirstNode != node ? e_old.FirstNode : e_old.SecondNode;
-                                    n_old.Edges.ForEach(e2_old => {
-                                        var n2_old = e2_old.FirstNode != n_old ? e2_old.FirstNode : e2_old.SecondNode;
-                                        if (n2_old.Data.LabyrinthType == LabyrinthItemType.Wall && n2_old.Data.Preview)
-                                        {
-                                            n2_old.Data.Preview = false;
-                                            rectangles[n2_old.Data.Position.X, n2_old.Data.Position.Y].Color = Color4.Chocolate;
-                                        }
-                                    });
-                                });
-                                node = n;
-                                node.Edges.FirstOrDefault(e2 => {
-                                    var n2 = e2.FirstNode != node ? e2.FirstNode : e2.SecondNode;
-
-                                    if (n2.Data.LabyrinthType == LabyrinthItemType.Wall && e2.Weight &&
-                                        n2.Edges.Any(e3 => {
-                                            var n3 = e3.FirstNode != n2 ? e3.FirstNode : e3.SecondNode;
-                                            bool tmp = n3.Edges.Count (e4 => 
-                                            {
-                                                var n4 = e4.FirstNode != n3 ? e4.FirstNode : e4.SecondNode;
-                                                return n4.Data.LabyrinthType == LabyrinthItemType.Ground;
-                                            }) <= 2;
-                                            return n3.Data.LabyrinthType == LabyrinthItemType.Undefined && e3.Weight && tmp;
-                                        }))
-                                    {
-                                        n2.Data.Preview = true;
-                                        return true;
-                                    }
-                                    return false;
-                                });
-                                loop = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                while (loop);
-            }
-            while (graph.Nodes.Count(n => n.Data.LabyrinthType == LabyrinthItemType.Ground && !n.Data.Final) != 0);
-
-            graph.Nodes.ForEach(n => {
-                if (n.Data.LabyrinthType == LabyrinthItemType.Undefined)
-                {
-                    n.Data.LabyrinthType = LabyrinthItemType.Wall;
-                    rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.Chocolate;
-                }
-            });
-        }
-
-        /// <summary>
-        /// Creates the map.
-        /// </summary>
-        /// <param name="x">The x coordinate.</param>
-        /// <param name="y">The y coordinate.</param>
-        public void CreateMap(uint x, uint y)
-        {
-            graph = objectManager.CreateOrRecycle<WeightedGraph<MapNode, bool>>();
-            graph.Init();
-
-            var nodesLast = new WeightedNode<MapNode, bool>[x];
-            MapNode mapnode;
-            var edges = new List<Pair<WeightedNode<MapNode, bool>, bool>>();
-
-            for (int k = 0; k < y; k++)
-            {
-                var nodes = new WeightedNode<MapNode, bool>[x];
-
-                for (int i = 0; i < x; i++)
-                {
-                    mapnode = new MapNode(k + "." + i, rand.Next());
-
-                    edges.Clear();
-
-                    if (k > 0) edges.Add(new Pair<WeightedNode<MapNode, bool>, bool>(nodesLast[i], true));
-
-                    if (i > 0) edges.Add(new Pair<WeightedNode<MapNode, bool>, bool>(nodes[i - 1], true));
-
-                    if (i > 0 && k > 0)
-                    {
-                        edges.Add(new Pair<WeightedNode<MapNode, bool>, bool>(nodesLast[i - 1], false));
-                        graph.AddEdge(nodesLast[i], nodes[i - 1], false);
-                    }
-
-                    nodes [i] = graph.AddNode (mapnode, edges);
-                    nodes [i].Data.Position = new Vector2i(i, k);
-                }
-
-                nodesLast = nodes;
-            }
-        }
-
-        /// <summary>
         /// Writes as SV.
         /// </summary>
-        public void WriteAsSVG()
+        public void WriteAsSVG ()
         {
-            var file = new StreamWriter("graph.dot");
+            var file = new StreamWriter ("graph.dot");
 
-            file.WriteLine("graph G {");
+            file.WriteLine ("graph G {");
             foreach (var edge in graph.Edges)
             {
-                file.WriteLine("{0} -- {1}", edge.FirstNode.Data.Name, edge.SecondNode.Data.Name);
+                file.WriteLine ("{0} -- {1}", edge.FirstNode.Data.Name, edge.SecondNode.Data.Name);
             }
-            file.WriteLine("}");
+            file.WriteLine ("}");
 
-            file.Close();
+            file.Close ();
 
             var proc = new Process {
                 StartInfo = new ProcessStartInfo {
                     FileName = "/usr/bin/dot",
                     Arguments = "-Tsvg " + Environment.CurrentDirectory + "/graph.dot -o " +
-                        Environment.CurrentDirectory + "/graph.svg",
+                    Environment.CurrentDirectory + "/graph.svg",
                     CreateNoWindow = true
                 }
             };
 
-            proc.Start();
-            proc.WaitForExit();
-            new FileInfo(Environment.CurrentDirectory + "/graph.dot").Delete();
+            proc.Start ();
+            proc.WaitForExit ();
+            new FileInfo (Environment.CurrentDirectory + "/graph.dot").Delete ();
         }
     }
 }

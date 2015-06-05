@@ -90,7 +90,7 @@ namespace FreezingArcher.Math {
 		/// <summary>
 		/// Constructs a new Vector2 from the given Vector2i.
 		/// </summary>
-		/// <param name="v">The Vector2i to copy components from.</param>
+		/// <param name="vec">The Vector2i to copy components from.</param>
 		public Vector2(Vector2i vec) {
 			X = vec.X;
 			Y = vec.Y;

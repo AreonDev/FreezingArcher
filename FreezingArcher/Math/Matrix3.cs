@@ -265,7 +265,7 @@ namespace FreezingArcher.Math
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Assimp.Matrix3"/> struct.
+		/// Initializes a new instance of the <see cref="Matrix3"/> struct.
 		/// </summary>
 		/// <param name="copy">Source matrix</param>
 		public Matrix3(Matrix3 copy)

@@ -6,9 +6,21 @@ using FreezingArcher.Math;
 
 namespace Henge3D
 {
-	public abstract class CompiledPart
-	{
-		public abstract Part ToCompositionPart();
-		public abstract void Transform(ref Matrix transform);
-	}
+    /// <summary>
+    /// Compiled part.
+    /// </summary>
+    public abstract class CompiledPart
+    {
+        /// <summary>
+        /// Tos the composition part.
+        /// </summary>
+        /// <returns>The composition part.</returns>
+        public abstract Part ToCompositionPart ();
+
+        /// <summary>
+        /// Transform the specified transform.
+        /// </summary>
+        /// <param name="transform">Transform.</param>
+        public abstract void Transform (ref Matrix transform);
+    }
 }

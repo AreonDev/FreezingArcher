@@ -25,8 +25,17 @@ namespace Henge3D.Physics
 	[Flags]
 	internal enum ContactStateFlags
 	{
+                /// <summary>
+                /// The is in contact.
+                /// </summary>
 		IsInContact = 1,
+                /// <summary>
+                /// The is suppressed.
+                /// </summary>
 		IsSuppressed = 2,
+                /// <summary>
+                /// The was in contact.
+                /// </summary>
 		WasInContact = 4
 	}
 
@@ -159,6 +168,11 @@ namespace Henge3D.Physics
 			this.InitializeFromModel(model);
 		}
 
+                /// <summary>
+                /// Initializes a new instance of the <see cref="Henge3D.Physics.RigidBody"/> class.
+                /// </summary>
+                /// <param name="model">Model.</param>
+                /// <param name="skin">Skin.</param>
 		public RigidBody(RigidBodyModel model, BodySkin skin)
 			: this()
 		{

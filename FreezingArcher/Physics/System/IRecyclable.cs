@@ -5,8 +5,14 @@ using System.Text;
 
 namespace Henge3D
 {
-	public interface IRecyclable
-	{
-		void Recycle();
-	}
+    /// <summary>
+    /// I recyclable.
+    /// </summary>
+    public interface IRecyclable
+    {
+        /// <summary>
+        /// Recycle this instance.
+        /// </summary>
+        void Recycle ();
+    }
 }

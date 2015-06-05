@@ -24,7 +24,6 @@ using FreezingArcher.Core;
 using FreezingArcher.Content;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
-using FreezingArcher.Renderer.Scene.SceneObjects;
 using System;
 
 namespace FreezingArcher.Game
@@ -32,7 +31,7 @@ namespace FreezingArcher.Game
     /// <summary>
     /// FurryLana static main class.
     /// </summary>
-    public class FurryLana// : FreezingArcher.Messaging.Interfaces.IMessageConsumer
+    public class FurryLana
     {
         /// <summary>
         /// The entry point of the program, where the program control starts and ends.
@@ -53,7 +52,7 @@ namespace FreezingArcher.Game
             Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Crimson;
 
             new LabyrinthGenerator (Application.Instance.ObjectManager,
-                Application.Instance.RendererContext.Scene, Application.Instance.MessageManager, new Random().Next());// totally broken seed
+                Application.Instance.RendererContext.Scene, Application.Instance.MessageManager, new Random().Next());
            
             Application.Instance.Run ();
             Application.Instance.Destroy ();

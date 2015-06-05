@@ -24,6 +24,7 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using FreezingArcher.DataStructures.Graphs;
 
 namespace FreezingArcher.Core
 {

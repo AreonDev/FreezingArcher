@@ -32,87 +32,94 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
-using System.Drawing;
-using System.Security.Policy;
 using FreezingArcher.Output;
-using Pencil.Gaming.Audio;
 
 namespace FreezingArcher.Game
 {
+    public static class Extensions
+    {
+        public static IEnumerable<WeightedNode<TData, TWeight>> GetNeighbours<TData, TWeight>(this WeightedNode<TData, TWeight> node)
+            where TWeight : IComparable
+        {
+            foreach (var e in node.Edges)
+                yield return e.FirstNode != node ? e.FirstNode : e.SecondNode;
+        }
+    }
+
+    /// <summary>
+    /// Map node.
+    /// </summary>
+    public class MapNode
+    {
+        /// <summary>
+        /// Initializes a new instance of the MapNode class.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="weight">Weight.</param>
+        /// <param name="preview">If set to <c>true</c> preview.</param>
+        public MapNode(string name, int weight, bool preview = false)
+        {
+            Weight = weight;
+            Preview = preview;
+            Name = name;
+            Final = false;
+        }
+
+        /// <summary>
+        /// The type of the labyrinth item.
+        /// </summary>
+        public LabyrinthItemType LabyrinthType;
+
+        /// <summary>
+        /// The weight.
+        /// </summary>
+        public int Weight;
+
+        /// <summary>
+        /// The preview flag.
+        /// </summary>
+        public bool Preview;
+
+        /// <summary>
+        /// The final flag.
+        /// </summary>
+        public bool Final;
+
+        /// <summary>
+        /// The name.
+        /// </summary>
+        public string Name;
+
+        /// <summary>
+        /// The position.
+        /// </summary>
+        public Vector2i Position;
+    }
+
+    /// <summary>
+    /// Labyrinth item type.
+    /// </summary>
+    public enum LabyrinthItemType
+    {
+        /// <summary>
+        /// The undefined item.
+        /// </summary>
+        Undefined,
+        /// <summary>
+        /// The ground item.
+        /// </summary>
+        Ground,
+        /// <summary>
+        /// The wall item.
+        /// </summary>
+        Wall
+    }
+
     /// <summary>
     /// Labyrinth generator.
     /// </summary>
     public class LabyrinthGenerator : IMessageConsumer
     {
-        /// <summary>
-        /// Labyrinth item type.
-        /// </summary>
-        public enum LabyrinthItemType
-        {
-            /// <summary>
-            /// The undefined item.
-            /// </summary>
-            Undefined,
-            /// <summary>
-            /// The ground item.
-            /// </summary>
-	    Ground,
-            /// <summary>
-            /// The wall item.
-            /// </summary>
-            Wall
-        }
-
-        /// <summary>
-        /// Map node.
-        /// </summary>
-        public class MapNode
-        {
-            /// <summary>
-            /// Initializes a new instance of the MapNode class.
-            /// </summary>
-            /// <param name="name">Name.</param>
-            /// <param name="weight">Weight.</param>
-            /// <param name="preview">If set to <c>true</c> preview.</param>
-            public MapNode(string name, int weight, bool preview = false)
-            {
-                Weight = weight;
-                Preview = preview;
-                Name = name;
-                Final = false;
-            }
-
-            /// <summary>
-            /// The type of the labyrinth item.
-            /// </summary>
-            public LabyrinthItemType LabyrinthType;
-
-            /// <summary>
-            /// The weight.
-            /// </summary>
-            public int Weight;
-
-            /// <summary>
-            /// The preview flag.
-            /// </summary>
-            public bool Preview;
-
-            /// <summary>
-            /// The final flag.
-            /// </summary>
-            public bool Final;
-
-            /// <summary>
-            /// The name.
-            /// </summary>
-            public string Name;
-
-            /// <summary>
-            /// The position.
-            /// </summary>
-            public Vector2i Position;
-        }
-
         #region IMessageConsumer implementation
 
         /// <summary>
@@ -151,8 +158,10 @@ namespace FreezingArcher.Game
             this.scene = scene;
             msgmnr += this;
             rand = new Random(seed);
-            const uint size = 50;
+            const uint size = 100;
             GenerateMap(size, size);
+
+            Logger.Log.AddLogEntry(LogLevel.Debug, "LabGen", "Seed: {0}", seed);
 
             /*var file = new StreamWriter("graph.txt");
             file.Write(PrintMap(size));
@@ -180,7 +189,7 @@ namespace FreezingArcher.Game
             int x = 0;
             int y = 0;
 
-            Vector3 scale = new Vector3(10, 10, 0);
+            Vector3 scale = new Vector3(4, 4, 0);
 
             foreach(var node in (IEnumerable<MapNode>) graph)
             {
@@ -250,7 +259,9 @@ namespace FreezingArcher.Game
             WeightedNode<MapNode, bool> lastNode = null;
             WeightedEdge<MapNode, bool> edge = graph.Edges[rand.Next(0, graph.Edges.Count)];
 
-            generationStep = () => {
+            //generationStep = () => {
+            do
+            {
                 lastNode = node;
 
                 if (edge != null)
@@ -281,6 +292,23 @@ namespace FreezingArcher.Game
                     }
                 }
 
+                node.Edges.ForEach (e => 
+                {
+                    var n = e.FirstNode != node ? e.FirstNode : e.SecondNode;
+                    if (n.Data.LabyrinthType == LabyrinthItemType.Undefined)
+                    {
+                        n.Data.LabyrinthType = LabyrinthItemType.Wall;
+                        n.Data.Preview = true;
+                    }
+                    if (n.Data.LabyrinthType == LabyrinthItemType.Wall)
+                    {   
+                        if (n.Data.Preview)
+                            rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.DarkGoldenrod;
+                        else
+                            rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.Chocolate;
+                    }
+                });
+
                 bool loop;
 
                 do
@@ -303,6 +331,17 @@ namespace FreezingArcher.Game
                             node.Data.Final = true;
                             if (n.Data.LabyrinthType == LabyrinthItemType.Ground && !n.Data.Final && e.Weight)
                             {
+                                node.Edges.ForEach(e_old => {
+                                    var n_old = e_old.FirstNode != node ? e_old.FirstNode : e_old.SecondNode;
+                                    n_old.Edges.ForEach(e2_old => {
+                                        var n2_old = e2_old.FirstNode != n_old ? e2_old.FirstNode : e2_old.SecondNode;
+                                        if (n2_old.Data.LabyrinthType == LabyrinthItemType.Wall && n2_old.Data.Preview)
+                                        {
+                                            n2_old.Data.Preview = false;
+                                            rectangles[n2_old.Data.Position.X, n2_old.Data.Position.Y].Color = Color4.Chocolate;
+                                        }
+                                    });
+                                });
                                 node = n;
                                 node.Edges.FirstOrDefault(e2 => {
                                     var n2 = e2.FirstNode != node ? e2.FirstNode : e2.SecondNode;
@@ -330,25 +369,16 @@ namespace FreezingArcher.Game
                     }
                 }
                 while (loop);
+            }
+            while (graph.Nodes.Count(n => n.Data.LabyrinthType == LabyrinthItemType.Ground && !n.Data.Final) != 0);
 
-                node.Edges.ForEach (e => 
+            graph.Nodes.ForEach(n => {
+                if (n.Data.LabyrinthType == LabyrinthItemType.Undefined)
                 {
-                    var n = e.FirstNode != node ? e.FirstNode : e.SecondNode;
-                    if (n.Data.LabyrinthType == LabyrinthItemType.Undefined)
-                    {
-                        n.Data.LabyrinthType = LabyrinthItemType.Wall;
-                        n.Data.Preview = true;
-                    }
-
-                    if (n.Data.LabyrinthType == LabyrinthItemType.Wall)
-                    {
-                        if (n.Data.Preview)
-                            rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.DarkGoldenrod;
-                        else
-                            rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.Chocolate;
-                    }
-                });
-            };
+                    n.Data.LabyrinthType = LabyrinthItemType.Wall;
+                    rectangles[n.Data.Position.X, n.Data.Position.Y].Color = Color4.Chocolate;
+                }
+            });
         }
 
         /// <summary>

@@ -53,7 +53,7 @@ namespace FreezingArcher.Game
             Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Crimson;
 
             new LabyrinthGenerator (Application.Instance.ObjectManager,
-                Application.Instance.RendererContext.Scene, Application.Instance.MessageManager, new Random().Next());
+                Application.Instance.RendererContext.Scene, Application.Instance.MessageManager, new Random().Next());// totally broken seed
            
             Application.Instance.Run ();
             Application.Instance.Destroy ();

@@ -54,8 +54,9 @@
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="GraphTest.cs" />
-    <Compile Include="LabyrinthGenerator.cs" />
-    <Compile Include="MapNode.cs" />
+    <Compile Include="Maze\MazeCell.cs" />
+    <Compile Include="Maze\MazeGenerator.cs" />
+    <Compile Include="Maze\MazeCellType.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -138,5 +139,6 @@ echo Successfully finished!</PostBuildEvent>
   <ItemGroup>
     <Folder Include="Audio\" />
     <Folder Include="Localization\" />
+    <Folder Include="Maze\" />
   </ItemGroup>
 </Project>

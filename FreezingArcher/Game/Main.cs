@@ -25,6 +25,7 @@ using FreezingArcher.Content;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
 using System;
+using FreezingArcher.Game.Maze;
 
 namespace FreezingArcher.Game
 {
@@ -51,7 +52,7 @@ namespace FreezingArcher.Game
             Application.Instance.RendererContext.Scene = new CoreScene();
             Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Crimson;
 
-            new LabyrinthGenerator (Application.Instance.ObjectManager,
+            new MazeGenerator (Application.Instance.ObjectManager,
                 Application.Instance.RendererContext.Scene, Application.Instance.MessageManager, new Random().Next());
            
             Application.Instance.Run ();

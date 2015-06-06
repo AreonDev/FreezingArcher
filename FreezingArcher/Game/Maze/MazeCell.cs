@@ -31,77 +31,41 @@ namespace FreezingArcher.Game.Maze
     public sealed class MazeCell
     {
         /// <summary>
-        /// The color of the wall.
-        /// </summary>
-        public static Color4 WallColor = Color4.DarkSalmon;
-        /// <summary>
-        /// The color of the preview wall.
-        /// </summary>
-        public static Color4 PreviewWallColor = Color4.Chocolate;
-        /// <summary>
-        /// The color of the ground.
-        /// </summary>
-        public static Color4 GroundColor = Color4.NavajoWhite;
-        /// <summary>
-        /// The final color of the ground.
-        /// </summary>
-        public static Color4 FinalGroundColor = Color4.WhiteSmoke;
-        /// <summary>
-        /// The color of an undefined cell.
-        /// </summary>
-        public static Color4 UndefinedColor = Color4.Fuchsia;
-        /// <summary>
-        /// The color of an error cell.
-        /// </summary>
-        public static Color4 ErrorColor = Color4.IndianRed;
-        /// <summary>
-        /// The color of a dead end cell.
-        /// </summary>
-        public static Color4 PathColor = Color4.DeepSkyBlue;
-        /// <summary>
-        /// The color of the portal.
-        /// </summary>
-        public static Color4 PortalColor = Color4.DarkOrchid;
-        /// <summary>
-        /// The color of the spawn.
-        /// </summary>
-        public static Color4 SpawnColor = Color4.DeepPink;
-        /// <summary>
-        /// The color of the exit.
-        /// </summary>
-        public static Color4 ExitColor = Color4.LimeGreen;
-
-        /// <summary>
         /// Initializes a new instance of the MapNode class.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="position">Position.</param>
         /// <param name="weight">Weight.</param>
         /// <param name="rectangles">Rectangles.</param>
+        /// <param name="theme">The color theme this cell should use.</param>
         /// <param name="preview">If set to <c>true</c> preview.</param>
-        public MazeCell(string name, Vector2i position, int weight, RectangleSceneObject[,] rectangles, bool preview = false)
+        public MazeCell(string name, Vector2i position, int weight, RectangleSceneObject[,] rectangles,
+            MazeColorTheme theme, bool preview = false)
         {
             Weight = weight;
             this.preview = preview;
             Name = name;
             recs = rectangles;
             Position = position;
+            this.theme = theme;
             final = false;
         }
 
         MazeCellType mazeType;
+        MazeColorTheme theme;
         bool preview;
         bool final;
         bool isPortal;
         bool isSpawn;
         bool isExit;
+        bool isPath;
 
         readonly RectangleSceneObject[,] recs;
 
         /// <summary>
         /// The type of the labyrinth item.
         /// </summary>
-        public MazeCellType MazeType
+        public MazeCellType MazeCellType
         {
             get
             {
@@ -124,7 +88,7 @@ namespace FreezingArcher.Game.Maze
         /// node.
         /// </summary>
         /// <value><c>true</c> if preview; otherwise, <c>false</c>.</value>
-        public bool Preview
+        public bool IsPreview
         {
             get
             {
@@ -141,7 +105,7 @@ namespace FreezingArcher.Game.Maze
         /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Game.Maze.MazeCell"/> is a final node.
         /// </summary>
         /// <value><c>true</c> if final; otherwise, <c>false</c>.</value>
-        public bool Final
+        public bool IsFinal
         {
             get
             {
@@ -211,6 +175,23 @@ namespace FreezingArcher.Game.Maze
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this instance is part of the path going out of the maze.
+        /// </summary>
+        /// <value><c>true</c> if this instance is path; otherwise, <c>false</c>.</value>
+        public bool IsPath
+        {
+            get
+            {
+                return isPath;
+            }
+            set
+            {
+                isPath = value;
+                updateColor();
+            }
+        }
+
+        /// <summary>
         /// Gets the position.
         /// </summary>
         /// <value>The position.</value>
@@ -226,24 +207,26 @@ namespace FreezingArcher.Game.Maze
 
         void updateColor()
         {
-            if (MazeType == MazeCellType.Wall && !Preview)
-                recs[Position.X, Position.Y].Color = WallColor;
-            else if (MazeType == MazeCellType.Wall && Preview)
-                recs[Position.X, Position.Y].Color = PreviewWallColor;
-            else if (MazeType == MazeCellType.Ground && IsPortal)
-                recs[Position.X, Position.Y].Color = PortalColor;
-            else if (MazeType == MazeCellType.Ground && IsSpawn)
-                recs[Position.X, Position.Y].Color = SpawnColor;
-            else if (MazeType == MazeCellType.Ground && IsExit)
-                recs[Position.X, Position.Y].Color = ExitColor;
-            else if (MazeType == MazeCellType.Ground && !Final)
-                recs[Position.X, Position.Y].Color = GroundColor;
-            else if (MazeType == MazeCellType.Ground && Final)
-                recs[Position.X, Position.Y].Color = FinalGroundColor;
-            else if (MazeType == MazeCellType.Undefined)
-                recs[Position.X, Position.Y].Color = UndefinedColor;
+            if (MazeCellType == MazeCellType.Wall && !IsPreview)
+                recs[Position.X, Position.Y].Color = theme.WallColor;
+            else if (MazeCellType == MazeCellType.Wall && IsPreview)
+                recs[Position.X, Position.Y].Color = theme.PreviewWallColor;
+            else if (MazeCellType == MazeCellType.Ground && IsPortal)
+                recs[Position.X, Position.Y].Color = theme.PortalColor;
+            else if (MazeCellType == MazeCellType.Ground && IsSpawn)
+                recs[Position.X, Position.Y].Color = theme.SpawnColor;
+            else if (MazeCellType == MazeCellType.Ground && IsExit)
+                recs[Position.X, Position.Y].Color = theme.ExitColor;
+            else if (MazeCellType == MazeCellType.Ground && IsPath)
+                recs[Position.X, Position.Y].Color = theme.PathColor;
+            else if (MazeCellType == MazeCellType.Ground && !IsFinal)
+                recs[Position.X, Position.Y].Color = theme.GroundColor;
+            else if (MazeCellType == MazeCellType.Ground && IsFinal)
+                recs[Position.X, Position.Y].Color = theme.FinalGroundColor;
+            else if (MazeCellType == MazeCellType.Undefined)
+                recs[Position.X, Position.Y].Color = theme.UndefinedColor;
             else
-                recs[Position.X, Position.Y].Color = ErrorColor;
+                recs[Position.X, Position.Y].Color = theme.ErrorColor;
         }
     }
 }

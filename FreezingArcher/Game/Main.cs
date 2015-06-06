@@ -52,9 +52,9 @@ namespace FreezingArcher.Game
             Application.Instance.RendererContext.Scene = new CoreScene();
             Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Crimson;
 
-            new MazeGenerator (Application.Instance.ObjectManager,
-                Application.Instance.RendererContext.Scene, Application.Instance.MessageManager, new Random().Next());
-           
+            new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
+                Application.Instance.RendererContext.Scene);
+
             Application.Instance.Run ();
             Application.Instance.Destroy ();
         }

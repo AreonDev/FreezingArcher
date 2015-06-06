@@ -20,202 +20,79 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-//#define DO_STEP
 using System;
 using System.Linq;
-using System.Diagnostics;
-using System.IO;
 using FreezingArcher.Core;
 using FreezingArcher.DataStructures.Graphs;
 using System.Collections.Generic;
-using FreezingArcher.Messaging.Interfaces;
-using FreezingArcher.Messaging;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
-using FreezingArcher.Output;
+using System.Threading;
 
 namespace FreezingArcher.Game.Maze
 {
     /// <summary>
-    /// Extension methods.
-    /// </summary>
-    public static class Extensions
-    {
-        /// <summary>
-        /// Gets the neighbour nodes.
-        /// </summary>
-        /// <returns>The neighbour nodes.</returns>
-        /// <param name="node">The node.</param>
-        /// <typeparam name="TData">Data type.</typeparam>
-        /// <typeparam name="TWeight">Weight type.</typeparam>
-        public static IEnumerable<Tuple<WeightedNode<TData, TWeight>, WeightedEdge<TData, TWeight>>>
-        GetNeighbours<TData, TWeight> (this WeightedNode<TData, TWeight> node)
-            where TWeight : IComparable
-        {
-            foreach (var e in node.Edges)
-                yield return e.FirstNode != node ?
-                    new Tuple<WeightedNode<TData, TWeight>, WeightedEdge<TData, TWeight>> (e.FirstNode, e) :
-                    new Tuple<WeightedNode<TData, TWeight>, WeightedEdge<TData, TWeight>> (e.SecondNode, e);
-        }
-    }
-
-    /// <summary>
-    /// Maze cell edge weight.
-    /// </summary>
-    public class MazeCellEdgeWeight : IComparable<MazeCellEdgeWeight>, IComparable
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Game.Maze.MazeCellEdgeWeight"/> class.
-        /// </summary>
-        /// <param name="even">If set to <c>true</c> even.</param>
-        /// <param name="direction">Direction.</param>
-        public MazeCellEdgeWeight(bool even, Direction direction)
-        {
-            Even = even;
-            Direction = direction;
-        }
-
-        /// <summary>
-        /// The even flag.
-        /// </summary>
-        public bool Even;
-
-        /// <summary>
-        /// The direction.
-        /// </summary>
-        public Direction Direction;
-
-        #region IComparable implementation
-
-        /// <summary>
-        /// Compares two values.
-        /// </summary>
-        /// <returns>The compare result.</returns>
-        /// <param name="other">The value to compare to.</param>
-        public int CompareTo (MazeCellEdgeWeight other)
-        {
-            return other != null ? Even.CompareTo (other.Even) : -1;
-        }
-
-        /// <summary>
-        /// Compares two values.
-        /// </summary>
-        /// <returns>The compare result.</returns>
-        /// <param name="obj">The value to compare to.</param>
-        public int CompareTo (object obj)
-        {
-            return CompareTo (obj as MazeCellEdgeWeight);
-        }
-
-        #endregion
-    }
-
-    /// <summary>
-    /// Direction.
-    /// </summary>
-    public enum Direction
-    {
-        /// <summary>
-        /// Unknown direction.
-        /// </summary>
-        Unknown,
-        /// <summary>
-        /// Horizontal direction.
-        /// </summary>
-        Horizontal,
-        /// <summary>
-        /// Vertical direction.
-        /// </summary>
-        Vertical,
-        /// <summary>
-        /// Diagonal direction.
-        /// </summary>
-        Diagonal
-    }
-
-    /// <summary>
     /// Labyrinth generator.
     /// </summary>
-    public sealed class MazeGenerator : IMessageConsumer
+    public sealed class MazeGenerator
     {
-        static readonly uint size = 100;
-        static readonly uint scaling = 5;
-
-        #region IMessageConsumer implementation
-
-        /// <summary>
-        /// Processes the incoming message
-        /// </summary>
-        /// <param name="msg">Message to process</param>
-        public void ConsumeMessage (IMessage msg)
-        {
-            var im = msg as InputMessage;
-            if (im != null)
-            {
-                if (im.IsActionPressed("jump"))
-                    GenerateMap(size, size);
-            }
-        }
-
-        /// <summary>
-        /// Gets the valid messages which can be used in the ConsumeMessage method
-        /// </summary>
-        /// <value>The valid messages</value>
-        public int[] ValidMessages { get; private set; }
-
-        #endregion
-
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.Maze.MazeGenerator"/> class.
         /// </summary>
         /// <param name="objmnr">Object manager.</param>
-        /// <param name="scene">Scene.</param>
-        /// <param name="msgmnr">Message manager.</param>
-        /// <param name="seed">Seed.</param>
-        /// <param name="turbulence">Turbulence factor. The higher the more straight will the maze be.</param>
-        /// <param name="portalSpawnFactor"> Portal spawn factor. The lower the more portals will be spawned.</param>
-        public MazeGenerator (ObjectManager objmnr, CoreScene scene, MessageManager msgmnr, int seed,
-            double turbulence = 2, int portalSpawnFactor = 3)
+        public MazeGenerator (ObjectManager objmnr)
         {
             objectManager = objmnr;
-            ValidMessages = new int[]{ (int)MessageId.Input };
-            this.scene = scene;
-            Turbulence = turbulence;
-            PortalSpawnFactor = portalSpawnFactor;
-            msgmnr += this;
-            rand = new Random (seed);
-            Logger.Log.AddLogEntry (LogLevel.Debug, "LabGen", "Seed: {0}", seed);
-            CreateMap (size, size);
-            DrawMaze (size, size);
+        }
+
+        Vector2i Offset = new Vector2i(0, 0);
+
+        /// <summary>
+        /// Generates the maze.
+        /// </summary>
+        /// <returns>The maze.</returns>
+        /// <param name="seed">Seed.</param>
+        /// <param name="theme">The theme of this maze.</param>
+        /// <param name="scene">Scene.</param>
+        /// <param name="sizeX">Size x.</param>
+        /// <param name="sizeY">Size y.</param>
+        /// <param name="scale">Scale.</param>
+        /// <param name="turbulence">Turbulence. The higher the more straight the maze will be.</param>
+        /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will be places</param>
+        /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
+        public Maze CreateMaze(int seed, MazeColorTheme theme, CoreScene scene = null, int sizeX = 50, int sizeY = 50, float scale = 10,
+            double turbulence = 2, int portalSpawnFactor = 5, int maximumContinuousPathLength = 20)
+        {
+            Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, theme, InitializeMaze, CreateMaze,
+                AddMazeToScene, CalculatePathToExit, turbulence, portalSpawnFactor, maximumContinuousPathLength);
+            maze.Offset = Offset;
+            maze.Init();
+            var offs = Offset;
+            offs.X += (int) (sizeX * scale);
+            //offs.Y += sizeY;
+            Offset = offs;
+
+            if (scene != null)
+                maze.AddToScene(scene);
+
+            return maze;
         }
 
         ObjectManager objectManager;
 
-        CoreScene scene;
+        #region delegates
 
-        WeightedGraph<MazeCell, MazeCellEdgeWeight> graph;
-
-        Random rand;
-
-        RectangleSceneObject[,] rectangles;
-
-        public double Turbulence { get; private set; }
-
-        public int PortalSpawnFactor { get; private set; }
-
-        /// <summary>
-        /// Generates the map.
-        /// </summary>
-        /// <param name="maxX">The x coordinate.</param>
-        /// <param name="maxY">The y coordinate.</param>
-        public void GenerateMap (uint maxX, uint maxY)
+        static void CreateMaze (ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref Random rand,
+            int maximumContinuousPathLength, double turbulence, int portalSpawnFactor)
         {
             WeightedNode<MazeCell, MazeCellEdgeWeight> node = null;
             WeightedNode<MazeCell, MazeCellEdgeWeight> lastNode = null;
             Direction lastDirection = Direction.Unknown;
             // set initial edge
             WeightedEdge<MazeCell, MazeCellEdgeWeight> edge = graph.Edges [rand.Next (0, graph.Edges.Count)];
+            int pathLength = 0;
+            int minimumBacktrack = 0;
 
             do
             {
@@ -228,10 +105,11 @@ namespace FreezingArcher.Game.Maze
                     node = edge.FirstNode != node ? edge.FirstNode : edge.SecondNode;
 
                     // if new node is not a ground set it to ground
-                    if (node.Data.MazeType != MazeCellType.Ground)
+                    if (node.Data.MazeCellType != MazeCellType.Ground)
                     {
-                        node.Data.MazeType = MazeCellType.Ground;
-                        node.Data.Preview = false;
+                        node.Data.MazeCellType = MazeCellType.Ground;
+                        node.Data.IsPreview = false;
+                        pathLength++;
                     }
 
                     // set walls surrounding last node to non-preview
@@ -239,9 +117,9 @@ namespace FreezingArcher.Game.Maze
                     {
                         lastNode.GetNeighbours ().ForEach ((n, e) =>
                         {
-                            if (n.Data.MazeType == MazeCellType.Wall &&
+                            if (n.Data.MazeCellType == MazeCellType.Wall &&
                                 !node.GetNeighbours ().Any ((n2, e2) => n == n2 && e2.Weight.Even))
-                                n.Data.Preview = false;
+                                n.Data.IsPreview = false;
                         });
                     }
                     else
@@ -251,10 +129,10 @@ namespace FreezingArcher.Game.Maze
                 // build walls around new node and set correct preview state on those
                 node.GetNeighbours ().ForEach ((n, e) =>
                 {
-                    if (n.Data.MazeType == MazeCellType.Undefined)
+                    if (n.Data.MazeCellType == MazeCellType.Undefined)
                     {
-                        n.Data.MazeType = MazeCellType.Wall;
-                        n.Data.Preview = true;
+                        n.Data.MazeCellType = MazeCellType.Wall;
+                        n.Data.IsPreview = true;
                     }
                 });
 
@@ -264,13 +142,19 @@ namespace FreezingArcher.Game.Maze
                 do
                 {
                     // get next edge
-                    edge = node.GetNeighbours ().Where ((n, e) =>
-                        (n.Data.MazeType == MazeCellType.Undefined || n.Data.Preview)
-                        && !n.Data.Final && e.Weight.Even).MinElem ((n, e) =>
-                            n.Data.Weight * (e.Weight.Direction == lastDirection ? Turbulence : 1 / Turbulence)).Item2;
+                    edge = null;
+                    if (pathLength < maximumContinuousPathLength)
+                    {
+                        edge = node.GetNeighbours ().Where ((n, e) =>
+                            (n.Data.MazeCellType == MazeCellType.Undefined || n.Data.IsPreview) && !n.Data.IsFinal && e.Weight.Even)
+                            .MinElem ((n, e) =>
+                                n.Data.Weight * (e.Weight.Direction == lastDirection ? turbulence : 1 / turbulence)).Item2;
+                    }
+                    else
+                        minimumBacktrack = maximumContinuousPathLength / 3;
 
                     // are we at an dead end? if true set IsPortal randomly
-                    node.Data.IsPortal |= !backtrack && edge == null && rand.Next() % PortalSpawnFactor == 0;
+                    node.Data.IsPortal |= !backtrack && edge == null && rand.Next() % portalSpawnFactor == 0;
 
                     // backtracking
                     backtrack = false;
@@ -279,36 +163,45 @@ namespace FreezingArcher.Game.Maze
                         // iterate over all surrounding nodes
                         node.GetNeighbours ().ForEach ((n, e) =>
                         {
-                            node.Data.Final = true;
+                            node.Data.IsFinal = true;
                             // can we go back?
-                            if (n.Data.MazeType == MazeCellType.Ground && !n.Data.Final && e.Weight.Even)
+                            if (n.Data.MazeCellType == MazeCellType.Ground && !n.Data.IsFinal && e.Weight.Even)
                             {
                                 // set walls of current node to non-preview to avoid artifacts
                                 node.GetNeighbours ().ForEach ((n_old, e_old) => 
                                     n_old.GetNeighbours ().ForEach ((n2_old, e2_old) =>
                                 {
-                                    if (n2_old.Data.MazeType == MazeCellType.Wall && n2_old.Data.Preview)
-                                        n2_old.Data.Preview = false;
+                                    if (n2_old.Data.MazeCellType == MazeCellType.Wall && n2_old.Data.IsPreview)
+                                        n2_old.Data.IsPreview = false;
                                 }));
                                 // go to next node
                                 node = n;
 
+                                if (minimumBacktrack > 0)
+                                {
+                                    backtrack = true;
+                                    pathLength = 0;
+                                    minimumBacktrack--;
+                                    return false;
+                                }
+
                                 // search for a wall which has undefined cells around it
                                 node.GetNeighbours ().FirstOrDefault ((n2, e2) =>
                                 {
-                                    if (n2.Data.MazeType == MazeCellType.Wall && e2.Weight.Even &&
+                                    if (n2.Data.MazeCellType == MazeCellType.Wall && e2.Weight.Even &&
                                             n2.GetNeighbours ().Any ((n3, e3) =>
-                                            n3.Data.MazeType == MazeCellType.Undefined && e3.Weight.Even &&
+                                            n3.Data.MazeCellType == MazeCellType.Undefined && e3.Weight.Even &&
                                             n3.GetNeighbours ().Count ((n4, e4) =>
-                                                n4.Data.MazeType == MazeCellType.Ground) <= 2))
+                                                n4.Data.MazeCellType == MazeCellType.Ground) <= 2))
                                     {
-                                        n2.Data.Preview = true;
+                                        n2.Data.IsPreview = true;
                                         return true;
                                     }
                                     return false;
                                 });
                                 // if we have not returned yet continue backtracking
                                 backtrack = true;
+                                pathLength = 0;
                                 // stop this loop
                                 return false;
                             }
@@ -319,29 +212,26 @@ namespace FreezingArcher.Game.Maze
                     else
                         lastDirection = edge.Weight.Direction;
                 } while (backtrack);
-            } while (graph.Nodes.Count (n => n.Data.MazeType == MazeCellType.Ground && !n.Data.Final) != 0);
+            } while (graph.Nodes.Count (n => n.Data.MazeCellType == MazeCellType.Ground && !n.Data.IsFinal) != 0);
 
             // set undefined cells to walls
             graph.Nodes.ForEach (n =>
             {
-                if (n.Data.MazeType == MazeCellType.Undefined)
-                    n.Data.MazeType = MazeCellType.Wall;
+                if (n.Data.MazeCellType == MazeCellType.Undefined)
+                    n.Data.MazeCellType = MazeCellType.Wall;
             });
 
             // set exit node
             var borderNodes = graph.Nodes.Where (n => n.Edges.Count < 8 && n.GetNeighbours ().Any (
-                (n2, e2) => n2.Data.MazeType == MazeCellType.Ground && e2.Weight.Even)).ToList();
+                (n2, e2) => n2.Data.MazeCellType == MazeCellType.Ground && e2.Weight.Even && !n2.Data.IsPortal)).ToList();
             var exit = borderNodes[rand.Next(0, borderNodes.Count)].Data;
-            exit.MazeType = MazeCellType.Ground;
+            exit.MazeCellType = MazeCellType.Ground;
             exit.IsExit = true;
         }
 
-        /// <summary>
-        /// Creates the map.
-        /// </summary>
-        /// <param name="x">The x coordinate.</param>
-        /// <param name="y">The y coordinate.</param>
-        public void CreateMap (uint x, uint y)
+        static void InitializeMaze (ref ObjectManager objectManager,
+            ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref RectangleSceneObject[,] rectangles,
+            ref Random rand, MazeColorTheme theme, uint x, uint y)
         {
             rectangles = new RectangleSceneObject[x, y];
             graph = objectManager.CreateOrRecycle<WeightedGraph<MazeCell, MazeCellEdgeWeight>> ();
@@ -357,7 +247,7 @@ namespace FreezingArcher.Game.Maze
 
                 for (int i = 0; i < x; i++)
                 {
-                    mapnode = new MazeCell (k + "." + i, new Vector2i (i, k), rand.Next (), rectangles);
+                    mapnode = new MazeCell (k + "." + i, new Vector2i (i, k), rand.Next (), rectangles, theme);
 
                     edges.Clear ();
 
@@ -367,7 +257,7 @@ namespace FreezingArcher.Game.Maze
 
                     if (i > 0)
                         edges.Add (new Pair<WeightedNode<MazeCell, MazeCellEdgeWeight>,
-                            MazeCellEdgeWeight> (nodes [i - 1], new MazeCellEdgeWeight (true, Direction.Horizontal)));
+                            MazeCellEdgeWeight> (nodes [i - 1], new MazeCellEdgeWeight(true, Direction.Horizontal)));
 
                     if (i > 0 && k > 0)
                     {
@@ -383,12 +273,8 @@ namespace FreezingArcher.Game.Maze
             }
         }
 
-        /// <summary>
-        /// Draws the maze.
-        /// </summary>
-        /// <param name="maxX">Max x.</param>
-        /// <param name="maxY">Max y.</param>
-        public void DrawMaze (uint maxX, uint maxY)
+        static void AddMazeToScene (ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
+            ref RectangleSceneObject[,] rectangles, ref CoreScene scene, float scaling, uint maxX, int xOffs, int yOffs)
         {
             int x = 0;
             int y = 0;
@@ -399,16 +285,16 @@ namespace FreezingArcher.Game.Maze
             {
                 rectangles [x, y] = new RectangleSceneObject ();
 
-                rectangles [x, y].Position = new Vector3 (x * scale.X, y * scale.Y, 0.0f);
+                rectangles [x, y].Position = new Vector3 (x * scale.X + xOffs, y * scale.Y + yOffs, 0.0f);
                 rectangles [x, y].Scaling = scale;
                 node.Data.Init ();
 
 
                 if (node.Edges.Count < 8)
                 {
-                    node.Data.MazeType = MazeCellType.Wall;
-                    node.Data.Preview = false;
-                    node.Data.Final = true;
+                    node.Data.MazeCellType = MazeCellType.Wall;
+                    node.Data.IsPreview = false;
+                    node.Data.IsFinal = true;
                 }
 
                 scene.Objects.Add (rectangles [x, y]);
@@ -421,34 +307,47 @@ namespace FreezingArcher.Game.Maze
             }
         }
 
-        /// <summary>
-        /// Writes graph as SVG.
-        /// </summary>
-        public void WriteAsSVG ()
+        static void CalculatePathToExit(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph)
         {
-            var file = new StreamWriter ("graph.dot");
+            WeightedNode<MazeCell, MazeCellEdgeWeight> node = null;
+            WeightedNode<MazeCell, MazeCellEdgeWeight> lastNode; 
+            graph.Nodes.ForEach(n => {
+                if (n.Data.MazeCellType == MazeCellType.Ground)
+                {
+                    n.Data.IsFinal = false;
+                    n.Data.IsPath = false;
 
-            file.WriteLine ("graph G {");
-            foreach (var edge in graph.Edges)
-            {
-                file.WriteLine ("{0} -- {1}", edge.FirstNode.Data.Name, edge.SecondNode.Data.Name);
-            }
-            file.WriteLine ("}");
-
-            file.Close ();
-
-            var proc = new Process {
-                StartInfo = new ProcessStartInfo {
-                    FileName = "/usr/bin/dot",
-                    Arguments = "-Tsvg " + Environment.CurrentDirectory + "/graph.dot -o " +
-                    Environment.CurrentDirectory + "/graph.svg",
-                    CreateNoWindow = true
+                    if (n.Data.IsSpawn)
+                        node = n;
                 }
-            };
+            });
 
-            proc.Start ();
-            proc.WaitForExit ();
-            new FileInfo (Environment.CurrentDirectory + "/graph.dot").Delete ();
+            do
+            {
+                node.Data.IsPath = true;
+                lastNode = node;
+                node = lastNode.GetNeighbours().FirstOrDefault((n, e) =>
+                    n.Data.MazeCellType == MazeCellType.Ground && !n.Data.IsPath && !n.Data.IsFinal && e.Weight.Even).Item1;
+                
+                while (node == null)
+                {
+                    lastNode.Data.IsFinal = true;
+                    lastNode.Data.IsPath = false;
+                    lastNode = lastNode.GetNeighbours ().FirstOrDefault ((n, e) =>
+                        n.Data.MazeCellType == MazeCellType.Ground && n.Data.IsPath && e.Weight.Even).Item1;
+                    node = lastNode.GetNeighbours ().FirstOrDefault ((n, e) =>
+                        n.Data.MazeCellType == MazeCellType.Ground && !n.Data.IsPath && !n.Data.IsFinal && e.Weight.Even).Item1;
+                }
+            } while (!node.Data.IsExit);
+
+            graph.Nodes.ForEach(n => {
+                if (n.Data.MazeCellType == MazeCellType.Ground)
+                {
+                    n.Data.IsFinal = true;
+                    n.Data.IsPreview = false;
+                }
+            });
         }
+        #endregion
     }
 }

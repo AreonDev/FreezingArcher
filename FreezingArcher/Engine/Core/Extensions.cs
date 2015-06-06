@@ -154,7 +154,8 @@ namespace FreezingArcher.Core
         public static Tuple<T1, T2> FirstOrDefault<T1, T2>(this IEnumerable<Tuple<T1, T2>> enumerable,
             Func<T1, T2, bool> predicate)
         {
-            return enumerable.FirstOrDefault(i => predicate(i.Item1, i.Item2));
+            var res = enumerable.FirstOrDefault(i => predicate(i.Item1, i.Item2));
+            return res ?? new Tuple<T1, T2>(default(T1), default(T2));
         }
 
         /// <summary>

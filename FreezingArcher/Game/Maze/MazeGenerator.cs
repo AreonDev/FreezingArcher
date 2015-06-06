@@ -89,8 +89,9 @@ namespace FreezingArcher.Game.Maze
             WeightedNode<MazeCell, MazeCellEdgeWeight> node = null;
             WeightedNode<MazeCell, MazeCellEdgeWeight> lastNode = null;
             Direction lastDirection = Direction.Unknown;
-            // set initial edge
-            WeightedEdge<MazeCell, MazeCellEdgeWeight> edge = graph.Edges [rand.Next (0, graph.Edges.Count)];
+            // set initial edge (exclude surounding wall)
+            var edges = graph.Edges.Where(e => !e.FirstNode.Data.IsFinal && !e.SecondNode.Data.IsFinal);
+            WeightedEdge<MazeCell, MazeCellEdgeWeight> edge = edges.ElementAt(rand.Next (0, edges.Count()));
             int pathLength = 0;
             int minimumBacktrack = 0;
 

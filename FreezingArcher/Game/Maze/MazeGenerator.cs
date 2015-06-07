@@ -280,7 +280,11 @@ namespace FreezingArcher.Game.Maze
             int x = 0;
             int y = 0;
 
-            Vector3 scale = new Vector3 (scaling, scaling, 0);
+            SceneObjectArray scnobjarr = new SceneObjectArray ("RectangleSceneObject_Filled");
+            scnobjarr.LayoutLocationOffset = 3;
+            scene.AddObject (scnobjarr);
+
+            Vector3 scale = new Vector3 (scaling, scaling, 1);
 
             foreach (var node in (IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>>) graph)
             {
@@ -288,6 +292,7 @@ namespace FreezingArcher.Game.Maze
 
                 rectangles [x, y].Position = new Vector3 (x * scale.X + xOffs, y * scale.Y + yOffs, 0.0f);
                 rectangles [x, y].Scaling = scale;
+                rectangles [x, y].Color = Color4.Fuchsia;
                 node.Data.Init ();
 
 
@@ -298,7 +303,7 @@ namespace FreezingArcher.Game.Maze
                     node.Data.IsFinal = true;
                 }
 
-                scene.Objects.Add (rectangles [x, y]);
+                scnobjarr.AddObject (rectangles [x, y]);
 
                 if (++x >= maxX)
                 {

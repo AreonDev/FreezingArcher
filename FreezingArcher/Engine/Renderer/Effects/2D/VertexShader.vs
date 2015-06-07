@@ -6,7 +6,7 @@ layout(location = 2) in vec2 InTexCoord1;
 
 layout(location = 3) in mat4 InInstanceWorldMatrix;
 layout(location = 7) in vec4 InInstanceColor;
-//layout(location = 8) in vec4 InOther;
+layout(location = 8) in vec4 InOther;
 
 out gl_PerVertex
 {

@@ -86,7 +86,7 @@ namespace FreezingArcher.Game
     public class LabyrinthGenerator : IMessageConsumer
     {
         static readonly uint size = 100;
-        static readonly uint scaling = 5;
+        static readonly uint scaling = 3;
 
         #region IMessageConsumer implementation
 
@@ -128,7 +128,7 @@ namespace FreezingArcher.Game
 
             scnobjarr = new SceneObjectArray ("RectangleSceneObject_Filled");
             scnobjarr.LayoutLocationOffset = 3;
-            scene.AddObject (scnobjarr);
+            this.scene.AddObject (scnobjarr);
 
             msgmnr += this;
             rand = new Random (seed);
@@ -318,14 +318,16 @@ namespace FreezingArcher.Game
             int x = 0;
             int y = 0;
 
-            Vector3 scale = new Vector3 (scaling, scaling, 0);
+            Vector3 scale = new Vector3 (scaling, scaling, 1);
 
             foreach (var node in (IEnumerable<MapNode>) graph)
             {
                 rectangles [x, y] = new RectangleSceneObject ();
 
-                rectangles [x, y].Position = new Vector3 (x * scale.X, y * scale.Y, 0.0f);
+                rectangles [x, y].Position = new Vector3 (x * scale.X, y * scale.Y, 1.0f);
                 rectangles [x, y].Scaling = scale;
+                rectangles [x, y].Color = Color4.Fuchsia;
+
                 node.Init ();
 
                 scnobjarr.AddObject (rectangles [x, y]);

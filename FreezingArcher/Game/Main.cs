@@ -50,7 +50,7 @@ namespace FreezingArcher.Game
             test.AddComponent<TransformComponent>();
 
             Application.Instance.RendererContext.Scene = new CoreScene();
-            Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Black;
+            Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Moccasin;
 
             new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
                 Application.Instance.RendererContext.Scene);

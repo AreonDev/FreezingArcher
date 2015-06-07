@@ -26,7 +26,9 @@ using Assimp;
 using Assimp.Configs;
 using System.Collections.Generic;
 
+using Pencil.Gaming.Graphics;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer.Scene.SceneObjects;
 
 namespace FreezingArcher.Renderer
 {
@@ -34,11 +36,24 @@ namespace FreezingArcher.Renderer
     {
         private AssimpContext m_AssimpContext;
 
+
+        private CoreScene PrivateScene;
         /// <summary>
         /// Gets or sets the scene.
         /// </summary>
         /// <value>The scene.</value>
-        public CoreScene Scene {get; set;}
+        public CoreScene Scene 
+        {
+            get
+            {
+                return PrivateScene;
+            }
+            set
+            {
+                PrivateScene = value;
+                PrivateScene.Init(this);
+            }
+        }
 
         public RendererContext(MessageManager mssgmngr) : base(mssgmngr)
         {
@@ -176,6 +191,8 @@ namespace FreezingArcher.Renderer
             msh.m_VertexBufferArray.UnbindVertexBufferArray();
         }
 
+
+
         /// <summary>
         /// FOR THE FUCKING FIN
         /// </summary>
@@ -185,9 +202,11 @@ namespace FreezingArcher.Renderer
             {
                 this.Clear(Scene.BackgroundColor);
 
-                foreach (ISceneObject so in Scene.Objects)
+                foreach (SceneObject obj in Scene.GetObjects())
                 {
-                    so.Draw(this);
+                    obj.Update();
+
+                    obj.Draw(this);
                 }
             }
         }

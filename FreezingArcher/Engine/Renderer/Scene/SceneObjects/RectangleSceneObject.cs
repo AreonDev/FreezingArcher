@@ -25,38 +25,73 @@ using FreezingArcher.Math;
 
 namespace FreezingArcher.Renderer.Scene.SceneObjects
 {
-    public class RectangleSceneObject : ISceneObject
+    public class RectangleSceneObject : SceneObject
     {
-        public Vector3 Position{get; set;}
-        public Vector3 Rotation{ get; set;}
+        private Color4 m_Color;
 
-        /// <summary>
-        /// Size of the Rectangle
-        /// </summary>
-        /// <value>The scaling.</value>
-        public Vector3 Scaling{ get; set;}
+        public Color4 Color
+        { 
+            get
+            {
+                return m_Color;
+            }
 
-        public float LineWidth{ get; set;}
-        public bool Filled{ get; set;}
-        public Color4 Color{ get; set;}
+            set
+            {
+                m_Color = value;
+                HasChanged = true;
+            }
+        }
+
+        public float LineWidth{ get; private set;}
+        public bool Filled{ get; private set;}
+
+        public RectangleSceneObject(float lineWidth, bool filled) : base()
+        {
+            LineWidth = lineWidth;
+            Filled = filled;
+        }
 
         public RectangleSceneObject()
         {
+            LineWidth = 1;
+            Filled = true;
         }
 
-        public void Draw(RendererContext rc)
+        public override void Draw(RendererContext rc)
         {
             Vector2 pos = Position.Xy;
             Vector2 size = Scaling.Xy;
             Color4 col = Color;
 
-            if (Filled)
+            if (!Filled)
                 rc.DrawRectangleAbsolute(ref pos, ref size, LineWidth, ref col);
             else
-                rc.DrawFilledRectangleAbsolute(ref pos, ref size, ref col);
+                rc.DrawFilledRectangleAbsolute(ref pos, ref size, ref col, 1);
         }
 
-        public string GetName() {return "RectangleSceneObject";}
+        public override SceneObjectArrayInstanceData GetData()
+        {
+            SceneObjectArrayInstanceData data = base.GetData();
+            data.Other1 = new Vector4(Color.R, Color.G, Color.B, Color.A);
+
+            return data;
+        }
+
+        public override void DrawInstanced(RendererContext rc, int count)
+        {
+            Vector2 pos = Vector2.Zero;
+            Vector2 size = new Vector2(1, 1);
+            Color4 col = new Color4(0, 0, 0, 0);
+
+            if (!Filled)
+                rc.DrawRectangleAbsolute(ref pos, ref size, LineWidth, ref col);
+            else
+                rc.DrawFilledRectangleAbsolute(ref pos, ref size, ref col, count);
+        }
+
+        public override string GetName() {return "RectangleSceneObject_"+
+            (Filled?"Filled":("Wired_"+LineWidth));}
     }
 }
 

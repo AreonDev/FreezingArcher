@@ -65,16 +65,6 @@ namespace FreezingArcher.Renderer
         FrontAndBack = ((int)0x0408)            ,
     }
 
-    internal class SomeResources
-    {
-        //public static Assimp.AssimpContext AssimpCnt;
-
-        static SomeResources()
-        {
-            //AssimpCnt = new Assimp.AssimpContext();
-        }
-    }
-
     public class RendererCore : Messaging.Interfaces.IMessageConsumer
     {
         private struct MatricesBlock2D
@@ -257,7 +247,7 @@ namespace FreezingArcher.Renderer
 
             //Init 2D Rendering Effect
             Create2DEffect("Internal_2D_Effect");
-            GenerateBuffer(FreezingArcher.Math.Color4.Black);
+            GenerateBuffer();
 
             return true;
         }
@@ -314,6 +304,23 @@ namespace FreezingArcher.Renderer
             VertexBuffer vb = new VertexBuffer(name, vbo, size, rbu);
 
             vb.VertexCount = data.Length;
+
+            _GraphicsResourceManager.AddResource(vb);
+
+            return vb;
+        }
+
+        public VertexBuffer CreateVertexBuffer(IntPtr data, int size, RendererBufferUsage rbu, string name)
+        {
+            int vbo = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)size, data, (BufferUsageHint)rbu);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            VertexBuffer vb = new VertexBuffer(name, vbo, size, rbu);
+
+            vb.VertexCount = size;
 
             _GraphicsResourceManager.AddResource(vb);
 
@@ -772,6 +779,40 @@ namespace FreezingArcher.Renderer
             Begin();
         }
 
+        public void EnableVertexAttribute(int location)
+        {
+            GL.EnableVertexAttribArray(location);
+        }
+
+        public void DisableVertexAttribute(int location)
+        {
+            GL.DisableVertexAttribArray(location);
+        }
+
+        public void VertexAttributePointer(VertexBufferLayoutKind vblk)
+        {
+
+
+            GL.VertexAttribPointer(vblk.AttributeID, vblk.AttributeSize, (VertexAttribPointerType)vblk.AttributeType, vblk.Normalized, vblk.Stride, (IntPtr)vblk.Offset);
+        }
+
+        public void VertexAttributeDivisor(int location, int divisor)
+        {
+            GL.VertexAttribDivisor(location, divisor);
+        }
+
+        public void CopyBuffer(GraphicsResource source, GraphicsResource dest, int size, int readoffset, int writeoffset)
+        {
+            GL.BindBuffer(BufferTarget.CopyReadBuffer, source.ID);
+            GL.BindBuffer(BufferTarget.CopyReadBuffer, dest.ID);
+
+            GL.CopyBufferSubData(BufferTarget.CopyReadBuffer, BufferTarget.CopyWriteBuffer, (IntPtr)readoffset,
+                (IntPtr)writeoffset, (IntPtr)size);
+
+            GL.BindBuffer(BufferTarget.CopyReadBuffer, 0);
+            GL.BindBuffer(BufferTarget.CopyWriteBuffer, 0);
+        }
+
         public void DrawArrays(int offset, int count, RendererBeginMode bm)
         {
             GL.DrawArrays((BeginMode)bm, offset, count);
@@ -782,24 +823,33 @@ namespace FreezingArcher.Renderer
             GL.DrawElements((BeginMode)bm, count, (DrawElementsType)det, offset);
         }
 
+        public void DrawElementsInstanced(int offset, int count, RendererIndexType det, RendererBeginMode bm, int primcount)
+        {
+            GL.DrawElementsInstanced((BeginMode)bm, count, (DrawElementsType)det, IntPtr.Zero, primcount);
+        }
+
+        public void DrawArraysInstanced(RendererBeginMode bm, int offset, int count, int primcount)
+        {
+            GL.DrawArraysInstanced((BeginMode)bm, offset, count, primcount);
+        }
 
         private VertexBuffer _2DVertexBuffer;
         private VertexBufferArray _2DVertexBufferArray;
 
-        private unsafe void GenerateBuffer(FreezingArcher.Math.Color4 color)
+        private unsafe void GenerateBuffer(/*FreezingArcher.Math.Color4 color*/)
         {
             Vertex2D[] v2d = new Vertex2D[9];
 
-            v2d[0] = new Vertex2D(new Vector3(0.0f, 0.0f, -5.0f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 0.0f));
-            v2d[1] = new Vertex2D(new Vector3(1.0f, 0.0f, -5.0f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(1.0f, 0.0f));
-            v2d[2] = new Vertex2D(new Vector3(0.0f, 1.0f, -5.0f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 1.0f));
-            v2d[3] = new Vertex2D(new Vector3(0.0f, 1.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 1.0f));
-            v2d[4] = new Vertex2D(new Vector3(1.0f, 0.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(1.0f, 0.0f));
-            v2d[5] = new Vertex2D(new Vector3(1.0f, 1.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(1.0f, 1.0f));
+            v2d[0] = new Vertex2D(new Vector3(0.0f, 0.0f, -5.0f), Vector4.Zero, new Vector2(0.0f, 0.0f));
+            v2d[1] = new Vertex2D(new Vector3(1.0f, 0.0f, -5.0f), Vector4.Zero, new Vector2(1.0f, 0.0f));
+            v2d[2] = new Vertex2D(new Vector3(0.0f, 1.0f, -5.0f), Vector4.Zero, new Vector2(0.0f, 1.0f));
+            v2d[3] = new Vertex2D(new Vector3(0.0f, 1.0f, -5f), Vector4.Zero, new Vector2(0.0f, 1.0f));
+            v2d[4] = new Vertex2D(new Vector3(1.0f, 0.0f, -5f), Vector4.Zero, new Vector2(1.0f, 0.0f));
+            v2d[5] = new Vertex2D(new Vector3(1.0f, 1.0f, -5f), Vector4.Zero, new Vector2(1.0f, 1.0f));
 
-            v2d[6] = new Vertex2D(new Vector3(0.0f, 0.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 0.0f));
-            v2d[7] = new Vertex2D(new Vector3(-1.0f, -1.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 0.0f));
-            v2d[8] = new Vertex2D(new Vector3(1.0f, -1.0f, -5f), new Vector4(color.R, color.G, color.B, color.A), new Vector2(0.0f, 0.0f));
+            v2d[6] = new Vertex2D(new Vector3(0.0f, 0.0f, -5f), Vector4.Zero, new Vector2(0.0f, 0.0f));
+            v2d[7] = new Vertex2D(new Vector3(-1.0f, -1.0f, -5f), Vector4.Zero, new Vector2(0.0f, 0.0f));
+            v2d[8] = new Vertex2D(new Vector3(1.0f, -1.0f, -5f), Vector4.Zero, new Vector2(0.0f, 0.0f));
 
             VertexBufferLayoutKind[] vblk = new VertexBufferLayoutKind[3];
             vblk[0].AttributeID = 0;
@@ -920,7 +970,7 @@ namespace FreezingArcher.Renderer
             GL.Disable(EnableCap.Blend);
         }
 
-        private void DrawFilledRectangle(ref Vector2 position, ref Vector2 size, ref Vector2 screen_size, ref FreezingArcher.Math.Color4 color, bool relative = false)
+        private void DrawFilledRectangle(ref Vector2 position, ref Vector2 size, ref Vector2 screen_size, ref FreezingArcher.Math.Color4 color, int count = 1, bool relative = false)
         {
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
@@ -942,7 +992,10 @@ namespace FreezingArcher.Renderer
 
             _2DEffect.BindPipeline();
 
-            DrawArrays(0, 6, RendererBeginMode.Triangles);
+            if (count > 1)
+                DrawArraysInstanced(RendererBeginMode.Triangles, 0, 6, count);
+            else
+                DrawArrays(0, 6, RendererBeginMode.Triangles);
 
             _2DUniformBuffer.UnbindBuffer();
 
@@ -1048,25 +1101,25 @@ namespace FreezingArcher.Renderer
             GL.Disable(EnableCap.Blend);
         }
 
-        public void DrawRectangleAbsolute(ref Vector2 position, ref Vector2 size, float line_width, ref FreezingArcher.Math.Color4 color)
+        public void DrawRectangleAbsolute(ref Vector2 position, ref Vector2 size, float line_width, ref FreezingArcher.Math.Color4 color, int count = 1)
         {
             Vector2 vs = new FreezingArcher.Math.Vector2(ViewportSize.X, ViewportSize.Y);
 
             DrawRectangle(ref position, ref size, ref vs, line_width, ref color);
         }
 
-        public void DrawRectangleRelative(ref Vector2 position, ref Vector2 size, float line_width, ref FreezingArcher.Math.Color4 color)
+        public void DrawRectangleRelative(ref Vector2 position, ref Vector2 size, float line_width, ref FreezingArcher.Math.Color4 color, int count = 1)
         {
             Vector2 vs = new FreezingArcher.Math.Vector2(1.0f, 1.0f);
 
             DrawRectangle(ref position, ref size, ref vs, line_width, ref color, true);
         }
 
-        public void DrawFilledRectangleAbsolute(ref Vector2 position, ref Vector2 size, ref FreezingArcher.Math.Color4 color)
+        public void DrawFilledRectangleAbsolute(ref Vector2 position, ref Vector2 size, ref FreezingArcher.Math.Color4 color, int count = 1)
         {
             Vector2 vs = new FreezingArcher.Math.Vector2(ViewportSize.X, ViewportSize.Y);
 
-            DrawFilledRectangle(ref position, ref size, ref vs, ref color);
+            DrawFilledRectangle(ref position, ref size, ref vs, ref color, count);
         }
 
         public void DrawSpriteAbsolute(Sprite spr)
@@ -1076,11 +1129,11 @@ namespace FreezingArcher.Renderer
             DrawSprite(ref vs, spr);
         }
 
-        public void DrawFilledRectangleRelaive(ref Vector2 position, ref Vector2 size, ref FreezingArcher.Math.Color4 color)
+        public void DrawFilledRectangleRelaive(ref Vector2 position, ref Vector2 size, ref FreezingArcher.Math.Color4 color, int count)
         {
             Vector2 vs = new FreezingArcher.Math.Vector2(1.0f, 1.0f);
 
-            DrawFilledRectangle(ref position, ref size, ref vs, ref color, true);
+            DrawFilledRectangle(ref position, ref size, ref vs, ref color, count, true);
         }
 
         public void DrawSpriteRelative(Sprite spr)

@@ -1,5 +1,5 @@
 ﻿//
-//  SceneObject.cs
+//  CubeSceneObject.cs
 //
 //  Author:
 //       dboeg <${AuthorEmail}>
@@ -21,19 +21,25 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
-using FreezingArcher.Math;
 
-namespace FreezingArcher.Renderer.Scene
+namespace FreezingArcher.Renderer.Scene.SceneObjects
 {
-    public interface ISceneObject
+    public class CubeSceneObject
     {
-        Vector3 Position {get ; set;}
-        Vector3 Rotation{ get; set;}
-        Vector3 Scaling {get; set;}
+        public CubeSceneObject()
+        {
 
-        void Draw(RendererContext rc);
+        }
 
-        string GetName();
+        public virtual void Draw(RendererContext rc)
+        {
+
+        }
+
+        public virtual string GetName()
+        {
+            return "CubeSceneObject";
+        }
     }
 }
 

@@ -80,6 +80,15 @@ namespace FreezingArcher.Renderer
             return GL.MapBufferRange(BufferTarget.ArrayBuffer, (IntPtr)offset, (IntPtr)size, bam);
         }
 
+        public void Clear()
+        {
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+
+            GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)0, (IntPtr)SizeInBytes, IntPtr.Zero);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        }
+
         public void UpdateBuffer<T>(T[] data, int size) where T : struct
         {
             if (!Created)
@@ -94,6 +103,18 @@ namespace FreezingArcher.Renderer
 
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)SizeInBytes, IntPtr.Zero, BufferUsageHint.StreamDraw);
             GL.BufferData<T>(BufferTarget.ArrayBuffer, (IntPtr)SizeInBytes, data, BufferUsageHint.StreamDraw);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        }
+
+        public void UpdateSubBuffer<T>(T[] data, int offset, int size) where T : struct
+        {
+            if (!Created)
+                throw new Exception("Resource is not created!");
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+
+            GL.BufferSubData<T>(BufferTarget.ArrayBuffer, (IntPtr)offset, (IntPtr)size, data);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }

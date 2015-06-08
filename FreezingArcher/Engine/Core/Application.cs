@@ -547,7 +547,9 @@ namespace FreezingArcher.Core
             {
                 PeriodicInputTask.Stop ();
                 PeriodicUpdateTask.Stop ();
+                PeriodicFramecounterTask.Stop (); 
                 updateStopwatch.Stop ();
+                frameStopwatch.Stop();
                 AudioManager.Dispose ();
                 Window.Destroy ();
             }

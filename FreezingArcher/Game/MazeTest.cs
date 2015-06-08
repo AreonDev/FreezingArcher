@@ -55,7 +55,7 @@ namespace FreezingArcher.Game
             maze[1] = mazeGenerator.CreateMaze(rand.Next(), MazeColorTheme.Underworld, scene);
 
             rect = new RectangleSceneObject();
-            rect.Color = Color4.Coral;
+            rect.Color = Color4.CadetBlue;
             rect.Position = new Vector3(4, 4, 0);
             rect.Scaling = new Vector3(50, 50, 1);
             scene.AddObject(rect);

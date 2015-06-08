@@ -292,7 +292,6 @@ namespace FreezingArcher.Game.Maze
 
                 rectangles [x, y].Position = new Vector3 (x * scale.X + xOffs, y * scale.Y + yOffs, 0.0f);
                 rectangles [x, y].Scaling = scale;
-                rectangles [x, y].Color = Color4.Fuchsia;
                 node.Data.Init ();
 
 

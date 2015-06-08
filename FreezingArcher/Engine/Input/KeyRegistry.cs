@@ -52,8 +52,9 @@ namespace FreezingArcher.Input
             Keys.Add ("backward", Key.S);
             Keys.Add ("left", Key.A);
             Keys.Add ("right", Key.D);
-            Keys.Add ("up", Key.E);
-            Keys.Add ("down", Key.Q);
+            Keys.Add ("inventory", Key.E);
+            Keys.Add ("drop", Key.Q);
+            Keys.Add ("frame", Key.F); 
             Keys.Add ("sneek", Key.LeftShift);
             Keys.Add ("run", Key.LeftControl);
             Keys.Add ("close", Key.Escape);

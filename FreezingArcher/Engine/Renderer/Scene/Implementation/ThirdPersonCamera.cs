@@ -85,11 +85,11 @@ namespace FreezingArcher.Renderer.Scene
                     moveZ (1 * fak);
                 }
 
-                if (im.IsActionDown ("up")) {
+                if (im.IsActionDown ("inventory")) {
                     moveY (-1 * fak);
                 }
 
-                if (im.IsActionDown ("down")) {
+                if (im.IsActionDown ("drop")) {
                     moveY (1 * fak);
                 }
                 if (im.IsActionDown ("sneek") && im.IsActionDown ("left")) {
@@ -112,7 +112,7 @@ namespace FreezingArcher.Renderer.Scene
                     rotateY (1 * fak);
                 }
 
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("down")) {
+                if (im.IsActionDown ("sneek") && im.IsActionDown ("drop")) {
                     rotateY (-1 * fak);
                 }
             }

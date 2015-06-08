@@ -44,7 +44,7 @@ namespace FreezingArcher.Core
     /// <summary>
     /// Test application.
     /// </summary>
-    public class Application : IMessageCreator
+    public sealed class Application : IMessageCreator
     {
         /// <summary>
         /// The name of the class.
@@ -102,7 +102,7 @@ namespace FreezingArcher.Core
         /// <summary>
         /// Indicating whether command line interface is active or not.
         /// </summary>
-        protected bool Cli = false;
+        private bool Cli = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.Application"/> class.
@@ -111,6 +111,7 @@ namespace FreezingArcher.Core
         public Application (string name, string[] args)
         {
             Name = name;
+            Frametime = 16;
             Logger.Initialize (name);
             ObjectManager = new ObjectManager();
             ComponentRegistry.Instance = new ComponentRegistry(ObjectManager);
@@ -337,14 +338,24 @@ namespace FreezingArcher.Core
         /// <summary>
         /// The periodic update task.
         /// </summary>
-        protected PeriodicTask PeriodicUpdateTask;
+        private PeriodicTask PeriodicUpdateTask;
 
         /// <summary>
         /// The periodic input task.
         /// </summary>
-        protected PeriodicTask PeriodicInputTask;
+        private PeriodicTask PeriodicInputTask;
 
         private Stopwatch updateStopwatch;
+
+        private Stopwatch frameStopwatch;
+
+        private PeriodicTask PeriodicFramecounterTask;
+
+        /// <summary>
+        /// Gets or sets the frametime in ms.
+        /// </summary>
+        /// <value>The frametime.</value>
+        public int Frametime { get; set; }
 
         /// <summary>
         /// Run this instance.
@@ -360,9 +371,11 @@ namespace FreezingArcher.Core
             updateStopwatch.Start ();
             PeriodicUpdateTask.Start ();
             PeriodicInputTask.Start ();
+            PeriodicFramecounterTask.Start();
 
             while (!Window.ShouldClose ())
             {
+                frameStopwatch.Restart();
                 // reexec loader if ressources need to be loaded again
                 // TODO: check if there is enough time left to do a reloading to avoid lag spikes
                 if (LoadAgain)
@@ -378,8 +391,12 @@ namespace FreezingArcher.Core
 
                 Window.SwapBuffers ();
                 Window.PollEvents ();
-                
-                Thread.Sleep (16);
+
+                frames++;
+
+                int sleep = Frametime - (int) frameStopwatch.ElapsedMilliseconds;
+                if (sleep > 0)
+                    Thread.Sleep (sleep);
             }
         }
 
@@ -387,19 +404,19 @@ namespace FreezingArcher.Core
         /// Gets the window.
         /// </summary>
         /// <value>The window.</value>
-        public Window Window { get; protected set; }
+        public Window Window { get; private set; }
 
         /// <summary>
         /// Gets or sets the game.
         /// </summary>
         /// <value>The game.</value>
-        public Game Game { get; protected set; }
+        public Game Game { get; private set; }
 
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
-        public string Name { get; protected set; }
+        public string Name { get; private set; }
 
         /// <summary>
         /// Gets or sets the message manager.
@@ -416,14 +433,21 @@ namespace FreezingArcher.Core
         /// Gets or sets the audio manager.
         /// </summary>
         /// <value>The audio manager.</value>
-        public AudioManager AudioManager { get; protected set; }
+        public AudioManager AudioManager { get; private set; }
 
+        /// <summary>
+        /// Gets the current frames per second.
+        /// </summary>
+        /// <value>The FPS value.</value>
+        public uint FPSCounter { get; private set; }
+
+        private uint frames = 0;
 
         ///<summary>
         /// Gets the RendererContext
         /// </summary>
         /// <value>>The renderer</value>
-        public RendererContext RendererContext{ get; protected set;}
+        public RendererContext RendererContext{ get; private set;}
 
         #region IResource implementation
 
@@ -441,12 +465,16 @@ namespace FreezingArcher.Core
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing application '{0}' ...", Name);
             InputManager = new InputManager (MessageManager);
             updateStopwatch = new Stopwatch();
+            frameStopwatch = new Stopwatch();
             PeriodicUpdateTask = new PeriodicTask (32, () => {
                 MessageCreated(new UpdateMessage(updateStopwatch.Elapsed));
                 updateStopwatch.Restart();
             });
             PeriodicInputTask = new PeriodicTask (16, InputManager.GenerateInputMessage);
-
+            PeriodicFramecounterTask = new PeriodicTask(1000, () => {
+                FPSCounter = frames;
+                frames = 0;
+            });
 
             Initer = new JobExecuter ();
             Initer.InsertJobs (GetInitJobs (new List<Action>()));
@@ -482,10 +510,7 @@ namespace FreezingArcher.Core
             Loader.ExecJobsSequential ();
             Loaded = true;
 
-            //Give a chance to load everything... and than create RendererStuff
-            Thread.Sleep(1000);
-
-            //Later some more stuf
+            //Later some more stuff
             RendererContext.Init();
             RendererContext.ViewportResize(0, 0, Window.Size.X, Window.Size.Y);
         }
@@ -539,7 +564,7 @@ namespace FreezingArcher.Core
         /// <see cref="FreezingArcher.Core.Application"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
-        public bool Loaded { get; protected set; }
+        public bool Loaded { get; private set; }
         
         /// <summary>
         /// Fire this event when you need the Load function to be called.
@@ -553,28 +578,28 @@ namespace FreezingArcher.Core
         /// <summary>
         /// The original command line row.
         /// </summary>
-        protected int OrigRow;
+        private int OrigRow;
         #endif
         
         /// <summary>
         /// The loader.
         /// </summary>
-        protected JobExecuter Loader;
+        private JobExecuter Loader;
 
         /// <summary>
         /// Indicating whether to load again.
         /// </summary>
-        protected bool LoadAgain;
+        private bool LoadAgain;
         
         /// <summary>
         /// The initer.
         /// </summary>
-        protected JobExecuter Initer;
+        private JobExecuter Initer;
 
         /// <summary>
         /// Indicating whether to initialize again.
         /// </summary>
-        protected bool InitAgain;
+        private bool InitAgain;
 
         /// <summary>
         /// The input manager.
@@ -585,7 +610,7 @@ namespace FreezingArcher.Core
         /// <summary>
         /// Creates the event table.
         /// </summary>
-        protected void CreateTable ()
+        private void CreateTable ()
         {
             Console.Clear ();
             OrigRow = Console.CursorTop;
@@ -616,7 +641,7 @@ namespace FreezingArcher.Core
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
         /// <param name="s">The string to write.</param>
-        protected void WriteAt (int x, int y, string s)
+        private void WriteAt (int x, int y, string s)
         {
             Console.SetCursorPosition (x, OrigRow + y);
             Console.Write (s);

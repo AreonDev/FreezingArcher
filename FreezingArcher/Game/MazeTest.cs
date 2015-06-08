@@ -117,6 +117,10 @@ namespace FreezingArcher.Game
                 {
                     pos.Y -= (float) (im.DeltaTime.TotalMilliseconds / fac);
                 }
+                if (im.IsActionPressed("frame"))
+                {
+                    Logger.Log.AddLogEntry(LogLevel.Debug, "Maze", "FPS: {0}", Application.Instance.FPSCounter);
+                }
                 rect.Position = pos;
             }
         }

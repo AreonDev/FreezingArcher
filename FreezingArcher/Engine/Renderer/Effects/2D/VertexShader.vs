@@ -34,10 +34,10 @@ bool checkMatrix(mat4 mat)
 
 void main() 
 {
-    gl_Position = ProjectionMatrix * WorldMatrix * InInstanceWorldMatrix * vec4(InPosition, 1.0);
+    //gl_Position = ProjectionMatrix * WorldMatrix * InInstanceWorldMatrix * vec4(InPosition, 1.0);
 
     //if(!checkMatrix(InInstanceWorldMatrix))
-    //    gl_Position = ProjectionMatrix * WorldMatrix * vec4(InPosition, 1.0);
+        gl_Position = ProjectionMatrix * WorldMatrix * vec4(InPosition, 1.0);
 
     OutTexCoord1 = InTexCoord1;
 

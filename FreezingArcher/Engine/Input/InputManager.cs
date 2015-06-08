@@ -158,7 +158,7 @@ namespace FreezingArcher.Input
             MouseScroll = Vector2.Zero;
             if (MessageCreated != null)
                 MessageCreated (id);
-            Stopwatch.Start();
+            Stopwatch.Restart();
         }
 
         /// <summary>

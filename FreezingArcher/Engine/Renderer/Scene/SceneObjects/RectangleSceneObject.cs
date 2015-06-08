@@ -90,6 +90,34 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                 rc.DrawFilledRectangleAbsolute(ref pos, ref size, ref col, count);
         }
 
+        public override void PrepareInstanced(RendererContext rc, VertexBufferLayoutKind[] vblks, VertexBuffer vb)
+        {
+            rc._2DVertexBufferArray.BindVertexBufferArray();
+
+            vb.BindBuffer();
+
+            for (int i = 0; i < vblks.Length; i++)
+            {
+                rc.EnableVertexAttribute((int)vblks[i].AttributeID);
+                rc.VertexAttributePointer(vblks[i]);
+                rc.VertexAttributeDivisor((int)vblks[i].AttributeID, 1);
+            }
+
+            vb.UnbindBuffer();
+
+            rc._2DVertexBufferArray.UnbindVertexBufferArray();
+        }
+
+        public override void UnPrepareInstanced(RendererContext rc, VertexBufferLayoutKind[] vblks)
+        {
+            rc._2DVertexBufferArray.BindVertexBufferArray();
+
+            for (int i = 0; i < vblks.Length; i++)
+                rc.DisableVertexAttribute((int)vblks[i].AttributeID);
+
+            rc._2DVertexBufferArray.UnbindVertexBufferArray();
+        }
+
         public override string GetName() {return "RectangleSceneObject_"+
             (Filled?"Filled":("Wired_"+LineWidth));}
     }

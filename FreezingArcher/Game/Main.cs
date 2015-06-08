@@ -55,16 +55,11 @@ namespace FreezingArcher.Game
                 Application.Instance.RendererContext.Scene = new CoreScene();
                 Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Crimson;
 
-
-                FreeCamera frcam = new FreeCamera ("BlaCam", Application.Instance.MessageManager);
-                Application.Instance.RendererContext.Scene.CamManager.AddCam (frcam);
-
-                //ModelSceneObject mdl = new ModelSceneObject ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
-
-                //Application.Instance.RendererContext.Scene.AddObject (mdl);
-
                 new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
                     Application.Instance.RendererContext.Scene);
+
+                ModelSceneObject mdl = new ModelSceneObject ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
+                Application.Instance.RendererContext.Scene.AddObject (mdl);
             }
 
             Application.Instance.Run ();

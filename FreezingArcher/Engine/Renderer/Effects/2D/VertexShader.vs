@@ -4,9 +4,9 @@ layout(location = 0) in vec3 InPosition;
 layout(location = 1) in vec4 InColor;
 layout(location = 2) in vec2 InTexCoord1;
 
-layout(location = 10) in mat4 InInstanceWorldMatrix;
-layout(location = 14) in vec4 InInstanceColor;
-layout(location = 15) in vec4 InOther;
+layout(location = 3) in mat4 InInstanceWorldMatrix;
+layout(location = 7) in vec4 InInstanceColor;
+layout(location = 8) in vec4 InOther;
 
 out gl_PerVertex
 {

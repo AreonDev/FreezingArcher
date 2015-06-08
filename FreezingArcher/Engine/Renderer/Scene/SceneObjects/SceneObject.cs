@@ -112,7 +112,10 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public virtual bool Init(RendererContext rc){return true;}
         public abstract void Draw(RendererContext rc);
+
         public abstract void DrawInstanced(RendererContext rc, int count);
+        public virtual void PrepareInstanced(RendererContext rc, VertexBufferLayoutKind[] vblks, VertexBuffer vb){}
+        public virtual void UnPrepareInstanced(RendererContext rc, VertexBufferLayoutKind[] vblks){}
         public abstract string GetName();
 
         public event SceneObjectChangedDelegate SceneObjectChanged = delegate(SceneObject obj){return true;};

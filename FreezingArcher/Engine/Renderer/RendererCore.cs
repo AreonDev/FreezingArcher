@@ -834,7 +834,7 @@ namespace FreezingArcher.Renderer
         }
 
         private VertexBuffer _2DVertexBuffer;
-        private VertexBufferArray _2DVertexBufferArray;
+        internal VertexBufferArray _2DVertexBufferArray;
 
         private unsafe void GenerateBuffer(/*FreezingArcher.Math.Color4 color*/)
         {
@@ -990,12 +990,12 @@ namespace FreezingArcher.Renderer
             _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("UseTexture"), 0.0f);
             _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("DrawColor"), new Pencil.Gaming.MathUtils.Vector4(color.R, color.G, color.B, color.A));
 
-            _2DEffect.BindPipeline();
-
             if (count > 1)
             {
                 _2DEffect.VertexProgram.SetUniform(_2DEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 1);
                 _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("InstancedDrawing"), 1);
+
+                _2DEffect.BindPipeline();
 
                 DrawArraysInstanced(RendererBeginMode.Triangles, 0, 6, count);
             }
@@ -1004,8 +1004,12 @@ namespace FreezingArcher.Renderer
                 _2DEffect.VertexProgram.SetUniform(_2DEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 0);
                 _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("InstancedDrawing"), 0);
 
+                _2DEffect.BindPipeline();
+
                 DrawArrays(0, 6, RendererBeginMode.Triangles);
             }
+
+            _2DVertexBufferArray.UnbindVertexBufferArray();
 
             _2DUniformBuffer.UnbindBuffer();
 

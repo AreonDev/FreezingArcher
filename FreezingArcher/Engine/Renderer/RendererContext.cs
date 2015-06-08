@@ -165,6 +165,9 @@ namespace FreezingArcher.Renderer
                 //TODO: Set Materials, and textures
                 //Each material has its Effect Class
                 BasicEffect mat = BasicEffect;
+                mat.World = Matrix.Identity;
+                mat.View = Matrix.LookAt(new Vector3(10.0f, 10.0f, 10.0f), Vector3.Zero, Vector3.UnitY);
+                mat.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 16.0f / 9.0f, 1.0f, 100.0f);
                 mat.Use();
                 mat.Update();
 

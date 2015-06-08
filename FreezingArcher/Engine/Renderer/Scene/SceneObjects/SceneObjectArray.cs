@@ -23,6 +23,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using FreezingArcher.Output;
 
 using FreezingArcher.Math;
 
@@ -248,8 +249,6 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             //Preparing
             if (InstanceDataVertexBuffer != null && SceneObjects.Count > 0)
             {
-                InstanceDataVertexBuffer.BindBuffer();
-
                 VertexBufferLayoutKind[] vblk = new VertexBufferLayoutKind[6];
 
                 //Set information
@@ -277,20 +276,9 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                 };
 
                 //Send it to Renderer
-                for (int i = 0; i < 6; i++)
-                {
-                    rc.EnableVertexAttribute((int)LayoutLocationOffset + i);
-                    rc.VertexAttributePointer(vblk[i]);
-                    rc.VertexAttributeDivisor((int)LayoutLocationOffset + i, 1);
-                }
-
+                SceneObjects[0].PrepareInstanced(rc, vblk, InstanceDataVertexBuffer);
                 SceneObjects[0].DrawInstanced(rc, SceneObjects.Count);
-
-                //Disable all attributes used by instancing
-                for (int i = 0; i < 6; i++)
-                    rc.DisableVertexAttribute((int)LayoutLocationOffset + i);
-
-                InstanceDataVertexBuffer.UnbindBuffer();
+                SceneObjects[0].UnPrepareInstanced(rc, vblk);
             }
         }
 

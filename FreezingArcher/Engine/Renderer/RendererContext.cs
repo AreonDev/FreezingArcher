@@ -56,6 +56,8 @@ namespace FreezingArcher.Renderer
             }
         }
 
+        public SimpleMaterial SimpleMaterial { get; private set;}
+
         public RendererContext(MessageManager mssgmngr) : base(mssgmngr)
         {
             m_AssimpContext = new AssimpContext();
@@ -64,6 +66,16 @@ namespace FreezingArcher.Renderer
         ~RendererContext()
         {
             m_AssimpContext.Dispose();
+        }
+
+        public override bool Init()
+        {
+            base.Init();
+
+            SimpleMaterial = new SimpleMaterial();
+            SimpleMaterial.Init(this);
+
+            return true;
         }
 
         public Model LoadModel(string path)
@@ -89,7 +101,7 @@ namespace FreezingArcher.Renderer
                         indices[(i*3)+j] = actual_mesh.Faces[i].Indices[j];
                 }
 
-                mdl.Meshes.Add(new Mesh(this, path, actual_mesh.MaterialIndex, indices, 
+                mdl.Meshes.Add(new Mesh(this, path, actual_mesh.MaterialIndex-1, indices, 
                     actual_mesh.Vertices.ToArray(), actual_mesh.Normals.ToArray(), actual_mesh.Tangents.ToArray(), actual_mesh.BiTangents.ToArray(),
                     actual_mesh.TextureCoordinateChannels, actual_mesh.VertexColorChannels, (Mesh.PrimitiveType)actual_mesh.PrimitiveType));
             }
@@ -168,24 +180,31 @@ namespace FreezingArcher.Renderer
                     Material mat = mdl.Materials[msh.MaterialIndex];
                     if(!mat.HasOptionalEffect)
                     {
-                        SimpleMaterial mat2 = new SimpleMaterial();
-                        mat2.Init(this);
+                        SimpleMaterial.SpecularColor = mat.ColorSpecular;
+                        SimpleMaterial.DiffuseColor = mat.ColorDiffuse;
 
-                        mat2.SpecularColor = mat.ColorSpecular;
-                        mat2.DiffuseColor = mat.ColorDiffuse;
+                        SimpleMaterial.NormalTexture = mat.TextureNormal;
+                        SimpleMaterial.ColorTexture = mat.TextureDiffuse;
 
-                        mat2.NormalTexture = mat.TextureNormal;
-                        mat2.ColorTexture = mat.TextureDiffuse;
+                        SimpleMaterial.Tile = 1.0f;
+                        SimpleMaterial.Plane = new Vector2(0.1f, 100.0f);
 
-                        mat = mat2;
+                        mat = SimpleMaterial;
                     }
 
                     //Set Scene Camera settings
                     mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("WorldMatrix"), world);
+                    mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ViewMatrix"),
+                        Matrix.LookAt(new Vector3(10.0f, 10.0f, 10.0f), Vector3.Zero, Vector3.UnitY));
+                    mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ProjectionMatrix"),
+                        Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)ViewportSize.X / (float) ViewportSize.Y, 0.1f, 100.0f));
 
+                    mat.OptionalEffect.BindPipeline();
 
                     //Draw all mesh
                     DrawMesh(msh, count);
+
+                    mat.OptionalEffect.UnbindPipeline();
                 }
             }
         }
@@ -227,6 +246,13 @@ namespace FreezingArcher.Renderer
 
                 Scene.FrameBuffer.Unbind();
             }
+
+            //Sprite spr = new Sprite();
+            //spr.Init(Scene.FrameBufferNormalTexture);
+            //spr.AbsolutePosition = new Vector2(0.0f, 0.0f);
+            //spr.Scaling = new Vector2(1, 1);
+
+            //DrawSpriteAbsolute(spr);
         }
     }
 }

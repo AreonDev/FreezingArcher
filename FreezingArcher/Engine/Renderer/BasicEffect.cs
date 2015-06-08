@@ -84,10 +84,10 @@ namespace FreezingArcher.Renderer
 
             m_LightBlockUniformBuffer.SetBufferBase(4);
 
-            m_MaterialBlockUniformBuffer = rc.CreateUniformBuffer<MaterialBlock>(m_MaterialBlock, MaterialBlock.SIZE, "Internal_Basic_Effect_MaterialBlock");
+            //m_MaterialBlockUniformBuffer = rc.CreateUniformBuffer<MaterialBlock>(m_MaterialBlock, MaterialBlock.SIZE, "Internal_Basic_Effect_MaterialBlock");
 
-            this.PixelProgram.SetUniformBlockBinding("MaterialBlock", 6);
-            m_MaterialBlockUniformBuffer.SetBufferBase(6);
+            //this.PixelProgram.SetUniformBlockBinding("MaterialBlock", 6);
+            //m_MaterialBlockUniformBuffer.SetBufferBase(6);
 
             return true;
         }
@@ -389,7 +389,7 @@ namespace FreezingArcher.Renderer
 
             m_LightBlockUniformBuffer.UpdateBuffer<LightBlock1>(m_LightBlock, LightBlock1.SIZE);
 
-            m_MaterialBlockUniformBuffer.UpdateBuffer<MaterialBlock>(m_MaterialBlock, MaterialBlock.SIZE);
+            //m_MaterialBlockUniformBuffer.UpdateBuffer<MaterialBlock>(m_MaterialBlock, MaterialBlock.SIZE);
         }
 
         public void ClearTextures()

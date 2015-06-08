@@ -46,7 +46,7 @@ void main()
         hpos = ProjectionMatrix * ViewMatrix * WorldMatrix * vec4(InPosition, 1.0);
 
         //copy texture coordinates
-        texcoord = InTexCoord1;
+        texcoord = InTexCoord1.xy;
 
         mat4 modelviewrot = ViewMatrix * WorldMatrix;
 
@@ -54,7 +54,7 @@ void main()
         vpos = vec3(modelviewrot * vec4(InPosition, 1.0));
 
         //Tangent space vectors in view space (with model transformations)
-        normal = (modelviewrot * InNormal).xyz;
-        tangent = (modelviewrot * InTangent).xyz;
-        binormal = (modelviewrot * InBiNormal).xyz;
+        normal = (modelviewrot * vec4(InNormal, 1.0)).xyz;
+        tangent = (modelviewrot * vec4(InTangent, 1.0)).xyz;
+        binormal = (modelviewrot * vec4(InBiNormal, 1.0)).xyz;
 }

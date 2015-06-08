@@ -225,7 +225,7 @@ namespace FreezingArcher.Renderer
         /// <param name="RenderContext"></param>
         /// <param name="SharedLoadingContext"></param>
         /// <returns>True or False</returns>
-        public bool Init(/*GlfwWindowPtr RenderContext, GlfwWindowPtr SharedLoadingContext*/)
+        public virtual bool Init(/*GlfwWindowPtr RenderContext, GlfwWindowPtr SharedLoadingContext*/)
         {
             /*
             try
@@ -921,7 +921,7 @@ namespace FreezingArcher.Renderer
                 _2DVertexBufferArray.BindVertexBufferArray();
 
                 _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("UseTexture"), 0.0f);
-                _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("DrawColor"), new Pencil.Gaming.MathUtils.Vector4(color.R, color.G, color.B, color.A));
+                _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("DrawColor"), new Vector4(color.R, color.G, color.B, color.A));
 
                 _2DEffect.BindPipeline();
 
@@ -988,7 +988,7 @@ namespace FreezingArcher.Renderer
             _2DVertexBufferArray.BindVertexBufferArray();
 
             _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("UseTexture"), 0.0f);
-            _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("DrawColor"), new Pencil.Gaming.MathUtils.Vector4(color.R, color.G, color.B, color.A));
+            _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("DrawColor"), new Vector4(color.R, color.G, color.B, color.A));
 
             if (count > 1)
             {
@@ -1073,7 +1073,7 @@ namespace FreezingArcher.Renderer
             _2DVertexBufferArray.BindVertexBufferArray();
 
             _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("UseTexture"), 0.0f);
-            _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("DrawColor"), new Pencil.Gaming.MathUtils.Vector4(color.R, color.G, color.B, color.A));
+            _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("DrawColor"), new Vector4(color.R, color.G, color.B, color.A));
 
             _2DEffect.BindPipeline();
 
@@ -1103,7 +1103,7 @@ namespace FreezingArcher.Renderer
             _2DVertexBufferArray.BindVertexBufferArray();
 
             _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("UseTexture"), 0.0f);
-            _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("DrawColor"), new Pencil.Gaming.MathUtils.Vector4(color.R, color.G, color.B, color.A));
+            _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("DrawColor"), new Vector4(color.R, color.G, color.B, color.A));
 
             _2DEffect.BindPipeline();
 

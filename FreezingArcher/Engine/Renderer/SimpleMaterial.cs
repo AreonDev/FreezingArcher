@@ -136,7 +136,8 @@ namespace FreezingArcher.Renderer
             {
                 specularColor = value;
                 if (OptionalEffect != null)
-                    OptionalEffect.PixelProgram.SetUniform(OptionalEffect.PixelProgram.GetUniformLocation("SpecularColor"), specularColor);
+                    OptionalEffect.PixelProgram.SetUniform(OptionalEffect.PixelProgram.GetUniformLocation("SpecularColor"), new Vector4(specularColor.R,
+                        specularColor.G, specularColor.B, specularColor.A));
             }
         }
 
@@ -151,7 +152,8 @@ namespace FreezingArcher.Renderer
             {
                 diffuseColor = value;
                 if (OptionalEffect != null)
-                    OptionalEffect.PixelProgram.SetUniform(OptionalEffect.PixelProgram.GetUniformLocation("DiffuseColor"), diffuseColor);
+                    OptionalEffect.PixelProgram.SetUniform(OptionalEffect.PixelProgram.GetUniformLocation("DiffuseColor"), new Vector4(diffuseColor.R, 
+                        diffuseColor.G, diffuseColor.B, diffuseColor.A));
             }
         }
 
@@ -165,11 +167,15 @@ namespace FreezingArcher.Renderer
             if (OptionalEffect == null)
                 return false;
 
+            OptionalEffect.BindPipeline();
+
             OptionalEffect.VertexProgram = rc.CreateShaderProgramFromFile("SimpleMaterial_VS_" + ticks, ShaderType.VertexShader,
                 "lib/Renderer/Effects/SimpleMaterial/vertex_shader.vs");
 
             OptionalEffect.PixelProgram = rc.CreateShaderProgramFromFile("SimpleMaterial_PS_" + ticks, ShaderType.PixelShader,
                 "lib/Renderer/Effects/SimpleMaterial/pixel_shader.ps");
+
+            OptionalEffect.UnbindPipeline();
                 
             return true;
         }

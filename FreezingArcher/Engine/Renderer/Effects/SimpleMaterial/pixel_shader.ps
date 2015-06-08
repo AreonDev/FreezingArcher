@@ -32,8 +32,7 @@ vec4 float_to_color(float f)
         color.y = floor(f);
         color.z = f-color.y;
         color.xy *= 0.00390625; // *= 1.0 / 256
-        color.w = 1.0;
-        return color;
+        return vec4(color, 1.0);
 }
 
 void main()
@@ -57,5 +56,5 @@ void main()
         specular_color = SpecularColor;
 
         float d = ((PlaneInformation.x * vpos.z + PlaneInformation.y) / -vpos.z);
-        depth_color = vec4(float_to_color(d), 1);
+        depth_color = float_to_color(d);
 }

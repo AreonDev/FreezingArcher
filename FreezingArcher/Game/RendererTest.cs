@@ -53,7 +53,7 @@ namespace FreezingArcher.Game
             Application.Instance.RendererContext.Scene.AddObject (scnobjarr);
 
             //Models
-            m300 = new ModelSceneObject[5];
+            m300 = new ModelSceneObject[1];
             for (int i = 0; i < m300.Length; i++) 
             {
                 if (i == 0) {

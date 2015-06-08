@@ -312,7 +312,7 @@ namespace FreezingArcher.Core
                 WriteAt (15, 13, action.ToString ());
                 #endif
                 
-                if (key == Key.F11 && action == KeyAction.Release)// F11 - dafuq?
+                if (key == Key.F11 && action == KeyAction.Release)
                 {
                     Window.ToggleFullscreen ();
                 }

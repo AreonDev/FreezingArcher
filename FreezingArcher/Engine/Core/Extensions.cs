@@ -460,5 +460,13 @@ namespace FreezingArcher.Core
         {
             return source.Where((c, i) => i % 2 != 0);
         }
+
+        public static string Format<T>(this IEnumerable<T> source, Func<T, string> conversion)
+        {
+            string s = "[";
+            foreach (var i in source)
+                s += conversion(i) + ", ";
+            return s.Substring(0, s.Length - 2) + "]";
+        }
     }
 }

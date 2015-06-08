@@ -22,7 +22,6 @@
 //
 //#define DEBUG_PERFORMANCE
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using Pencil.Gaming.MathUtils;
 using FreezingArcher.Messaging.Interfaces;
@@ -30,6 +29,7 @@ using FreezingArcher.Input;
 using FreezingArcher.Output;
 using FreezingArcher.Core;
 using Pencil.Gaming;
+using System.Linq;
 
 namespace FreezingArcher.Messaging
 {
@@ -90,6 +90,8 @@ namespace FreezingArcher.Messaging
             #endif
         }
 
+        public static readonly string ModuleName = "InputMessage";
+
         /// <summary>
         /// Gets or sets the keys.
         /// </summary>
@@ -138,20 +140,30 @@ namespace FreezingArcher.Messaging
         /// <param name="action">Action name.</param>
         public bool IsActionDown (string action)
         {
-            var key = Keys.Find(k => k.KeyAction == action);
+            var keys = Keys.Where(k => k.KeyAction == action);
 
-            if (key == null)
-                return Application.Instance.InputManager.CurrentlyDownKeys.Contains(action);
+            foreach (var key in keys)
+            {
+                if (key == null)
+                {
+                    return Application.Instance.InputManager.CurrentlyDownKeys.Contains(action);
+                }
 
-            if (key.Action == KeyAction.Press && !Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
-                Application.Instance.InputManager.CurrentlyDownKeys.Add(action);
+                if (key.Action == KeyAction.Press && !Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
+                {
+                    Application.Instance.InputManager.CurrentlyDownKeys.Add(action);
+                }
 
-            if (key.Action == KeyAction.Release && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
-                Application.Instance.InputManager.CurrentlyDownKeys.Remove(action);
+                if (key.Action == KeyAction.Release && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
+                {
+                    Application.Instance.InputManager.CurrentlyDownKeys.RemoveAll(s => s == action);
+                }
 
-            if (key.Action != KeyAction.Repeat && key.Action != KeyAction.Press
-                && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
-                Application.Instance.InputManager.CurrentlyDownKeys.Remove(action);
+                if (key.Action != KeyAction.Repeat && key.Action != KeyAction.Press && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
+                {
+                    Application.Instance.InputManager.CurrentlyDownKeys.RemoveAll(s => s == action);
+                }
+            }
 
             return Application.Instance.InputManager.CurrentlyDownKeys.Contains(action);
         }

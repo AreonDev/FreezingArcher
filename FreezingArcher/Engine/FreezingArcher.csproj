@@ -233,6 +233,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Scene\SceneObjects\SceneObjectArray.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\RectangleSceneObjectArray.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\SceneObject.cs" />
+    <Compile Include="Renderer\Scene\SceneObjects\ModelSceneObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

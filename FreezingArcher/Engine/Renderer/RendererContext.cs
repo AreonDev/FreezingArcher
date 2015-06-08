@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using Pencil.Gaming.Graphics;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Renderer
 {
@@ -156,7 +157,7 @@ namespace FreezingArcher.Renderer
             return mdl;
         }
 
-        public void DrawModel(Model mdl)
+        public void DrawModel(Model mdl, int count = 1)
         {
             foreach (Mesh msh in mdl.Meshes)
             {
@@ -167,6 +168,12 @@ namespace FreezingArcher.Renderer
                 #region TODO
                 //TODO: Set Materials, and textures
                 //Each material has its Effect Class
+                BasicEffect mat = BasicEffect;
+                mat.Use();
+                mat.Update();
+
+                //if((msh.m_MaterialIndex == -1) || (mdl.Materials.Count == 0) || (msh.MaterialIndex >= mdl.Materials.Count))
+                //    mat = SimpleMaterial(
 
                 //Sort each effect class
 
@@ -176,11 +183,11 @@ namespace FreezingArcher.Renderer
                 #endregion
 
                 //Draw all mesh
-                DrawMesh(msh);
+                DrawMesh(msh, count);
             }
         }
 
-        public void DrawMesh(Mesh msh)
+        public void DrawMesh(Mesh msh, int count = 1)
         {
             //Materials and Matrices should be correctly set
             msh.m_VertexBufferArray.BindVertexBufferArray();
@@ -204,6 +211,10 @@ namespace FreezingArcher.Renderer
 
                 foreach (SceneObject obj in Scene.GetObjects())
                 {
+                    //BasicEffect.World = obj.WorldMatrix;
+                    //BasicEffect.View = Matrix.LookAt(new Vector3(10.0f, 10.0f, 10.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
+                    //BasicEffect.Projection = Matrix.
+
                     obj.Update();
 
                     obj.Draw(this);

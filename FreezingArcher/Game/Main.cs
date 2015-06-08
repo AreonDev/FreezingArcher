@@ -24,6 +24,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Content;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer.Scene.SceneObjects;
 using System;
 using FreezingArcher.Game.Maze;
 
@@ -52,8 +53,16 @@ namespace FreezingArcher.Game
             Application.Instance.RendererContext.Scene = new CoreScene();
             Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Crimson;
 
-            new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
-                Application.Instance.RendererContext.Scene);
+          
+            FreeCamera frcam = new FreeCamera ("BlaCam", Application.Instance.MessageManager);
+            Application.Instance.RendererContext.Scene.CamManager.AddCam (frcam);
+
+            ModelSceneObject mdl = new ModelSceneObject ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
+
+            Application.Instance.RendererContext.Scene.AddObject (mdl);
+
+            //new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
+            //   Application.Instance.RendererContext.Scene);
 
             Application.Instance.Run ();
             Application.Instance.Destroy ();

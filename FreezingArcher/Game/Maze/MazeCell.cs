@@ -124,6 +124,12 @@ namespace FreezingArcher.Game.Maze
         public string Name;
 
         /// <summary>
+        /// Gets or sets a value indicating whether this instance is a dead end.
+        /// </summary>
+        /// <value><c>true</c> if this instance is a dead end; otherwise, <c>false</c>.</value>
+        public bool IsDeadEnd { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether this instance is a portal.
         /// </summary>
         /// <value><c>true</c> if this instance is a portal; otherwise, <c>false</c>.</value>

@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
-using System.Threading;
 
 namespace FreezingArcher.Game.Maze
 {
@@ -59,13 +58,14 @@ namespace FreezingArcher.Game.Maze
         /// <param name="sizeY">Size y.</param>
         /// <param name="scale">Scale.</param>
         /// <param name="turbulence">Turbulence. The higher the more straight the maze will be.</param>
-        /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will be places</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
-        public Maze CreateMaze(int seed, MazeColorTheme theme, CoreScene scene = null, int sizeX = 50, int sizeY = 50, float scale = 10,
-            double turbulence = 2, int portalSpawnFactor = 5, int maximumContinuousPathLength = 20)
+        /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will appear.</param>
+        public Maze CreateMaze(int seed, MazeColorTheme theme, CoreScene scene = null, int sizeX = 50, int sizeY = 50,
+            float scale = 10, double turbulence = 2, int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
         {
             Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, theme, InitializeMaze, CreateMaze,
-                AddMazeToScene, CalculatePathToExit, turbulence, portalSpawnFactor, maximumContinuousPathLength);
+                AddMazeToScene, CalculatePathToExit, SpawnPortals, turbulence, maximumContinuousPathLength, 
+                portalSpawnFactor);
             maze.Offset = Offset;
             maze.Init();
             var offs = Offset;
@@ -84,7 +84,7 @@ namespace FreezingArcher.Game.Maze
         #region delegates
 
         static void CreateMaze (ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref Random rand,
-            int maximumContinuousPathLength, double turbulence, int portalSpawnFactor)
+            int maximumContinuousPathLength, double turbulence)
         {
             WeightedNode<MazeCell, MazeCellEdgeWeight> node = null;
             WeightedNode<MazeCell, MazeCellEdgeWeight> lastNode = null;
@@ -92,6 +92,7 @@ namespace FreezingArcher.Game.Maze
             // set initial edge (exclude surounding wall)
             var edges = graph.Edges.Where(e => !e.FirstNode.Data.IsFinal && !e.SecondNode.Data.IsFinal);
             WeightedEdge<MazeCell, MazeCellEdgeWeight> edge = edges.ElementAt(rand.Next (0, edges.Count()));
+            Vector2i spawnPos = edge.FirstNode.Data.Position;
             int pathLength = 0;
             int minimumBacktrack = 0;
 
@@ -148,14 +149,14 @@ namespace FreezingArcher.Game.Maze
                     {
                         edge = node.GetNeighbours ().Where ((n, e) =>
                             (n.Data.MazeCellType == MazeCellType.Undefined || n.Data.IsPreview) && !n.Data.IsFinal && e.Weight.Even)
-                            .MinElem ((n, e) =>
+                            .MaxElem ((n, e) =>
                                 n.Data.Weight * (e.Weight.Direction == lastDirection ? turbulence : 1 / turbulence)).Item2;
                     }
                     else
                         minimumBacktrack = maximumContinuousPathLength / 3;
 
-                    // are we at an dead end? if true set IsPortal randomly
-                    node.Data.IsPortal |= !backtrack && edge == null && rand.Next() % portalSpawnFactor == 0;
+                    // are we at an dead end?
+                    node.Data.IsDeadEnd |= !backtrack && edge == null;
 
                     // backtracking
                     backtrack = false;
@@ -223,9 +224,9 @@ namespace FreezingArcher.Game.Maze
             });
 
             // set exit node
-            var borderNodes = graph.Nodes.Where (n => n.Edges.Count < 8 && n.GetNeighbours ().Any (
-                (n2, e2) => n2.Data.MazeCellType == MazeCellType.Ground && e2.Weight.Even && !n2.Data.IsPortal)).ToList();
-            var exit = borderNodes[rand.Next(0, borderNodes.Count)].Data;
+            var exit = graph.Nodes.Where (n => n.Edges.Count < 8 && n.GetNeighbours ().Any (
+                (n2, e2) => n2.Data.MazeCellType == MazeCellType.Ground && e2.Weight.Even && !n2.Data.IsDeadEnd))
+                .MaxElem(n => (spawnPos - n.Data.Position).Length).Data;
             exit.MazeCellType = MazeCellType.Ground;
             exit.IsExit = true;
         }
@@ -352,6 +353,43 @@ namespace FreezingArcher.Game.Maze
                     n.Data.IsPreview = false;
                 }
             });
+        }
+
+        static void SpawnPortals(WeightedGraph<MazeCell, MazeCellEdgeWeight> previous,
+            WeightedGraph<MazeCell, MazeCellEdgeWeight> current,
+            WeightedGraph<MazeCell, MazeCellEdgeWeight> next, Random rand, uint portalSpawnFactor)
+        {
+            if (previous == null)
+            {
+                for (int i = 0; i < current.Nodes.Count; i++)
+                {
+                    if (current.Nodes[i].Data.IsDeadEnd &&
+                        next.Nodes[i].Data.MazeCellType == MazeCellType.Ground &&
+                        rand.Next() % portalSpawnFactor == 0)
+                        current.Nodes[i].Data.IsPortal = true;
+                }
+            }
+            else if (next == null)
+            {
+                for (int i = 0; i < current.Nodes.Count; i++)
+                {
+                    if (previous.Nodes[i].Data.MazeCellType == MazeCellType.Ground &&
+                        current.Nodes[i].Data.IsDeadEnd &&
+                        rand.Next() % portalSpawnFactor == 0)
+                        current.Nodes[i].Data.IsPortal = true;
+                }                
+            }
+            else
+            {
+                for (int i = 0; i < current.Nodes.Count; i++)
+                {
+                    if (previous.Nodes[i].Data.MazeCellType == MazeCellType.Ground &&
+                        current.Nodes[i].Data.IsDeadEnd &&
+                        next.Nodes[i].Data.MazeCellType == MazeCellType.Ground &&
+                        rand.Next() % portalSpawnFactor == 0)
+                        current.Nodes[i].Data.IsPortal = true;
+                }
+            }
         }
         #endregion
     }

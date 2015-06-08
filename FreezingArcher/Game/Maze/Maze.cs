@@ -27,6 +27,7 @@ using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Math;
 using FreezingArcher.Core;
 using FreezingArcher.Output;
+using Pencil.Gaming.Graphics;
 
 namespace FreezingArcher.Game.Maze
 {
@@ -41,7 +42,7 @@ namespace FreezingArcher.Game.Maze
     /// Generate maze delegate.
     /// </summary>
     delegate void GenerateMazeDelegate(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref Random rand,
-        int maximumContinuousPathLength, double turbulence, int portalSpawnFactor);
+        int maximumContinuousPathLength, double turbulence);
 
     /// <summary>
     /// Add maze to scene delegate.
@@ -53,6 +54,13 @@ namespace FreezingArcher.Game.Maze
     /// Calculate path to exit delegate.
     /// </summary>
     delegate void CalculatePathToExitDelegate(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph);
+
+    /// <summary>
+    /// Spawn portals delegate.
+    /// </summary>
+    delegate void PlaceFeaturesDelegate(WeightedGraph<MazeCell, MazeCellEdgeWeight> previous,
+        WeightedGraph<MazeCell, MazeCellEdgeWeight> current, WeightedGraph<MazeCell, MazeCellEdgeWeight> next,
+        Random rand, uint portalSpawnFactor);
 
     /// <summary>
     /// Maze.
@@ -72,13 +80,15 @@ namespace FreezingArcher.Game.Maze
         /// <param name="generateFunc">Generate func.</param>
         /// <param name="addToSceneDelegate">Add to scene delegate.</param>
         /// <param name="exitFunc">Calculate path to exit function.</param>
+        /// <param name="placeFeaturesFunc">Spawn portals function.</param>
         /// <param name="turbulence">Turbulence.</param>
-        /// <param name="portalSpawnFactor">Portal spawn factor.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
+        /// <param name="portalSpawnFactor">Portal spawn factor.</param>
         internal Maze (ObjectManager objmnr, int seed, int sizeX, int sizeY, float scale, MazeColorTheme theme,
             InitializeMazeDelegate initFunc, GenerateMazeDelegate generateFunc,
-            AddMazeToSceneDelegate addToSceneDelegate, CalculatePathToExitDelegate exitFunc, double turbulence, int portalSpawnFactor,
-            int maximumContinuousPathLength)
+            AddMazeToSceneDelegate addToSceneDelegate, CalculatePathToExitDelegate exitFunc,
+            PlaceFeaturesDelegate placeFeaturesFunc, double turbulence, int maximumContinuousPathLength,
+            uint portalSpawnFactor)
         {
             objectManager = objmnr;
             Seed = seed;
@@ -93,9 +103,10 @@ namespace FreezingArcher.Game.Maze
             generateMazeDelegate = generateFunc;
             addMazeToSceneDelegate = addToSceneDelegate;
             calcExitPathDelegate = exitFunc;
+            placeFeaturesDelegate = placeFeaturesFunc;
         }
 
-        WeightedGraph<MazeCell, MazeCellEdgeWeight> graph;
+        internal WeightedGraph<MazeCell, MazeCellEdgeWeight> graph;
 
         Random rand;
 
@@ -110,6 +121,8 @@ namespace FreezingArcher.Game.Maze
         readonly AddMazeToSceneDelegate addMazeToSceneDelegate;
 
         readonly CalculatePathToExitDelegate calcExitPathDelegate;
+
+        readonly PlaceFeaturesDelegate placeFeaturesDelegate;
 
         readonly float scale;
 
@@ -129,12 +142,6 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <value>The turbulence.</value>
         public double Turbulence { get; private set; }
-
-        /// <summary>
-        /// Gets the portal spawn factor.
-        /// </summary>
-        /// <value>The portal spawn factor.</value>
-        public int PortalSpawnFactor { get; private set; }
 
         /// <summary>
         /// Gets the maximum continuous path length.
@@ -173,6 +180,18 @@ namespace FreezingArcher.Game.Maze
         public bool IsExitPathCalculated { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating whether this <see cref="FreezingArcher.Game.Maze.Maze"/> are features placed.
+        /// </summary>
+        /// <value><c>true</c> if are features placed; otherwise, <c>false</c>.</value>
+        public bool AreFeaturesPlaced { get; private set; }
+
+        /// <summary>
+        /// Gets the portal spawn factor.
+        /// </summary>
+        /// <value>The portal spawn factor.</value>
+        public uint PortalSpawnFactor { get; private set; }
+
+        /// <summary>
         /// Init this instance.
         /// </summary>
         public void Init()
@@ -208,11 +227,48 @@ namespace FreezingArcher.Game.Maze
             if (generateMazeDelegate != null)
             {
                 IsGenerated = true;
-                generateMazeDelegate(ref graph, ref rand, MaximumContinuousPathLength, Turbulence, PortalSpawnFactor);
+                generateMazeDelegate(ref graph, ref rand, MaximumContinuousPathLength, Turbulence);
             }
             else
             {
                 Logger.Log.AddLogEntry(LogLevel.Error, "Maze", "Failed to generate maze as the generator is null!");
+            }
+        }
+
+        /// <summary>
+        /// Spawns the features.
+        /// </summary>
+        /// <param name="previous">Previous maze graph.</param>
+        /// <param name="next">Next maze graph.</param>
+        public void SpawnFeatures(WeightedGraph<MazeCell, MazeCellEdgeWeight> previous = null,
+            WeightedGraph<MazeCell, MazeCellEdgeWeight> next = null)
+        {
+            if (!IsInitialized)
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, "Maze", "Cannot place features as maze is not initialized!");
+                return;
+            }
+
+            if (!IsGenerated)
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, "Maze", "Cannot place features as maze is not generated!");
+                return;
+            }
+
+            if (AreFeaturesPlaced)
+            {
+                Logger.Log.AddLogEntry(LogLevel.Warning, "Maze", "Features are already placed in this maze!");
+                return;
+            }
+
+            if (placeFeaturesDelegate != null)
+            {
+                AreFeaturesPlaced = true;
+                placeFeaturesDelegate (previous, graph, next, rand, PortalSpawnFactor);
+            }
+            else
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, "Maze", "Failed to place features as placing delegate is null!");
             }
         }
 

@@ -373,6 +373,33 @@ namespace FreezingArcher.Core
             foreach (var i in source)
             {
                 tmp = selector(i);
+                if (comp.Equals(default(TElem)) || comp.CompareTo(tmp) > 0)
+                {
+                    src = i;
+                    comp = tmp;
+                }
+            }
+            return src;
+        }
+
+        /// <summary>
+        /// Get the maximum element of a collection by a selector which selects the maximum element by choosing
+        /// properties from this element.
+        /// </summary>
+        /// <returns>The element.</returns>
+        /// <param name="source">Source.</param>
+        /// <param name="selector">Selector.</param>
+        /// <typeparam name="TSource">The element type.</typeparam>
+        /// <typeparam name="TElem">The type of the comparable part of the element.</typeparam>
+        public static TSource MaxElem<TSource, TElem>(this IEnumerable<TSource> source, Func<TSource, TElem> selector)
+            where TElem : IComparable
+        {
+            TSource src = default(TSource);
+            TElem comp = default(TElem);
+            TElem tmp;
+            foreach (var i in source)
+            {
+                tmp = selector(i);
                 if (comp.Equals(default(TElem)) || comp.CompareTo(tmp) < 0)
                 {
                     src = i;
@@ -395,6 +422,22 @@ namespace FreezingArcher.Core
             Func<T1, T2, TElem> selector) where TElem : IComparable
         {
             var t = source.MinElem(i => selector(i.Item1, i.Item2));
+            return t ?? new Tuple<T1, T2>(default(T1), default(T2));
+        }
+
+        /// <summary>
+        /// Maximum element from enumerable.
+        /// </summary>
+        /// <returns>The element.</returns>
+        /// <param name="source">Source.</param>
+        /// <param name="selector">Selector.</param>
+        /// <typeparam name="T1">The 1st type parameter.</typeparam>
+        /// <typeparam name="T2">The 2nd type parameter.</typeparam>
+        /// <typeparam name="TElem">The 3rd type parameter.</typeparam>
+        public static Tuple<T1, T2> MaxElem<T1, T2, TElem>(this IEnumerable<Tuple<T1, T2>> source,
+            Func<T1, T2, TElem> selector) where TElem : IComparable
+        {
+            var t = source.MaxElem(i => selector(i.Item1, i.Item2));
             return t ?? new Tuple<T1, T2>(default(T1), default(T2));
         }
 

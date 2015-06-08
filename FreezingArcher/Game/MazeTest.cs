@@ -82,6 +82,13 @@ namespace FreezingArcher.Game
                     else if (maze[1].IsGenerated && !maze[1].IsExitPathCalculated)
                         maze[1].CalculatePathToExit();
                 }
+                if (im.IsActionPressed("sneek"))
+                {
+                    if (maze[0].IsGenerated && !maze[0].AreFeaturesPlaced)
+                        maze[0].SpawnFeatures(null, maze[1].graph);
+                    else if (maze[1].IsGenerated && !maze[1].AreFeaturesPlaced)
+                        maze[1].SpawnFeatures(maze[0].graph);
+                }
             }
         }
 

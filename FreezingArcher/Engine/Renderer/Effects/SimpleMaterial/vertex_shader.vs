@@ -5,15 +5,15 @@
 layout(location = 0) in vec3 InPosition;
 layout(location = 1) in vec3 InNormal;
 layout(location = 2) in vec3 InTangent;
-layout(location = 3) in vec3 InBiTangent;
+layout(location = 3) in vec3 InBiNormal;
 
 layout(location = 4) in vec3 InTexCoord1;
-layout(location = 5) in vec3 InTexCoord2;
-layout(location = 6) in vec3 InTexCoord3;
 
 layout(location = 7) in vec4 InColor1;
-layout(location = 8) in vec4 InColor2;
-layout(location = 9) in vec4 InColor3;
+
+layout(location = 10) in mat4 InInstanceWorld;
+layout(location = 14) in vec4 InOther1;
+layout(location = 15) in vec4 InOther2;
 //####################################################
 
 //Output per Pixel
@@ -28,47 +28,33 @@ out gl_PerVertex
 
 //Output format
 //####################################################
-layout(location = 0) out vec3 OutTexCoord1;
-layout(location = 1) out vec3 OutTexCoord2;
-layout(location = 2) out vec3 OutTexCoord3;
-
-layout(location = 3) out vec4 OutColor1;
-layout(location = 4) out vec4 OutColor2;
-layout(location = 5) out vec4 OutColor3;
+layout(location = 0) out vec4 hpos; // Position (Clip space)
+layout(location = 1) out vec2 texcoord; // texture coordinate
+layout(location = 2) out vec3 vpos; // Position (View Space)
+layout(location = 3) out vec3 normal; // surface normal (view space)
+layout(location = 4) out vec3 tangent; // tangent vector (view space)
+layout(location = 5) out vec3 binormal; // binormal vector (view space)
 //####################################################
-
-layout(location = 6) out vec4 OutNormal;
-layout(location = 7) out vec4 OutTangent;
-layout(location = 8) out vec4 OutBinormal;
-
-layout(location = 9) out mat4 OutNormalMatrix;
-
-
-uniform LightBlock
-{
-        vec4 LightColor;
-        vec3 LightPosition;
-};
-       
-uniform MatricesBlock
-{
-        mat4 WorldMatrix;
-        mat4 ViewMatrix;
-        mat4 ProjectionMatrix;
-};
+ 
+uniform mat4 WorldMatrix;
+uniform mat4 ViewMatrix;
+uniform mat4 ProjectionMatrix;
 
 void main()
 {
-        gl_Position = ProjectionMatrix * ViewMatrix * WorldMatrix * vec4(InPosition, 1.0);
+        // Vertex position in clip space
+        hpos = ProjectionMatrix * ViewMatrix * WorldMatrix * vec4(InPosition, 1.0);
 
-        OutNormalMatrix = ViewMatrix * WorldMatrix;
-        OutNormal = vec4(InNormal, 1.0);
+        //copy texture coordinates
+        texcoord = InTexCoord1;
 
-        OutTexCoord1 = InTexCoord1;
-        OutTexCoord2 = InTexCoord2;
-        OutTexCoord3 = InTexCoord3;
+        mat4 modelviewrot = ViewMatrix * WorldMatrix;
 
-        OutColor1 = InColor1;
-        OutColor2 = InColor2;
-        OutColor3 = InColor3;
+        //Vertex position in view space (with model transformations)
+        vpos = vec3(modelviewrot * vec4(InPosition, 1.0));
+
+        //Tangent space vectors in view space (with model transformations)
+        normal = (modelviewrot * InNormal).xyz;
+        tangent = (modelviewrot * InTangent).xyz;
+        binormal = (modelviewrot * InBiNormal).xyz;
 }

@@ -139,6 +139,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             if (obj.GetName() == ObjectName)
             {
+                obj.Init(PrivateRendererContext);
                 SceneObjects.Add(obj);
                 obj.SceneObjectChanged += SceneObjectChangedHandler;
 

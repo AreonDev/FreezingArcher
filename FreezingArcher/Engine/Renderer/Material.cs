@@ -141,8 +141,8 @@ namespace FreezingArcher.Renderer
         }
         #endregion
 
-        public Effect OptionalEffect { get; private set;}
-        public bool HasOptionalEffect{ get; private set;}
+        public Effect OptionalEffect { get; protected set;}
+        public bool HasOptionalEffect{ get; protected set;}
 
         public Material()
         {

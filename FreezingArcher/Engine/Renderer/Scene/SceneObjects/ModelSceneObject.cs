@@ -27,32 +27,81 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
     public class ModelSceneObject : SceneObject
     {
         private string ModelPath;
+        private bool   LoadModel;
         private Model  MyModel;
 
         public override void Draw(RendererContext rc)
         {
-            rc.DrawModel(MyModel);
+            if(MyModel != null)
+                rc.DrawModel(MyModel, this.WorldMatrix);
         }
 
         public override void DrawInstanced(RendererContext rc, int count)
         {
-            //Instancing....
+            if(MyModel != null)
+                rc.DrawModel(MyModel, count == 1 ? WorldMatrix : FreezingArcher.Math.Matrix.Identity, count);
+
+            if(!LoadModel)
+                rc.DrawModel(MyModel, count == 1 ? WorldMatrix : FreezingArcher.Math.Matrix.Identity, count);
+        }
+
+        public override void PrepareInstanced(RendererContext rc, VertexBufferLayoutKind[] vblks, VertexBuffer vb)
+        {
+            if (MyModel != null)
+            {
+                foreach (Mesh msh in MyModel.Meshes)
+                {
+                    msh.m_VertexBufferArray.BindVertexBufferArray();
+
+                    vb.BindBuffer();
+
+                    foreach (VertexBufferLayoutKind vblk in vblks)
+                    {
+                        rc.EnableVertexAttribute((int)vblk.AttributeID);
+                        rc.VertexAttributePointer(vblk);
+                        rc.VertexAttributeDivisor((int)vblk.AttributeID, 1);
+                    }
+
+                    vb.UnbindBuffer();
+
+                    msh.m_VertexBufferArray.UnbindVertexBufferArray();
+                }
+            }
+        }
+
+        public override void UnPrepareInstanced(RendererContext rc, VertexBufferLayoutKind[] vblks)
+        {
+            if (MyModel != null)
+            {
+                foreach (Mesh msh in MyModel.Meshes)
+                {
+                    msh.m_VertexBufferArray.BindVertexBufferArray();
+
+                    foreach (VertexBufferLayoutKind vblk in vblks)
+                        rc.DisableVertexAttribute((int)vblk.AttributeID);
+
+                    msh.m_VertexBufferArray.UnbindVertexBufferArray();
+                }
+            }
+            
         }
 
         public override bool Init(RendererContext rc)
         {
-            MyModel = rc.LoadModel(ModelPath);
+            if(LoadModel)
+                MyModel = rc.LoadModel(ModelPath);
 
             return true;
         }
 
         public override string GetName()
         {
-            return "ModelSceneObject";
+            return "ModelSceneObject_" + ModelPath;
         }
 
-        public ModelSceneObject(string path)
+        public ModelSceneObject(string path, bool load = true)
         {
+            LoadModel = load;
             ModelPath = path;
         }
     }

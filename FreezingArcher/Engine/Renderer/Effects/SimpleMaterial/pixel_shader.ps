@@ -2,48 +2,60 @@
 
 //Input format
 //####################################################
-layout(location = 0) in vec3 InTexCoord1;
-layout(location = 1) in vec3 InTexCoord2;
-layout(location = 2) in vec3 InTexCoord3;
-
-layout(location = 3) in vec4 InColor1;
-layout(location = 4) in vec4 InColor2;
-layout(location = 5) in vec4 InColor3;
-
-layout(location = 6) in vec4 InNormal;
-layout(location = 7) in vec4 InTangent;
-layout(location = 8) in vec4 InBinormal;
-
-layout(location = 9) in mat4 InNormaMatrix;
+layout(location = 0) in vec4 hpos; // Position (Clip space)
+layout(location = 1) in vec2 texcoord; // texture coordinate
+layout(location = 2) in vec3 vpos; // Position (View Space)
+layout(location = 3) in vec3 normal; // surface normal (view space)
+layout(location = 4) in vec3 tangent; // tangent vector (view space)
+layout(location = 5) in vec3 binormal; // binormal vector (view space)
 //####################################################
 
-layout(location = 0) out vec4 normal_colour;
-//layout(location = 1) out vec4 diffuse_colour;
-//layout(location = 2) out vec4 specular_colour;
-//layout(location = 3) out vec4 depth_colour;
+layout(location = 0) out vec4 normal_color;
+layout(location = 1) out vec4 diffuse_color;
+layout(location = 2) out vec4 specular_color;
+layout(location = 3) out vec4 depth_color;
 
-uniform sampler2D ColourTexture;
 uniform sampler2D NormalTexture;
+uniform sampler2D ColorTexture;
 
-uniform float UseColor;
+uniform float Tile;
+uniform vec4 DiffuseColor;
+uniform vec4 SpecularColor;
+uniform vec2 PlaneInformation;
 
-uniform MaterialBlock
+vec4 float_to_color(float f)
 {
-        vec4 Ambient;
-        vec4 Diffuse;
-        vec4 Specular;
-        float Shininess;
-};
+        vec3 color;
+        f *= 256;
+        color.x = floor(f);
+        f = (f-color.x) * 256;
+        color.y = floor(f);
+        color.z = f-color.y;
+        color.xy *= 0.00390625; // *= 1.0 / 256
+        color.w = 1.0;
+        return color;
+}
 
 void main()
 {
-        vec4 colour_col = texture2D(ColourTexture, InTexCoord1.xy);
-        vec4 normal_col = texture2D(NormalTexture, InTexCoord1.xy);
+        vec2 texcrd = texcoord*Tile;
 
-        //normal_colour = InNormalMatrix * (InNormal);
-        normal_colour = normal_colour;
+        vec3 normalcol = texture2D(ColorTexture, texcrd).xyz;
+        vec3 color = texture2D(NormalTexture, texcrd).xyz;
 
-        //diffuse_colour = vec4(0, 0, 0, 0);
-        //specular_colour = diffuse_colour;
-        //depth_colour = diffuse_colour;
+        //transform normal to view space
+        normalcol -= 0.5;
+        normalcol = normalize(normalcol.x * tangent + normalcol.y*binormal + 
+                normal.z * normal);
+
+        //convert normal back to [0, 1] color space
+        normalcol = normal*0.5+0.5;
+
+        //fill G-Buffer
+        normal_color = vec4(normalcol, 1);
+        diffuse_color = vec4(color*DiffuseColor.xyz, 1);
+        specular_color = SpecularColor;
+
+        float d = ((PlaneInformation.x * vpos.z + PlaneInformation.y) / -vpos.z);
+        depth_color = vec4(float_to_color(d), 1);
 }

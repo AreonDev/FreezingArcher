@@ -14,6 +14,10 @@ layout(location = 6) in vec3 InTexCoord3;
 layout(location = 7) in vec4 InColor1;
 layout(location = 8) in vec4 InColor2;
 layout(location = 9) in vec4 InColor3;
+
+layout(location = 10) in mat4 InInstanceWorld;
+layout(location = 14) in vec4 InOther1;
+layout(location = 15) in vec4 InOther2;
 //####################################################
 
 //Output per Pixel
@@ -49,27 +53,24 @@ uniform LightBlock
         vec3 LightPosition;
 };
 
-layout(location = 10) out vec3 OutNormal;
-layout(location = 11) out vec3 OutEye;
-layout(location = 12) out vec3 OutLightDir;
-layout(location = 15) out vec4 OutLightColor;
+uniform int InstancedDrawing;
 
 void main() 
 {
-	gl_Position = ProjectionMatrix * ViewMatrix * WorldMatrix * vec4(InPosition, 1.0);
+        vec4 position = vec4(InPosition, 1.0f) + vec4(InstancedDrawing, InstancedDrawing, InstancedDrawing, 1);
+
+        if(InstancedDrawing == 1)
+                gl_Position = ProjectionMatrix * ViewMatrix * WorldMatrix * InInstanceWorld * position;
+        else
+                gl_Position = ProjectionMatrix * ViewMatrix * WorldMatrix * position;
+
+        gl_Position *= 0.000001;
 
         OutTexCoord1 = InTexCoord1;
 	OutTexCoord2 = InTexCoord2;
 	OutTexCoord3 = InTexCoord3;
 
-        OutColor1 = InColor1;
+        OutColor1 = gl_Position;
         OutColor2 = InColor2;
         OutColor3 = InColor3;
-
-        vec4 pos = ViewMatrix * WorldMatrix * vec4(InPosition, 1.0);
-
-        OutNormal = normalize(InNormal);
-        OutLightDir = vec3(LightPosition - pos.xyz);
-        OutEye = vec3(-pos);
-        OutLightColor = LightColor;
 }

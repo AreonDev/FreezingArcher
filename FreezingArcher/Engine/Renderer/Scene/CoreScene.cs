@@ -116,6 +116,12 @@ namespace FreezingArcher.Renderer.Scene
         public CameraManager CamManager{ get; set;}
 
 
+        public FrameBuffer FrameBuffer{ get; private set;}
+        public Texture2D   FrameBufferNormalTexture { get; private set;}
+        public Texture2D   FrameBufferColorTexture{ get; private set;}
+        public Texture2D   FrameBufferSpecularTexture { get; private set;}
+        public Texture2D   FrameBufferDepthTexture { get; private set;}
+        public TextureDepthStencil FrameBufferDepthStencilTexture { get; private set;}
 
         public CoreScene()
         {
@@ -123,12 +129,45 @@ namespace FreezingArcher.Renderer.Scene
             Objects = new List<SceneObject>();
             SubScenes = new List<CoreScene>();
 
+            FrameBuffer = null;
+
             SceneName = "CoreScene";
         }
 
         internal bool Init(RendererContext rc)
         {
             PrivateRendererContext = rc;
+
+            //Init Framebuffer
+            long ticks = DateTime.Now.Ticks;
+
+            FrameBuffer = rc.CreateFrameBuffer("CoreSceneFrameBuffer_" + ticks);
+
+            FrameBufferNormalTexture = rc.CreateTexture2D("CoreSceneFrameBufferNormalTexture_"+ticks,
+                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false);
+
+            FrameBufferColorTexture = rc.CreateTexture2D("CoreSceneFrameBufferColorTexture_" + ticks,
+                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false);
+
+            FrameBufferSpecularTexture = rc.CreateTexture2D("CoreSceneFrameBufferSpecularTexture_" + ticks,
+                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false);
+
+            FrameBufferDepthTexture = rc.CreateTexture2D("CoreSceneFrameBufferDepthTexture_" + ticks,
+                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false);
+
+            FrameBufferDepthStencilTexture = rc.CreateTextureDepthStencil("CoreSceneFrameBufferDepthStencil_" + ticks,
+                rc.ViewportSize.X, rc.ViewportSize.Y, IntPtr.Zero, false);
+
+            FrameBuffer.BeginPrepare();
+
+            FrameBuffer.AddTexture(FrameBufferNormalTexture, FrameBuffer.AttachmentUsage.Color0);
+            FrameBuffer.AddTexture(FrameBufferColorTexture, FrameBuffer.AttachmentUsage.Color1);
+            FrameBuffer.AddTexture(FrameBufferSpecularTexture, FrameBuffer.AttachmentUsage.Color2);
+            FrameBuffer.AddTexture(FrameBufferDepthTexture, FrameBuffer.AttachmentUsage.Color3);
+
+            FrameBuffer.AddTexture(FrameBufferDepthStencilTexture, FrameBuffer.AttachmentUsage.DepthStencil);
+
+            FrameBuffer.EndPrepare();
 
             return true;
         }

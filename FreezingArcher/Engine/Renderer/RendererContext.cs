@@ -99,6 +99,8 @@ namespace FreezingArcher.Renderer
             mdl.Materials = new List<Material>();
             foreach (Assimp.Material mat in scn.Materials)
             {
+                long ticks = DateTime.Now.Ticks;
+
                 if (mat.Name == "DefaultMaterial")
                     continue;
 
@@ -120,34 +122,34 @@ namespace FreezingArcher.Renderer
                 material.ColorSpecular = mat.ColorSpecular;
 
                 //Load all textures
-                material.TextureAmbient = mat.HasTextureAmbient ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureAmbient", true,
+                material.TextureAmbient = mat.HasTextureAmbient ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureAmbient_"+ticks, true,
                     folder_path + "/" + mat.TextureAmbient.FilePath) : null;
 
-                material.TextureDiffuse = mat.HasTextureDiffuse ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureDiffuse", true,
+                material.TextureDiffuse = mat.HasTextureDiffuse ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureDiffuse_"+ticks, true,
                     folder_path + "/" + mat.TextureDiffuse.FilePath) : null;
 
-                material.TextureEmissive = mat.HasTextureEmissive ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureEmissive", true,
+                material.TextureEmissive = mat.HasTextureEmissive ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureEmissive_"+ticks, true,
                     folder_path + "/" + mat.TextureEmissive.FilePath) : null;
 
-                material.TextureLightMap = mat.HasTextureLightMap ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureLightMap", true,
+                material.TextureLightMap = mat.HasTextureLightMap ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureLightMap_"+ticks, true,
                     folder_path + "/" + mat.TextureLightMap.FilePath) : null;
 
-                material.TextureNormal = mat.HasTextureNormal ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureNormal", true,
+                material.TextureNormal = mat.HasTextureNormal ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureNormal_"+ticks, true,
                     folder_path + "/" + mat.TextureNormal.FilePath) : null;
 
-                material.TextureOpacity = mat.HasTextureOpacity ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureOpacity", true,
+                material.TextureOpacity = mat.HasTextureOpacity ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureOpacity_"+ticks, true,
                     folder_path + "/" + mat.TextureOpacity.FilePath) : null;
 
-                material.TextureReflection = mat.HasTextureReflection ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureReflection", true,
+                material.TextureReflection = mat.HasTextureReflection ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureReflection_"+ticks, true,
                     folder_path + "/" + mat.TextureReflection.FilePath) : null;
 
-                material.TextureDisplacement = mat.HasTextureDisplacement ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureDisplacement", true,
+                material.TextureDisplacement = mat.HasTextureDisplacement ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureDisplacement_"+ticks, true,
                     folder_path + "/" + mat.TextureDisplacement.FilePath) : null;
 
                 material.TextureReflective = null;
 
 
-                material.TextureSpecular = mat.HasTextureSpecular ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureSpecular", true,
+                material.TextureSpecular = mat.HasTextureSpecular ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureSpecular_"+ticks, true,
                     folder_path + "/" + mat.TextureSpecular.FilePath) : null;
 
                 mdl.Materials.Add(material);
@@ -157,32 +159,34 @@ namespace FreezingArcher.Renderer
             return mdl;
         }
 
-        public void DrawModel(Model mdl, int count = 1)
+        public void DrawModel(Model mdl, Matrix world, int count = 1)
         {
-            foreach (Mesh msh in mdl.Meshes)
+            if (mdl != null)
             {
-                #region TODO
-                //TODO: Set Materials, and textures
-                //Each material has its Effect Class
-                BasicEffect mat = BasicEffect;
-                mat.World = Matrix.Identity;
-                mat.View = Matrix.LookAt(new Vector3(10.0f, 10.0f, 10.0f), Vector3.Zero, Vector3.UnitY);
-                mat.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 16.0f / 9.0f, 1.0f, 100.0f);
-                mat.Use();
-                mat.Update();
+                foreach (Mesh msh in mdl.Meshes)
+                {
+                    Material mat = mdl.Materials[msh.MaterialIndex];
+                    if(!mat.HasOptionalEffect)
+                    {
+                        SimpleMaterial mat2 = new SimpleMaterial();
+                        mat2.Init(this);
 
-                //if((msh.m_MaterialIndex == -1) || (mdl.Materials.Count == 0) || (msh.MaterialIndex >= mdl.Materials.Count))
-                //    mat = SimpleMaterial(
+                        mat2.SpecularColor = mat.ColorSpecular;
+                        mat2.DiffuseColor = mat.ColorDiffuse;
 
-                //Sort each effect class
+                        mat2.NormalTexture = mat.TextureNormal;
+                        mat2.ColorTexture = mat.TextureDiffuse;
 
-                //Configure for material
+                        mat = mat2;
+                    }
 
-                //Store all matrices correctly
-                #endregion
+                    //Set Scene Camera settings
+                    mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("WorldMatrix"), world);
 
-                //Draw all mesh
-                DrawMesh(msh, count);
+
+                    //Draw all mesh
+                    DrawMesh(msh, count);
+                }
             }
         }
 
@@ -191,8 +195,12 @@ namespace FreezingArcher.Renderer
             //Materials and Matrices should be correctly set
             msh.m_VertexBufferArray.BindVertexBufferArray();
 
-            DrawElements(0, msh.m_Indices.IndexCount, RendererIndexType.UnsignedInt, 
-                (msh.m_PrimitiveType == Mesh.PrimitiveType.Triangles) ? RendererBeginMode.Triangles : RendererBeginMode.Points);
+            if (count == 1)
+                DrawElements(0, msh.m_Indices.IndexCount, RendererIndexType.UnsignedInt, 
+                    (msh.m_PrimitiveType == Mesh.PrimitiveType.Triangles) ? RendererBeginMode.Triangles : RendererBeginMode.Points);
+            else
+                DrawElementsInstanced(0, msh.m_Indices.IndexCount, RendererIndexType.UnsignedInt,
+                    (msh.m_PrimitiveType == Mesh.PrimitiveType.Triangles) ? RendererBeginMode.Triangles : RendererBeginMode.Points, count);
 
             msh.m_VertexBufferArray.UnbindVertexBufferArray();
         }
@@ -206,7 +214,9 @@ namespace FreezingArcher.Renderer
         {
             if (Scene != null)
             {
-                this.Clear(Scene.BackgroundColor);
+                Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
+
+                this.Clear(Scene.BackgroundColor, 1);
 
                 foreach (SceneObject obj in Scene.GetObjects())
                 {
@@ -214,6 +224,8 @@ namespace FreezingArcher.Renderer
 
                     obj.Draw(this);
                 }
+
+                Scene.FrameBuffer.Unbind();
             }
         }
     }

@@ -62,6 +62,7 @@
     <Compile Include="Maze\Maze.cs" />
     <Compile Include="MazeTest.cs" />
     <Compile Include="Maze\MazeColorTheme.cs" />
+    <Compile Include="RendererTest.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>

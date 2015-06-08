@@ -127,7 +127,9 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Input\KeyboardInput.cs" />
     <Compile Include="Input\MouseInput.cs" />
     <Compile Include="Renderer\UniformBuffer.cs" />
-    <Compile Include="Renderer\VertexBuffer.cs" />
+    <Compile Include="Renderer\VertexBuffer.cs">
+      <DependentUpon>UniformBuffer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Content\Game.cs" />
     <Compile Include="Messaging\MessageEvent.cs" />
     <Compile Include="Messaging\MessageID.cs" />
@@ -249,6 +251,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\MouseCaptureMessage.cs" />
     <Compile Include="Content\GameState.cs" />
     <Compile Include="Content\GameStateTransition.cs" />
+    <Compile Include="Renderer\SimpleMaterial.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

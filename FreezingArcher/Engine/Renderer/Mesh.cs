@@ -122,32 +122,34 @@ namespace FreezingArcher.Renderer
                 Logger.Log.AddLogEntry(LogLevel.Fatal, "Renderer.Mesh", FreezingArcher.Core.Status.BadArgument);
                 throw new Exception();
             }
-
+                
             m_MaterialIndex = matidx;
             m_PrimitiveType = type;
 
             //Init buffers
 
+            long ticks = DateTime.Now.Ticks;
+
             m_VertexTexCoords = null;
             m_VertexColors = null;
 
-            m_Indices = rc.CreateIndexBuffer(indices, indices.Length * 4, RendererBufferUsage.StaticDraw, name + "_Indices");
-            m_VertexPosition = rc.CreateVertexBuffer(positions, positions.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_Positions");
+            m_Indices = rc.CreateIndexBuffer(indices, indices.Length * 4, RendererBufferUsage.StaticDraw, name + "_Indices_"+ticks);
+            m_VertexPosition = rc.CreateVertexBuffer(positions, positions.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_Positions_"+ticks);
 
             if (normals == null)
                 m_VertexNormal = new VertexBuffer();
             else
-                m_VertexNormal = rc.CreateVertexBuffer(normals, normals.Length * 3 * 4, RendererBufferUsage.StreamDraw, name + "_Normals");
+                m_VertexNormal = rc.CreateVertexBuffer(normals, normals.Length * 3 * 4, RendererBufferUsage.StreamDraw, name + "_Normals_"+ticks);
 
             if (tangents == null)
                 m_VertexTangent = new VertexBuffer();
             else
-                m_VertexTangent = rc.CreateVertexBuffer(tangents, tangents.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_Tangents");
+                m_VertexTangent = rc.CreateVertexBuffer(tangents, tangents.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_Tangents_"+ticks);
 
             if (bitangents == null)
                 m_VertexBiTangent = new VertexBuffer();
             else
-                m_VertexBiTangent = rc.CreateVertexBuffer(bitangents, bitangents.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_BiNormals");
+                m_VertexBiTangent = rc.CreateVertexBuffer(bitangents, bitangents.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_BiNormals_"+ticks);
 
             if (texcoords != null && texcoords.Length > 0)
             {
@@ -164,7 +166,7 @@ namespace FreezingArcher.Renderer
                     if (texcoords[i].Count > 0)
                     {
                         m_VertexTexCoords[i] = 
-                        rc.CreateVertexBuffer(texcoords[i].ToArray(), texcoords[i].ToArray().Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_TexCoord" + i);
+                        rc.CreateVertexBuffer(texcoords[i].ToArray(), texcoords[i].ToArray().Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_TexCoord" + i + "_"+ticks);
                     }
                 }
 
@@ -176,7 +178,7 @@ namespace FreezingArcher.Renderer
 
                 for (int i = 0; i < colors.Length; i++)
                     m_VertexColors[i] = 
-                        rc.CreateVertexBuffer(colors[i].ToArray(), colors[i].ToArray().Length * 4 * 4, RendererBufferUsage.StaticDraw, name + "_Colors" + i);
+                        rc.CreateVertexBuffer(colors[i].ToArray(), colors[i].ToArray().Length * 4 * 4, RendererBufferUsage.StaticDraw, name + "_Colors" + i + "_"+ticks);
             }
 
 
@@ -190,7 +192,7 @@ namespace FreezingArcher.Renderer
             vblk[0].Offset = 0;
             vblk[0].Stride = 3 * 4;
 
-            m_VertexBufferArray = rc.CreateVertexBufferArray(m_VertexPosition, vblk, name + "_VertexBufferArray", m_Indices);
+            m_VertexBufferArray = rc.CreateVertexBufferArray(m_VertexPosition, vblk, name + "_VertexBufferArray_"+ticks, m_Indices);
 
             m_VertexBufferArray.BeginPrepare();
 

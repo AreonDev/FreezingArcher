@@ -85,6 +85,18 @@ namespace FreezingArcher.Messaging
         /// <summary>
         /// Occurs when the window is resized.
         /// </summary>
-        WindowResizeMessage
+        WindowResizeMessage,
+        /// <summary>
+        /// Occurs when the position of an entity changes.
+        /// </summary>
+        PositionChangedMessage = 30,
+        /// <summary>
+        /// Occurs when the rotation of an entity changes.
+        /// </summary>
+        RotationChangedMessage,
+        /// <summary>
+        /// Occurs when the scaling of an entity changes.
+        /// </summary>
+        ScaleChangedMessage
     }
 }

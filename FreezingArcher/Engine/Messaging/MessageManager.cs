@@ -102,6 +102,7 @@ namespace FreezingArcher.Messaging
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Adding message creator '{0}'",
                 c.GetType ().ToString ());
+            c.MessageCreated -= HandleMessageCreated;
             c.MessageCreated += HandleMessageCreated;
         }
 

@@ -99,7 +99,7 @@ namespace FreezingArcher.Content
             }
 
             var component = ComponentRegistry.Instance.Instantiate<T>();
-            component.Init(this);
+            component.Init(this, MessageManager);
 
             Components.Add(typeid, component);
 

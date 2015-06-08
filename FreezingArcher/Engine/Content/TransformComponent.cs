@@ -23,6 +23,7 @@
 using System;
 using FreezingArcher.Math;
 using System.Threading;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Content
 {
@@ -56,22 +57,59 @@ namespace FreezingArcher.Content
 
         #endregion
 
+        Vector3 position;
+        Quaternion rotation;
+        Vector3 scale;
+
         /// <summary>
         /// Gets or sets the position.
         /// </summary>
         /// <value>The position.</value>
-        public Vector3 Position { get; set; }
+        public Vector3 Position
+        {
+            get
+            {
+                return position;
+            }
+            set
+            {
+                position = value;
+                CreateMessage(new PositionChangedMessage(Entity, value));
+            }
+        }
 
         /// <summary>
         /// Gets or sets the rotation.
         /// </summary>
         /// <value>The rotation.</value>
-        public Quaternion Rotation { get; set; }
+        public Quaternion Rotation
+        {
+            get
+            {
+                return rotation;
+            }
+            set
+            {
+                rotation = value;
+                CreateMessage(new RotationChangedMessage(Entity, value));
+            }
+        }
 
         /// <summary>
         /// Gets or sets the scale.
         /// </summary>
         /// <value>The scale.</value>
-        public Vector3 Scale { get; set; }
+        public Vector3 Scale
+        {
+            get
+            {
+                return scale;
+            }
+            set
+            {
+                scale = value;
+                CreateMessage(new ScaleChangedMessage(Entity, value));
+            }
+        }
     }
 }

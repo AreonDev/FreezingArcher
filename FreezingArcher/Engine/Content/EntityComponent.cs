@@ -24,6 +24,8 @@ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using FreezingArcher.Core;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Content
 {
@@ -34,15 +36,25 @@ namespace FreezingArcher.Content
     /// access modifiers must be internal or higher. If any of the constraints listed above is not met the build will
     /// fail on post processing.
     /// </summary>
-    public abstract class EntityComponent : FAObject
+    public abstract class EntityComponent : FAObject, IMessageCreator
     {
+        #region IMessageCreator implementation
+
+        public event MessageEvent MessageCreated;
+
+        #endregion
+
+        protected Entity Entity;
+
         /// <summary>
         /// Initialize this component. Within this method all properties may be reseted and reloaded from the attribute
         /// manager.
         /// </summary>
         /// <param name="entity">The entity this component is bounded to.</param>
-        public virtual void Init(Entity entity)
+        public virtual void Init(Entity entity, MessageManager msgmnr)
         {
+            Entity = entity;
+            msgmnr += this;
             // set type based default parameters for fields and properties
             Type t = GetType();
             var fields = t.GetFields().Where(f => !f.IsDefined(typeof(CompilerGeneratedAttribute), false) &&
@@ -64,6 +76,16 @@ namespace FreezingArcher.Content
 
             // set instance based default parameters for fields and properties
             // TODO
+        }
+
+        /// <summary>
+        /// Creates the message.
+        /// </summary>
+        /// <param name="msg">Message.</param>
+        protected void CreateMessage(IMessage msg)
+        {
+            if (MessageCreated != null)
+                MessageCreated(msg);
         }
     }
 }

@@ -80,7 +80,7 @@ namespace PostProcessor
 		    BindingFlags.Instance |
 		    BindingFlags.DeclaredOnly).ToList();
 
-		var fields2 = fields.Where(k => (k.IsPrivate || k.IsFamily || k.IsFamilyOrAssembly)
+		var fields2 = fields.Where(k => (k.IsFamily || k.IsFamilyOrAssembly)
 		    && !k.IsDefined(typeof(CompilerGeneratedAttribute), false) &&
 		    !k.Name.StartsWith("Default", StringComparison.InvariantCulture)).ToList();
 
@@ -92,14 +92,12 @@ namespace PostProcessor
 		    {
 			string access_modifier = null;
 
-			if (field.IsPrivate)
-			    access_modifier = "private";
 			if (field.IsFamily)
 			    access_modifier = "protected";
 			if (field.IsFamilyOrAssembly)
 			    access_modifier = "protected internal";
 
-			Console.WriteLine("Error: Field {0} is {1} but should be at least internal!", field.Name,
+			Console.WriteLine("Error: Field {0} is {1} but should be at least internal or private!", field.Name,
 			    access_modifier);
 		    }
 		    error |= PostProcessingError.FieldError;
@@ -147,7 +145,7 @@ namespace PostProcessor
 
 		foreach (var field in fields)
 		{
-		    if (!field.IsStatic && !field.IsDefined(typeof(CompilerGeneratedAttribute), false))
+                    if (!field.IsPrivate && !field.IsStatic && !field.IsDefined(typeof(CompilerGeneratedAttribute), false))
 		    {
 			if (fields.FindIndex(f => f.Name == "Default" + field.Name) < 0)
 			{

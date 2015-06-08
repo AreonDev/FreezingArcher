@@ -59,10 +59,10 @@ namespace FreezingArcher.Game
 
             ModelSceneObject mdl = new ModelSceneObject ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
 
-            Application.Instance.RendererContext.Scene.AddObject (mdl);
+            //Application.Instance.RendererContext.Scene.AddObject (mdl);
 
-            //new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
-            //   Application.Instance.RendererContext.Scene);
+            new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
+               Application.Instance.RendererContext.Scene);
 
             Application.Instance.Run ();
             Application.Instance.Destroy ();

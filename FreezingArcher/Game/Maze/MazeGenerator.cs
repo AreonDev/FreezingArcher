@@ -282,7 +282,7 @@ namespace FreezingArcher.Game.Maze
             int y = 0;
 
             SceneObjectArray scnobjarr = new SceneObjectArray ("RectangleSceneObject_Filled");
-            scnobjarr.LayoutLocationOffset = 3;
+            scnobjarr.LayoutLocationOffset = 10;
             scene.AddObject (scnobjarr);
 
             Vector3 scale = new Vector3 (scaling, scaling, 1);

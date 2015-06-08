@@ -161,10 +161,6 @@ namespace FreezingArcher.Renderer
         {
             foreach (Mesh msh in mdl.Meshes)
             {
-                #region Test
-
-                #endregion
-
                 #region TODO
                 //TODO: Set Materials, and textures
                 //Each material has its Effect Class
@@ -211,10 +207,6 @@ namespace FreezingArcher.Renderer
 
                 foreach (SceneObject obj in Scene.GetObjects())
                 {
-                    //BasicEffect.World = obj.WorldMatrix;
-                    //BasicEffect.View = Matrix.LookAt(new Vector3(10.0f, 10.0f, 10.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
-                    //BasicEffect.Projection = Matrix.
-
                     obj.Update();
 
                     obj.Draw(this);

@@ -993,9 +993,19 @@ namespace FreezingArcher.Renderer
             _2DEffect.BindPipeline();
 
             if (count > 1)
+            {
+                _2DEffect.VertexProgram.SetUniform(_2DEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 1);
+                _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("InstancedDrawing"), 1);
+
                 DrawArraysInstanced(RendererBeginMode.Triangles, 0, 6, count);
+            }
             else
+            {
+                _2DEffect.VertexProgram.SetUniform(_2DEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 0);
+                _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("InstancedDrawing"), 0);
+
                 DrawArrays(0, 6, RendererBeginMode.Triangles);
+            }
 
             _2DUniformBuffer.UnbindBuffer();
 

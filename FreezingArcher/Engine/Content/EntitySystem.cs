@@ -39,10 +39,15 @@ namespace FreezingArcher.Content
         /// <summary>
         /// Initialize this system. This may be used as a constructor replacement.
         /// </summary>
-        public virtual void Init(MessageManager msgmnr)
+        public virtual void Init(MessageManager msgmnr, Entity entity)
         {
             msgmnr += this;
+            Entity = entity;
         }
+
+        protected Entity Entity;
+
+        public Type[] NeededComponents { get; protected set; }
 
         #region IMessageConsumer implementation
         /// <summary>

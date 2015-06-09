@@ -343,7 +343,7 @@ namespace FreezingArcher.DataStructures.Graphs
 
                     reachedNodes.Add(node);
                     node.Edges.ForEach(e => {
-                        if (startNode == e.SecondNode)
+                        if (node == e.SecondNode)
                             stack.Push(e.FirstNode);
                         else
                             stack.Push(e.SecondNode);

@@ -45,24 +45,27 @@ namespace FreezingArcher.Game
             Application.Instance.Init ();
             Application.Instance.Load ();
 	   
-            ComponentRegistry.Instance.Register<TransformComponent> ();
-            Entity test = Application.Instance.ObjectManager.CreateOrRecycle<Entity> ();
-            test.Init ("Test Entity", Application.Instance.MessageManager);
-            test.AddComponent<TransformComponent>();
+            if (!Application.Instance.IsCommandLineInterface)
+            {
+                ComponentRegistry.Instance.Register<TransformComponent> ();
+                Entity test = Application.Instance.ObjectManager.CreateOrRecycle<Entity> ();
+                test.Init ("Test Entity", Application.Instance.MessageManager);
+                test.AddComponent<TransformComponent>();
 
-            Application.Instance.RendererContext.Scene = new CoreScene();
-            Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Crimson;
+                Application.Instance.RendererContext.Scene = new CoreScene();
+                Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Crimson;
 
-          
-            FreeCamera frcam = new FreeCamera ("BlaCam", Application.Instance.MessageManager);
-            Application.Instance.RendererContext.Scene.CamManager.AddCam (frcam);
 
-            //ModelSceneObject mdl = new ModelSceneObject ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
+                FreeCamera frcam = new FreeCamera ("BlaCam", Application.Instance.MessageManager);
+                Application.Instance.RendererContext.Scene.CamManager.AddCam (frcam);
 
-            //Application.Instance.RendererContext.Scene.AddObject (mdl);
+                //ModelSceneObject mdl = new ModelSceneObject ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
 
-            new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
-               Application.Instance.RendererContext.Scene);
+                //Application.Instance.RendererContext.Scene.AddObject (mdl);
+
+                new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
+                    Application.Instance.RendererContext.Scene);
+            }
 
             Application.Instance.Run ();
             Application.Instance.Destroy ();

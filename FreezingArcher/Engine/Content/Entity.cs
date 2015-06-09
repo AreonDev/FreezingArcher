@@ -89,16 +89,21 @@ namespace FreezingArcher.Content
         /// <typeparam name="T">The type of the component.</typeparam>
         public bool AddComponent<T>() where T : EntityComponent
         {
-            int typeid = typeof(T).GetHashCode();
+            return internalAddComponent(typeof(T));
+        }
+
+        bool internalAddComponent(Type type)
+        {
+            int typeid = type.GetHashCode();
 
             if (Components.ContainsKey (typeid))
             {
                 Logger.Log.AddLogEntry(LogLevel.Error, ModuleName,
-                    "Component {0} is already registered in this entity!", typeof(T).Name);
+                    "Component {0} is already registered in this entity!", type.Name);
                 return false;
             }
 
-            var component = ComponentRegistry.Instance.Instantiate<T>();
+            var component = ComponentRegistry.Instance.Instantiate(type);
             component.Init(this, MessageManager);
 
             Components.Add(typeid, component);
@@ -142,11 +147,16 @@ namespace FreezingArcher.Content
             }
 
             var system = ObjectManager.CreateOrRecycle(typeof(T)) as T;
-            system.Init(MessageManager);
+            system.Init(MessageManager, this);
 
             Systems.Add(typeid, system);
 
-            return true;
+            bool result = true;
+            if (system.NeededComponents != null)
+                foreach (var comp in system.NeededComponents)
+                    result = result && internalAddComponent(comp);
+
+            return result;
         }
 
         /// <summary>

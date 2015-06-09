@@ -349,7 +349,7 @@ namespace FreezingArcher.DataStructures.Graphs
 
                     reachedNodes.Add(node);
                     node.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
-                        if (startNode == e.SecondNode)
+                        if (node == e.SecondNode)
                             stack.Push(e.FirstNode);
                         else
                             stack.Push(e.SecondNode);
@@ -462,7 +462,7 @@ namespace FreezingArcher.DataStructures.Graphs
 
                         reachedNodes.Add(node);
                         node.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
-                            if (graph.Nodes[0] == e.SecondNode)
+                            if (node == e.SecondNode)
                                 stack.Push(e.FirstNode);
                             else
                                 stack.Push(e.SecondNode);
@@ -503,7 +503,7 @@ namespace FreezingArcher.DataStructures.Graphs
 
                         reachedNodes.Add(node);
                         node.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
-                            if (graph.Nodes[0] == e.SecondNode)
+                            if (node == e.SecondNode)
                                 stack.Push(e.FirstNode);
                             else
                                 stack.Push(e.SecondNode);
@@ -547,7 +547,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         reachedNodes.Add(node);
                         node.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
                             estack.Push(e);
-                            if (graph.Nodes[0] == e.SecondNode)
+                            if (node == e.SecondNode)
                                 stack.Push(e.FirstNode);
                             else
                                 stack.Push(e.SecondNode);
@@ -588,7 +588,7 @@ namespace FreezingArcher.DataStructures.Graphs
 
                         reachedNodes.Add(node);
                         node.Edges.OrderByDescending(j => j.Weight).ForEach(e => {
-                            if (graph.Nodes[0] == e.SecondNode)
+                            if (node == e.SecondNode)
                                 stack.Push(e.FirstNode);
                             else
                                 stack.Push(e.SecondNode);

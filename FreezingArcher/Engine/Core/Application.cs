@@ -102,7 +102,7 @@ namespace FreezingArcher.Core
         /// <summary>
         /// Indicating whether command line interface is active or not.
         /// </summary>
-        private bool Cli = false;
+        public bool IsCommandLineInterface { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.Application"/> class.
@@ -160,7 +160,7 @@ namespace FreezingArcher.Core
 
             if (!CommandLineInterface.Instance.ParseArguments (args))
             {
-                Cli = true;
+                IsCommandLineInterface = true;
                 return;
             }
 
@@ -362,7 +362,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Run ()
         {
-            if (Cli)
+            if (IsCommandLineInterface)
                 return;
 
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Running application '{0}' ...", Name);
@@ -457,7 +457,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Init ()
         {
-            if (Cli)
+            if (IsCommandLineInterface)
                 return;
 
             Loaded = false;
@@ -502,7 +502,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Load ()
         {
-            if (Cli)
+            if (IsCommandLineInterface)
                 return;
 
             Loaded = false;
@@ -543,7 +543,7 @@ namespace FreezingArcher.Core
             Loaded = false;
             MessageManager.StopProcessing ();
 
-            if (!Cli)
+            if (!IsCommandLineInterface)
             {
                 PeriodicInputTask.Stop ();
                 PeriodicUpdateTask.Stop ();

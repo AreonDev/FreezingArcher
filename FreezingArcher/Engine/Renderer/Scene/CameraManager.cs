@@ -56,7 +56,7 @@ namespace FreezingArcher.Renderer.Scene
         /// Gets the active cam.
         /// </summary>
         /// <param name="cam">Cam.</param>
-        public void getActiveCam(){
+        public BaseCam getActiveCam(){
             return this.getCam("ActiveCam");            
         }
 

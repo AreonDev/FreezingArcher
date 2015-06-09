@@ -41,13 +41,39 @@ namespace FreezingArcher.Renderer.Scene
         public CameraManager (string name = "root", BaseCam cam = null)
         {
             CamTree = new Tree<Pair<string, BaseCam>> (new Pair<string, BaseCam>(name, cam));
+            CamTree.AddChild(new Pair<string, BaseCam>("ActiveCam", null));
+        }
+
+        /// <summary>
+        /// Sets the active cam.
+        /// </summary>
+        /// <param name="cam">Cam.</param>
+        public void setActiveCam(BaseCam cam){
+            this.setCam("ActiveCam", cam);            
+        }
+
+        /// <summary>
+        /// Gets the active cam.
+        /// </summary>
+        /// <param name="cam">Cam.</param>
+        public void getActiveCam(){
+            return this.getCam("ActiveCam");            
+        }
+
+        /// <summary>
+        /// Sets the cam.
+        /// </summary>
+        /// <param name="camName">Cam name.</param>
+        /// <param name="cam">Cam.</param>
+        public void setCam(string camName, BaseCam cam){
+            ((IEnumerable<Tree<Pair<string, BaseCam>>>) CamTree.LevelOrder).First(i => i.Data.A == camName).Data.B = cam;
         }
 
         /// <summary>
         /// Adds the group.
         /// </summary>
         /// <param name="name">Name.</param>
-        public  void AddGroup(string name){
+        public void AddGroup(string name){
             CamTree.AddChild (new Pair<string, BaseCam>(name, null));
         }
 
@@ -56,20 +82,32 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         /// <param name="cam">Cam.</param>
         /// <param name="groupID">Group I.</param>
-        public  void AddCam(BaseCam cam, string groupID="root")
+        public void AddCam(BaseCam cam, string groupID="root")
         {
             ((IEnumerable<Tree<Pair<string, BaseCam>>>) CamTree.LevelOrder).First(i => i.Data.A == groupID)
                 .AddChild (new Pair<string, BaseCam>(cam.Name, cam));
         }
 
         /// <summary>
+        /// Gets the cam.
+        /// </summary>
+        /// <returns>The cam.</returns>
+        /// <param name="camName">Cam name.</param>
+        public BaseCam getCam(string camName){
+            return ((IEnumerable<Tree<Pair<string, BaseCam>>>) CamTree.LevelOrder).First(i => i.Data.A == camName).Data.B;
+        }
+
+        /// <summary>
         /// Toggles the cam.
         /// </summary>
         /// <param name="cam">Cam.</param>
-        public  void ToggleCam(BaseCam cam){
+        public void ToggleCam(BaseCam cam){
             Tree<Pair<string, BaseCam>> TmpNode = ((IEnumerable<Tree<Pair<string, BaseCam>>>) CamTree.LevelOrder)
                 .First(i => i.Data.A == cam.Name);
+            
 
+//            if (TmpNode.Parent.Parent == null)
+//                return 1;
             var TmpGroup = TmpNode.Parent.Parent;
 
             var Level = TmpGroup.Level+1;

@@ -99,7 +99,7 @@ namespace FreezingArcher.Game
             var im = msg as InputMessage;
             if (im != null)
             {
-                float fac = 100.0f;
+                //float fac = 100.0f;
 
                 //var pos = m300[0].Position;
                 if (im.IsActionDown("right"))

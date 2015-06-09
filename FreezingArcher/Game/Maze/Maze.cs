@@ -35,7 +35,7 @@ namespace FreezingArcher.Game.Maze
     /// Initialize maze delegate.
     /// </summary>
     delegate void InitializeMazeDelegate(ref ObjectManager objectManager,
-        ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref RectangleSceneObject[,] rectangles, ref Random rand,
+        ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref ModelSceneObject[,] models, ref Random rand,
         MazeColorTheme theme, uint x, uint y);
 
     /// <summary>
@@ -48,7 +48,7 @@ namespace FreezingArcher.Game.Maze
     /// Add maze to scene delegate.
     /// </summary>
     delegate void AddMazeToSceneDelegate(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
-        ref RectangleSceneObject[,] rectangles, ref CoreScene scene, float scaling, uint maxX, int offsX, int offsY);
+        ref ModelSceneObject[,] models, ref CoreScene scene, float scaling, uint maxX, int offsX, int offsY);
 
     /// <summary>
     /// Calculate path to exit delegate.
@@ -110,7 +110,7 @@ namespace FreezingArcher.Game.Maze
 
         Random rand;
 
-        RectangleSceneObject[,] rectangles;
+        ModelSceneObject[,] models;
 
         ObjectManager objectManager;
 
@@ -199,7 +199,7 @@ namespace FreezingArcher.Game.Maze
             if (initMazeDelegate != null)
             {
                 IsInitialized = true;
-                initMazeDelegate(ref objectManager, ref graph, ref rectangles, ref rand, Theme, (uint) Size.X, (uint) Size.Y);
+                initMazeDelegate(ref objectManager, ref graph, ref models, ref rand, Theme, (uint) Size.X, (uint) Size.Y);
             }
             else
             {
@@ -210,7 +210,7 @@ namespace FreezingArcher.Game.Maze
         /// <summary>
         /// Generate this instance.
         /// </summary>
-        public void Generate()
+        public void Generate(CoreScene scene = null)
         {
             if (!IsInitialized)
             {
@@ -228,6 +228,9 @@ namespace FreezingArcher.Game.Maze
             {
                 IsGenerated = true;
                 generateMazeDelegate(ref graph, ref rand, MaximumContinuousPathLength, Turbulence);
+
+                if (scene != null)
+                    AddToScene(scene);
             }
             else
             {
@@ -286,7 +289,7 @@ namespace FreezingArcher.Game.Maze
 
             if (addMazeToSceneDelegate != null)
             {
-                addMazeToSceneDelegate(ref graph, ref rectangles, ref scene, scale, (uint) Size.X, Offset.X, Offset.Y);
+                addMazeToSceneDelegate(ref graph, ref models, ref scene, scale, (uint) Size.X, Offset.X, Offset.Y);
             }
             else
             {

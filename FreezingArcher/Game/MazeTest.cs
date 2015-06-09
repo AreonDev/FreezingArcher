@@ -48,24 +48,27 @@ namespace FreezingArcher.Game
             ValidMessages = new int[] { (int) MessageId.Input };
             msgmnr += this;
             mazeGenerator = new MazeGenerator (objmnr);
+            this.scene = scene;
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze[0] = mazeGenerator.CreateMaze(rand.Next(), MazeColorTheme.Overworld, scene);
-            maze[1] = mazeGenerator.CreateMaze(rand.Next(), MazeColorTheme.Underworld, scene);
+            maze[0] = mazeGenerator.CreateMaze(rand.Next(), MazeColorTheme.Overworld);
+            maze[1] = mazeGenerator.CreateMaze(rand.Next(), MazeColorTheme.Underworld);
 
-            rect = new RectangleSceneObject();
-            rect.Color = Color4.CadetBlue;
-            rect.Position = new Vector3(4, 4, 0);
-            rect.Scaling = new Vector3(50, 50, 1);
-            scene.AddObject(rect);
+            //rect = new RectangleSceneObject();
+            //rect.Color = Color4.CadetBlue;
+            //rect.Position = new Vector3(4, 4, 0);
+            //rect.Scaling = new Vector3(50, 50, 1);
+            //scene.AddObject(rect);
         }
 
         readonly MazeGenerator mazeGenerator;
 
         readonly Maze.Maze[] maze = new Maze.Maze[2];
 
-        RectangleSceneObject rect;
+        //RectangleSceneObject rect;
+
+        CoreScene scene;
 
         #region IMessageConsumer implementation
 
@@ -81,7 +84,7 @@ namespace FreezingArcher.Game
                 if (im.IsActionPressed("jump"))
                 {
                     if (!maze[0].IsGenerated)
-                        maze[0].Generate();
+                        maze[0].Generate(scene);
                     else if (!maze[1].IsGenerated)
                         maze[1].Generate();
                 }
@@ -99,7 +102,7 @@ namespace FreezingArcher.Game
                     else if (maze[1].IsGenerated && !maze[1].AreFeaturesPlaced)
                         maze[1].SpawnFeatures(maze[0].graph);
                 }
-                var pos = rect.Position;
+                /*var pos = rect.Position;
                 const int fac = 10;
                 if (im.IsActionDown("right"))
                 {
@@ -121,7 +124,7 @@ namespace FreezingArcher.Game
                 {
                     Logger.Log.AddLogEntry(LogLevel.Debug, "Maze", "FPS: {0}", Application.Instance.FPSCounter);
                 }
-                rect.Position = pos;
+                rect.Position = pos;*/
             }
         }
 

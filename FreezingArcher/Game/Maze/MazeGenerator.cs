@@ -53,28 +53,24 @@ namespace FreezingArcher.Game.Maze
         /// <returns>The maze.</returns>
         /// <param name="seed">Seed.</param>
         /// <param name="theme">The theme of this maze.</param>
-        /// <param name="scene">Scene.</param>
         /// <param name="sizeX">Size x.</param>
         /// <param name="sizeY">Size y.</param>
         /// <param name="scale">Scale.</param>
         /// <param name="turbulence">Turbulence. The higher the more straight the maze will be.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will appear.</param>
-        public Maze CreateMaze(int seed, MazeColorTheme theme, CoreScene scene = null, int sizeX = 50, int sizeY = 50,
+        public Maze CreateMaze(int seed, MazeColorTheme theme, int sizeX = 50, int sizeY = 50,
             float scale = 10, double turbulence = 2, int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
         {
             Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, theme, InitializeMaze, CreateMaze,
                 AddMazeToScene, CalculatePathToExit, SpawnPortals, turbulence, maximumContinuousPathLength, 
                 portalSpawnFactor);
             maze.Offset = Offset;
-            maze.Init();
             var offs = Offset;
             offs.X += (int) (sizeX * scale);
             //offs.Y += sizeY;
             Offset = offs;
-
-            if (scene != null)
-                maze.AddToScene(scene);
+            maze.Init();
 
             return maze;
         }
@@ -232,10 +228,10 @@ namespace FreezingArcher.Game.Maze
         }
 
         static void InitializeMaze (ref ObjectManager objectManager,
-            ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref RectangleSceneObject[,] rectangles,
+            ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref ModelSceneObject[,] rectangles,
             ref Random rand, MazeColorTheme theme, uint x, uint y)
         {
-            rectangles = new RectangleSceneObject[x, y];
+            rectangles = new ModelSceneObject[x, y];
             graph = objectManager.CreateOrRecycle<WeightedGraph<MazeCell, MazeCellEdgeWeight>> ();
             graph.Init ();
 
@@ -249,7 +245,7 @@ namespace FreezingArcher.Game.Maze
 
                 for (int i = 0; i < x; i++)
                 {
-                    mapnode = new MazeCell (k + "." + i, new Vector2i (i, k), rand.Next (), rectangles, theme);
+                    mapnode = new MazeCell (k + "." + i, new Vector2i (i, k), rand.Next ());//, rectangles, theme);
 
                     edges.Clear ();
 
@@ -273,28 +269,10 @@ namespace FreezingArcher.Game.Maze
 
                 nodesLast = nodes;
             }
-        }
-
-        static void AddMazeToScene (ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
-            ref RectangleSceneObject[,] rectangles, ref CoreScene scene, float scaling, uint maxX, int xOffs, int yOffs)
-        {
-            int x = 0;
-            int y = 0;
-
-            SceneObjectArray scnobjarr = new SceneObjectArray ("RectangleSceneObject_Filled");
-            scnobjarr.LayoutLocationOffset = 3;
-            scene.AddObject (scnobjarr);
-
-            Vector3 scale = new Vector3 (scaling, scaling, 1);
 
             foreach (var node in (IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>>) graph)
             {
-                rectangles [x, y] = new RectangleSceneObject ();
-
-                rectangles [x, y].Position = new Vector3 (x * scale.X + xOffs, y * scale.Y + yOffs, 0.0f);
-                rectangles [x, y].Scaling = scale;
                 node.Data.Init ();
-
 
                 if (node.Edges.Count < 8)
                 {
@@ -302,8 +280,41 @@ namespace FreezingArcher.Game.Maze
                     node.Data.IsPreview = false;
                     node.Data.IsFinal = true;
                 }
+            }
+        }
 
-                scnobjarr.AddObject (rectangles [x, y]);
+        static void AddMazeToScene (ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
+            ref ModelSceneObject[,] rectangles, ref CoreScene scene, float scaling, uint maxX, int xOffs, int yOffs)
+        {
+            int x = 0;
+            int y = 0;
+
+            SceneObjectArray scnobjarr_wall = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Wall/wall.xml");
+            scnobjarr_wall.LayoutLocationOffset = 10;
+            scene.AddObject (scnobjarr_wall);
+
+            SceneObjectArray scnobjarr_ground = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Ground/ground.xml");
+            scnobjarr_ground.LayoutLocationOffset = 10;
+            scene.AddObject (scnobjarr_ground);
+
+            Vector3 scale = new Vector3 (scaling, scaling, 1);
+
+            foreach (var node in (IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>>) graph)
+            {
+                if (node.Data.MazeCellType == MazeCellType.Ground)
+                {
+                    rectangles [x, y] = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
+                    rectangles [x, y].Position = new Vector3 (x * scale.X + xOffs, y * scale.Y + yOffs, 0.0f);
+                    rectangles [x, y].Scaling = scale;
+                    scnobjarr_ground.AddObject (rectangles [x, y]);
+                }
+                else
+                {
+                    rectangles [x, y] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
+                    rectangles [x, y].Position = new Vector3 (x * scale.X + xOffs, y * scale.Y + yOffs, 0.0f);
+                    rectangles [x, y].Scaling = scale;
+                    scnobjarr_wall.AddObject (rectangles [x, y]);
+                }
 
                 if (++x >= maxX)
                 {

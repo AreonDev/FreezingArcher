@@ -36,23 +36,21 @@ namespace FreezingArcher.Game.Maze
         /// <param name="name">Name.</param>
         /// <param name="position">Position.</param>
         /// <param name="weight">Weight.</param>
-        /// <param name="rectangles">Rectangles.</param>
-        /// <param name="theme">The color theme this cell should use.</param>
         /// <param name="preview">If set to <c>true</c> preview.</param>
-        public MazeCell(string name, Vector2i position, int weight, RectangleSceneObject[,] rectangles,
-            MazeColorTheme theme, bool preview = false)
+        public MazeCell(string name, Vector2i position, int weight, //ModelSceneObject[,] rectangles,
+            /*MazeColorTheme theme,*/ bool preview = false)
         {
             Weight = weight;
             this.preview = preview;
             Name = name;
-            recs = rectangles;
+            //models = rectangles;
             Position = position;
-            this.theme = theme;
+            //this.theme = theme;
             final = false;
         }
 
         MazeCellType mazeType;
-        MazeColorTheme theme;
+        //MazeColorTheme theme;
         bool preview;
         bool final;
         bool isPortal;
@@ -60,7 +58,7 @@ namespace FreezingArcher.Game.Maze
         bool isExit;
         bool isPath;
 
-        readonly RectangleSceneObject[,] recs;
+        //readonly ModelSceneObject[,] models;
 
         /// <summary>
         /// The type of the labyrinth item.
@@ -213,26 +211,27 @@ namespace FreezingArcher.Game.Maze
 
         void updateColor()
         {
-            if (MazeCellType == MazeCellType.Wall && !IsPreview)
-                recs[Position.X, Position.Y].Color = theme.WallColor;
+            /*if (MazeCellType == MazeCellType.Wall && !IsPreview)
+                models[Position.X, Position.Y].Color = theme.WallColor;
             else if (MazeCellType == MazeCellType.Wall && IsPreview)
-                recs[Position.X, Position.Y].Color = theme.PreviewWallColor;
+                models[Position.X, Position.Y].Color = theme.PreviewWallColor;
             else if (MazeCellType == MazeCellType.Ground && IsPortal)
-                recs[Position.X, Position.Y].Color = theme.PortalColor;
+                models[Position.X, Position.Y].Color = theme.PortalColor;
             else if (MazeCellType == MazeCellType.Ground && IsSpawn)
-                recs[Position.X, Position.Y].Color = theme.SpawnColor;
+                models[Position.X, Position.Y].Color = theme.SpawnColor;
             else if (MazeCellType == MazeCellType.Ground && IsExit)
-                recs[Position.X, Position.Y].Color = theme.ExitColor;
+                models[Position.X, Position.Y].Color = theme.ExitColor;
             else if (MazeCellType == MazeCellType.Ground && IsPath)
-                recs[Position.X, Position.Y].Color = theme.PathColor;
+                models[Position.X, Position.Y].Color = theme.PathColor;
             else if (MazeCellType == MazeCellType.Ground && !IsFinal)
-                recs[Position.X, Position.Y].Color = theme.GroundColor;
+                models[Position.X, Position.Y].Color = theme.GroundColor;
             else if (MazeCellType == MazeCellType.Ground && IsFinal)
-                recs[Position.X, Position.Y].Color = theme.FinalGroundColor;
+                models[Position.X, Position.Y].Color = theme.FinalGroundColor;
             else if (MazeCellType == MazeCellType.Undefined)
-                recs[Position.X, Position.Y].Color = theme.UndefinedColor;
+                models[Position.X, Position.Y].Color = theme.UndefinedColor;
             else
-                recs[Position.X, Position.Y].Color = theme.ErrorColor;
+                models[Position.X, Position.Y].Color = theme.ErrorColor;*/
+            // TODO
         }
     }
 }

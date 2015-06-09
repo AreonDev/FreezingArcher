@@ -36,6 +36,8 @@ layout(location = 4) out vec3 tangent; // tangent vector (view space)
 layout(location = 5) out vec3 binormal; // binormal vector (view space)
 //####################################################
  
+uniform int  InstancedDrawing;
+
 uniform mat4 WorldMatrix;
 uniform mat4 ViewMatrix;
 uniform mat4 ProjectionMatrix;
@@ -43,18 +45,28 @@ uniform mat4 ProjectionMatrix;
 void main()
 {
         // Vertex position in clip space
-        hpos = ProjectionMatrix * ViewMatrix * WorldMatrix * vec4(InPosition, 1.0);
+        if(InstancedDrawing == 1)
+                hpos = ProjectionMatrix * ViewMatrix * WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0);
+        else
+                hpos = ProjectionMatrix * ViewMatrix * WorldMatrix * vec4(InPosition, 1.0);
+
+        gl_Position = hpos;
 
         //copy texture coordinates
         texcoord = InTexCoord1.xy;
 
-        mat4 modelviewrot = ViewMatrix * WorldMatrix;
+        mat4 normalmat;
+
+        if(InstancedDrawing == 1)
+                normalmat = transpose(inverse(ViewMatrix * WorldMatrix * InInstanceWorld));
+        else
+                normalmat = transpose(inverse(ViewMatrix * WorldMatrix));
 
         //Vertex position in view space (with model transformations)
-        vpos = vec3(modelviewrot * vec4(InPosition, 1.0));
+        vpos = (ViewMatrix * WorldMatrix * vec4(InPosition, 1.0)).xyz;
 
         //Tangent space vectors in view space (with model transformations)
-        normal = (modelviewrot * vec4(InNormal, 1.0)).xyz;
-        tangent = (modelviewrot * vec4(InTangent, 1.0)).xyz;
-        binormal = (modelviewrot * vec4(InBiNormal, 1.0)).xyz;
+        normal = (normalmat * vec4(InNormal, 1.0)).xyz;
+        tangent = (normalmat * vec4(InTangent, 1.0)).xyz;
+        binormal = (normalmat * vec4(InBiNormal, 1.0)).xyz;
 }

@@ -10,8 +10,8 @@ layout(location = 4) in vec3 tangent; // tangent vector (view space)
 layout(location = 5) in vec3 binormal; // binormal vector (view space)
 //####################################################
 
-layout(location = 0) out vec4 normal_color;
-layout(location = 1) out vec4 diffuse_color;
+layout(location = 1) out vec4 normal_color;
+layout(location = 0) out vec4 diffuse_color;
 layout(location = 2) out vec4 specular_color;
 layout(location = 3) out vec4 depth_color;
 
@@ -28,33 +28,34 @@ vec4 float_to_color(float f)
         vec3 color;
         f *= 256;
         color.x = floor(f);
-        f = (f-color.x) * 256;
+        f = (f-color.x);// * 256;
         color.y = floor(f);
         color.z = f-color.y;
-        color.xy *= 0.00390625; // *= 1.0 / 256
+        color.xyz *= 0.00390625; // *= 1.0 / 256
         return vec4(color, 1.0);
+        //return vec4(f, f, f, 1.0);
 }
 
 void main()
 {
         vec2 texcrd = texcoord*Tile;
 
-        vec3 normalcol = texture2D(ColorTexture, texcrd).xyz;
-        vec3 color = texture2D(NormalTexture, texcrd).xyz;
+        vec3 normalcol = texture2D(NormalTexture, texcrd).xyz;
+        vec3 color = texture2D(ColorTexture, texcrd).xyz;
 
         //transform normal to view space
         normalcol -= 0.5;
         normalcol = normalize(normalcol.x * tangent + normalcol.y*binormal + 
-                normal.z * normal);
+               normalcol.z * normal);
 
         //convert normal back to [0, 1] color space
-        normalcol = normal*0.5+0.5;
+        normalcol = normalcol*0.5 +0.5;
 
         //fill G-Buffer
         normal_color = vec4(normalcol, 1);
         diffuse_color = vec4(color*DiffuseColor.xyz, 1);
         specular_color = SpecularColor;
 
-        float d = ((PlaneInformation.x * vpos.z + PlaneInformation.y) / -vpos.z);
-        depth_color = float_to_color(d);
+        float d = (gl_FragCoord.z - PlaneInformation.x) / (PlaneInformation.y);
+        depth_color = vec4(-vpos.z, -vpos.z, -vpos.z, 1);
 }

@@ -48,20 +48,20 @@ namespace FreezingArcher.Game
             ValidMessages = new int[] { (int) MessageId.Input };
             msgmnr += this;
 
-            scnobjarr = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
+            scnobjarr = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Wall/wall.obj");
             scnobjarr.LayoutLocationOffset = 10;
             Application.Instance.RendererContext.Scene.AddObject (scnobjarr);
 
             //Models
-            m300 = new ModelSceneObject[1];
+            m300 = new ModelSceneObject[200];
             for (int i = 0; i < m300.Length; i++) 
             {
                 if (i == 0) {
-                    m300 [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj");
+                    m300 [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.obj");
                 } else
-                    m300 [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Rabbit/Rabbit.obj", false);
+                    m300 [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.obj", false);
 
-                m300 [i].Position = new Vector3 (i*1.0f, i*1.0f, 0.0f);
+                m300 [i].Position = new Vector3 ((i-100)*2.0f, 0f, 0.0f);
                 m300 [i].Scaling = new Vector3 (1, 1, 1);
 
                 scnobjarr.AddObject (m300 [i]);

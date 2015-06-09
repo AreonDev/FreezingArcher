@@ -90,6 +90,18 @@ namespace FreezingArcher.Renderer
                     m_Sampler.Unbind();
             }
         }
+
+        public override void Resize(int width, int height)
+        {
+            GL.BindTexture(TextureTarget.Texture2D, ID);
+
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+
+            Width = width;
+            Height = height;
+        }
     }
 
     public class Texture3D : Texture
@@ -138,9 +150,25 @@ namespace FreezingArcher.Renderer
 
     public class TextureDepthStencil : Texture2D
     {
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
         internal TextureDepthStencil(int width, int height, string name, int id) : base(width, height, false, name, id)
         {
+            Width = width;
+            Height = height;
+        }
 
+        public override void Resize(int width, int height)
+        {
+            GL.BindTexture(TextureTarget.Texture2D, ID);
+
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Depth24Stencil8, width, height, 0, PixelFormat.DepthStencil, PixelType.UnsignedInt248, IntPtr.Zero);
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+
+            Width = width;
+            Height = height;
         }
     }
 
@@ -179,6 +207,8 @@ namespace FreezingArcher.Renderer
         {
             
         }
+
+        public virtual void Resize(int width, int height) {}
 
         public virtual void Bind(int index) { }
         public virtual void Unbind() { }

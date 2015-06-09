@@ -66,8 +66,8 @@ namespace FreezingArcher.Renderer
                 if (value != null)
                 {
                     colorTexture.SetUseCount(colorTexture.InternalUseCount + 1);
-                    colorTexture.Bind(0);
-                    OptionalEffect.PixelProgram.SetUniform(OptionalEffect.PixelProgram.GetUniformLocation("ColorTexture"), 0);
+                    colorTexture.Bind(1);
+                    OptionalEffect.PixelProgram.SetUniform(OptionalEffect.PixelProgram.GetUniformLocation("ColorTexture"), 1);
                 }
             }
         }
@@ -89,8 +89,8 @@ namespace FreezingArcher.Renderer
                 if (value != null)
                 {
                     normalTexture.SetUseCount(normalTexture.InternalUseCount + 1);
-                    normalTexture.Bind(1);
-                    OptionalEffect.PixelProgram.SetUniform(OptionalEffect.PixelProgram.GetUniformLocation("NormalTexture"), 1);
+                    normalTexture.Bind(0);
+                    OptionalEffect.PixelProgram.SetUniform(OptionalEffect.PixelProgram.GetUniformLocation("NormalTexture"), 0);
                 }
             }
         }
@@ -174,6 +174,9 @@ namespace FreezingArcher.Renderer
 
             OptionalEffect.PixelProgram = rc.CreateShaderProgramFromFile("SimpleMaterial_PS_" + ticks, ShaderType.PixelShader,
                 "lib/Renderer/Effects/SimpleMaterial/pixel_shader.ps");
+
+            DiffuseColor = diffuseColor;
+            SpecularColor = specularColor;
 
             OptionalEffect.UnbindPipeline();
                 

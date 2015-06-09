@@ -623,6 +623,8 @@ namespace FreezingArcher.Renderer
             Sampler s2d = CreateSampler(name + "_Sampler");
             tex.Sampler = s2d;
             tex.SamplerAllowed = generate_sampler;
+            tex.Sampler.MagnificationFilter = MagnificationFilter.UseNearest;
+            tex.Sampler.MinificationFilter = MinificationFilter.UseNearest;
 
             return tex;
         }

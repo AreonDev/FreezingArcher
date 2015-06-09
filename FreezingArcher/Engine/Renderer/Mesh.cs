@@ -42,10 +42,10 @@ namespace FreezingArcher.Renderer
                 return m_MaterialIndex;
             }
 
-            //set
-            //{
-                //Vllt doch nicht?
-            //}
+            internal set
+            {
+                m_MaterialIndex = value;
+            }
         }
 
         public int VertexCount
@@ -137,19 +137,49 @@ namespace FreezingArcher.Renderer
             m_VertexPosition = rc.CreateVertexBuffer(positions, positions.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_Positions_"+ticks);
 
             if (normals == null)
+            {
                 m_VertexNormal = new VertexBuffer();
+  
+                //TODO: Generate simple normals!
+            }
             else
                 m_VertexNormal = rc.CreateVertexBuffer(normals, normals.Length * 3 * 4, RendererBufferUsage.StreamDraw, name + "_Normals_"+ticks);
 
-            if (tangents == null)
-                m_VertexTangent = new VertexBuffer();
-            else
-                m_VertexTangent = rc.CreateVertexBuffer(tangents, tangents.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_Tangents_"+ticks);
+            if (tangents == null || tangents.Length == 0)
+            {
+                //TODO: generate tangents
+                Vector3[] gen_tangents = new Vector3[positions.Length];
 
-            if (bitangents == null)
-                m_VertexBiTangent = new VertexBuffer();
-            else
-                m_VertexBiTangent = rc.CreateVertexBuffer(bitangents, bitangents.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_BiNormals_"+ticks);
+                for (int i = 0; i < gen_tangents.Length; i++)
+                {
+                    Vector3 c1 = Vector3.Cross(normals[i], Vector3.UnitZ);
+                    Vector3 c2 = Vector3.Cross(normals[i], Vector3.UnitY);
+
+                    if (c1.Length > c2.Length)
+                        gen_tangents[i] = c1;
+                    else
+                        gen_tangents[i] = c2;
+
+                    gen_tangents[i] = Vector3.Normalize(gen_tangents[i]);
+                }
+
+                tangents = gen_tangents;
+            }
+
+            m_VertexTangent = rc.CreateVertexBuffer(tangents, tangents.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_Tangents_"+ticks);
+
+            if (bitangents == null || bitangents.Length == 0)
+            {
+                //TODO: generate bitangents
+                Vector3[] gen_bitangents = new Vector3[positions.Length];
+
+                for (int i = 0; i < gen_bitangents.Length; i++)
+                    gen_bitangents[i] = Vector3.Normalize(Vector3.Cross(normals[i], tangents[i]));
+
+                bitangents = gen_bitangents;
+            }
+
+            m_VertexBiTangent = rc.CreateVertexBuffer(bitangents, bitangents.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_BiNormals_"+ticks);
 
             if (texcoords != null && texcoords.Length > 0)
             {

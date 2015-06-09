@@ -177,7 +177,26 @@ namespace FreezingArcher.Renderer
             {
                 foreach (Mesh msh in mdl.Meshes)
                 {
-                    Material mat = mdl.Materials[msh.MaterialIndex];
+                    Material mat = null;
+
+                    if (msh.MaterialIndex >= 0)
+                    {
+                        mat = mdl.Materials[msh.MaterialIndex];
+                    }
+                    else
+                    {
+                        mat = new Material();
+                        mat.ColorDiffuse = FreezingArcher.Math.Color4.White;
+                        mat.ColorSpecular = FreezingArcher.Math.Color4.White;
+
+                        mat.TextureNormal = CreateTexture2D("Blablablabla_"+DateTime.Now.Ticks, true, "lib/Renderer/TestGraphics/Wall/wall_normal.jpg");
+                        mat.TextureDiffuse =  CreateTexture2D("Blablablabl12a_"+DateTime.Now.Ticks, true, "lib/Renderer/TestGraphics/Wall/wall_diffuse.jpg");
+
+                        mdl.Materials.Add(mat);
+
+                        msh.MaterialIndex = 0;
+                    }
+
                     if(!mat.HasOptionalEffect)
                     {
                         SimpleMaterial.SpecularColor = mat.ColorSpecular;
@@ -187,7 +206,7 @@ namespace FreezingArcher.Renderer
                         SimpleMaterial.ColorTexture = mat.TextureDiffuse;
 
                         SimpleMaterial.Tile = 1.0f;
-                        SimpleMaterial.Plane = new Vector2(0.1f, 100.0f);
+                        SimpleMaterial.Plane = new Vector2(10.0f, 100.0f);
 
                         mat = SimpleMaterial;
                     }
@@ -195,9 +214,14 @@ namespace FreezingArcher.Renderer
                     //Set Scene Camera settings
                     mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("WorldMatrix"), world);
                     mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ViewMatrix"),
-                        Matrix.LookAt(new Vector3(10.0f, 10.0f, 10.0f), Vector3.Zero, Vector3.UnitY));
+                        Matrix.LookAt(new Vector3(0.0f, 10.0f, 100.0f), Vector3.Zero, Vector3.UnitY));
                     mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ProjectionMatrix"),
-                        Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)ViewportSize.X / (float) ViewportSize.Y, 0.1f, 100.0f));
+                        Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)ViewportSize.X / (float) ViewportSize.Y, 10f, 100.0f));
+
+                    if (count > 1)
+                        mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 1);
+                    else
+                        mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 0);
 
                     mat.OptionalEffect.BindPipeline();
 
@@ -233,7 +257,17 @@ namespace FreezingArcher.Renderer
         {
             if (Scene != null)
             {
-                Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
+                if (Scene.FrameBufferDepthStencilTexture.Width != ViewportSize.X ||
+                   Scene.FrameBufferDepthStencilTexture.Height != ViewportSize.Y)
+                    Scene.ResizeTextures(ViewportSize.X, ViewportSize.Y);
+
+                Scene.FrameBuffer.UseAttachments(new FrameBuffer.AttachmentUsage[]
+                    {FrameBuffer.AttachmentUsage.Color0,
+                        FrameBuffer.AttachmentUsage.Color1, FrameBuffer.AttachmentUsage.Color2,
+                        FrameBuffer.AttachmentUsage.Color3
+                    });
+
+                //Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
 
                 this.Clear(Scene.BackgroundColor, 1);
 
@@ -244,11 +278,11 @@ namespace FreezingArcher.Renderer
                     obj.Draw(this);
                 }
 
-                Scene.FrameBuffer.Unbind();
+                //Scene.FrameBuffer.Unbind();
             }
 
             //Sprite spr = new Sprite();
-            //spr.Init(Scene.FrameBufferNormalTexture);
+            //spr.Init(Scene.FrameBufferColorTexture);
             //spr.AbsolutePosition = new Vector2(0.0f, 0.0f);
             //spr.Scaling = new Vector2(1, 1);
 

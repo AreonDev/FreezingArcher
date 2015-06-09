@@ -134,6 +134,16 @@ namespace FreezingArcher.Renderer.Scene
             SceneName = "CoreScene";
         }
 
+        public void ResizeTextures(int width, int height)
+        {
+            FrameBufferNormalTexture.Resize(width, height);
+            FrameBufferColorTexture.Resize(width, height);
+            FrameBufferDepthTexture.Resize(width, height);
+            FrameBufferSpecularTexture.Resize(width, height);
+
+            FrameBufferDepthStencilTexture.Resize(width, height);
+        }
+
         internal bool Init(RendererContext rc)
         {
             PrivateRendererContext = rc;

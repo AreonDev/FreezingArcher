@@ -40,4 +40,7 @@
     <Compile Include="TypeHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="xml_parser.cs" />
+  </ItemGroup>
 </Project>

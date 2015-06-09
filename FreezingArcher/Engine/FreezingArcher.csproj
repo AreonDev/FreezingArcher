@@ -349,6 +349,7 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Renderer\TestGraphics\Wall\wall.3ds">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\BlueprintRegistry.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />

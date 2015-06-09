@@ -32,6 +32,9 @@ namespace FreezingArcher.Renderer.Scene
     public class CoreScene
     {
         private List<SceneObject> Objects;
+
+        object ListLock = new object();
+
         private List<CoreScene> SubScenes;
 
         private RendererContext PrivateRendererContext;
@@ -77,10 +80,13 @@ namespace FreezingArcher.Renderer.Scene
         {
             List<SceneObject> list = new List<SceneObject>(Objects.Count);
 
-            Objects.ForEach((item) =>
-                {
-                    list.Add(item);
-                });
+            lock (ListLock)
+            {
+                Objects.ForEach((item) =>
+                    {
+                        list.Add(item);
+                    });
+            }
 
             return list;
         }
@@ -89,11 +95,14 @@ namespace FreezingArcher.Renderer.Scene
         {
             int count = 0;
 
-            Objects.ForEach((item) =>
-                {
-                    if(item.GetName() == name)
-                        count++;
-                });
+            lock (ListLock)
+            {
+                Objects.ForEach((item) =>
+                    {
+                        if (item.GetName() == name)
+                            count++;
+                    });
+            }
 
             return count;
         }

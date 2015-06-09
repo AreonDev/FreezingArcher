@@ -303,10 +303,15 @@ namespace FreezingArcher.Renderer
 
                         SimpleMaterial.Tile = 1.0f;
 
-                        if(scene == null)
+                        if (scene == null)
                             SimpleMaterial.Plane = new Vector2(0.1f, 100.0f);
                         else
-                            SimpleMaterial.Plane = new Vector2(scene.CamManager.GetActiveCam().zNear, scene.CamManager.GetActiveCam().zFar);
+                        {
+                            BaseCam cam = scene.CamManager.GetActiveCam();
+
+                            if(cam != null)
+                                SimpleMaterial.Plane = new Vector2(cam.zNear, cam.zFar);
+                        }
 
                         mat = SimpleMaterial;
                     }
@@ -316,10 +321,15 @@ namespace FreezingArcher.Renderer
 
                     if(scene != null)
                     {
-                        mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ViewMatrix"),
-                            scene.CamManager.GetActiveCam().ViewMatrix);
-                        mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ProjectionMatrix"),
-                            scene.CamManager.GetActiveCam().ProjectionMatrix);
+                        BaseCam cam = scene.CamManager.GetActiveCam();
+
+                        if (cam != null)
+                        {
+                            mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ViewMatrix"),
+                                scene.CamManager.GetActiveCam().ViewMatrix);
+                            mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ProjectionMatrix"),
+                                scene.CamManager.GetActiveCam().ProjectionMatrix);
+                        }
                     }
 
                     if (count > 1)

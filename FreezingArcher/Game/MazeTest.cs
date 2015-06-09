@@ -49,6 +49,10 @@ namespace FreezingArcher.Game
             msgmnr += this;
             mazeGenerator = new MazeGenerator (objmnr);
             this.scene = scene;
+
+            scene.CamManager.AddCam (new FreeCamera ("Bla", msgmnr));
+            scene.CamManager.SetActiveCam (scene.CamManager.GetCam ("Bla"));
+
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);

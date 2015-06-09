@@ -30,6 +30,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         private string ModelPath;
         private bool   LoadModel;
         private Model  MyModel;
+        private bool IsInitialized = false;
 
         private static List<ModelSceneObject> CachingList;
 
@@ -91,8 +92,13 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public override bool Init(RendererContext rc)
         {
-            if(LoadModel)
-                MyModel = rc.LoadModel(ModelPath);
+            if (!IsInitialized)
+            {
+                if (LoadModel)
+                    MyModel = rc.LoadModel(ModelPath);
+
+                IsInitialized = true;
+            }
 
             return true;
         }

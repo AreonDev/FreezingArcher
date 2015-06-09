@@ -101,27 +101,28 @@ namespace FreezingArcher.Renderer.Scene
         /// Toggles the cam.
         /// </summary>
         /// <param name="cam">Cam.</param>
-        public void ToggleCam(BaseCam cam){
+        public BaseCam ToggleCam(){
             Tree<Pair<string, BaseCam>> TmpNode = ((IEnumerable<Tree<Pair<string, BaseCam>>>) CamTree.LevelOrder)
-                .First(i => i.Data.A == cam.Name);
-            
+                .First(i => i.Data.A == getActiveCam().Name);
 
 //            if (TmpNode.Parent.Parent == null)
 //                return 1;
-            var TmpGroup = TmpNode.Parent.Parent;
+            var TmpGroup = TmpNode.Parent;
 
-            var Level = TmpGroup.Level+1;
+//            var Level = TmpGroup.Level+1;
+//
+//            var GroupList = from x in ((IEnumerable<Tree<Pair<string, BaseCam>>>)TmpGroup.LevelOrder)
+//                                       where (x.Level == Level) && (x.Data.B == null)
+//                                       select x;
 
-            var GroupList = from x in ((IEnumerable<Tree<Pair<string, BaseCam>>>)TmpGroup.LevelOrder)
-                                       where (x.Level == Level) && (x.Data.B == null)
-                                       select x;
-
-            foreach(var Group in GroupList){
-                if(Group != TmpGroup){
-                    TmpNode.Parent = Group;
-                    break;
+            foreach(var node in (IEnumerable<Tree<Pair<string, BaseCam>>>) TmpGroup.DepthFirst)
+                {
+                if(node != TmpNode){
+                    setActiveCam(node.Data.B);
+                    return node.Data.B;
                 }
             }
+            return TmpNode.Data.B;
         }
     }
 }

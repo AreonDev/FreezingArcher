@@ -28,7 +28,7 @@ namespace FreezingArcher.DataStructures.Trees
     /// <summary>
     /// Represents an tree of arbitrary data
     /// </summary>
-    public interface ITree<TData> : IEnumerable<TData>
+    public interface ITree<TData> : IEnumerable<TData>, IEnumerable<ITree<TData>>
     {
         /// <summary>
         /// Gets a value indicating whether this instance is the root node.

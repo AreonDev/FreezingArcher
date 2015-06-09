@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace FreezingArcher.DataStructures.Trees
@@ -28,10 +29,8 @@ namespace FreezingArcher.DataStructures.Trees
     /// <summary>
     /// Generic tree of arbitrary data
     /// </summary>
-    public class Tree<TData> : ITree<TData>, IEnumerable<Tree<TData>>
+    public class Tree<TData> : ITree<TData>
     {
-        IEnumerable<TData> TiefenSuche;
-
         /// <summary>
         /// Enumerates all nodes or their data in level-order traversal
         /// </summary>
@@ -103,7 +102,7 @@ namespace FreezingArcher.DataStructures.Trees
             #endregion
         }
 
-        public class DepthFirstEnumerable : IEnumerable<TData>, IEquatable<Tree<TData>>
+        public class DepthFirstEnumerable : IEnumerable<TData>, IEnumerable<Tree<TData>>
         {
             readonly Tree<TData> root;
             internal DepthFirstEnumerable(Tree<TData> r)
@@ -117,32 +116,7 @@ namespace FreezingArcher.DataStructures.Trees
             /// <returns>The enumerator.</returns>
             IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
             {
-                Tree<TData> node;
-                Stack<Tree<TData>> stack = new Stack<Tree<TData>>();
-                List<Tree<TData>> reachedNodes = new List<Tree<TData>>();
-
-                yield return root.Data;
-
-                reachedNodes.Add(root);
-                root.children.ForEach(e => {
-                    if (!stack.Contains(e))
-                        stack.Push(e)});
-
-                do {
-                    node = stack.Pop();
-
-                    if(!reachedNodes.Contains(node))
-                    {
-                        yield return node.Data;
-
-                        reachedNodes.Add(node);
-                        node.children.ForEach(e => {
-                            if (!stack.Contains(e))
-                                stack.Push(e)});
-                    }
-
-                } while (stack.Count > 0);
-
+                return (this as IEnumerable<ITree<TData>>).Select(n => n.Data).GetEnumerator();
             }
 
             /// <summary>
@@ -160,7 +134,7 @@ namespace FreezingArcher.DataStructures.Trees
                 reachedNodes.Add(root);
                 root.children.ForEach(e => {
                     if (!stack.Contains(e))
-                        stack.Push(e)});
+                        stack.Push(e);});
 
                 do {
                     node = stack.Pop();
@@ -172,7 +146,7 @@ namespace FreezingArcher.DataStructures.Trees
                         reachedNodes.Add(node);
                         node.children.ForEach(e => {
                             if (!stack.Contains(e))
-                                stack.Push(e)});
+                                stack.Push(e);});
                     }
 
                 } while (stack.Count > 0);
@@ -184,31 +158,7 @@ namespace FreezingArcher.DataStructures.Trees
             /// <returns>The enumerator.</returns>
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
             {
-                Tree<TData> node;
-                Stack<Tree<TData>> stack = new Stack<Tree<TData>>();
-                List<Tree<TData>> reachedNodes = new List<Tree<TData>>();
-
-                yield return root.Data;
-
-                reachedNodes.Add(root);
-                root.children.ForEach(e => {
-                    if (!stack.Contains(e))
-                        stack.Push(e)});
-
-                do {
-                    node = stack.Pop();
-
-                    if(!reachedNodes.Contains(node))
-                    {
-                        yield return node.Data;
-
-                        reachedNodes.Add(node);
-                        node.children.ForEach(e => {
-                            if (!stack.Contains(e))
-                                stack.Push(e)});
-                    }
-
-                } while (stack.Count > 0);
+                return ((IEnumerable<TData>)this).GetEnumerator();
             }
 
             #endregion
@@ -218,7 +168,7 @@ namespace FreezingArcher.DataStructures.Trees
         /// Gets or sets the data.
         /// </summary>
         /// <value>The data.</value>
-        public TData Data {get; set;}
+        public TData Data { get; set; }
 
         /// <summary>
         /// Gets the parent.
@@ -226,7 +176,7 @@ namespace FreezingArcher.DataStructures.Trees
         /// <value>The parent.</value>
         public Tree<TData> Parent { get; set;}
 
-        private List<Tree<TData>> children = new List<Tree<TData>>();
+        List<Tree<TData>> children = new List<Tree<TData>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.DataStructures.Trees.Tree{TData}"/> class.
@@ -239,10 +189,10 @@ namespace FreezingArcher.DataStructures.Trees
         /// <summary>
         /// Initializes a new instance of the Tree class.
         /// </summary>
-        /// <param name="_Data">Data.</param>
-        public Tree(TData _Data)
+        /// <param name="data">Data.</param>
+        public Tree(TData data)
         {
-            Data = _Data;
+            Data = data;
         }
 
         /// <summary>
@@ -269,10 +219,11 @@ namespace FreezingArcher.DataStructures.Trees
             }
         }
 
-        private LevelOrderEnumerable levelOrder;
+        LevelOrderEnumerable levelOrder;
+        DepthFirstEnumerable depthFirst;
 
         /// <summary>
-        /// Gets an enumerable which enumerates in levl-order traversal
+        /// Gets an enumerable which enumerates in level-order traversal
         /// </summary>
         /// <value>The level-order enumerable.</value>
         public LevelOrderEnumerable LevelOrder
@@ -280,6 +231,18 @@ namespace FreezingArcher.DataStructures.Trees
             get
             {
                 return levelOrder ?? (levelOrder = new LevelOrderEnumerable(this));
+            }
+        }
+
+        /// <summary>
+        /// Gets an enumerable which enumerates with a depth-first algorithm through this tree.
+        /// </summary>
+        /// <value>The depth-first enumerable.</value>
+        public DepthFirstEnumerable DepthFirst
+        {
+            get
+            {
+                return depthFirst ?? (depthFirst = new DepthFirstEnumerable(this));
             }
         }
 
@@ -364,7 +327,7 @@ namespace FreezingArcher.DataStructures.Trees
         {
             return ((IEnumerable<TData>)LevelOrder).GetEnumerator();
         }
-        IEnumerator<Tree<TData>> IEnumerable<Tree<TData>>.GetEnumerator()
+        IEnumerator<ITree<TData>> IEnumerable<ITree<TData>>.GetEnumerator()
         {
             return ((IEnumerable<Tree<TData>>)LevelOrder).GetEnumerator();
         }
@@ -372,7 +335,6 @@ namespace FreezingArcher.DataStructures.Trees
         {
             return ((System.Collections.IEnumerable)LevelOrder).GetEnumerator();
         }
-
         #endregion
     }
 }

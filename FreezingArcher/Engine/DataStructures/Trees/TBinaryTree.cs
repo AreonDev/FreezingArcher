@@ -29,7 +29,7 @@ namespace FreezingArcher.DataStructures.Trees
     /// <summary>
     /// Binary tree of arbitrary data
     /// </summary>
-    public class BinaryTree<TData> : ITree<TData>, IEnumerable<BinaryTree<TData>>
+    public class BinaryTree<TData> : ITree<TData>
     {
         /// <summary>
         /// Enumerates all nodes or their data in pre-order traversal
@@ -570,7 +570,7 @@ namespace FreezingArcher.DataStructures.Trees
         {
             return ((IEnumerable<TData>)PreOrder).GetEnumerator();
         }
-        IEnumerator<BinaryTree<TData>> IEnumerable<BinaryTree<TData>>.GetEnumerator()
+        IEnumerator<ITree<TData>> IEnumerable<ITree<TData>>.GetEnumerator()
         {
             return ((IEnumerable<BinaryTree<TData>>)PreOrder).GetEnumerator();
         }

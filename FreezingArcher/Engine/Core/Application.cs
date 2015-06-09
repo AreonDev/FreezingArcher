@@ -510,8 +510,6 @@ namespace FreezingArcher.Core
             Loader.ExecJobsSequential ();
             Loaded = true;
 
-            Thread.Sleep(1000);
-
             //Later some more stuff
             RendererContext.Init();
             RendererContext.ViewportResize(0, 0, Window.Size.X, Window.Size.Y);

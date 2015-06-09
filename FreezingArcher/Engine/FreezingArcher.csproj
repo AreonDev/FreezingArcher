@@ -240,6 +240,13 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\PositionChangedMessage.cs" />
     <Compile Include="Messaging\RotationChangedMessage.cs" />
     <Compile Include="Messaging\ScaleChangedMessage.cs" />
+    <Compile Include="Content\Environment.cs" />
+    <Compile Include="Content\Weather.cs" />
+    <Compile Include="Content\Temperature.cs" />
+    <Compile Include="Content\TemperatureUnit.cs" />
+    <Compile Include="Content\DownfallType.cs" />
+    <Compile Include="Content\Downfall.cs" />
+    <Compile Include="Content\Wind.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

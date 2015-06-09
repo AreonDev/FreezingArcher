@@ -482,7 +482,7 @@ namespace FreezingArcher.Core
             Loader = new JobExecuter ();
             Loader.InsertJobs (GetLoadJobs (new List<Action>(), Loader.NeedsReexecHandler));
             Loader.DoReexec += () => { LoadAgain = true; };
-            Initer.ExecJobsParallel (Environment.ProcessorCount);
+            Initer.ExecJobsParallel (System.Environment.ProcessorCount);
         }
 
         /// <summary>

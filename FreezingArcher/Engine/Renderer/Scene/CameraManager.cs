@@ -48,16 +48,16 @@ namespace FreezingArcher.Renderer.Scene
         /// Sets the active cam.
         /// </summary>
         /// <param name="cam">Cam.</param>
-        public void setActiveCam(BaseCam cam){
-            this.setCam("ActiveCam", cam);            
+        public void SetActiveCam(BaseCam cam){
+            this.SetCam("ActiveCam", cam);            
         }
 
         /// <summary>
         /// Gets the active cam.
         /// </summary>
         /// <param name="cam">Cam.</param>
-        public BaseCam getActiveCam(){
-            return this.getCam("ActiveCam");            
+        public BaseCam GetActiveCam(){
+            return this.GetCam("ActiveCam");            
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         /// <param name="camName">Cam name.</param>
         /// <param name="cam">Cam.</param>
-        public void setCam(string camName, BaseCam cam){
+        public void SetCam(string camName, BaseCam cam){
             ((IEnumerable<Tree<Pair<string, BaseCam>>>) CamTree.LevelOrder).First(i => i.Data.A == camName).Data.B = cam;
         }
 
@@ -93,7 +93,7 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         /// <returns>The cam.</returns>
         /// <param name="camName">Cam name.</param>
-        public BaseCam getCam(string camName){
+        public BaseCam GetCam(string camName){
             return ((IEnumerable<Tree<Pair<string, BaseCam>>>) CamTree.LevelOrder).First(i => i.Data.A == camName).Data.B;
         }
 

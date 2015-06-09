@@ -44,7 +44,7 @@ namespace FreezingArcher.Game
             Application.Instance = new Application ("Freezing Archer", args);
             Application.Instance.Init ();
             Application.Instance.Load ();
-	   
+
             if (!Application.Instance.IsCommandLineInterface)
             {
                 ComponentRegistry.Instance.Register<TransformComponent> ();

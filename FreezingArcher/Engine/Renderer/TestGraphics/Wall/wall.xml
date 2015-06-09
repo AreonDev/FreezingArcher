@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<model>
+    <object>wall.obj</object>
+
+    <material>
+        <graphics normal="wall_normal.jpg" diffuse="wall_diffuse.jpg"/>
+    </material>
+</model>

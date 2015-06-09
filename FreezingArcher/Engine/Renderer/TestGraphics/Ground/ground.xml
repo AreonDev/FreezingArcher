@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<model>
+    <object>ground.obj</object>
+
+    <material>
+        <graphics normal="ground_normal.jpg" diffuse="ground_diffuse.jpg"/>
+    </material>
+</model>

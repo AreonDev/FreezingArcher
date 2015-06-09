@@ -26,6 +26,8 @@ using Assimp;
 using Assimp.Configs;
 using System.Collections.Generic;
 
+using System.Xml;
+
 using Pencil.Gaming.Graphics;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
@@ -80,101 +82,198 @@ namespace FreezingArcher.Renderer
 
         public Model LoadModel(string path)
         {
+            bool use_xml = false;
+
             Model mdl = new Model();
 
             string folder_path = System.IO.Path.GetDirectoryName(path);
 
-            Assimp.Scene scn = m_AssimpContext.ImportFile(path);
+            if (System.IO.Path.GetExtension(path) == ".xml")
+                use_xml = true;
+
+            string file_path = path;
+
+            Material bla_mat = new Material();
+
+            #region XML
+            if (use_xml)
+            {
+                using (XmlReader reader = XmlReader.Create(path))
+                {
+                    while (reader.Read())
+                    {
+                        if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "model"))
+                        {
+                            while((reader.NodeType != XmlNodeType.Element) || (reader.Name != "object")) reader.Read();
+
+                            reader.Read();
+
+                            if (!reader.HasValue)
+                                return null;
+
+                            file_path = reader.Value;
+                        }
+
+                        if((reader.NodeType == XmlNodeType.Element) && (reader.Name == "material"))
+                        {
+                            reader.ReadToFollowing("graphics");
+
+                            if (reader.HasAttributes)
+                            {
+                                bla_mat.TextureDiffuse = 
+                                    CreateTexture2D(file_path + "_Material_XML_TextureDiffuse_" + DateTime.Now.Ticks, true, folder_path + "/" + reader.GetAttribute("diffuse"));
+                                bla_mat.TextureNormal = 
+                                    CreateTexture2D(file_path + "_Material_XML_TextureNormal_" + DateTime.Now.Ticks, true, folder_path + "/" + reader.GetAttribute("normal"));
+
+                                //More material information
+                                bla_mat.ColorDiffuse = FreezingArcher.Math.Color4.White;
+                                bla_mat.ColorSpecular = FreezingArcher.Math.Color4.White;
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
+
+
+            /*
+            Assimp.Scene scn = m_AssimpContext.ImportFile(folder_path + "/" + file_path);
             NormalSmoothingAngleConfig config = new NormalSmoothingAngleConfig(66.0f);
             m_AssimpContext.SetConfig(config);
+            */
+
+            //Tue unfug!
+            //Load OBJ Mesh
+
 
             //Copy mesh data to model
             mdl.Meshes = new List<Mesh>();
 
-            foreach (Assimp.Mesh actual_mesh in scn.Meshes)
-            {
+            //foreach (Assimp.Mesh actual_mesh in scn.Meshes)
+            //{
                 //Export faces, hopefully, every face is Triangle
-                int[] indices = new int[actual_mesh.FaceCount * 3];
-                for(int i = 0; i < actual_mesh.FaceCount; i++)
-                {
-                    for(int j = 0; j < actual_mesh.Faces[i].IndexCount; j++)
-                        indices[(i*3)+j] = actual_mesh.Faces[i].Indices[j];
-                }
+            int[] indices;//= new int[actual_mesh.FaceCount * 3];
+            Pencil.Gaming.MathUtils.Vector4[] positions;
+            Pencil.Gaming.MathUtils.Vector3[] normals;
+            Pencil.Gaming.MathUtils.Vector2[] texcoords;
 
-                mdl.Meshes.Add(new Mesh(this, path, actual_mesh.MaterialIndex-1, indices, 
-                    actual_mesh.Vertices.ToArray(), actual_mesh.Normals.ToArray(), actual_mesh.Tangents.ToArray(), actual_mesh.BiTangents.ToArray(),
-                    actual_mesh.TextureCoordinateChannels, actual_mesh.VertexColorChannels, (Mesh.PrimitiveType)actual_mesh.PrimitiveType));
-            }
+            Pencil.Gaming.Graphics.GL.Utils.LoadModel(folder_path + "/" + file_path, out positions, out normals, out texcoords, out indices);
 
-            //Materials??? Ulalalala xD
-            // FIXME: Please, HERE!
+            //Convert zeugs
+            Vector3[] npositions = new Vector3[positions.Length];
+            for (int i = 0; i < positions.Length; i++)
+                npositions[i] = new Vector3(positions[i].X, positions[i].Y, positions[i].Z);
+
+            Vector3[] nnormals = new Vector3[normals.Length];
+            for (int i = 0; i < normals.Length; i++)
+                nnormals[i] = new Vector3(normals[i].X, normals[i].Y, normals[i].Z);
+
+            //Convert texcoords to 3d texcoords
+            Vector3[] texcoords3d = new Vector3[texcoords.Length];
+            List<Vector3> tex_coords_3d_list = new List<Vector3>();
+            List<Vector3>[] tex_coord_list_array = new List<Vector3>[] { tex_coords_3d_list };
+
+            for (int i = 0; i < texcoords.Length; i++)
+                tex_coords_3d_list.Add(new Vector3(texcoords[i].X, texcoords[i].Y, 1));
+
+
+
+                //for(int i = 0; i < actual_mesh.FaceCount; i++)
+                //{
+                //    for(int j = 0; j < actual_mesh.Faces[i].IndexCount; j++)
+                //        indices[(i*3)+j] = actual_mesh.Faces[i].Indices[j];
+                //}
+
+                int mat_index = 0;
+
+                if (use_xml)
+                    mat_index = 0;
+
+            mdl.Meshes.Add(new Mesh(this, folder_path + "/" + file_path, mat_index, indices, npositions, nnormals, null, null, 
+                    tex_coord_list_array, null, Mesh.PrimitiveType.Triangles));
+
+
+                //mdl.Meshes.Add(new Mesh(this, path, mat_index, indices, 
+                //    actual_mesh.Vertices.ToArray(), actual_mesh.Normals.ToArray(), actual_mesh.Tangents.ToArray(), actual_mesh.BiTangents.ToArray(),
+                //    actual_mesh.TextureCoordinateChannels, actual_mesh.VertexColorChannels, (Mesh.PrimitiveType)actual_mesh.PrimitiveType));
+            //}
+             
             mdl.Materials = new List<Material>();
-            foreach (Assimp.Material mat in scn.Materials)
+
+            if (!use_xml)
             {
-                long ticks = DateTime.Now.Ticks;
+                /*
+                foreach (Assimp.Material mat in scn.Materials)
+                {
+                    long ticks = DateTime.Now.Ticks;
 
-                if (mat.Name == "DefaultMaterial")
-                    continue;
+                    if (mat.Name == "DefaultMaterial")
+                        continue;
 
-                Material material = new Material();
+                    Material material = new Material();
 
-                material.Name = mat.Name;
+                    material.Name = mat.Name;
 
-                material.Shininess = mat.Shininess;
-                material.ShininessStrength = mat.ShininessStrength;
+                    material.Shininess = mat.Shininess;
+                    material.ShininessStrength = mat.ShininessStrength;
 
-                material.TwoSided = mat.IsTwoSided;
-                material.WireFramed = mat.IsWireFrameEnabled;
+                    material.TwoSided = mat.IsTwoSided;
+                    material.WireFramed = mat.IsWireFrameEnabled;
 
-                //Copy all colors
-                material.ColorAmbient = mat.ColorAmbient;
-                material.ColorDiffuse = mat.ColorDiffuse;
-                material.ColorEmmissive = mat.ColorEmissive;
-                material.ColorReflective = mat.ColorReflective;
-                material.ColorSpecular = mat.ColorSpecular;
+                    //Copy all colors
+                    material.ColorAmbient = mat.ColorAmbient;
+                    material.ColorDiffuse = mat.ColorDiffuse;
+                    material.ColorEmmissive = mat.ColorEmissive;
+                    material.ColorReflective = mat.ColorReflective;
+                    material.ColorSpecular = mat.ColorSpecular;
 
-                //Load all textures
-                material.TextureAmbient = mat.HasTextureAmbient ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureAmbient_"+ticks, true,
-                    folder_path + "/" + mat.TextureAmbient.FilePath) : null;
+                    //Load all textures
+                    material.TextureAmbient = mat.HasTextureAmbient ? this.CreateTexture2D(file_path + "_Material_" + mdl.Materials.Count + "_TextureAmbient_" + ticks, true,
+                        folder_path + "/" + mat.TextureAmbient.FilePath) : null;
 
-                material.TextureDiffuse = mat.HasTextureDiffuse ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureDiffuse_"+ticks, true,
-                    folder_path + "/" + mat.TextureDiffuse.FilePath) : null;
+                    material.TextureDiffuse = mat.HasTextureDiffuse ? this.CreateTexture2D(file_path + "_Material_" + mdl.Materials.Count + "_TextureDiffuse_" + ticks, true,
+                        folder_path + "/" + mat.TextureDiffuse.FilePath) : null;
 
-                material.TextureEmissive = mat.HasTextureEmissive ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureEmissive_"+ticks, true,
-                    folder_path + "/" + mat.TextureEmissive.FilePath) : null;
+                    material.TextureEmissive = mat.HasTextureEmissive ? this.CreateTexture2D(file_path + "_Material_" + mdl.Materials.Count + "_TextureEmissive_" + ticks, true,
+                        folder_path + "/" + mat.TextureEmissive.FilePath) : null;
 
-                material.TextureLightMap = mat.HasTextureLightMap ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureLightMap_"+ticks, true,
-                    folder_path + "/" + mat.TextureLightMap.FilePath) : null;
+                    material.TextureLightMap = mat.HasTextureLightMap ? this.CreateTexture2D(file_path + "_Material_" + mdl.Materials.Count + "_TextureLightMap_" + ticks, true,
+                        folder_path + "/" + mat.TextureLightMap.FilePath) : null;
 
-                material.TextureNormal = mat.HasTextureNormal ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureNormal_"+ticks, true,
-                    folder_path + "/" + mat.TextureNormal.FilePath) : null;
+                    material.TextureNormal = mat.HasTextureNormal ? this.CreateTexture2D(file_path + "_Material_" + mdl.Materials.Count + "_TextureNormal_" + ticks, true,
+                        folder_path + "/" + mat.TextureNormal.FilePath) : null;
 
-                material.TextureOpacity = mat.HasTextureOpacity ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureOpacity_"+ticks, true,
-                    folder_path + "/" + mat.TextureOpacity.FilePath) : null;
+                    material.TextureOpacity = mat.HasTextureOpacity ? this.CreateTexture2D(file_path + "_Material_" + mdl.Materials.Count + "_TextureOpacity_" + ticks, true,
+                        folder_path + "/" + mat.TextureOpacity.FilePath) : null;
 
-                material.TextureReflection = mat.HasTextureReflection ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureReflection_"+ticks, true,
-                    folder_path + "/" + mat.TextureReflection.FilePath) : null;
+                    material.TextureReflection = mat.HasTextureReflection ? this.CreateTexture2D(file_path + "_Material_" + mdl.Materials.Count + "_TextureReflection_" + ticks, true,
+                        folder_path + "/" + mat.TextureReflection.FilePath) : null;
 
-                material.TextureDisplacement = mat.HasTextureDisplacement ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureDisplacement_"+ticks, true,
-                    folder_path + "/" + mat.TextureDisplacement.FilePath) : null;
+                    material.TextureDisplacement = mat.HasTextureDisplacement ? this.CreateTexture2D(file_path + "_Material_" + mdl.Materials.Count + "_TextureDisplacement_" + ticks, true,
+                        folder_path + "/" + mat.TextureDisplacement.FilePath) : null;
 
-                material.TextureReflective = null;
+                    material.TextureReflective = null;
 
 
-                material.TextureSpecular = mat.HasTextureSpecular ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureSpecular_"+ticks, true,
-                    folder_path + "/" + mat.TextureSpecular.FilePath) : null;
+                    material.TextureSpecular = mat.HasTextureSpecular ? this.CreateTexture2D(path + "_Material_" + mdl.Materials.Count + "_TextureSpecular_" + ticks, true,
+                        folder_path + "/" + mat.TextureSpecular.FilePath) : null;
 
-                mdl.Materials.Add(material);
+                    mdl.Materials.Add(material);
+                }*/
             }
+            else
+                mdl.Materials.Add(bla_mat);
 
             //Hopefully, everything went right....
             return mdl;
         }
 
-        public void DrawModel(Model mdl, Matrix world, int count = 1)
+        public void DrawModel(Model mdl, Matrix world, int count = 1, CoreScene scene = null)
         {
             if (mdl != null)
             {
+                EnableDepthTest(true);
+
                 foreach (Mesh msh in mdl.Meshes)
                 {
                     Material mat = null;
@@ -188,9 +287,6 @@ namespace FreezingArcher.Renderer
                         mat = new Material();
                         mat.ColorDiffuse = FreezingArcher.Math.Color4.White;
                         mat.ColorSpecular = FreezingArcher.Math.Color4.White;
-
-                        mat.TextureNormal = CreateTexture2D("Blablablabla_"+DateTime.Now.Ticks, true, "lib/Renderer/TestGraphics/Wall/wall_normal.jpg");
-                        mat.TextureDiffuse =  CreateTexture2D("Blablablabl12a_"+DateTime.Now.Ticks, true, "lib/Renderer/TestGraphics/Wall/wall_diffuse.jpg");
 
                         mdl.Materials.Add(mat);
 
@@ -206,17 +302,25 @@ namespace FreezingArcher.Renderer
                         SimpleMaterial.ColorTexture = mat.TextureDiffuse;
 
                         SimpleMaterial.Tile = 1.0f;
-                        SimpleMaterial.Plane = new Vector2(10.0f, 100.0f);
+
+                        if(scene == null)
+                            SimpleMaterial.Plane = new Vector2(0.1f, 100.0f);
+                        else
+                            SimpleMaterial.Plane = new Vector2(scene.CamManager.GetActiveCam().zNear, scene.CamManager.GetActiveCam().zFar);
 
                         mat = SimpleMaterial;
                     }
 
                     //Set Scene Camera settings
                     mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("WorldMatrix"), world);
-                    mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ViewMatrix"),
-                        Matrix.LookAt(new Vector3(0.0f, 10.0f, 100.0f), Vector3.Zero, Vector3.UnitY));
-                    mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ProjectionMatrix"),
-                        Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)ViewportSize.X / (float) ViewportSize.Y, 10f, 100.0f));
+
+                    if(scene != null)
+                    {
+                        mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ViewMatrix"),
+                            scene.CamManager.GetActiveCam().ViewMatrix);
+                        mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("ProjectionMatrix"),
+                            scene.CamManager.GetActiveCam().ProjectionMatrix);
+                    }
 
                     if (count > 1)
                         mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 1);

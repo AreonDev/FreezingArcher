@@ -48,28 +48,53 @@ namespace FreezingArcher.Game
             ValidMessages = new int[] { (int) MessageId.Input };
             msgmnr += this;
 
-            scnobjarr = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Wall/wall.obj");
-            scnobjarr.LayoutLocationOffset = 10;
-            Application.Instance.RendererContext.Scene.AddObject (scnobjarr);
+            SceneObjectArrayWalls = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Wall/wall.xml");
+            SceneObjectArrayWalls.LayoutLocationOffset = 10;
+            scene.AddObject (SceneObjectArrayWalls);
 
-            //Models
-            m300 = new ModelSceneObject[200];
-            for (int i = 0; i < m300.Length; i++) 
+            SceneObjectArrayGrounds = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Ground/ground.xml");
+            SceneObjectArrayGrounds.LayoutLocationOffset = 10;
+            scene.AddObject (SceneObjectArrayGrounds);
+
+            scene.CamManager.AddCam (new FreeCamera ("BLa", msgmnr));
+            scene.CamManager.SetActiveCam (Application.Instance.RendererContext.Scene.CamManager.GetCam ("BLa"));
+
+            //Walls
+            walls = new ModelSceneObject[200];
+            for (int i = 0; i < walls.Length; i++) 
             {
                 if (i == 0) {
-                    m300 [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.obj");
+                    walls [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
                 } else
-                    m300 [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.obj", false);
+                    walls [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml", false);
 
-                m300 [i].Position = new Vector3 ((i-100)*2.0f, 0f, 0.0f);
-                m300 [i].Scaling = new Vector3 (1, 1, 1);
+                walls [i].Position = new Vector3 ((i-100)*2.0f, 0f, 0.0f);
+                walls [i].Scaling = new Vector3 (1, 1, 1);
 
-                scnobjarr.AddObject (m300 [i]);
+                SceneObjectArrayWalls.AddObject (walls [i]);
+            }
+
+            //Grounds
+            grounds = new ModelSceneObject[200];
+            for (int i = 0; i < grounds.Length; i++) 
+            {
+                if (i == 0) {
+                    grounds [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
+                } else
+                    grounds [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml", false);
+
+                grounds [i].Position = new Vector3 ((i-100)*2.0f, 0f, 2.0f);
+                grounds [i].Scaling = new Vector3 (1, 1, 1);
+
+                SceneObjectArrayGrounds.AddObject (grounds [i]);
             }
         }
 
-        ModelSceneObject[] m300;
-        SceneObjectArray scnobjarr;
+        ModelSceneObject[] walls;
+        ModelSceneObject[] grounds;
+
+        SceneObjectArray SceneObjectArrayWalls;
+        SceneObjectArray SceneObjectArrayGrounds;
 
         #region IMessageConsumer implementation
 
@@ -84,25 +109,25 @@ namespace FreezingArcher.Game
             {
                 float fac = 100.0f;
 
-                var pos = m300[0].Position;
+                //var pos = m300[0].Position;
                 if (im.IsActionDown("right"))
                 {
-                    pos.X += (float) (im.DeltaTime.TotalMilliseconds / fac);
+                    //pos.X += (float) (im.DeltaTime.TotalMilliseconds / fac);
                 }
                 if (im.IsActionDown("left"))
                 {
-                    pos.X -= (float) (im.DeltaTime.TotalMilliseconds / fac);
+                    //pos.X -= (float) (im.DeltaTime.TotalMilliseconds / fac);
                 }
                 if (im.IsActionDown("backward"))
                 {
-                    pos.Y += (float) (im.DeltaTime.TotalMilliseconds / fac);
+                    //pos.Y += (float) (im.DeltaTime.TotalMilliseconds / fac);
                 }
                 if (im.IsActionDown("forward"))
                 {
-                    pos.Y -= (float) (im.DeltaTime.TotalMilliseconds / fac);
+                    //pos.Y -= (float) (im.DeltaTime.TotalMilliseconds / fac);
                 }
 
-                m300[0].Position = pos;
+                //m300[0].Position = pos;
             }
         }
 

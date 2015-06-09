@@ -248,9 +248,15 @@ namespace FreezingArcher.Renderer.Scene
 //            var tmp = cameraPosition;
 //            tmp.X += _position;
 //            cameraPosition = tmp;
-            cameraPosition += _position * new Vector3(ViewMatrix.Column2.X,ViewMatrix.Column2.Y,ViewMatrix.Column2.Z);
+            cameraPosition += _position * new Vector3(ViewMatrix.Column2.X,0,ViewMatrix.Column2.Z);//ViewMatrix.Column2.Y
             UpdateCamera ();
 //            Logger.Log.AddLogEntry (LogLevel.Debug, "MoveX", Status.Computing);
+        }
+
+        public void MoveTo(Vector3 position)
+        {
+            cameraPosition = position;
+            UpdateCamera();
         }
 
         /// <summary>

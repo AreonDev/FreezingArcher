@@ -93,11 +93,11 @@ namespace FreezingArcher.Renderer.Scene
                 }
                 if (im.MouseMovement.X != 0)
                 {
-                    rotateY(im.MouseMovement.X * 0.0001f);
+                    rotateY(im.MouseMovement.X * 0.001f);
                 }
                 if (im.MouseMovement.Y != 0)
                 {
-                    rotateX(im.MouseMovement.Y * 0.0001f);
+                    rotateX(im.MouseMovement.Y * 0.001f);
                 }
             }
         }

@@ -297,21 +297,26 @@ namespace FreezingArcher.Game.Maze
             scnobjarr_ground.LayoutLocationOffset = 10;
             scene.AddObject (scnobjarr_ground);
 
-            Vector3 scale = new Vector3 (scaling, scaling, 1);
+            Vector3 scale = new Vector3 (4, 4, 4);
+
+            var startNode = graph.Nodes.FirstOrDefault (n => n.Data.IsSpawn);
+            if (startNode != null)
+                scene.CamManager.GetActiveCam ().MoveTo (new Vector3 (startNode.Data.Position.X * scale.X * 2 + xOffs, 1.5f, 
+                    startNode.Data.Position.Y * scale.Y * 2 + yOffs));
 
             foreach (var node in (IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>>) graph)
             {
                 if (node.Data.MazeCellType == MazeCellType.Ground)
                 {
                     rectangles [x, y] = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
-                    rectangles [x, y].Position = new Vector3 (x * scale.X + xOffs, y * scale.Y + yOffs, 0.0f);
+                    rectangles [x, y].Position = new Vector3 (x * scale.X * 2 + xOffs, -0.0f, y * scale.Y * 2 + yOffs);
                     rectangles [x, y].Scaling = scale;
                     scnobjarr_ground.AddObject (rectangles [x, y]);
                 }
                 else
                 {
                     rectangles [x, y] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
-                    rectangles [x, y].Position = new Vector3 (x * scale.X + xOffs, y * scale.Y + yOffs, 0.0f);
+                    rectangles [x, y].Position = new Vector3 (x * scale.X * 2 + xOffs, -0.5f, y * scale.Y * 2 + yOffs);
                     rectangles [x, y].Scaling = scale;
                     scnobjarr_wall.AddObject (rectangles [x, y]);
                 }

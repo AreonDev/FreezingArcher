@@ -103,7 +103,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="cam">Cam.</param>
         public BaseCam ToggleCam(){
             Tree<Pair<string, BaseCam>> TmpNode = ((IEnumerable<Tree<Pair<string, BaseCam>>>) CamTree.LevelOrder)
-                .First(i => i.Data.A == getActiveCam().Name);
+                .First(i => i.Data.A == GetActiveCam().Name);
 
 //            if (TmpNode.Parent.Parent == null)
 //                return 1;
@@ -118,7 +118,7 @@ namespace FreezingArcher.Renderer.Scene
             foreach(var node in (IEnumerable<Tree<Pair<string, BaseCam>>>) TmpGroup.DepthFirst)
                 {
                 if(node != TmpNode){
-                    setActiveCam(node.Data.B);
+                    SetActiveCam(node.Data.B);
                     return node.Data.B;
                 }
             }

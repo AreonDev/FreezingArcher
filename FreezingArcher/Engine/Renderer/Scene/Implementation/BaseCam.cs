@@ -58,9 +58,9 @@ namespace FreezingArcher.Renderer.Scene
         /// <value>The valid messages</value>
         public int[] ValidMessages { get; protected set; }
 
-        Vector3 cameraPosition { get; set; }
+        protected Vector3 cameraPosition { get; set; }
 
-        Vector3 currentRotation { get; set; }
+        protected Vector3 currentRotation { get; set; }
 
         float zNear { get; set;}
         float zFar { get; set;}
@@ -129,7 +129,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <value>The height.</value>
         public int Height { get; set; }
 
-        private void UpdateCamera ()
+        protected void UpdateCamera ()
         {
             float sinx = (float) System.Math.Sin (currentRotation.X);
             float cosx = (float) System.Math.Cos (currentRotation.X);

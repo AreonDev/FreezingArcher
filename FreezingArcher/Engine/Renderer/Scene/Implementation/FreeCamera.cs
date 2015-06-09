@@ -89,28 +89,13 @@ namespace FreezingArcher.Renderer.Scene
                 if (im.IsActionDown ("drop")) {
                     moveY (1 * fak);
                 }
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("left")) {
-                    rotateX (-1 * fak);
+                if (im.MouseMovement.X != 0)
+                {
+                    rotateY(im.MouseMovement.X * 0.0001f);
                 }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("right")) {
-                    rotateX (1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("forward")) {
-                    rotateZ (-1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("backward")) {
-                    rotateZ (1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("inventory")) {
-                    rotateY (1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("drop")) {
-                    rotateY (-1 * fak);
+                if (im.MouseMovement.Y != 0)
+                {
+                    rotateX(im.MouseMovement.Y * 0.0001f);
                 }
             }
 

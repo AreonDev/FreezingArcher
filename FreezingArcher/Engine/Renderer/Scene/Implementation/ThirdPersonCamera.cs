@@ -40,6 +40,7 @@ namespace FreezingArcher.Renderer.Scene
     public class ThirdPersonCamera : BaseCam //, IMessageConsumer
     {
         Entity Person;
+        Vector3 position;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.FreeCamera"/> class.
@@ -58,7 +59,11 @@ namespace FreezingArcher.Renderer.Scene
             Person = person;
             ValidMessages = new int[] { (int)MessageId.Input, (int) MessageId.WindowResizeMessage };
             mssgmngr += this;
-            //Person.GetComponent<TransformComponent>().Position;
+        }
+
+        private void UpdateCamera(){
+            currentRotation = Person.GetComponent<TransformComponent>().Position - cameraPosition;
+            base.UpdateCamera();
         }
 
         /// <summary>
@@ -91,29 +96,6 @@ namespace FreezingArcher.Renderer.Scene
 
                 if (im.IsActionDown ("drop")) {
                     moveY (1 * fak);
-                }
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("left")) {
-                    rotateX (-1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("right")) {
-                    rotateX (1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("forward")) {
-                    rotateZ (-1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("backward")) {
-                    rotateZ (1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("up")) {
-                    rotateY (1 * fak);
-                }
-
-                if (im.IsActionDown ("sneek") && im.IsActionDown ("drop")) {
-                    rotateY (-1 * fak);
                 }
             }
 

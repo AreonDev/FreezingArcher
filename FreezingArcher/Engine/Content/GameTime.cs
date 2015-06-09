@@ -53,3 +53,4 @@ namespace FreezingArcher.Content
         public long LengthOfDay { get; set; }
     }
 }
+

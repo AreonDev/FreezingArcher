@@ -50,7 +50,7 @@ namespace FreezingArcher.Renderer.Scene
     /// <summary>
     /// My first freezing archer cam.
     /// </summary>
-    abstract public class BaseCam
+    abstract public class BaseCam : IMessageConsumer
     {
         /// <summary>
         /// Gets the valid messages which can be used in the ConsumeMessage method
@@ -62,11 +62,62 @@ namespace FreezingArcher.Renderer.Scene
 
         protected Vector3 currentRotation { get; set; }
 
-        float zNear { get; set;}
-        float zFar { get; set;}
-        float fovY { get; set;}
+        protected float _WindowX;
+        public float WindowX
+        {
+            get{ return this._WindowX; }
+            set
+            {
+                this._WindowX = value;
+                UpdateProjectionMatrix();
+            }
+        }
 
-        internal const float fak = 0.1f;
+        protected float _WindowY;
+        public float WindowY
+        {
+            get{ return this._WindowY; }
+            set
+            {
+                this._WindowY = value;
+                UpdateProjectionMatrix();
+            }
+        }
+
+        protected float _zNear;
+        public float zNear
+        {
+            get{ return this._zNear; }
+            set
+            {
+                this._zNear = value;
+                UpdateProjectionMatrix();
+            }
+        }
+
+        protected float _zFar;
+        public float zFar
+        {
+            get{ return this._zFar; }
+            set
+            {
+                this._zFar = value;
+                UpdateProjectionMatrix();
+            }
+        }
+
+        protected float _fovY;
+        public float fovY
+        {
+            get{ return this._fovY; }
+            set
+            {
+                this._fovY = value;
+                UpdateProjectionMatrix();
+            }
+        }
+
+        protected const float fak = 0.1f;
 
         Vector3 cameraReference;
         Vector3 transformedReference = Vector3.UnitX;
@@ -87,19 +138,21 @@ namespace FreezingArcher.Renderer.Scene
         internal BaseCam (string _name,
             Vector3 _cameraPosition = default(Vector3),
             Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
-            float fov = (float)System.Math.PI / 4.0f)
+            float fov = MathHelper.PiOver4)
         {
             Name = _name;
             cameraPosition = _cameraPosition;
             currentRotation = _currentRotation;
             cameraReference = new Vector3 (0, 0, -1);
-            zNear = near;
-            zFar = far;
-            fovY = fov;
+            _zNear = near;
+            _zFar = far;
+            _fovY = fov;
 
-            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (fovY,
+
+
+            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (_fovY,
                 (float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y,
-                zNear, zFar); 
+                _zNear, _zFar); 
             
             UpdateCamera ();
             Logger.Log.AddLogEntry (LogLevel.Debug, "CAM " + Name, Status.Computing);
@@ -228,15 +281,21 @@ namespace FreezingArcher.Renderer.Scene
 //            Logger.Log.AddLogEntry (LogLevel.Debug, "MoveZ", Status.Computing);
         }
 
-        /// <summary>
-        /// Updates the projection matrix.
-        /// </summary>
-        internal void UpdateProjectionMatrix (WindowResizeMessage msg)
+        protected void UpdateProjectionMatrix ()
         {
-            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (fovY, 
-                (float)msg.Width / (float)msg.Height, zNear, zFar); 
+            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (_fovY, 
+                (float)_WindowX / (float)_WindowY, _zNear, _zFar); 
         }
 
+        public virtual void ConsumeMessage (Messaging.Interfaces.IMessage msg)
+        {
+            WindowResizeMessage wrm = msg as WindowResizeMessage;
+            if (wrm != null)
+            {
+                WindowX = wrm.Width;
+                WindowY = wrm.Height;
+            }
+        }
     }
 }
 

@@ -70,8 +70,10 @@ namespace FreezingArcher.Renderer.Scene
         /// Consumes the message.
         /// </summary>
         /// <param name="msg">Message.</param>
-        public virtual void ConsumeMessage (Messaging.Interfaces.IMessage msg)
+        public override void ConsumeMessage (Messaging.Interfaces.IMessage msg)
         {
+            base.ConsumeMessage(msg);
+
             InputMessage im = msg as InputMessage;
             if (im != null) {
                 if (im.IsActionDown ("forward")) {
@@ -97,11 +99,6 @@ namespace FreezingArcher.Renderer.Scene
                 if (im.IsActionDown ("drop")) {
                     moveY (1 * fak);
                 }
-            }
-
-            WindowResizeMessage wrm = msg as WindowResizeMessage;
-            if (wrm != null) {
-                UpdateProjectionMatrix (wrm);
             }
         }
     }

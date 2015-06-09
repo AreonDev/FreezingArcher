@@ -21,17 +21,22 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Input;
 using FreezingArcher.Output;
+using FreezingArcher.DataStructures.Graphs;
+using FreezingArcher.Core;
+using FreezingArcher.Renderer.Scene;
+using System.Drawing;
 
 namespace FreezingArcher.Content
 {
     /// <summary>
     /// Game.
     /// </summary>
-    public class Game : IResource, IManageable
+    public sealed class Game : IManageable
     {
         /// <summary>
         /// The name of the class.
@@ -42,73 +47,179 @@ namespace FreezingArcher.Content
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.Game"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
-        public Game (string name)
+        public Game (string name, ObjectManager objmnr)
         {
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new game '{0}'", name);
             Name = name;
-            LevelManager = new LevelManager ();
-            Loaded = true;
+            GameStateGraph = objmnr.CreateOrRecycle<DirectedWeightedGraph<GameState, GameStateTransition>>();
+            GameStateGraph.Init();
         }
 
-        #region IResource implementation
-
         /// <summary>
-        /// Gets the init jobs.
+        /// Gets the state of the current game.
         /// </summary>
-        /// <returns>The init jobs.</returns>
-        /// <param name="list">List.</param>
-        public List<Action> GetInitJobs (List<Action> list)
+        /// <value>The state of the current game.</value>
+        public GameState CurrentGameState
         {
-            LevelManager.GetInitJobs (list);
-            return list;
+            get
+            {
+                return currentNode.Data;
+            }
         }
 
+        DirectedWeightedNode<GameState, GameStateTransition> currentNode;
+
         /// <summary>
-        /// Gets the load jobs.
+        /// Gets the game state graph.
         /// </summary>
-        /// <returns>The load jobs.</returns>
-        /// <param name="list">List.</param>
-        /// <param name="reloader">Reloader.</param>
-        public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
+        /// <value>The game state graph.</value>
+        public DirectedWeightedGraph<GameState, GameStateTransition> GameStateGraph { get; private set; }
+
+        /// <summary>
+        /// Switch to the given game state.
+        /// </summary>
+        /// <returns><c>true</c>, if successfully switched game state, <c>false</c> otherwise.</returns>
+        /// <param name="name">Game state name.</param>
+        public bool SwitchToGameState(string name)
         {
-            LevelManager.GetLoadJobs (list, reloader);
-            NeedsLoad = reloader;
-            return list;
+            var newstate = currentNode.OutgoingEdges.FirstOrDefault(e =>
+                e.DestinationNode.Data.Name == name).DestinationNode;
+
+            if (newstate == null)
+            {
+                if (!GameStateGraph.Nodes.Any(n => n.Data.Name == name))
+                {
+                    Logger.Log.AddLogEntry(LogLevel.Error, ClassName,
+                        "There is no game state '{0}' registered in this game!", name);
+                    return false;
+                }
+
+                Logger.Log.AddLogEntry(LogLevel.Warning, ClassName,
+                    "The game state '{0}' is not reachable from the current game state!", name);
+                return false;
+            }
+            currentNode = newstate;
+            return true;
         }
 
         /// <summary>
-        /// Destroy this resource.
-        /// 
-        /// Why not IDisposable:
-        /// IDisposable is called from within the grabage collector context so we do not have a valid gl context there.
-        /// Therefore I added the Destroy function as this would be called by the parent instance within a valid gl
-        /// context.
+        /// Removes the state of the game.
         /// </summary>
-        public void Destroy ()
+        /// <returns><c>true</c>, if game state was removed, <c>false</c> otherwise.</returns>
+        /// <param name="name">Name.</param>
+        public bool RemoveGameState(string name)
         {
-            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying game '{0}'", Name);
-            LevelManager.Destroy ();
+            var node = GameStateGraph.Nodes.FirstOrDefault(n => n.Data.Name == name);
+
+            if (node != null)
+                return GameStateGraph.RemoveNode(node);
+            
+            return false;
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Content.Game"/> is loaded.
+        /// Adds the state of the game.
         /// </summary>
-        /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
-        public bool Loaded { get; protected set; }
+        /// <returns><c>true</c>, if game state was added, <c>false</c> otherwise.</returns>
+        /// <param name="name">Name.</param>
+        /// <param name="env">Env.</param>
+        /// <param name="scene">Scene.</param>
+        /// <param name="from">From.</param>
+        /// <param name="to">To.</param>
+        public bool AddGameState(string name, Environment env, CoreScene scene,
+            IEnumerable<Tuple<string, GameStateTransition>> from = null,
+            IEnumerable<Tuple<string, GameStateTransition>> to = null)
+        {
+            return AddGameState(new GameState(name, env, scene), from, to);
+        }
 
         /// <summary>
-        /// Fire this event when you need the Load function to be called.
-        /// For example after init or when new resources needs to be loaded.
+        /// Adds the state of the game.
         /// </summary>
-        public event Handler NeedsLoad;
+        /// <returns><c>true</c>, if game state was added, <c>false</c> otherwise.</returns>
+        /// <param name="gameState">Game state.</param>
+        /// <param name="from">From.</param>
+        /// <param name="to">To.</param>
+        public bool AddGameState(GameState gameState, IEnumerable<Tuple<string, GameStateTransition>> from = null,
+            IEnumerable<Tuple<string, GameStateTransition>> to = null)
+        {
+            if (from == null && to == null)
+            {
+                GameStateGraph.AddNode(gameState);
+            }
+            else if (from == null && to != null)
+            {
+                var outgoing = new List<Pair<DirectedWeightedNode<GameState, GameStateTransition>, GameStateTransition>>();
+                foreach (var t in to)
+                {
+                    var node = GameStateGraph.Nodes.FirstOrDefault(n => n.Data.Name == t.Item1);
+                    if (node != null)
+                    {
+                        var trans = t.Item2 ?? GameStateTransition.DefaultTransition;
+                        outgoing.Add(
+                            new Pair<DirectedWeightedNode<GameState, GameStateTransition>, GameStateTransition>(
+                                node, trans));
+                    }
+                }
 
-        #endregion
+                GameStateGraph.AddNode(gameState, outgoing);
+            }
+            else if (from != null && to == null)
+            {
+                var incoming = new List<Pair<DirectedWeightedNode<GameState, GameStateTransition>, GameStateTransition>>();
+                foreach (var t in from)
+                {
+                    var node = GameStateGraph.Nodes.FirstOrDefault(n => n.Data.Name == t.Item1);
 
-        /// <summary>
-        /// Gets the level manager.
-        /// </summary>
-        /// <value>The level manager.</value>
-        public LevelManager LevelManager { get; protected set; }
+                    if (node != null)
+                    {
+                        var trans = t.Item2 ?? GameStateTransition.DefaultTransition;
+                        incoming.Add(
+                            new Pair<DirectedWeightedNode<GameState, GameStateTransition>, GameStateTransition>(
+                                node, trans));
+                    }
+                }
+
+                GameStateGraph.AddNode(gameState, null, incoming);
+            }
+            else if (from != null && to != null)
+            {
+                var outgoing = new List<Pair<DirectedWeightedNode<GameState, GameStateTransition>, GameStateTransition>>();
+                foreach (var t in to)
+                {
+                    var node = GameStateGraph.Nodes.FirstOrDefault(n => n.Data.Name == t.Item1);
+                    if (node != null)
+                    {
+                        var trans = t.Item2 ?? GameStateTransition.DefaultTransition;
+                        outgoing.Add(
+                            new Pair<DirectedWeightedNode<GameState, GameStateTransition>, GameStateTransition>(
+                                node, trans));
+                    }
+                }
+
+                var incoming = new List<Pair<DirectedWeightedNode<GameState, GameStateTransition>, GameStateTransition>>();
+                foreach (var t in from)
+                {
+                    var node = GameStateGraph.Nodes.FirstOrDefault(n => n.Data.Name == t.Item1);
+
+                    if (node != null)
+                    {
+                        var trans = t.Item2 ?? GameStateTransition.DefaultTransition;
+                        incoming.Add(
+                            new Pair<DirectedWeightedNode<GameState, GameStateTransition>, GameStateTransition>(
+                                node, trans));
+                    }
+                }
+
+                GameStateGraph.AddNode(gameState, outgoing, incoming);
+            }
+            else
+            {
+                Logger.Log.AddLogEntry(LogLevel.Severe, ClassName, Status.UnreachableLineReached);
+                return false;
+            }
+            return true;
+        }
 
         #region IManageable implementation
 

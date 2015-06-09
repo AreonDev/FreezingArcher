@@ -87,6 +87,10 @@ namespace FreezingArcher.Messaging
         /// </summary>
         WindowResizeMessage,
         /// <summary>
+        /// Occurs when the mouse is captured or released from a window.
+        /// </summary>
+        MouseCaptureMessage,
+        /// <summary>
         /// Occurs when the position of an entity changes.
         /// </summary>
         PositionChangedMessage = 30,

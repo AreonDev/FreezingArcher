@@ -180,7 +180,8 @@ namespace FreezingArcher.Core
                 ParserUtils.ParseVector (
                     ConfigManager.Instance["freezing_archer"].GetString ("general", "resolution")),
                 name);
-            Game = new Game (name);
+            MessageManager += Window;
+            Game = new Game (name, ObjectManager);
             LoadAgain = false;
             InitAgain = false;
 
@@ -493,7 +494,6 @@ namespace FreezingArcher.Core
         public List<Action> GetInitJobs (List<Action> list)
         {
             Window.GetInitJobs (list);
-            Game.GetInitJobs (list);
             return list;
         }
 
@@ -524,7 +524,6 @@ namespace FreezingArcher.Core
         public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
             Window.GetLoadJobs (list, reloader);
-            Game.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }

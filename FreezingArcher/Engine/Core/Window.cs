@@ -26,8 +26,10 @@ using System;
 using System.Collections.Generic;
 using FreezingArcher.Configuration;
 using FreezingArcher.Core.Interfaces;
-using FreezingArcher.Output;
 using FreezingArcher.Math;
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Output;
 using Pencil.Gaming;
 
 namespace FreezingArcher.Core
@@ -35,7 +37,7 @@ namespace FreezingArcher.Core
     /// <summary>
     /// Window.
     /// </summary>
-    public class Window : IResource
+    public class Window : IResource, IMessageCreator
     {
         /// <summary>
         /// The name of the class.
@@ -55,6 +57,12 @@ namespace FreezingArcher.Core
 	    MResolution = resolution;
 	    MTitle = title;
         }
+
+        #region IMessageCreator implementation
+
+        public event MessageEvent MessageCreated;
+
+        #endregion
 
         #region IResource implementation
 
@@ -242,6 +250,9 @@ namespace FreezingArcher.Core
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Capturing mouse in window '{0}'", Title);
             CursorMode = CursorMode.CursorCaptured | CursorMode.CursorHidden;
             Glfw.SetInputMode (Win, InputMode.CursorMode, CursorMode);
+
+            if (MessageCreated != null)
+                MessageCreated(new MouseCaptureMessage(true));
         }
 
         /// <summary>
@@ -252,6 +263,9 @@ namespace FreezingArcher.Core
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Releasing mouse from window '{0}'", Title);
             CursorMode = CursorMode.CursorNormal;
             Glfw.SetInputMode (Win, InputMode.CursorMode, CursorMode);
+
+            if (MessageCreated != null)
+                MessageCreated(new MouseCaptureMessage(false));
         }
 
         /// <summary>

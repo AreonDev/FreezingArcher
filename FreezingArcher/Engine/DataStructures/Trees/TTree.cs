@@ -30,6 +30,8 @@ namespace FreezingArcher.DataStructures.Trees
     /// </summary>
     public class Tree<TData> : ITree<TData>, IEnumerable<Tree<TData>>
     {
+        IEnumerable<TData> TiefenSuche;
+
         /// <summary>
         /// Enumerates all nodes or their data in level-order traversal
         /// </summary>
@@ -96,6 +98,117 @@ namespace FreezingArcher.DataStructures.Trees
                     foreach (var item in node.children)
                         tmp.Enqueue(item);
                 }
+            }
+
+            #endregion
+        }
+
+        public class DepthFirstEnumerable : IEnumerable<TData>, IEquatable<Tree<TData>>
+        {
+            readonly Tree<TData> root;
+            internal DepthFirstEnumerable(Tree<TData> r)
+            {
+                root = r;
+            }
+            #region IEnumerable implementation
+            /// <summary>
+            /// Gets the enumerator.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            IEnumerator<TData> IEnumerable<TData>.GetEnumerator()
+            {
+                Tree<TData> node;
+                Stack<Tree<TData>> stack = new Stack<Tree<TData>>();
+                List<Tree<TData>> reachedNodes = new List<Tree<TData>>();
+
+                yield return root.Data;
+
+                reachedNodes.Add(root);
+                root.children.ForEach(e => {
+                    if (!stack.Contains(e))
+                        stack.Push(e)});
+
+                do {
+                    node = stack.Pop();
+
+                    if(!reachedNodes.Contains(node))
+                    {
+                        yield return node.Data;
+
+                        reachedNodes.Add(node);
+                        node.children.ForEach(e => {
+                            if (!stack.Contains(e))
+                                stack.Push(e)});
+                    }
+
+                } while (stack.Count > 0);
+
+            }
+
+            /// <summary>
+            /// Gets the enumerator.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            IEnumerator<Tree<TData>> IEnumerable<Tree<TData>>.GetEnumerator()
+            {
+                Tree<TData> node;
+                Stack<Tree<TData>> stack = new Stack<Tree<TData>>();
+                List<Tree<TData>> reachedNodes = new List<Tree<TData>>();
+
+                yield return root;
+
+                reachedNodes.Add(root);
+                root.children.ForEach(e => {
+                    if (!stack.Contains(e))
+                        stack.Push(e)});
+
+                do {
+                    node = stack.Pop();
+
+                    if(!reachedNodes.Contains(node))
+                    {
+                        yield return node;
+
+                        reachedNodes.Add(node);
+                        node.children.ForEach(e => {
+                            if (!stack.Contains(e))
+                                stack.Push(e)});
+                    }
+
+                } while (stack.Count > 0);
+            }
+
+            /// <summary>
+            /// Gets the enumerator.
+            /// </summary>
+            /// <returns>The enumerator.</returns>
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                Tree<TData> node;
+                Stack<Tree<TData>> stack = new Stack<Tree<TData>>();
+                List<Tree<TData>> reachedNodes = new List<Tree<TData>>();
+
+                yield return root.Data;
+
+                reachedNodes.Add(root);
+                root.children.ForEach(e => {
+                    if (!stack.Contains(e))
+                        stack.Push(e)});
+
+                do {
+                    node = stack.Pop();
+
+                    if(!reachedNodes.Contains(node))
+                    {
+                        yield return node.Data;
+
+                        reachedNodes.Add(node);
+                        node.children.ForEach(e => {
+                            if (!stack.Contains(e))
+                                stack.Push(e)});
+                    }
+
+                } while (stack.Count > 0);
             }
 
             #endregion

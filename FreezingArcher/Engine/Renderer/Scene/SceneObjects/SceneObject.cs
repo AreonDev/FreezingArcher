@@ -118,6 +118,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         public virtual void UnPrepareInstanced(RendererContext rc, VertexBufferLayoutKind[] vblks){}
         public abstract string GetName();
 
+        public abstract SceneObject Clone();
+
         public event SceneObjectChangedDelegate SceneObjectChanged = delegate(SceneObject obj){return true;};
 
         public SceneObject()

@@ -119,6 +119,13 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public List<SceneObject> SceneObjects;
         public string ObjectName { get; private set;}
+        SceneObject InitSceneObject = null;
+        int         InitSceneObjectCount = 0;
+
+        public SceneObject GetInitSceneObject()
+        {
+            return InitSceneObject;
+        }
 
         public uint LayoutLocationOffset { get; set;}
 
@@ -132,7 +139,22 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
             ObjectsChanged = new List<int>();
 
+            InitSceneObject = null;
+            InitSceneObjectCount = 0;
+
             ObjectName = object_name;
+        }
+
+        public SceneObjectArray(SceneObject scn, int count = 1)
+        {
+            SceneObjects = new List<SceneObject>(count);
+
+            ObjectsChanged = new List<int>();
+
+            InitSceneObject = scn;
+            InitSceneObjectCount = count;
+
+            ObjectName = scn.GetName();
         }
             
         public void AddObject(SceneObject obj)
@@ -157,6 +179,15 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                     FreezingArcher.Core.Status.YouShallNotPassNull, "Object name does not match");
         }
          
+        public SceneObject GetObject(int i)
+        {
+            return SceneObjects[i];
+        }
+
+        public SceneObject[] GetObjects()
+        {
+            return SceneObjects.ToArray();
+        }
 
         private void PrepareBuffer()
         {
@@ -210,6 +241,14 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         public override bool Init(RendererContext rc)
         {
             PrivateRendererContext = rc;
+
+            if (InitSceneObject != null)
+            {
+                SceneObjects.Add(InitSceneObject);
+
+                for (int i = 1; i < InitSceneObjectCount; i++)
+                    SceneObjects.Add(InitSceneObject.Clone());
+            }
 
             return true;
         }
@@ -281,6 +320,11 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                 SceneObjects[0].DrawInstanced(rc, SceneObjects.Count);
                 SceneObjects[0].UnPrepareInstanced(rc, vblk);
             }
+        }
+
+        public override SceneObject Clone()
+        {
+            return this;
         }
 
         public override void DrawInstanced(RendererContext rc, int count)

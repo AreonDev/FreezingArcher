@@ -86,12 +86,15 @@ namespace FreezingArcher.Input
         {
             string s;
 
+            lock(keys)
+            {
             foreach (KeyboardInput i in keys)
                 if (CachedConfig.TryGetValue (i.Key, out s))
                 {
                     if (s != null)
-                        i.KeyAction = s;
+                       i.KeyAction = s;
                 }
+            }
 
             return new InputMessage (keys, mouse, mouseMovement, mouseScroll, deltaTime);
         }

@@ -60,14 +60,10 @@ namespace FreezingArcher.Game
             scene.CamManager.SetActiveCam (Application.Instance.RendererContext.Scene.CamManager.GetCam ("BLa"));
 
             //Walls
-            walls = new ModelSceneObject[200];
-            for (int i = 0; i < walls.Length; i++) 
+            walls = new ModelSceneObject[2500];
+            for (int i = 1; i < walls.Length; i++) 
             {
-                if (i == 0) {
-                    walls [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
-                } else
-                    walls [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml", false);
-
+                walls [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
                 walls [i].Position = new Vector3 ((i-100)*2.0f, 0f, 0.0f);
                 walls [i].Scaling = new Vector3 (1, 1, 1);
 
@@ -75,14 +71,10 @@ namespace FreezingArcher.Game
             }
 
             //Grounds
-            grounds = new ModelSceneObject[200];
-            for (int i = 0; i < grounds.Length; i++) 
+            grounds = new ModelSceneObject[2500];
+            for (int i = 1; i < grounds.Length; i++) 
             {
-                if (i == 0) {
-                    grounds [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
-                } else
-                    grounds [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml", false);
-
+                grounds [i] = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
                 grounds [i].Position = new Vector3 ((i-100)*2.0f, 0f, 2.0f);
                 grounds [i].Scaling = new Vector3 (1, 1, 1);
 

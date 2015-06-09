@@ -117,6 +117,11 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
             rc._2DVertexBufferArray.UnbindVertexBufferArray();
         }
+            
+        public override SceneObject Clone()
+        {
+            return this;
+        }
 
         public override string GetName() {return "RectangleSceneObject_"+
             (Filled?"Filled":("Wired_"+LineWidth));}

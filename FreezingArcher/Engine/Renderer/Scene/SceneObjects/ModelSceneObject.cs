@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Collections.Generic;
 
 namespace FreezingArcher.Renderer.Scene.SceneObjects
 {
@@ -29,6 +30,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         private string ModelPath;
         private bool   LoadModel;
         private Model  MyModel;
+
+        private static List<ModelSceneObject> CachingList;
 
         public override void Draw(RendererContext rc)
         {
@@ -99,10 +102,47 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             return "ModelSceneObject_" + ModelPath;
         }
 
+        public override SceneObject Clone()
+        {
+            ModelSceneObject msobj = new ModelSceneObject(ModelPath, false);
+
+            //Delegate[] bla = this.SceneObjectChanged.GetInvocationList();
+
+            //for (int i = 0; i < bla.Length; i++)
+            //    msobj.SceneObjectChanged += bla[i];
+                
+            msobj.Scaling = this.Scaling;
+            msobj.Rotation = this.Rotation;
+            msobj.Position = this.Position;
+            msobj.MyModel = this.MyModel;
+            msobj.LoadModel = false;
+
+            return msobj;
+        }
+
         public ModelSceneObject(string path, bool load = true)
         {
             LoadModel = load;
             ModelPath = path;
+
+            if (CachingList == null)
+                CachingList = new List<ModelSceneObject>();
+
+            foreach (ModelSceneObject obj in CachingList)
+            {
+                if (obj.ModelPath == path)
+                    LoadModel = false;
+            }
+
+            CachingList.Add(this);
+        }
+
+        ~ModelSceneObject()
+        {
+            if (CachingList != null)
+            {
+                CachingList.Remove(this);
+            }
         }
     }
 }

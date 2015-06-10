@@ -45,6 +45,8 @@ namespace FreezingArcher.Game
             Application.Instance.Init ();
             Application.Instance.Load ();
 
+            PhysicsTest physics = null;
+
             if (!Application.Instance.IsCommandLineInterface)
             {
                 ComponentRegistry.Instance.Register<TransformComponent> ();
@@ -60,10 +62,15 @@ namespace FreezingArcher.Game
 
                 //new RendererTest (Application.Instance.MessageManager, Application.Instance.ObjectManager,
                 //    Application.Instance.RendererContext.Scene);
+
+                physics = new PhysicsTest(Application.Instance.RendererContext, Application.Instance.MessageManager);
             }
 
             Application.Instance.Run ();
             Application.Instance.Destroy ();
+
+            if (physics != null)
+                physics.Dispose();
         }
     }
 }

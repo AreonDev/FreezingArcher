@@ -95,7 +95,9 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Package>xbuild12</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -252,6 +254,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\SimpleMaterial.cs" />
     <Compile Include="Content\ModelComponent.cs" />
     <Compile Include="Content\ModelSystem.cs" />
+    <Compile Include="Content\EntityFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

@@ -28,8 +28,8 @@ using FreezingArcher.Messaging;
 namespace FreezingArcher.Content
 {
     /// <summary>
-    /// Abstract entity system. Classes of this type are used modify the data of entities stored in components.
-    /// Those classes may hold be a message consumer only and may not hold any additional data or have any additional
+    /// Abstract entity system. Classes of this type are used to modify the data of entities stored in components.
+    /// Those classes may hold a message consumer only and may not hold any additional data or have any additional
     /// methods.
     /// Inheritance of this class must be sealed, only overriden fields and methods may be contained in this class.
     /// If any of the constraints listed above is not met the build will fail on post processing.

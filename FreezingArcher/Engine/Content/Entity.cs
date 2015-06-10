@@ -89,17 +89,27 @@ namespace FreezingArcher.Content
         /// <typeparam name="T">The type of the component.</typeparam>
         public bool AddComponent<T>() where T : EntityComponent
         {
-            return internalAddComponent(typeof(T));
+            return AddComponent(typeof(T));
         }
 
-        bool internalAddComponent(Type type)
+        /// <summary>
+        /// Adds the component.
+        /// </summary>
+        /// <returns><c>true</c>, if component was added, <c>false</c> otherwise.</returns>
+        /// <param name="type">Type.</param>
+        public bool AddComponent(Type type)
         {
+            if (!type.IsAssignableFrom(typeof(EntityComponent)))
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, ModuleName,
+                    "The specified component '{0}' is not of type EntityComponent!", type.Name);
+                return false;
+            }
+
             int typeid = type.GetHashCode();
 
             if (Components.ContainsKey (typeid))
             {
-                Logger.Log.AddLogEntry(LogLevel.Error, ModuleName,
-                    "Component {0} is already registered in this entity!", type.Name);
                 return false;
             }
 
@@ -137,16 +147,31 @@ namespace FreezingArcher.Content
         /// <typeparam name="T">The type of the system to add.</typeparam>
         public bool AddSystem<T> () where T : EntitySystem
         {
-            int typeid = typeof(T).GetHashCode();
+            return AddSystem(typeof(T));
+        }
 
-            if (Systems.ContainsKey(typeid))
+        /// <summary>
+        /// Adds an entity system to this entity identified by the type parameter.
+        /// </summary>
+        /// <returns><c>true</c>, if system was added, <c>false</c> otherwise.</returns>
+        /// <param name="type">Type.</param>
+        public bool AddSystem(Type type)
+        {
+            if (!type.IsAssignableFrom(typeof(EntitySystem)))
             {
                 Logger.Log.AddLogEntry(LogLevel.Error, ModuleName,
-                    "System {0} is already registered in this entity!", typeof(T).Name);
+                    "The specified system '{0}' is not of type EntitySystem!", type.Name);
                 return false;
             }
 
-            var system = ObjectManager.CreateOrRecycle(typeof(T)) as T;
+            int typeid = type.GetHashCode();
+
+            if (Systems.ContainsKey(typeid))
+            {
+                return false;
+            }
+
+            var system = ObjectManager.CreateOrRecycle(type) as EntitySystem;
             system.Init(MessageManager, this);
 
             Systems.Add(typeid, system);
@@ -154,7 +179,7 @@ namespace FreezingArcher.Content
             bool result = true;
             if (system.NeededComponents != null)
                 foreach (var comp in system.NeededComponents)
-                    result = result && internalAddComponent(comp);
+                    result = result && AddComponent(comp);
 
             return result;
         }

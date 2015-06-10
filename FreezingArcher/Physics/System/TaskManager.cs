@@ -94,7 +94,6 @@ namespace Henge3D
     {
         private static TaskManager _current;
         private static int _threadCount;
-        private static bool _isThreadingEnabled = false;
 
         static TaskManager ()
         {
@@ -114,11 +113,6 @@ namespace Henge3D
             }
         }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether multi-threading is enabled. If this value is set to false, all tasks will be
-        /// executed in serial on a single processor.
-        /// </summary>
-        public static bool IsThreadingEnabled { get { return _isThreadingEnabled; } set { _isThreadingEnabled = value; } }
 
         /// <summary>
         /// Gets the supproted number of threads.
@@ -145,30 +139,26 @@ namespace Henge3D
 
         private volatile bool _disposing = false, _running = false;
         private volatile int _waitingThreadCount = 0, _currentTaskIndex = 0;
-        private volatile List<Action<TaskParams>> _tasks;
-        private volatile List<TaskParams> _params;
+        private volatile Queue<Tuple<Action<TaskParams>, TaskParams>> _tasks;
         private Thread[] _threads;
 
         private object _exceptionsLock;
         private List<TaskException> _exceptions;
         private AutoResetEvent _taskInitWaitHandle;
-        private ManualResetEvent _managerWaitHandleA, _managerWaitHandleB, _managerCurrentWaitHandle;
+        private ManualResetEvent _managerWaitHandle;
 
         private TaskManager ()
         {
-            _tasks = new List<Action<TaskParams>> ();
-            _params = new List<TaskParams> ();
+            _tasks = new Queue<Tuple<Action<TaskParams>, TaskParams>> ();
             _exceptions = new List<TaskException> ();
             _exceptionsLock = new object ();
             _threads = new Thread[_threadCount];
             _taskInitWaitHandle = new AutoResetEvent (false);
-            _managerWaitHandleA = new ManualResetEvent (false);
-            _managerWaitHandleB = new ManualResetEvent (false);
-            _managerCurrentWaitHandle = _managerWaitHandleA;
+            _managerWaitHandle = new ManualResetEvent (false);
 
-            _threads [0] = Thread.CurrentThread;
+            //_threads [0] = Thread.CurrentThread;
 
-            for (int i = 1; i < _threadCount; i++)
+            for (int i = 0; i < _threadCount; i++)
             {
                 _threads [i] = new Thread (() =>
                 {
@@ -187,8 +177,10 @@ namespace Henge3D
         /// <param name="parameters">Optinoal parameters to supply to the task.</param>
         public void AddTask (Action<TaskParams> task, TaskParams parameters)
         {
-            _tasks.Add (task);
-            _params.Add (parameters);
+            lock (_tasks)
+            {
+                _tasks.Enqueue (new Tuple<Action<TaskParams>, TaskParams> (task, parameters));
+            }
         }
 
         /// <summary>
@@ -229,46 +221,37 @@ namespace Henge3D
                 throw new InvalidOperationException ();
             if (_running)
                 throw new InvalidOperationException ();
-
-            if (_tasks.Count < 1)
+            lock (_tasks)
+            {
+                if (_tasks.Count < 1) //nothing to do here
                 return;
+            }
             _running = true;
 
             try
             {
-                if (!_isThreadingEnabled)
+                _currentTaskIndex = 0;
+                _waitingThreadCount = 0;
+                _managerWaitHandle.Set ();
+
+                //TaskPump ();
+
+                while (_waitingThreadCount < _threadCount - 1)
                 {
-                    for (int i = 0; i < _tasks.Count; i++)
-                        _tasks [i] (_params [i]);
+                    Thread.Sleep (0);
                 }
-                else
+
+                if (_exceptions.Count > 0)
                 {
-                    _currentTaskIndex = 0;
-                    _waitingThreadCount = 0;
-                    _managerCurrentWaitHandle.Set ();
-
-                    TaskPump ();
-
-                    while (_waitingThreadCount < _threadCount - 1)
-                    {
-                        Thread.Sleep (0);
-                    }
-
-                    if (_exceptions.Count > 0)
-                    {
-                        var e = new TaskManagerException (_exceptions.ToArray ());
-                        _exceptions.Clear ();
-                        throw e;
-                    }
+                    var e = new TaskManagerException (_exceptions.ToArray ());
+                    _exceptions.Clear ();
+                    throw e;
                 }
             }
             finally
             {
-                _managerCurrentWaitHandle.Reset ();
-                _managerCurrentWaitHandle = _managerCurrentWaitHandle == _managerWaitHandleA
-					? _managerWaitHandleB : _managerWaitHandleA;
+                _managerWaitHandle.Reset ();
                 _tasks.Clear ();
-                _params.Clear ();
                 _running = false;
             }
         }
@@ -288,8 +271,7 @@ namespace Henge3D
             _disposing = true;
             try
             {
-                _managerWaitHandleA.Set ();
-                _managerWaitHandleB.Set ();
+                _managerWaitHandle.Set ();
             }
             catch (ObjectDisposedException)
             {
@@ -302,19 +284,7 @@ namespace Henge3D
             while (true)
             {
                 Interlocked.Increment (ref _waitingThreadCount);
-                _managerWaitHandleA.WaitOne ();
-
-                if (_disposing)
-                {
-                    return;
-                }
-                else
-                {
-                    TaskPump ();
-                }
-
-                Interlocked.Increment (ref _waitingThreadCount);
-                _managerWaitHandleB.WaitOne ();
+                _managerWaitHandle.WaitOne ();
 
                 if (_disposing)
                 {
@@ -329,14 +299,25 @@ namespace Henge3D
 
         private void TaskPump ()
         {
-            int count = _tasks.Count;
-
+            Tuple<Action<TaskParams>, TaskParams> tuple;
+            
+            while (true)
+            {
+                lock (_tasks)
+                {
+                    if (_tasks.Count == 0)
+                        return;
+                    tuple = _tasks.Dequeue ();
+                }
+                tuple.Item1 (tuple.Item2);
+            }
+            /*
             while (_currentTaskIndex < count)
             {
                 int taskIndex = _currentTaskIndex;
 
                 if (taskIndex == Interlocked.CompareExchange (ref _currentTaskIndex, taskIndex + 1, taskIndex)
-                && taskIndex < count)
+                    && taskIndex < count)
                 {
                     try
                     {
@@ -351,6 +332,7 @@ namespace Henge3D
                     }
                 }
             }
+            */
         }
     }
 }

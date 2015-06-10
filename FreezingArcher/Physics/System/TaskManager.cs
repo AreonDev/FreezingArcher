@@ -94,7 +94,7 @@ namespace Henge3D
     {
         private static TaskManager _current;
         private static int _threadCount;
-        private static bool _isThreadingEnabled = true;
+        private static bool _isThreadingEnabled = false;
 
         static TaskManager ()
         {

@@ -29,6 +29,7 @@ using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Game
 {
@@ -44,7 +45,7 @@ namespace FreezingArcher.Game
             model.Position = new Vector3 (10, 30, 10);
 
             MassProperties = MassProperties.FromCuboid(3, new Vector3 (1, 2, 1));
-            Vector3 p1 = new Vector3(0f, 0f, 1), p2 = new Vector3(0f, 0f, -1);
+            Vector3 p1 = new Vector3(0f, 0f, 1) + model.Position, p2 = new Vector3(0f, 0f, -1) + model.Position;
             Skin.Add(new CapsulePart(new Capsule(p1, p2, 0.5f)), new Henge3D.Physics.Material(0.5f, 2));
         }
 
@@ -60,24 +61,41 @@ namespace FreezingArcher.Game
     {
         PhysicsManager physicsManager;
         PhysicsBody body;
+        PhysicsGroundPlane plane;
 
         public PhysicsTest (RendererContext rc, MessageManager msgmnr)
         {
             physicsManager = new PhysicsManager();
-            physicsManager.Initialize();
             body = new PhysicsBody(rc, msgmnr, "lib/Renderer/TestGraphics/Wall/wall.xml");
+            plane = new PhysicsGroundPlane(rc);
+            physicsManager.Initialize();
             physicsManager.Add(body);
+            physicsManager.Add(plane);
+            physicsManager.Gravity = new Vector3(0, -9.81f, 0);
             msgmnr += this;
         }
 
         #region IMessageConsumer implementation
+
+        Vector3 force = new Vector3(200,0,0);
 
         public void ConsumeMessage (IMessage msg)
         {
             UpdateMessage um = msg as UpdateMessage;
             if (um != null)
             {
-                //body.UpdateModel();
+                physicsManager.Update((float) um.TimeStamp.TotalMilliseconds);
+                body.UpdateModel();
+            }
+
+            InputMessage im = msg as InputMessage;
+            if (im != null)
+            {
+                if (im.IsActionPressed("frame"))
+                {
+                    Logger.Log.AddLogEntry(LogLevel.Debug, "Physics", "Forcing force to be forced on force...");
+                    body.ApplyForce(ref force);
+                }
             }
         }
 
@@ -85,7 +103,7 @@ namespace FreezingArcher.Game
         {
             get
             {
-                return new[] { (int) MessageId.Update };
+                return new[] { (int) MessageId.Update, (int) MessageId.Input };
             }
         }
 

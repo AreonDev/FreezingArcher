@@ -270,36 +270,39 @@ namespace FreezingArcher.Renderer
 
         public void DeleteModel(Model mdl)
         {
-            foreach (Mesh msh in mdl.Meshes)
+            if (mdl != null)
             {
-                DeleteGraphicsResourceAsync(msh.m_VertexBufferArray);
+                foreach (Mesh msh in mdl.Meshes)
+                {
+                    DeleteGraphicsResourceAsync(msh.m_VertexBufferArray);
 
-                DeleteGraphicsResourceAsync(msh.m_Indices);
-                DeleteGraphicsResourceAsync(msh.m_VertexBiTangent);
+                    DeleteGraphicsResourceAsync(msh.m_Indices);
+                    DeleteGraphicsResourceAsync(msh.m_VertexBiTangent);
 
-                foreach(VertexBuffer vb in msh.m_VertexColors)
-                    DeleteGraphicsResourceAsync(vb);
+                    foreach (VertexBuffer vb in msh.m_VertexColors)
+                        DeleteGraphicsResourceAsync(vb);
 
-                DeleteGraphicsResourceAsync(msh.m_VertexNormal);
-                DeleteGraphicsResourceAsync(msh.m_VertexPosition);
-                DeleteGraphicsResourceAsync(msh.m_VertexTangent);
+                    DeleteGraphicsResourceAsync(msh.m_VertexNormal);
+                    DeleteGraphicsResourceAsync(msh.m_VertexPosition);
+                    DeleteGraphicsResourceAsync(msh.m_VertexTangent);
 
-                foreach(VertexBuffer vb in msh.m_VertexTexCoords)
-                    DeleteGraphicsResourceAsync(vb);
-            }
+                    foreach (VertexBuffer vb in msh.m_VertexTexCoords)
+                        DeleteGraphicsResourceAsync(vb);
+                }
 
-            foreach (Material mat in mdl.Materials)
-            {
-                DeleteGraphicsResourceAsync(mat.TextureSpecular);
-                DeleteGraphicsResourceAsync(mat.TextureReflective);
-                DeleteGraphicsResourceAsync(mat.TextureReflection);
-                DeleteGraphicsResourceAsync(mat.TextureOpacity);
-                DeleteGraphicsResourceAsync(mat.TextureNormal);
-                DeleteGraphicsResourceAsync(mat.TextureLightMap);
-                DeleteGraphicsResourceAsync(mat.TextureEmissive);
-                DeleteGraphicsResourceAsync(mat.TextureDisplacement);
-                DeleteGraphicsResourceAsync(mat.TextureDiffuse);
-                DeleteGraphicsResourceAsync(mat.TextureAmbient);
+                foreach (Material mat in mdl.Materials)
+                {
+                    DeleteGraphicsResourceAsync(mat.TextureSpecular);
+                    DeleteGraphicsResourceAsync(mat.TextureReflective);
+                    DeleteGraphicsResourceAsync(mat.TextureReflection);
+                    DeleteGraphicsResourceAsync(mat.TextureOpacity);
+                    DeleteGraphicsResourceAsync(mat.TextureNormal);
+                    DeleteGraphicsResourceAsync(mat.TextureLightMap);
+                    DeleteGraphicsResourceAsync(mat.TextureEmissive);
+                    DeleteGraphicsResourceAsync(mat.TextureDisplacement);
+                    DeleteGraphicsResourceAsync(mat.TextureDiffuse);
+                    DeleteGraphicsResourceAsync(mat.TextureAmbient);
+                }
             }
         }
 

@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace FreezingArcher.Renderer.Scene.SceneObjects
 {
-    public class ModelSceneObject : SceneObject
+    public class ModelSceneObject : SceneObject, IDisposable
     {
         private string ModelPath;
         private bool   LoadModel;
@@ -161,9 +161,28 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
             CachingList.Add(this);
         }
+            
+        bool disposed = false;
 
-        ~ModelSceneObject()
+        // Public implementation of Dispose pattern callable by consumers.
+        public void Dispose()
+        { 
+            Dispose(true);
+            GC.SuppressFinalize(this);           
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
         {
+
+            if (disposed)
+                return; 
+
+            if (disposing) {
+                // Free any other managed objects here.
+                //
+            }
+
             lock (CachingListLock)
             {
                 if (CachingList != null)
@@ -183,6 +202,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                         PrivateRendererContext.DeleteModel(this.MyModel);
                 }
             }
+
+            disposed = true;
         }
     }
 }

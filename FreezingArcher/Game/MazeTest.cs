@@ -29,7 +29,7 @@ using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Output;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
-using FreezingArcher.Renderer.Scene.Implementation;
+using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {

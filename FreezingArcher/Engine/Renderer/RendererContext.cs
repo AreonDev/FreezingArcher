@@ -276,11 +276,16 @@ namespace FreezingArcher.Renderer
 
                 DeleteGraphicsResourceAsync(msh.m_Indices);
                 DeleteGraphicsResourceAsync(msh.m_VertexBiTangent);
-                DeleteGraphicsResourceAsync(msh.m_VertexColors);
+
+                foreach(VertexBuffer vb in msh.m_VertexColors)
+                    DeleteGraphicsResourceAsync(vb);
+
                 DeleteGraphicsResourceAsync(msh.m_VertexNormal);
                 DeleteGraphicsResourceAsync(msh.m_VertexPosition);
                 DeleteGraphicsResourceAsync(msh.m_VertexTangent);
-                DeleteGraphicsResourceAsync(msh.m_VertexTexCoords);
+
+                foreach(VertexBuffer vb in msh.m_VertexTexCoords)
+                    DeleteGraphicsResourceAsync(vb);
             }
 
             foreach (Material mat in mdl.Materials)

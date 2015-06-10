@@ -25,7 +25,7 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
 
-namespace FreezingArcher.Renderer.Scene.Implementation
+namespace FreezingArcher.Renderer.Scene
 {
     public class FirstPersonCamera : FreeCamera, IMessageConsumer
     {

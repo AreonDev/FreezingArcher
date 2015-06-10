@@ -34,12 +34,13 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         private RendererContext PrivateRendererContext = null;
 
+        private static object CachingListLock = new object();
         private static List<ModelSceneObject> CachingList;
 
         public override void Draw(RendererContext rc)
         {
             if(MyModel != null)
-                rc.DrawModel(MyModel, this.WorldMatrix);
+                rc.DrawModel(MyModel, this.WorldMatrix, 1, rc.Scene);
         }
 
         public override void DrawInstanced(RendererContext rc, int count)
@@ -135,16 +136,18 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             LoadModel = load;
             ModelPath = path;
 
-            if (CachingList == null)
-                CachingList = new List<ModelSceneObject>();
-
-            foreach (ModelSceneObject obj in CachingList)
+            lock (CachingListLock)
             {
-                if (obj.ModelPath == path)
-                {
-                    LoadModel = false;
+                if (CachingList == null)
+                    CachingList = new List<ModelSceneObject>();
 
-                    this.MyModel = obj.MyModel;
+                foreach (ModelSceneObject obj in CachingList)
+                {
+                    if (obj.ModelPath == path)
+                    {
+                        LoadModel = false;
+                        this.MyModel = obj.MyModel;
+                    }
                 }
             }
 
@@ -153,21 +156,24 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         ~ModelSceneObject()
         {
-            if (CachingList != null)
+            lock (CachingListLock)
             {
-                CachingList.Remove(this);
-
-                //Check, if something more in this list, if not, clear loaded model
-                bool contains = false;
-
-                foreach (ModelSceneObject obj in CachingList)
+                if (CachingList != null)
                 {
-                    if (obj.ModelPath == this.ModelPath)
-                        contains = true;
-                }
+                    CachingList.Remove(this);
 
-                if (!contains)
-                    PrivateRendererContext.DeleteModel(this.MyModel);
+                    //Check, if something more in this list, if not, clear loaded model
+                    bool contains = false;
+
+                    foreach (ModelSceneObject obj in CachingList)
+                    {
+                        if (obj.ModelPath == this.ModelPath)
+                            contains = true;
+                    }
+
+                    if (!contains)
+                        PrivateRendererContext.DeleteModel(this.MyModel);
+                }
             }
         }
     }

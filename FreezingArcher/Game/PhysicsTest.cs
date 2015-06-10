@@ -40,12 +40,12 @@ namespace FreezingArcher.Game
         {
             model = new ModelSceneObject(xmlPath);
             rendererContext.Scene.AddObject(model);
+
+            model.Position = new Vector3 (10, 10, 10);
+
             MassProperties = MassProperties.FromCuboid(3, new Vector3 (1, 2, 1));
             Vector3 p1 = new Vector3(0f, 0f, 1), p2 = new Vector3(0f, 0f, -1);
             Skin.Add(new CapsulePart(new Capsule(p1, p2, 0.5f)), new Henge3D.Physics.Material(0.5f, 2));
-
-            rendererContext.Scene.CamManager.AddCam(new FreeCamera("FreeCamera", msgmnr));
-            rendererContext.Scene.CamManager.SetActiveCam(rendererContext.Scene.CamManager.GetCam("FreeCamera"));
         }
 
         public void UpdateModel()

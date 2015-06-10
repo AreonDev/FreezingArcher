@@ -354,6 +354,12 @@ namespace FreezingArcher.Renderer
                         mat = SimpleMaterial;
                     }
 
+                    if (count > 1)
+                        mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 1);
+                    else
+                        mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 0);
+
+
                     //Set Scene Camera settings
                     mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("WorldMatrix"), world);
 
@@ -369,12 +375,7 @@ namespace FreezingArcher.Renderer
                                 scene.CameraManager.GetActiveCam().ProjectionMatrix);
                         }
                     }
-
-                    if (count > 1)
-                        mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 1);
-                    else
-                        mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 0);
-
+                        
                     mat.OptionalEffect.BindPipeline();
 
                     //Draw all mesh

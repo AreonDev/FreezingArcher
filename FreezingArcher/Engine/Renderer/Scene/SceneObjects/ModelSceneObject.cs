@@ -28,14 +28,15 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
     public class ModelSceneObject : SceneObject, IDisposable
     {
         private string ModelPath;
-        private bool   LoadModel;
-        private Model  MyModel;
+        private bool LoadModel;
+        private Model MyModel;
         private bool IsInitialized = false;
 
         private RendererContext PrivateRendererContext = null;
 
         private static object CachingListLock = new object();
         private static List<ModelSceneObject> CachingList;
+        //warum statisch? ist völliger boolshit!
 
         public Model Model
         {
@@ -47,16 +48,16 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public override void Draw(RendererContext rc)
         {
-            if(MyModel != null)
+            if (MyModel != null)
                 rc.DrawModel(MyModel, this.WorldMatrix, 1, rc.Scene);
         }
 
         public override void DrawInstanced(RendererContext rc, int count)
         {
-            if(MyModel != null)
+            if (MyModel != null)
                 rc.DrawModel(MyModel, count == 1 ? WorldMatrix : FreezingArcher.Math.Matrix.Identity, count, rc.Scene);
 
-            if(!LoadModel)
+            if (!LoadModel)
                 rc.DrawModel(MyModel, count == 1 ? WorldMatrix : FreezingArcher.Math.Matrix.Identity, count, rc.Scene);
         }
 
@@ -143,25 +144,27 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             LoadModel = load;
             ModelPath = path;
-
             lock (CachingListLock)
             {
                 if (CachingList == null)
                     CachingList = new List<ModelSceneObject>();
 
-                foreach (ModelSceneObject obj in CachingList)
+                if (CachingList.Count > 0)
                 {
-                    if (obj.ModelPath == path)
+                    foreach (ModelSceneObject obj in CachingList)
                     {
-                        LoadModel = false;
-                        this.MyModel = obj.MyModel;
+                        if (obj.ModelPath == path)
+                        {
+                            LoadModel = false;
+                            this.MyModel = obj.MyModel;
+                        }
                     }
                 }
             }
 
             CachingList.Add(this);
         }
-            
+
         bool disposed = false;
 
         // Public implementation of Dispose pattern callable by consumers.
@@ -178,7 +181,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             if (disposed)
                 return; 
 
-            if (disposing) {
+            if (disposing)
+            {
                 // Free any other managed objects here.
                 //
             }

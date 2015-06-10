@@ -39,6 +39,7 @@ namespace FreezingArcher.Game
             Skin.DefaultMaterial = new Henge3D.Physics.Material(1f, 0.5f);
             MassProperties = new MassProperties(float.PositiveInfinity,Matrix.Identity);
             Skin.Add(new PlanePart(-Vector3.UnitY, Vector3.UnitY));
+
             model = new ModelSceneObject("lib/Renderer/TestGraphics/Ground/ground.xml");
             rc.Scene.AddObject(model);
         }

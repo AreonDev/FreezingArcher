@@ -56,8 +56,8 @@ namespace FreezingArcher.Game
             SceneObjectArrayGrounds.LayoutLocationOffset = 10;
             scene.AddObject (SceneObjectArrayGrounds);
 
-            scene.CamManager.AddCam (new FreeCamera ("BLa", msgmnr));
-            scene.CamManager.SetActiveCam (Application.Instance.RendererContext.Scene.CamManager.GetCam ("BLa"));
+            scene.CameraManager.AddCam (new FreeCamera ("BLa", msgmnr));
+            scene.CameraManager.SetActiveCam (Application.Instance.RendererContext.Scene.CameraManager.GetCam ("BLa"));
 
             //Walls
             walls = new ModelSceneObject[2500];

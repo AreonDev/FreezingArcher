@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using FreezingArcher.Renderer;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Renderer.Scene
 {
@@ -122,7 +123,7 @@ namespace FreezingArcher.Renderer.Scene
 
         public Color4 BackgroundColor{ get; set;}
         public string SceneName{ get; set;}
-        public CameraManager CamManager{ get; set;}
+        public CameraManager CameraManager{ get; set;}
 
 
         public FrameBuffer FrameBuffer{ get; private set;}
@@ -132,9 +133,9 @@ namespace FreezingArcher.Renderer.Scene
         public Texture2D   FrameBufferDepthTexture { get; private set;}
         public TextureDepthStencil FrameBufferDepthStencilTexture { get; private set;}
 
-        public CoreScene()
+        public CoreScene(MessageManager messageManager)
         {
-            CamManager = new CameraManager();
+            CameraManager = new CameraManager(messageManager);
             Objects = new List<SceneObject>();
             SubScenes = new List<CoreScene>();
 

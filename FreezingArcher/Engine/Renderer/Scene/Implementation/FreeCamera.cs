@@ -38,7 +38,7 @@ namespace FreezingArcher.Renderer.Scene
 	 * Hinweis2: Gimbal-Locks sind böse ;)
 	 */
 
-    public class FreeCamera : BaseCam, IMessageConsumer
+    public class FreeCamera : BaseCamera, IMessageConsumer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.FreeCamera"/> class.
@@ -50,7 +50,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="far">Far.</param>
         /// <param name="fov">Fov.</param>
         public FreeCamera (string name, MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3),
-                                   Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
+                                   Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 1000.0f,
                                    float fov = (float)System.Math.PI / 4.0f) : base (name, _cameraPosition,
                                                                            _currentRotation, near, far, fov)
         {
@@ -69,27 +69,27 @@ namespace FreezingArcher.Renderer.Scene
             InputMessage im = msg as InputMessage;
             if (im != null) {
                 if (im.IsActionDown ("forward")) {
-                    moveX (-1 * fak);
+                    MoveX (-1 * fak);
                 }
 
                 if (im.IsActionDown ("backward")) {
-                    moveX (1 * fak);
+                    MoveX (1 * fak);
                 }
 
                 if (im.IsActionDown ("left")) {
-                    moveZ (-1 * fak);
+                    MoveZ (-1 * fak);
                 }
 
                 if (im.IsActionDown ("right")) {
-                    moveZ (1 * fak);
+                    MoveZ (1 * fak);
                 }
 
                 if (im.IsActionDown ("inventory")) {
-                    moveY (-1 * fak);
+                    MoveY (-1 * fak);
                 }
 
                 if (im.IsActionDown ("drop")) {
-                    moveY (1 * fak);
+                    MoveY (1 * fak);
                 }
                 if (im.MouseMovement.X != 0)
                 {

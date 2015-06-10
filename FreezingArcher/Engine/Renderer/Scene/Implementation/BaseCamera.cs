@@ -50,7 +50,7 @@ namespace FreezingArcher.Renderer.Scene
     /// <summary>
     /// My first freezing archer cam.
     /// </summary>
-    abstract public class BaseCam : IMessageConsumer
+    abstract public class BaseCamera : IMessageConsumer
     {
         /// <summary>
         /// Gets the valid messages which can be used in the ConsumeMessage method
@@ -135,7 +135,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="near">Near.</param>
         /// <param name="far">Far.</param>
         /// <param name="fov">Fov.</param>
-        internal BaseCam (string _name,
+        internal BaseCamera (string _name,
             Vector3 _cameraPosition = default(Vector3),
             Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
             float fov = MathHelper.PiOver4)
@@ -200,6 +200,13 @@ namespace FreezingArcher.Renderer.Scene
                 new Quaternion (0, 0, sinz, cosz));
         }
 
+        public void MoveTo(Vector3 position)
+        {
+            cameraPosition = position;
+            UpdateCamera();
+        }
+
+
         /// <summary>
         /// Rotates the x.
         /// </summary>
@@ -238,32 +245,27 @@ namespace FreezingArcher.Renderer.Scene
             UpdateCamera ();
 //            Logger.Log.AddLogEntry (LogLevel.Debug, "Rotate Z", Status.Computing);
         }
+            
 
         /// <summary>
         /// Moves the x.
         /// </summary>
         /// <param name="_position">Posotion.</param>
-        public void moveX (float _position)
+        public virtual void MoveX (float _position)
         {
 //            var tmp = cameraPosition;
 //            tmp.X += _position;
 //            cameraPosition = tmp;
-            cameraPosition += _position * new Vector3(ViewMatrix.Column2.X,0,ViewMatrix.Column2.Z);//ViewMatrix.Column2.Y
+            cameraPosition += _position * new Vector3(ViewMatrix.Column2.X,ViewMatrix.Column2.Y,ViewMatrix.Column2.Z);
             UpdateCamera ();
 //            Logger.Log.AddLogEntry (LogLevel.Debug, "MoveX", Status.Computing);
-        }
-
-        public void MoveTo(Vector3 position)
-        {
-            cameraPosition = position;
-            UpdateCamera();
         }
 
         /// <summary>
         /// Moves the y.
         /// </summary>
         /// <param name="_position">Posotion.</param>
-        public void moveY (float _position)
+        public virtual void MoveY (float _position)
         {
 //            var tmp = cameraPosition;
 //            tmp.Y += _position;
@@ -277,7 +279,7 @@ namespace FreezingArcher.Renderer.Scene
         /// Moves the z.
         /// </summary>
         /// <param name="_position">Posotion.</param>
-        public void moveZ (float _position)
+        public virtual void MoveZ (float _position)
         {
 //            var tmp = cameraPosition;
 //            tmp.Z += _position;

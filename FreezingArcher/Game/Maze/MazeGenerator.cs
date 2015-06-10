@@ -301,7 +301,7 @@ namespace FreezingArcher.Game.Maze
 
             var startNode = graph.Nodes.FirstOrDefault (n => n.Data.IsSpawn);
             if (startNode != null)
-                scene.CamManager.GetActiveCam ().MoveTo (new Vector3 (startNode.Data.Position.X * scale.X * 2 + xOffs, 1.5f, 
+                scene.CameraManager.GetActiveCam ().MoveTo (new Vector3 (startNode.Data.Position.X * scale.X * 2 + xOffs, 1.5f, 
                     startNode.Data.Position.Y * scale.Y * 2 + yOffs));
 
             foreach (var node in (IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>>) graph)

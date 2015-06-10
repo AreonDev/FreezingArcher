@@ -29,6 +29,7 @@ using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Output;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
+using FreezingArcher.Renderer.Scene.Implementation;
 
 namespace FreezingArcher.Game
 {
@@ -50,8 +51,10 @@ namespace FreezingArcher.Game
             mazeGenerator = new MazeGenerator (objmnr);
             this.scene = scene;
 
-            scene.CamManager.AddCam (new FreeCamera ("Bla", msgmnr, default(Vector3), default(Vector3), 0.1f, 200));
-            scene.CamManager.SetActiveCam (scene.CamManager.GetCam ("Bla"));
+            scene.CameraManager.AddCam (new FirstPersonCamera ("Player", msgmnr, default(Vector3), default(Vector3), 0.1f, 200));
+            scene.CameraManager.AddCam (new FreeCamera ("Overview", msgmnr, default(Vector3), default(Vector3), 0.1f, 1000.0f));
+            BaseCamera test = scene.CameraManager.GetCam ("Player");
+            scene.CameraManager.SetActiveCam (test);
 
             int seed = new Random().Next();
             var rand = new Random(seed);

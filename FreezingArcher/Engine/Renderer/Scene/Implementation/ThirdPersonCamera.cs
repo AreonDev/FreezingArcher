@@ -37,7 +37,7 @@ namespace FreezingArcher.Renderer.Scene
 	 */
 
 
-    public class ThirdPersonCamera : BaseCam //, IMessageConsumer
+    public class ThirdPersonCamera : BaseCamera //, IMessageConsumer
     {
         Entity Person;
         public Vector3 Position { get; set;}
@@ -94,27 +94,27 @@ namespace FreezingArcher.Renderer.Scene
             InputMessage im = msg as InputMessage;
             if (im != null) {
                 if (im.IsActionDown ("forward")) {
-                    moveX (1 * fak);
+                    MoveX (1 * fak);
                 }
 
                 if (im.IsActionDown ("backward")) {
-                    moveX (-1 * fak);
+                    MoveX (-1 * fak);
                 }
 
                 if (im.IsActionDown ("left")) {
-                    moveZ (-1 * fak);
+                    MoveZ (-1 * fak);
                 }
 
                 if (im.IsActionDown ("right")) {
-                    moveZ (1 * fak);
+                    MoveZ (1 * fak);
                 }
 
                 if (im.IsActionDown ("inventory")) {
-                    moveY (-1 * fak);
+                    MoveY (-1 * fak);
                 }
 
                 if (im.IsActionDown ("drop")) {
-                    moveY (1 * fak);
+                    MoveY (1 * fak);
                 }
             }
         }

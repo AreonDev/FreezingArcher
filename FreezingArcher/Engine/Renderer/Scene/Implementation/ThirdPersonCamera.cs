@@ -40,7 +40,7 @@ namespace FreezingArcher.Renderer.Scene
     public class ThirdPersonCamera : BaseCam //, IMessageConsumer
     {
         Entity Person;
-        Vector3 position;
+        public Vector3 Position { get; set;}
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.FreeCamera"/> class.
@@ -56,13 +56,30 @@ namespace FreezingArcher.Renderer.Scene
                                   float fov = (float)System.Math.PI / 4.0f) : base (name, _cameraPosition,
                                                               _currentRotation, near, far, fov)
         {
+            Position = new Vector3(float.MinValue, float.MinValue, float.MinValue);
             Person = person;
             ValidMessages = new int[] { (int)MessageId.Input, (int) MessageId.WindowResizeMessage };
             mssgmngr += this;
         }
 
+        public ThirdPersonCamera (string name, MessageManager mssgmngr, Vector3 position=new Vector3(), Vector3 _cameraPosition = default(Vector3),
+            Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
+            float fov = (float)System.Math.PI / 4.0f) : base (name, _cameraPosition,
+                _currentRotation, near, far, fov)
+        {
+            Position = position;
+            ValidMessages = new int[] { (int)MessageId.Input, (int) MessageId.WindowResizeMessage };
+            mssgmngr += this;
+        }
+
         private void UpdateCamera(){
-            currentRotation = Person.GetComponent<TransformComponent>().Position - cameraPosition;
+            if (Position.X != float.MinValue)
+            {
+                currentRotation = Position - cameraPosition;
+            }
+            else{
+                currentRotation = Person.GetComponent<TransformComponent>().Position - cameraPosition;
+            }
             base.UpdateCamera();
         }
 

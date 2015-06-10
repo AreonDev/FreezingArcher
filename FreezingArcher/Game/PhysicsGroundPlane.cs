@@ -26,6 +26,7 @@ using Henge3D;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Renderer;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Game
 {
@@ -36,9 +37,9 @@ namespace FreezingArcher.Game
         public PhysicsGroundPlane (RendererContext rc)
         {
             Skin.DefaultMaterial = new Henge3D.Physics.Material(1f, 0.5f);
+            MassProperties = new MassProperties(float.PositiveInfinity,Matrix.Identity);
             Skin.Add(new PlanePart(-Vector3.UnitY, Vector3.UnitY));
             model = new ModelSceneObject("lib/Renderer/TestGraphics/Ground/ground.xml");
-            Freeze();
             rc.Scene.AddObject(model);
         }
 
@@ -47,6 +48,7 @@ namespace FreezingArcher.Game
             model.Position = Transform.Position;
             model.Rotation = Transform.Orientation;
             model.Scaling = new Vector3(Transform.Scale, Transform.Scale, Transform.Scale);
+            //Logger.Log.AddLogEntry(LogLevel.Info, "PhysicsGroundPlane", "Position: {0}", model.Position);
         }
     }
 }

@@ -142,16 +142,12 @@ namespace Henge3D
         private volatile Queue<Tuple<Action<TaskParams>, TaskParams>> _tasks;
         private Thread[] _threads;
 
-        private object _exceptionsLock;
-        private List<TaskException> _exceptions;
         private AutoResetEvent _taskInitWaitHandle;
         private ManualResetEvent _managerWaitHandle;
 
         private TaskManager ()
         {
             _tasks = new Queue<Tuple<Action<TaskParams>, TaskParams>> ();
-            _exceptions = new List<TaskException> ();
-            _exceptionsLock = new object ();
             _threads = new Thread[_threadCount];
             _taskInitWaitHandle = new AutoResetEvent (false);
             _managerWaitHandle = new ManualResetEvent (false);
@@ -237,16 +233,8 @@ namespace Henge3D
                 //TaskPump ();
 
                 while (_waitingThreadCount < _threadCount - 1)
-                {
                     Thread.Sleep (0);
-                }
 
-                if (_exceptions.Count > 0)
-                {
-                    var e = new TaskManagerException (_exceptions.ToArray ());
-                    _exceptions.Clear ();
-                    throw e;
-                }
             }
             finally
             {
@@ -269,14 +257,7 @@ namespace Henge3D
         public void Dispose ()
         {
             _disposing = true;
-            try
-            {
-                _managerWaitHandle.Set ();
-            }
-            catch (ObjectDisposedException)
-            {
-                // Necessary on windows phone for some reason.
-            }
+            _managerWaitHandle.Set ();
         }
 
         private void ThreadProc ()
@@ -287,13 +268,8 @@ namespace Henge3D
                 _managerWaitHandle.WaitOne ();
 
                 if (_disposing)
-                {
                     return;
-                }
-                else
-                {
-                    TaskPump ();
-                }
+                TaskPump ();
             }
         }
 
@@ -311,28 +287,6 @@ namespace Henge3D
                 }
                 tuple.Item1 (tuple.Item2);
             }
-            /*
-            while (_currentTaskIndex < count)
-            {
-                int taskIndex = _currentTaskIndex;
-
-                if (taskIndex == Interlocked.CompareExchange (ref _currentTaskIndex, taskIndex + 1, taskIndex)
-                    && taskIndex < count)
-                {
-                    try
-                    {
-                        _tasks [taskIndex] (_params [taskIndex]);
-                    }
-                    catch (Exception e)
-                    {
-                        lock (_exceptionsLock)
-                        {
-                            _exceptions.Add (new TaskException (_tasks [taskIndex], e));
-                        }
-                    }
-                }
-            }
-            */
         }
     }
 }

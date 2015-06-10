@@ -42,8 +42,8 @@ namespace FreezingArcher.Game
             model = new ModelSceneObject(xmlPath);
             rendererContext.Scene.AddObject(model);
 
-            model.Position = new Vector3 (10, 30, 10);
-
+            model.Position = new Vector3 (10, 100, 10);
+            Freeze();
             MassProperties = MassProperties.FromCuboid(3, new Vector3 (1, 2, 1));
             Vector3 p1 = new Vector3(0f, 0f, 1) + model.Position, p2 = new Vector3(0f, 0f, -1) + model.Position;
             Skin.Add(new CapsulePart(new Capsule(p1, p2, 0.5f)), new Henge3D.Physics.Material(0.5f, 2));
@@ -54,6 +54,7 @@ namespace FreezingArcher.Game
             model.Position = Transform.Position;
             model.Rotation = Transform.Orientation;
             model.Scaling = new Vector3 (Transform.Scale, Transform.Scale, Transform.Scale);
+            //Logger.Log.AddLogEntry(LogLevel.Info, "PhysicsBody", "Position: {0}", model.Position);
         }
     }
 
@@ -86,6 +87,7 @@ namespace FreezingArcher.Game
             {
                 physicsManager.Update((float) um.TimeStamp.TotalMilliseconds);
                 body.UpdateModel();
+                plane.UpdateModel();
             }
 
             InputMessage im = msg as InputMessage;

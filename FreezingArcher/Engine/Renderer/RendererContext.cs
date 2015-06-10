@@ -268,6 +268,36 @@ namespace FreezingArcher.Renderer
             return mdl;
         }
 
+        public void DeleteModel(Model mdl)
+        {
+            foreach (Mesh msh in mdl.Meshes)
+            {
+                DeleteGraphicsResourceAsync(msh.m_VertexBufferArray);
+
+                DeleteGraphicsResourceAsync(msh.m_Indices);
+                DeleteGraphicsResourceAsync(msh.m_VertexBiTangent);
+                DeleteGraphicsResourceAsync(msh.m_VertexColors);
+                DeleteGraphicsResourceAsync(msh.m_VertexNormal);
+                DeleteGraphicsResourceAsync(msh.m_VertexPosition);
+                DeleteGraphicsResourceAsync(msh.m_VertexTangent);
+                DeleteGraphicsResourceAsync(msh.m_VertexTexCoords);
+            }
+
+            foreach (Material mat in mdl.Materials)
+            {
+                DeleteGraphicsResourceAsync(mat.TextureSpecular);
+                DeleteGraphicsResourceAsync(mat.TextureReflective);
+                DeleteGraphicsResourceAsync(mat.TextureReflection);
+                DeleteGraphicsResourceAsync(mat.TextureOpacity);
+                DeleteGraphicsResourceAsync(mat.TextureNormal);
+                DeleteGraphicsResourceAsync(mat.TextureLightMap);
+                DeleteGraphicsResourceAsync(mat.TextureEmissive);
+                DeleteGraphicsResourceAsync(mat.TextureDisplacement);
+                DeleteGraphicsResourceAsync(mat.TextureDiffuse);
+                DeleteGraphicsResourceAsync(mat.TextureAmbient);
+            }
+        }
+
         public void DrawModel(Model mdl, Matrix world, int count = 1, CoreScene scene = null)
         {
             if (mdl != null)

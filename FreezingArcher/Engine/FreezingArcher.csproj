@@ -250,6 +250,8 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\GameState.cs" />
     <Compile Include="Content\GameStateTransition.cs" />
     <Compile Include="Renderer\SimpleMaterial.cs" />
+    <Compile Include="Content\ModelComponent.cs" />
+    <Compile Include="Content\ModelSystem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

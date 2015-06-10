@@ -111,5 +111,17 @@ namespace FreezingArcher.Content
                 CreateMessage(new ScaleChangedMessage(Entity, value));
             }
         }
+
+        /// <summary>
+        /// Gets the world matrix.
+        /// </summary>
+        /// <value>The world matrix.</value>
+        public Matrix WorldMatrix
+        {
+            get
+            {
+                return Matrix.CreateScale(scale) * Matrix.CreateFromQuaternion(rotation) * Matrix.CreateTranslation(position);
+            }
+        }
     }
 }

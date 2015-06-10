@@ -43,9 +43,13 @@ namespace FreezingArcher.Content
         {
             msgmnr += this;
             Entity = entity;
+            internalValidMessages = new int[] { };
+            NeededComponents = null;
         }
 
         protected Entity Entity;
+
+        protected int[] internalValidMessages;
 
         public Type[] NeededComponents { get; protected set; }
 
@@ -60,7 +64,13 @@ namespace FreezingArcher.Content
         /// Gets the valid messages which can be used in the ConsumeMessage method
         /// </summary>
         /// <value>The valid messages</value>
-        public abstract int[] ValidMessages { get; }
+        public int[] ValidMessages
+        {
+            get
+            {
+                return internalValidMessages;
+            }
+        }
         #endregion
     }
 }

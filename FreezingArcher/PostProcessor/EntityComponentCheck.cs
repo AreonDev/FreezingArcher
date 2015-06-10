@@ -181,7 +181,7 @@ namespace PostProcessor
                         }
                     }    
 
-		    if (fields.FindIndex(f => f.Name == "Default" + prop.Name) < 0)
+                    if (prop.CanWrite && fields.FindIndex(f => f.Name == "Default" + prop.Name) < 0)
 		    {
 			Console.WriteLine("Error: Field {0} has no default value specified via a static field!",
 			    prop.Name);

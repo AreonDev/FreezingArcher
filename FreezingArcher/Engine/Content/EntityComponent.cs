@@ -59,7 +59,7 @@ namespace FreezingArcher.Content
             Type t = GetType();
             var fields = t.GetFields().Where(f => !f.IsDefined(typeof(CompilerGeneratedAttribute), false) &&
                 !f.Name.StartsWith("Default", StringComparison.InvariantCulture)).ToList();
-            var props = t.GetProperties();
+            var props = t.GetProperties().Where(p => p.CanWrite);
 
             foreach(var field in fields)
             {

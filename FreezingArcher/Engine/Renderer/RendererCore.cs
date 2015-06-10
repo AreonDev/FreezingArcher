@@ -196,6 +196,12 @@ namespace FreezingArcher.Renderer
             public int Height { get; private set; }
         }
 
+        private class RCActionDeleteGraphicsResource : RCAction
+        {
+            public RCActionDeleteGraphicsResource(GraphicsResource gr){GraphicsResource = gr;}
+            public GraphicsResource GraphicsResource;
+        }
+
         #endregion
 
         private object _RendererCoreActionsListLock;
@@ -770,6 +776,10 @@ namespace FreezingArcher.Renderer
                     RCActionViewportSizeChange rcavsc = rca as RCActionViewportSizeChange;
                     if (rcavsc != null)
                         ViewportResize(rcavsc.X, rcavsc.Y, rcavsc.Width, rcavsc.Height);
+
+                    RCActionDeleteGraphicsResource rcdgr = rca as RCActionDeleteGraphicsResource;
+                    if (rcdgr != null)
+                        DeleteGraphicsResource(rcdgr.GraphicsResource);
                 }
 
                 _RendererCoreActionsList.Clear();
@@ -1209,6 +1219,14 @@ namespace FreezingArcher.Renderer
         public void DrawPointsAbsolute(Vector2[] position, float PointWidth, FreezingArcher.Math.Color4 color)
         {
             throw new NotImplementedException();
+        }
+
+        public void DeleteGraphicsResourceAsync(GraphicsResource gr)
+        {
+            lock (_RendererCoreActionsListLock)
+            {
+                _RendererCoreActionsList.Add(new RCActionDeleteGraphicsResource(gr));
+            }
         }
 
         public void DeleteGraphicsResource(GraphicsResource gr)

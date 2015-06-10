@@ -32,6 +32,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         private Model  MyModel;
         private bool IsInitialized = false;
 
+        private RendererContext PrivateRendererContext = null;
+
         private static List<ModelSceneObject> CachingList;
 
         public override void Draw(RendererContext rc)
@@ -97,6 +99,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                 if (LoadModel)
                     MyModel = rc.LoadModel(ModelPath);
 
+                PrivateRendererContext = rc;
+
                 IsInitialized = true;
             }
 
@@ -137,7 +141,11 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             foreach (ModelSceneObject obj in CachingList)
             {
                 if (obj.ModelPath == path)
+                {
                     LoadModel = false;
+
+                    this.MyModel = obj.MyModel;
+                }
             }
 
             CachingList.Add(this);
@@ -148,6 +156,18 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             if (CachingList != null)
             {
                 CachingList.Remove(this);
+
+                //Check, if something more in this list, if not, clear loaded model
+                bool contains = false;
+
+                foreach (ModelSceneObject obj in CachingList)
+                {
+                    if (obj.ModelPath == this.ModelPath)
+                        contains = true;
+                }
+
+                if (!contains)
+                    PrivateRendererContext.DeleteModel(this.MyModel);
             }
         }
     }

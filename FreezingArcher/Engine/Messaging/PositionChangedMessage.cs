@@ -39,14 +39,14 @@ namespace FreezingArcher.Messaging
         public PositionChangedMessage(Entity entity, Vector3 position)
         {
             Entity = entity;
-            Rotation = position;
+            Position = position;
         }
 
         /// <summary>
         /// Gets the position.
         /// </summary>
         /// <value>The position.</value>
-        public Vector3 Rotation { get; private set; }
+        public Vector3 Position { get; private set; }
        
         /// <summary>
         /// Gets the entity.

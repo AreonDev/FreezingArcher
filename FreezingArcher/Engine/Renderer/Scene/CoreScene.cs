@@ -42,36 +42,45 @@ namespace FreezingArcher.Renderer.Scene
 
         public void AddObject(SceneObject obj)
         {
-            if (PrivateRendererContext != null)
+            lock (ListLock)
             {
-                if (obj.Init(PrivateRendererContext))
-                    Objects.Add(obj);
+                if (PrivateRendererContext != null)
+                {
+                    if (obj.Init(PrivateRendererContext))
+                        Objects.Add(obj);
+                    else
+                        Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.ClimateChangeDrivenCatastrophicWeatherEvent);
+                }
                 else
-                    Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.ClimateChangeDrivenCatastrophicWeatherEvent);
+                    Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.AKittenDies, "Scene is not initialized!"); 
             }
-            else
-                Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.AKittenDies, "Scene is not initialized!"); 
         }
 
         public void RemoveObject(SceneObject obj)
         {
-            Objects.Remove(obj);
+            lock (ListLock)
+            {
+                Objects.Remove(obj);
+            }
         }
 
         public List<string> GetObjectNames()
         {
             List<string> list = new List<string>();
 
-            foreach (SceneObject obj in Objects)
+            lock (ListLock)
             {
-                bool name_in_new_list = false;
+                foreach (SceneObject obj in Objects)
+                {
+                    bool name_in_new_list = false;
 
-                foreach (string name in list)
-                    if (name == obj.GetName())
-                        name_in_new_list = true;
+                    foreach (string name in list)
+                        if (name == obj.GetName())
+                            name_in_new_list = true;
 
-                if (!name_in_new_list)
-                    list.Add(obj.GetName());
+                    if (!name_in_new_list)
+                        list.Add(obj.GetName());
+                }
             }
 
             return list;
@@ -112,11 +121,14 @@ namespace FreezingArcher.Renderer.Scene
         {
             List<SceneObject> scnobj = new List<SceneObject>();
 
-            Objects.ForEach((item) =>
-                {
-                    if(item.GetName() == name)
-                        scnobj.Add(item);
-                });
+            lock (ListLock)
+            {
+                Objects.ForEach((item) =>
+                    {
+                        if (item.GetName() == name)
+                            scnobj.Add(item);
+                    });
+            }
 
             return scnobj;
         }

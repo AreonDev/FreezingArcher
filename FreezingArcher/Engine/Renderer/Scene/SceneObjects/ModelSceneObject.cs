@@ -37,6 +37,14 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         private static object CachingListLock = new object();
         private static List<ModelSceneObject> CachingList;
 
+        public Model Model
+        {
+            get
+            {
+                return MyModel;
+            }
+        }
+
         public override void Draw(RendererContext rc)
         {
             if(MyModel != null)

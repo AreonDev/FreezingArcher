@@ -41,7 +41,7 @@ namespace FreezingArcher.Game
             model = new ModelSceneObject(xmlPath);
             rendererContext.Scene.AddObject(model);
 
-            model.Position = new Vector3 (10, 10, 10);
+            model.Position = new Vector3 (10, 30, 10);
 
             MassProperties = MassProperties.FromCuboid(3, new Vector3 (1, 2, 1));
             Vector3 p1 = new Vector3(0f, 0f, 1), p2 = new Vector3(0f, 0f, -1);

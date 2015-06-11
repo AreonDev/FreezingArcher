@@ -34,6 +34,25 @@ namespace FreezingArcher.Renderer
         internal int   m_MaterialIndex;
         internal PrimitiveType m_PrimitiveType;
 
+        private Vector3[] vertices;
+        private int[] indices;
+
+        public Vector3[] Vertices
+        {
+            get
+            {
+                return vertices;
+            }
+        }
+
+        public int[] Indices
+        {
+            get
+            {
+                return indices;
+            }
+        }
+
         #region Properties
         public int MaterialIndex
         {
@@ -132,6 +151,9 @@ namespace FreezingArcher.Renderer
 
             m_VertexTexCoords = null;
             m_VertexColors = null;
+
+            this.vertices = positions;
+            this.indices = indices;
 
             m_Indices = rc.CreateIndexBuffer(indices, indices.Length * 4, RendererBufferUsage.StaticDraw, name + "_Indices_"+ticks);
             m_VertexPosition = rc.CreateVertexBuffer(positions, positions.Length * 3 * 4, RendererBufferUsage.StaticDraw, name + "_Positions_"+ticks);

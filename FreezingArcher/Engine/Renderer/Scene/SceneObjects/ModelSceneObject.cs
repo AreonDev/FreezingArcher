@@ -56,9 +56,6 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             if (MyModel != null)
                 rc.DrawModel(MyModel, count == 1 ? WorldMatrix : FreezingArcher.Math.Matrix.Identity, count, rc.Scene);
-
-            if (!LoadModel)
-                rc.DrawModel(MyModel, count == 1 ? WorldMatrix : FreezingArcher.Math.Matrix.Identity, count, rc.Scene);
         }
 
         public override void PrepareInstanced(RendererContext rc, VertexBufferLayoutKind[] vblks, VertexBuffer vb)

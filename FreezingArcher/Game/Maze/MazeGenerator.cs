@@ -62,7 +62,7 @@ namespace FreezingArcher.Game.Maze
         public Maze CreateMaze(int seed, MazeColorTheme theme, int sizeX = 50, int sizeY = 50,
             float scale = 10, double turbulence = 2, int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
         {
-            Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, theme, InitializeMaze, CreateMaze,
+            Maze maze = new Maze (objectManager, 1, sizeX, sizeY, scale, theme, InitializeMaze, CreateMaze,
                 AddMazeToScene, CalculatePathToExit, SpawnPortals, turbulence, maximumContinuousPathLength, 
                 portalSpawnFactor);
             maze.Offset = Offset;

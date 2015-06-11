@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 using FreezingArcher.Renderer;
@@ -32,35 +33,36 @@ namespace FreezingArcher.Renderer.Scene
 {
     public class CoreScene
     {
-        private List<SceneObject> Objects;
+        private ConcurrentBag<SceneObject> Objects;
 
         object ListLock = new object();
 
-        private List<CoreScene> SubScenes;
+        private ConcurrentBag<CoreScene> SubScenes;
 
         private RendererContext PrivateRendererContext;
 
         public void AddObject(SceneObject obj)
         {
-            lock (ListLock)
+            if (PrivateRendererContext != null)
             {
-                if (PrivateRendererContext != null)
-                {
-                    if (obj.Init(PrivateRendererContext))
-                        Objects.Add(obj);
-                    else
-                        Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.ClimateChangeDrivenCatastrophicWeatherEvent);
-                }
+                if (obj.Init(PrivateRendererContext))
+                    Objects.Add(obj);
                 else
-                    Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.AKittenDies, "Scene is not initialized!"); 
+                    Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.ClimateChangeDrivenCatastrophicWeatherEvent);
             }
+            else
+                Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.AKittenDies, "Scene is not initialized!"); 
+
         }
 
         public void RemoveObject(SceneObject obj)
         {
             lock (ListLock)
             {
-                Objects.Remove(obj);
+                SceneObject obj2;
+
+                if(!Objects.TryTake(out obj2))
+                    Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", "Could not remove Object");
             }
         }
 
@@ -90,13 +92,8 @@ namespace FreezingArcher.Renderer.Scene
         {
             List<SceneObject> list = new List<SceneObject>(Objects.Count);
 
-            lock (ListLock)
-            {
-                Objects.ForEach((item) =>
-                    {
-                        list.Add(item);
-                    });
-            }
+            foreach (SceneObject obj in Objects)
+                list.Add(obj);
 
             return list;
         }
@@ -105,13 +102,10 @@ namespace FreezingArcher.Renderer.Scene
         {
             int count = 0;
 
-            lock (ListLock)
+            foreach (SceneObject obj in Objects)
             {
-                Objects.ForEach((item) =>
-                    {
-                        if (item.GetName() == name)
-                            count++;
-                    });
+                if (obj.GetName() == name)
+                    count++;
             }
 
             return count;
@@ -121,13 +115,10 @@ namespace FreezingArcher.Renderer.Scene
         {
             List<SceneObject> scnobj = new List<SceneObject>();
 
-            lock (ListLock)
+            foreach (SceneObject obj in Objects)
             {
-                Objects.ForEach((item) =>
-                    {
-                        if (item.GetName() == name)
-                            scnobj.Add(item);
-                    });
+                if (obj.GetName() == name)
+                    scnobj.Add(obj);
             }
 
             return scnobj;
@@ -148,8 +139,8 @@ namespace FreezingArcher.Renderer.Scene
         public CoreScene(MessageManager messageManager)
         {
             CameraManager = new CameraManager(messageManager);
-            Objects = new List<SceneObject>();
-            SubScenes = new List<CoreScene>();
+            Objects = new ConcurrentBag<SceneObject>();
+            SubScenes = new ConcurrentBag<CoreScene>();
 
             FrameBuffer = null;
 

@@ -22,13 +22,19 @@
 //
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Core.Interfaces;
+using Henge3D.Physics;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Messaging;
+using System;
+using FreezingArcher.Math;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
     /// <summary>
     /// Game state class. This class represents a single game state such as a level or a menu.
     /// </summary>
-    public sealed class GameState : IManageable
+    public sealed class GameState : IManageable, IMessageConsumer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.GameState"/> class.
@@ -36,11 +42,17 @@ namespace FreezingArcher.Content
         /// <param name="name">Name.</param>
         /// <param name="env">Environment.</param>
         /// <param name="scene">Scene.</param>
-        public GameState(string name, Environment env, CoreScene scene)
+        /// <param name="msgmnr">Message Manager.</param>
+        public GameState(string name, Environment env, CoreScene scene, MessageManager msgmnr)
         {
             Name = name;
             Environment = env;
             Scene = scene;
+            PhysicsManager = new PhysicsManager();
+            PhysicsManager.Initialize();
+            PhysicsManager.Gravity = new Vector3(0, -9.81f, 0);
+            ValidMessages = new[] { (int) MessageId.Update };
+            msgmnr += this;
         }
 
         /// <summary>
@@ -55,6 +67,12 @@ namespace FreezingArcher.Content
         /// <value>The scene.</value>
         public CoreScene Scene { get; set; }
 
+        /// <summary>
+        /// Gets the physics manager.
+        /// </summary>
+        /// <value>The physics manager.</value>
+        public PhysicsManager PhysicsManager { get; private set; }
+
         // TODO add transition effects
 
         #region IManageable implementation
@@ -66,5 +84,26 @@ namespace FreezingArcher.Content
         public string Name { get; set; }
 
         #endregion
+
+        #region IMessageConsumer implementation
+
+        public void ConsumeMessage(IMessage msg)
+        {
+            UpdateMessage um = msg as UpdateMessage;
+
+            if (um != null)
+            {
+                PhysicsManager.Update((float) um.TimeStamp.TotalMilliseconds);
+            }
+        }
+
+        public int[] ValidMessages { get; private set; }
+
+        #endregion
+
+        public void Destroy()
+        {
+            PhysicsManager.Dispose();
+        }
     }
 }

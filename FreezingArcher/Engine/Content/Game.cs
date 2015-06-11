@@ -30,6 +30,7 @@ using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Core;
 using FreezingArcher.Renderer.Scene;
 using System.Drawing;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Content
 {
@@ -47,10 +48,13 @@ namespace FreezingArcher.Content
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.Game"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
-        public Game (string name, ObjectManager objmnr)
+        /// <param name="objmnr">Object Manager.</param>
+        /// <param name="msgmnr">Message Manager.</param>
+        public Game (string name, ObjectManager objmnr, MessageManager msgmnr)
         {
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new game '{0}'", name);
             Name = name;
+            MessageManager = msgmnr;
             GameStateGraph = objmnr.CreateOrRecycle<DirectedWeightedGraph<GameState, GameStateTransition>>();
             GameStateGraph.Init();
         }
@@ -68,6 +72,7 @@ namespace FreezingArcher.Content
         }
 
         DirectedWeightedNode<GameState, GameStateTransition> currentNode;
+        MessageManager MessageManager;
 
         /// <summary>
         /// Gets the game state graph.
@@ -130,7 +135,7 @@ namespace FreezingArcher.Content
             IEnumerable<Tuple<string, GameStateTransition>> from = null,
             IEnumerable<Tuple<string, GameStateTransition>> to = null)
         {
-            return AddGameState(new GameState(name, env, scene), from, to);
+            return AddGameState(new GameState(name, env, scene, MessageManager), from, to);
         }
 
         /// <summary>
@@ -218,6 +223,10 @@ namespace FreezingArcher.Content
                 Logger.Log.AddLogEntry(LogLevel.Severe, ClassName, Status.UnreachableLineReached);
                 return false;
             }
+
+            if (currentNode == null)
+                currentNode = GameStateGraph.Nodes[0];
+
             return true;
         }
 
@@ -230,5 +239,11 @@ namespace FreezingArcher.Content
         public string Name { get; set; }
 
         #endregion
+
+        public void Destroy()
+        {
+            foreach (var n in GameStateGraph.Nodes)
+                n.Data.Destroy();
+        }
     }
 }

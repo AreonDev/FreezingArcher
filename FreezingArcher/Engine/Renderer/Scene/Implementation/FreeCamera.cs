@@ -85,11 +85,11 @@ namespace FreezingArcher.Renderer.Scene
                 }
 
                 if (im.IsActionDown ("inventory")) {
-                    MoveY (-1 * fak);
+                    MoveY (1 * fak);
                 }
 
                 if (im.IsActionDown ("drop")) {
-                    MoveY (1 * fak);
+                    MoveY (-1 * fak);
                 }
                 if (im.MouseMovement.X != 0)
                 {

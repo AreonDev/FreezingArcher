@@ -24,6 +24,7 @@ using System;
 using FreezingArcher.Core;
 using FreezingArcher.Messaging;
 using FreezingArcher.Content;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -32,6 +33,11 @@ namespace FreezingArcher.Content
     /// </summary>
     public class EntityFactory
     {
+        /// <summary>
+        /// The global instance of the entity factory.
+        /// </summary>
+        public static EntityFactory Instance;
+
         /// <summary>
         /// The name of the module.
         /// </summary>
@@ -58,16 +64,32 @@ namespace FreezingArcher.Content
         /// <param name="name">Name.</param>
         /// <param name="components">Components.</param>
         /// <param name="systems">Systems.</param>
-        public Entity CreateWith(string name, Type[] components, Type[] systems)
+        public Entity CreateWith(string name, Type[] components = null, Type[] systems = null)
         {
             Entity e = ObjectManager.CreateOrRecycle<Entity>();
             e.Init(name, MessageManager);
 
-            foreach (var c in components)
-                e.AddComponent(c);
+            if (components != null)
+            {
+                foreach (var c in components)
+                {
+                    if (!e.AddComponent(c))
+                    {
+                        Logger.Log.AddLogEntry(LogLevel.Error, ModuleName, "Failed to add component {0}!", c.Name);
+                    }
+                }
+            }
 
-            foreach (var s in systems)
-                e.AddSystem(s);
+            if (systems != null)
+            {
+                foreach (var s in systems)
+                {
+                    if (!e.AddSystem(s))
+                    {
+                        Logger.Log.AddLogEntry(LogLevel.Error, ModuleName, "Failed to add system {0}!", s.Name);
+                    }
+                }
+            }
 
             return e;
         }

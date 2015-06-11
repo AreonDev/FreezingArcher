@@ -45,32 +45,31 @@ namespace FreezingArcher.Game
             Application.Instance.Init ();
             Application.Instance.Load ();
 
-            PhysicsTest physics = null;
-
             if (!Application.Instance.IsCommandLineInterface)
             {
-                ComponentRegistry.Instance.Register<TransformComponent> ();
-                Entity test = Application.Instance.ObjectManager.CreateOrRecycle<Entity> ();
-                test.Init ("Test Entity", Application.Instance.MessageManager);
-                test.AddComponent<TransformComponent>();
+                Application.Instance.Game.AddGameState("default",
+                    new FreezingArcher.Content.Environment(new Weather(), new GameTime(new DateTime(), 3600)),
+                    Application.Instance.RendererContext.Scene);
 
                 Application.Instance.RendererContext.Scene = new CoreScene(Application.Instance.MessageManager);
                 Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Crimson;
 
-                new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
-                    Application.Instance.RendererContext.Scene);
+                Application.Instance.RendererContext.Scene.CameraManager.AddCam (new FreeCamera ("free_cam",
+                    Application.Instance.MessageManager));
+                Application.Instance.RendererContext.Scene.CameraManager.SetActiveCam (
+                    Application.Instance.RendererContext.Scene.CameraManager.GetCam ("free_cam"));
+
+                //new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
+                //    Application.Instance.RendererContext.Scene);
 
                 //new RendererTest (Application.Instance.MessageManager, Application.Instance.ObjectManager,
                 //    Application.Instance.RendererContext.Scene);
 
-                physics = new PhysicsTest(Application.Instance.RendererContext, Application.Instance.MessageManager);
+                new PhysicsTest(Application.Instance);
             }
 
             Application.Instance.Run ();
             Application.Instance.Destroy ();
-
-            if (physics != null)
-                physics.Dispose();
         }
     }
 }

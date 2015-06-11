@@ -44,7 +44,7 @@ namespace FreezingArcher.Core
     /// <summary>
     /// Test application.
     /// </summary>
-    public sealed class Application : IMessageCreator
+    public sealed class Application : IMessageCreator, IMessageConsumer
     {
         /// <summary>
         /// The name of the class.
@@ -114,10 +114,11 @@ namespace FreezingArcher.Core
             Frametime = 16;
             Logger.Initialize (name);
             ObjectManager = new ObjectManager();
-            ComponentRegistry.Instance = new ComponentRegistry(ObjectManager);
+            ValidMessages = new[] { (int) MessageId.Input };
             MessageManager = new MessageManager ();
             MessageManager += this;
             ConfigManager.Initialize (MessageManager);
+            EntityFactory.Instance = new EntityFactory(ObjectManager, MessageManager);
 
             CommandLineInterface.Instance.SetHelp ("Freezing Archer 3D game engine/framework", "Alpha 0.0.1",
                 "AreonDev", 2015, 'h', "help", true, true, null,
@@ -181,22 +182,11 @@ namespace FreezingArcher.Core
                     ConfigManager.Instance["freezing_archer"].GetString ("general", "resolution")),
                 name);
             MessageManager += Window;
-            Game = new Game (name, ObjectManager);
+            Game = new Game (name, ObjectManager, MessageManager);
             LoadAgain = false;
             InitAgain = false;
 
-            #if DEBUG_EVENTS
-            CreateTable ();
-            #endif
-            
             Window.WindowResize = (GlfwWindowPtr window, int width, int height) => {
-                #if DEBUG_EVENTS
-                WriteAt (1, 5, "       ");
-                WriteAt (1, 5, width.ToString ());
-                WriteAt (9, 5, "        ");
-                WriteAt (9, 5, height.ToString ());
-                #endif
-
                 Window.MSize = new Vector2i(width, height);
 
                 if (MessageCreated != null)
@@ -204,30 +194,16 @@ namespace FreezingArcher.Core
             };
             
             Window.WindowMove = (GlfwWindowPtr window, int x, int y) => {
-                #if DEBUG_EVENTS
-                WriteAt (18, 5, "       ");
-                WriteAt (18, 5, x.ToString ());
-                WriteAt (26, 5, "       ");
-                WriteAt (26, 5, y.ToString ());
-                #endif
                 if (MessageCreated != null)
                     MessageCreated (new WindowMoveMessage (Window, x, y));
             };
             
             Window.WindowClose = (GlfwWindowPtr window) => {
-                #if DEBUG_EVENTS
-                WriteAt (17, 15, "                                                       ");
-                WriteAt (17, 15, " WindowClose fired");
-                #endif
                 if (MessageCreated != null)
                     MessageCreated (new WindowCloseMessage (Window));
             };
             
             Window.WindowFocus = (GlfwWindowPtr window, bool focus) => {
-                #if DEBUG_EVENTS
-                WriteAt (58, 9, "              ");
-                WriteAt (58, 9, focus.ToString ());
-                #endif
                 Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Window '{0}' changed focus state to '{1}'",
                     Window.Title, focus);
                 if (MessageCreated != null)
@@ -235,10 +211,6 @@ namespace FreezingArcher.Core
             };
             
             Window.WindowMinimize = (GlfwWindowPtr window, bool minimized) => {
-                #if DEBUG_EVENTS
-                WriteAt (58, 11, "              ");
-                WriteAt (58, 11, minimized.ToString ());
-                #endif
                 Logger.Log.AddLogEntry (LogLevel.Debug, ClassName,
                     "Window '{0}' changed minimized state to '{1}'", Window.Title, minimized);
                 if (MessageCreated != null)
@@ -246,43 +218,18 @@ namespace FreezingArcher.Core
             };
             
             Window.WindowError = (GlfwError error, string desc) => {
-                #if DEBUG_EVENTS
-                WriteAt (17, 15, "                                                       ");
-                WriteAt (17, 15, "WindowError: " + error + " - " + desc);
-                #endif
                 Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Window '{0}' threw an error: [{1}] {2}",
                     Window.Title, error.ToString (), desc);
                 if (MessageCreated != null)
                     MessageCreated (new WindowErrorMessage (Window, error.ToString (), desc));
             };
             
-            Window.MouseButton = (GlfwWindowPtr window, MouseButton button, KeyAction action) => {
-                #if DEBUG_EVENTS
-                WriteAt (50, 5, "            ");
-                WriteAt (50, 5, button.ToString ());
-                WriteAt (63, 5, "         ");
-                WriteAt (63, 5, action.ToString ());
-                #endif
+            Window.MouseButton = (GlfwWindowPtr wnd, MouseButton btn, KeyAction action) =>
+                InputManager.HandleMouseButton(wnd, btn, action);
 
-                InputManager.HandleMouseButton (window, button, action);
-            };
-
-            Window.MouseMove = (GlfwWindowPtr window, double x, double y) => {
-                #if DEBUG_EVENTS
-                WriteAt (34, 5, "       ");
-                WriteAt (34, 5, string.Format ("{0:f}", x));
-                WriteAt (42, 5, "       ");
-                WriteAt (42, 5, string.Format ("{0:f}", y));
-                #endif
-
-                InputManager.HandleMouseMove (window, x, y);
-            };
+            Window.MouseMove = (GlfwWindowPtr wnd, double x, double y) => InputManager.HandleMouseMove(wnd, x, y);
             
             Window.MouseOver = (GlfwWindowPtr window, bool enter) => {
-                #if DEBUG_EVENTS
-                WriteAt (58, 13, "              ");
-                WriteAt (58, 13, enter.ToString ());
-                #endif
                 if (enter)
                     Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Mouse entered window '{0}'",
                         Window.Title);
@@ -294,46 +241,11 @@ namespace FreezingArcher.Core
                     MessageCreated (new WindowMouseOverMessage (Window, enter));
             };
             
-            Window.MouseScroll = (GlfwWindowPtr window, double xoffs, double yoffs) => {
-                #if DEBUG_EVENTS
-                WriteAt (24, 13, "       ");
-                WriteAt (24, 13, string.Format ("{0:f}", xoffs));
-                WriteAt (32, 13, "       ");
-                WriteAt (32, 13, string.Format ("{0:f}", yoffs));
-                #endif
-
-                InputManager.HandleMouseScroll (window, xoffs, yoffs);
-            };
+            Window.MouseScroll = (GlfwWindowPtr wnd, double xoffset, double yoffset) =>
+                InputManager.HandleMouseScroll(wnd, xoffset, yoffset);
             
-            Window.KeyAction = (GlfwWindowPtr window, Key key, int scancode, KeyAction action, KeyModifiers mods) => {
-                #if DEBUG_EVENTS
-                WriteAt (1, 13, "             ");
-                WriteAt (1, 13, key.ToString ());
-                WriteAt (15, 13, "        ");
-                WriteAt (15, 13, action.ToString ());
-                #endif
-                
-                if (key == Key.F11 && action == KeyAction.Release)
-                {
-                    Window.ToggleFullscreen ();
-                }
-
-                if (key == Key.F1 && action == KeyAction.Release)
-                {
-                    if (Window.IsMouseCaptured ())
-                        Window.ReleaseMouse ();
-                    else
-                        Window.CaptureMouse ();
-                }
-
-                if (key == Key.F2 && action == KeyAction.Release)
-                    ConfigManager.Instance.SaveAll ();
-
-                if (key == Key.Escape && action == KeyAction.Release)
-                    Window.Close ();
-
-                InputManager.HandleKeyboardInput (window, key, scancode, action, mods);
-            };
+            Window.KeyAction = (GlfwWindowPtr wnd, Key key, int scanCode, KeyAction action, KeyModifiers mods) =>
+                InputManager.HandleKeyboardInput(wnd, key, scanCode, action, mods);
         }
 
         /// <summary>
@@ -544,6 +456,7 @@ namespace FreezingArcher.Core
 
             if (!IsCommandLineInterface)
             {
+                Game.Destroy();
                 PeriodicInputTask.Stop ();
                 PeriodicUpdateTask.Stop ();
                 PeriodicFramecounterTask.Stop (); 
@@ -574,13 +487,6 @@ namespace FreezingArcher.Core
         public event Handler NeedsLoad;
 
         #endregion
-
-        #if DEBUG_EVENTS
-        /// <summary>
-        /// The original command line row.
-        /// </summary>
-        private int OrigRow;
-        #endif
         
         /// <summary>
         /// The loader.
@@ -607,54 +513,46 @@ namespace FreezingArcher.Core
         /// </summary>
         internal InputManager InputManager;
 
-        #if DEBUG_EVENTS
-        /// <summary>
-        /// Creates the event table.
-        /// </summary>
-        private void CreateTable ()
-        {
-            Console.Clear ();
-            OrigRow = Console.CursorTop;
-            string s =
-                "+----------------+---------------+---------------+----------------------+\n" +
-                    "|  WindowResize  |  WindowMove   |   MouseMove   |     MouseButton      |\n" +
-                    "+-------+--------+-------+-------+-------+-------+------------+---------+\n" +
-                    "| Width | Height |   X   |   Y   |   X   |   Y   |   Button   | Action  |\n" +
-                    "+-------+--------+-------+-------+-------+-------+------------+---------+\n" +
-                    "|       |        |       |       |       |       |            |         |\n" +
-                    "+-------+--------+-------+-------+-------+-------+------------+---------+\n" +
-                    "                                                                         \n" +
-                    "+----------------------+---------------+-----------------+--------------+\n" +
-                    "|       KeyAction      |  MouseScroll  | WindowFocus:    |              |\n" +
-                    "+-------------+--------+-------+-------+-----------------+--------------+\n" +
-                    "|     Key     | Action |   X   |   Y   | WindowMinimize: |              |\n" +
-                    "+-------------+--------+-------+-------+-----------------+--------------+\n" +
-                    "|             |        |       |       | MouseOver:      |              |\n" +
-                    "+-------------+-+------+-------+-------+-----------------+--------------+\n" +
-                    "| Other Events: |                                                       |\n" +
-                    "+---------------+-------------------------------------------------------+\n";
-            Console.Write (s);
-        }
-
-        /// <summary>
-        /// Writes s at x and y.
-        /// </summary>
-        /// <param name="x">The x coordinate.</param>
-        /// <param name="y">The y coordinate.</param>
-        /// <param name="s">The string to write.</param>
-        private void WriteAt (int x, int y, string s)
-        {
-            Console.SetCursorPosition (x, OrigRow + y);
-            Console.Write (s);
-        }
-        #endif
-
         #region IMessageCreator implementation
 
         /// <summary>
         /// Occurs when a new message is created an is ready for processing
         /// </summary>
         public event MessageEvent MessageCreated;
+
+        #endregion
+
+        #region IMessageConsumer implementation
+
+        public void ConsumeMessage(IMessage msg)
+        {
+            InputMessage im = msg as InputMessage;
+
+            if (im != null)
+            {
+                if (im.IsActionPressed("fullscreen"))
+                {
+                    Window.ToggleFullscreen();
+                }
+                if (im.IsActionPressed("capture_mouse"))
+                {
+                    if (Window.IsMouseCaptured ())
+                        Window.ReleaseMouse ();
+                    else
+                        Window.CaptureMouse ();
+                }
+                if (im.IsActionPressed("close"))
+                {
+                    Window.Close();
+                }
+                if (im.IsActionPressed("save"))
+                {
+                    ConfigManager.Instance.SaveAll();
+                }
+            }
+        }
+
+        public int[] ValidMessages { get; private set; }
 
         #endregion
     }

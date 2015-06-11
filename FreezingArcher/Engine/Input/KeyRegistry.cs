@@ -60,6 +60,9 @@ namespace FreezingArcher.Input
             Keys.Add ("close", Key.Escape);
             Keys.Add ("jump", Key.Space);
             Keys.Add ("camera", Key.C);
+            Keys.Add ("fullscreen", Key.F11);
+            Keys.Add ("capture_mouse", Key.F1);
+            Keys.Add ("save", Key.F2);
         }
 
         /// <summary>

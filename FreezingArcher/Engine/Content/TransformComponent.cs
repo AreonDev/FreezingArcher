@@ -72,7 +72,7 @@ namespace FreezingArcher.Content
             set
             {
                 position = value;
-                CreateMessage(new PositionChangedMessage(Entity, value));
+                CreateMessage(new PositionChangedMessage(Entity));
             }
         }
 
@@ -89,7 +89,7 @@ namespace FreezingArcher.Content
             set
             {
                 rotation = value;
-                CreateMessage(new RotationChangedMessage(Entity, value));
+                CreateMessage(new RotationChangedMessage(Entity));
             }
         }
 
@@ -106,7 +106,7 @@ namespace FreezingArcher.Content
             set
             {
                 scale = value;
-                CreateMessage(new ScaleChangedMessage(Entity, value));
+                CreateMessage(new ScaleChangedMessage(Entity));
             }
         }
 

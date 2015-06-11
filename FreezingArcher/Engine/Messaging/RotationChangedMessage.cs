@@ -35,18 +35,10 @@ namespace FreezingArcher.Messaging
         /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.RotationChangedMessage"/> class.
         /// </summary>
         /// <param name="entity">Entity.</param>
-        /// <param name="rotation">Rotation.</param>
-        public RotationChangedMessage(Entity entity, Quaternion rotation)
+        public RotationChangedMessage(Entity entity)
         {
             Entity = entity;
-            Rotation = rotation;
         }
-
-        /// <summary>
-        /// Gets the position.
-        /// </summary>
-        /// <value>The position.</value>
-        public Quaternion Rotation { get; private set; }
        
         /// <summary>
         /// Gets the entity.

@@ -41,9 +41,9 @@ namespace FreezingArcher.Content
         /// </summary>
         public virtual void Init(MessageManager msgmnr, Entity entity)
         {
+            internalValidMessages = new int[] { };
             msgmnr += this;
             Entity = entity;
-            internalValidMessages = new int[] { };
             NeededComponents = null;
         }
 

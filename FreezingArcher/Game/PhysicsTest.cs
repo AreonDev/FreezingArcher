@@ -30,94 +30,46 @@ using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Output;
+using FreezingArcher.Content;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Game
 {
-    public class PhysicsBody : RigidBody
+    public class PhysicsTest
     {
-        ModelSceneObject model;
-
-        public PhysicsBody(RendererContext rendererContext, MessageManager msgmnr, string xmlPath)
+        public PhysicsTest(Application app)
         {
-            model = new ModelSceneObject(xmlPath);
-            rendererContext.Scene.AddObject(model);
+            Entity wall = EntityFactory.Instance.CreateWith("wall", null,
+                new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
 
-            model.Position = new Vector3 (10, 100, 10);
-            Freeze();
-            MassProperties = MassProperties.FromCuboid(3, new Vector3 (1, 2, 1));
-            Vector3 p1 = new Vector3(0f, 0f, 1) + model.Position, p2 = new Vector3(0f, 0f, -1) + model.Position;
-            Skin.Add(new CapsulePart(new Capsule(p1, p2, 0.5f)), new Henge3D.Physics.Material(0.5f, 2));
+            var wallModel = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
+            wall.GetComponent<ModelComponent>().Model = wallModel;
+            app.RendererContext.Scene.AddObject(wallModel);
+
+            var wallRigidBody = new RigidBody();
+            wall.GetComponent<PhysicsComponent>().RigidBody = wallRigidBody;
+            wallRigidBody.MassProperties = MassProperties.FromCuboid(50, new Vector3(1, 2, 1));
+            Vector3 p1 = new Vector3(0f, 0f, 1), p2 = new Vector3(0f, 0f, -1);
+            wallRigidBody.Skin.Add(new CapsulePart(new Capsule(p1, p2, 0.5f)), new Henge3D.Physics.Material(1f, 0.000001f));
+            wallRigidBody.SetWorld(new Vector3(0, 10, 0));
+
+            Entity ground = EntityFactory.Instance.CreateWith("ground", null,
+                new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
+
+            var groundModel = new ModelSceneObject("lib/Renderer/TestGraphics/Ground/ground.xml");
+            ground.GetComponent<ModelComponent>().Model = groundModel;
+            app.RendererContext.Scene.AddObject(groundModel);
+
+            var groundRigidBody = new RigidBody();
+            ground.GetComponent<PhysicsComponent>().RigidBody = groundRigidBody;
+            groundRigidBody.MassProperties = new MassProperties(float.PositiveInfinity, Matrix.Identity);
+            groundRigidBody.Skin.DefaultMaterial = new Henge3D.Physics.Material(1f, 0.1f);
+            groundRigidBody.Skin.Add(new PlanePart(Vector3.UnitZ, Vector3.UnitY));
+
+            app.RendererContext.Scene.CameraManager.GetActiveCam().MoveTo(new Vector3(-1, 1, 0));
+
+            app.Game.CurrentGameState.PhysicsManager.Add(groundRigidBody);
+            app.Game.CurrentGameState.PhysicsManager.Add(wallRigidBody);
         }
-
-        public void UpdateModel()
-        {
-            model.Position = Transform.Position;
-            model.Rotation = Transform.Orientation;
-            model.Scaling = new Vector3 (Transform.Scale, Transform.Scale, Transform.Scale);
-            //Logger.Log.AddLogEntry(LogLevel.Info, "PhysicsBody", "Position: {0}", model.Position);
-        }
-    }
-
-    public class PhysicsTest : IMessageConsumer, IDisposable
-    {
-        PhysicsManager physicsManager;
-        PhysicsBody body;
-        PhysicsGroundPlane plane;
-
-        public PhysicsTest (RendererContext rc, MessageManager msgmnr)
-        {
-            physicsManager = new PhysicsManager();
-            body = new PhysicsBody(rc, msgmnr, "lib/Renderer/TestGraphics/Wall/wall.xml");
-            plane = new PhysicsGroundPlane(rc);
-            physicsManager.Initialize();
-            physicsManager.Add(body);
-            physicsManager.Add(plane);
-            physicsManager.Gravity = new Vector3(0, -9.81f, 0);
-            msgmnr += this;
-        }
-
-        #region IMessageConsumer implementation
-
-        Vector3 force = new Vector3(200,0,0);
-
-        public void ConsumeMessage (IMessage msg)
-        {
-            UpdateMessage um = msg as UpdateMessage;
-            if (um != null)
-            {
-                physicsManager.Update((float) um.TimeStamp.TotalMilliseconds);
-                body.UpdateModel();
-                plane.UpdateModel();
-            }
-
-            InputMessage im = msg as InputMessage;
-            if (im != null)
-            {
-                if (im.IsActionPressed("frame"))
-                {
-                    Logger.Log.AddLogEntry(LogLevel.Debug, "Physics", "Forcing force to be forced on force...");
-                    body.ApplyForce(ref force);
-                }
-            }
-        }
-
-        public int[] ValidMessages
-        {
-            get
-            {
-                return new[] { (int) MessageId.Update, (int) MessageId.Input };
-            }
-        }
-
-        #endregion
-
-        #region IDisposable implementation
-
-        public void Dispose ()
-        {
-            physicsManager.Dispose();
-        }
-
-        #endregion
     }
 }

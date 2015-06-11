@@ -45,7 +45,7 @@ namespace FreezingArcher.Messaging
         Thread messageThread = null;
         bool run = false;
         //default does not work
-        readonly Queue<IMessage> mc = null;
+        internal readonly Queue<IMessage> MessageQueue = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.MessageManager"/> class.
@@ -54,7 +54,7 @@ namespace FreezingArcher.Messaging
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new message manager");
             messageThread = new Thread (FlushQueue);
-            mc = new Queue<IMessage> (2000);
+            MessageQueue = new Queue<IMessage> (2000);
         }
 
         /// <summary>
@@ -108,8 +108,8 @@ namespace FreezingArcher.Messaging
 
         void HandleMessageCreated (IMessage m)
         {
-            lock (mc)
-                mc.Enqueue (m);
+            lock (MessageQueue)
+                MessageQueue.Enqueue (m);
 
         }
 
@@ -167,11 +167,11 @@ namespace FreezingArcher.Messaging
         {
             while (run)
             {
-                if (mc.Count != 0)
+                if (MessageQueue.Count != 0)
                 {
                     IMessage Message = null;
-                    lock (mc)
-                        Message = mc.Dequeue ();
+                    lock (MessageQueue)
+                        Message = MessageQueue.Dequeue ();
                     List<IMessageConsumer> tmp = null;
                     if (messageList.TryGetValue (Message.MessageId, out tmp))
                         tmp.ForEach (i => i.ConsumeMessage (Message));
@@ -180,7 +180,7 @@ namespace FreezingArcher.Messaging
                     Thread.Sleep (5);
             }
             //ensure queue is empty
-            mc.Clear ();
+            MessageQueue.Clear ();
         }
     }
 }

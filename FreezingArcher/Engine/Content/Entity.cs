@@ -99,7 +99,7 @@ namespace FreezingArcher.Content
         /// <param name="type">Type.</param>
         public bool AddComponent(Type type)
         {
-            if (!type.IsAssignableFrom(typeof(EntityComponent)))
+            if (!typeof(EntityComponent).IsAssignableFrom(type))
             {
                 Logger.Log.AddLogEntry(LogLevel.Error, ModuleName,
                     "The specified component '{0}' is not of type EntityComponent!", type.Name);
@@ -110,10 +110,10 @@ namespace FreezingArcher.Content
 
             if (Components.ContainsKey (typeid))
             {
-                return false;
+                return true;
             }
 
-            var component = ComponentRegistry.Instance.Instantiate(type);
+            var component = ObjectManager.CreateOrRecycle(type) as EntityComponent;
             component.Init(this, MessageManager);
 
             Components.Add(typeid, component);
@@ -157,7 +157,7 @@ namespace FreezingArcher.Content
         /// <param name="type">Type.</param>
         public bool AddSystem(Type type)
         {
-            if (!type.IsAssignableFrom(typeof(EntitySystem)))
+            if (!typeof(EntitySystem).IsAssignableFrom(type))
             {
                 Logger.Log.AddLogEntry(LogLevel.Error, ModuleName,
                     "The specified system '{0}' is not of type EntitySystem!", type.Name);
@@ -168,7 +168,7 @@ namespace FreezingArcher.Content
 
             if (Systems.ContainsKey(typeid))
             {
-                return false;
+                return true;
             }
 
             var system = ObjectManager.CreateOrRecycle(type) as EntitySystem;
@@ -178,8 +178,16 @@ namespace FreezingArcher.Content
 
             bool result = true;
             if (system.NeededComponents != null)
+            {
                 foreach (var comp in system.NeededComponents)
-                    result = result && AddComponent(comp);
+                {
+                    if (!AddComponent(comp))
+                    {
+                        result = false;
+                        Logger.Log.AddLogEntry(LogLevel.Error, ModuleName, "Failed to add component {0}!", comp.Name);
+                    }
+                }
+            }
 
             return result;
         }

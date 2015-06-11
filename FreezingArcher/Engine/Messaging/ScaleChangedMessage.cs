@@ -35,18 +35,10 @@ namespace FreezingArcher.Messaging
         /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.ScaleChangedMessage"/> class.
         /// </summary>
         /// <param name="entity">Entity.</param>
-        /// <param name="scale">Position.</param>
-        public ScaleChangedMessage(Entity entity, Vector3 scale)
+        public ScaleChangedMessage(Entity entity)
         {
             Entity = entity;
-            Scale = scale;
         }
-
-        /// <summary>
-        /// Gets the scale.
-        /// </summary>
-        /// <value>The scale.</value>
-        public Vector3 Scale { get; private set; }
        
         /// <summary>
         /// Gets the entity.

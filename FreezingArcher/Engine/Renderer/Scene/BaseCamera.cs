@@ -201,6 +201,8 @@ namespace FreezingArcher.Renderer.Scene
         /// <value>The name.</value>
         public string Name { get; set; }
 
+        //const Vector3 defaultUp = Vector3.UnitY;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Renderer.Scene.BaseCamera"/> class.
         /// </summary>
@@ -223,7 +225,7 @@ namespace FreezingArcher.Renderer.Scene
             MZNear = near;
             MZFar = far;
             MFov = fov;
-            MUp = up;
+            MUp = up != Vector3.Zero ? up : Vector3.UnitY;
 
 
 

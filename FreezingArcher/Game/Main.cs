@@ -57,7 +57,7 @@ namespace FreezingArcher.Game
                 rc.Scene.BackgroundColor = Color4.Crimson;
                 rc.Scene.CameraManager.AddCam (new FreeCamera ("free_cam", msgmnr));
                 var cammnr = rc.Scene.CameraManager;
-                cammnr.SetActiveCam (cammnr.GetCam ("free_cam"));
+                cammnr.ActiveCamera = cammnr.GetCam ("free_cam");
 
                 new MazeTest(msgmnr, objmnr, rc.Scene);
                 new PhysicsTest(Application.Instance);

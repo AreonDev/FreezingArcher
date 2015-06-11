@@ -73,7 +73,7 @@ namespace FreezingArcher.Game
             groundRigidBody.Skin.DefaultMaterial = new Henge3D.Physics.Material(1f, 0.1f);
             groundRigidBody.Skin.Add(new PlanePart(Vector3.UnitZ, Vector3.UnitY));
 
-            app.RendererContext.Scene.CameraManager.GetActiveCam().MoveTo(new Vector3(-1, 1, 0));
+            app.RendererContext.Scene.CameraManager.ActiveCamera.MoveTo(new Vector3(-1, 1, 0));
 
             app.Game.CurrentGameState.PhysicsManager.Add(groundRigidBody);
             app.Game.CurrentGameState.PhysicsManager.Add(wallRigidBody);

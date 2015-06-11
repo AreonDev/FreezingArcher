@@ -54,7 +54,7 @@ namespace FreezingArcher.Game
             scene.CameraManager.AddCam (new FirstPersonCamera ("Player", msgmnr, default(Vector3), default(Vector3), 0.1f, 200));
             scene.CameraManager.AddCam (new FreeCamera ("Overview", msgmnr, default(Vector3), default(Vector3), 0.1f, 1000.0f));
             BaseCamera test = scene.CameraManager.GetCam ("Player");
-            scene.CameraManager.SetActiveCam (test);
+            scene.CameraManager.ActiveCamera = test;
 
             int seed = new Random().Next();
             var rand = new Random(seed);

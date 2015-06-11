@@ -49,20 +49,16 @@ namespace FreezingArcher.Renderer.Scene
             msgmngr += this;
         }
 
-        /// <summary>
-        /// Sets the active cam.
-        /// </summary>
-        /// <param name="cam">Cam.</param>
-        public void SetActiveCam(BaseCamera cam){
-            this.SetCam("ActiveCam", cam);            
-        }
-
-        /// <summary>
-        /// Gets the active cam.
-        /// </summary>
-        /// <param name="cam">Cam.</param>
-        public BaseCamera GetActiveCam(){
-            return this.GetCam("ActiveCam");            
+        public BaseCamera ActiveCamera
+        {
+            get
+            {
+                return GetCam("ActiveCam");
+            }
+            set
+            {
+                SetCam("ActiveCam", value);
+            }
         }
 
         /// <summary>
@@ -110,22 +106,14 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="cam">Cam.</param>
         public BaseCamera ToggleCamera(){
             Tree<Pair<string, BaseCamera>> TmpNode = ((IEnumerable<Tree<Pair<string, BaseCamera>>>) CamTree.LevelOrder)
-                .First(i => i.Data.A == GetActiveCam().Name);
+                .First(i => i.Data.A == ActiveCamera.Name);
 
-//            if (TmpNode.Parent.Parent == null)
-//                return 1;
             var TmpGroup = TmpNode.Parent;
-
-//            var Level = TmpGroup.Level+1;
-//
-//            var GroupList = from x in ((IEnumerable<Tree<Pair<string, BaseCam>>>)TmpGroup.LevelOrder)
-//                                       where (x.Level == Level) && (x.Data.B == null)
-//                                       select x;
 
             foreach(var node in (IEnumerable<Tree<Pair<string, BaseCamera>>>) TmpGroup.DepthFirst)
                 {
                 if(node != TmpNode && null != node.Data.B){
-                    SetActiveCam(node.Data.B);
+                    ActiveCamera = node.Data.B;
                     return node.Data.B;
                 }
             }

@@ -27,22 +27,25 @@ using FreezingArcher.Math;
 
 namespace FreezingArcher.Renderer.Scene
 {
+    /// <summary>
+    /// First person camera.
+    /// </summary>
     public class FirstPersonCamera : FreeCamera, IMessageConsumer
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Renderer.Scene.Implementation.FirstPersonCam"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Renderer.Scene.FirstPersonCamera"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="mssgmngr">Mssgmngr.</param>
-        /// <param name="_cameraPosition">Camera position.</param>
-        /// <param name="_currentRotation">Current rotation.</param>
+        /// <param name="cameraPosition">Camera position.</param>
+        /// <param name="currentRotation">Current rotation.</param>
         /// <param name="near">Near.</param>
         /// <param name="far">Far.</param>
         /// <param name="fov">Fov.</param>
-        public FirstPersonCamera (string name, MessageManager mssgmngr, Vector3 _cameraPosition = default(Vector3),
-            Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
-            float fov = MathHelper.PiOver4) : base (name, mssgmngr, _cameraPosition,
-                _currentRotation, near, far, fov)
+        public FirstPersonCamera (string name, MessageManager mssgmngr, Vector3 cameraPosition = default(Vector3),
+            Vector3 currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
+            float fov = MathHelper.PiOver4) : base (name, mssgmngr, cameraPosition,
+                currentRotation, near, far, fov)
         {
             ValidMessages = new int[] { (int)MessageId.Input, (int) MessageId.WindowResizeMessage };
             mssgmngr += this;
@@ -54,7 +57,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="_position">Posotion.</param>
         public override void MoveX (float _position)
         {
-            cameraPosition += _position * new Vector3(ViewMatrix.Column2.X,0,ViewMatrix.Column2.Z);
+            CameraPosition += _position * new Vector3(ViewMatrix.Column2.X,0,ViewMatrix.Column2.Z);
             UpdateCamera ();
         }
 

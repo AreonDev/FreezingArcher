@@ -348,7 +348,7 @@ namespace FreezingArcher.Renderer
                             BaseCamera cam = scene.CameraManager.ActiveCamera;
 
                             if(cam != null)
-                                SimpleMaterial.Plane = new Vector2(cam.zNear, cam.zFar);
+                                SimpleMaterial.Plane = new Vector2(cam.ZNear, cam.ZFar);
                         }
 
                         mat = SimpleMaterial;

@@ -31,14 +31,26 @@ using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Renderer.Scene
 {
+    /// <summary>
+    /// Camera manager.
+    /// </summary>
     public class CameraManager : IMessageConsumer
     {
+        /// <summary>
+        /// The cam tree.
+        /// </summary>
         internal Tree<Pair<string, BaseCamera>> CamTree;
+
+        /// <summary>
+        /// Gets the valid messages which can be used in the ConsumeMessage method
+        /// </summary>
+        /// <value>The valid messages</value>
         public int[] ValidMessages { get; protected set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Game.CameraManager"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Renderer.Scene.CameraManager"/> class.
         /// </summary>
+        /// <param name="msgmngr">Msgmngr.</param>
         /// <param name="name">Name.</param>
         /// <param name="cam">Cam.</param>
         public CameraManager (MessageManager msgmngr, string name = "root", BaseCamera cam = null)
@@ -49,6 +61,10 @@ namespace FreezingArcher.Renderer.Scene
             msgmngr += this;
         }
 
+        /// <summary>
+        /// Gets or sets the active camera.
+        /// </summary>
+        /// <value>The active camera.</value>
         public BaseCamera ActiveCamera
         {
             get
@@ -101,9 +117,9 @@ namespace FreezingArcher.Renderer.Scene
         }
 
         /// <summary>
-        /// Toggles the cam.
+        /// Toggles the camera.
         /// </summary>
-        /// <param name="cam">Cam.</param>
+        /// <returns>The camera.</returns>
         public BaseCamera ToggleCamera(){
             Tree<Pair<string, BaseCamera>> TmpNode = ((IEnumerable<Tree<Pair<string, BaseCamera>>>) CamTree.LevelOrder)
                 .First(i => i.Data.A == ActiveCamera.Name);
@@ -120,6 +136,10 @@ namespace FreezingArcher.Renderer.Scene
             return TmpNode.Data.B;
         }
 
+        /// <summary>
+        /// Processes the incoming message
+        /// </summary>
+        /// <param name="msg">Message to process</param>
         public void ConsumeMessage (Messaging.Interfaces.IMessage msg)
         {
             InputMessage im = msg as InputMessage;

@@ -40,7 +40,11 @@ namespace FreezingArcher.Renderer.Scene
     public class ThirdPersonCamera : BaseCamera //, IMessageConsumer
     {
         Entity Person;
-        public Vector3 Position { get; set;}
+        /// <summary>
+        /// Gets or sets the position.
+        /// </summary>
+        /// <value>The position.</value>
+        public Vector3? Position { get; set;}
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.FreeCamera"/> class.
@@ -56,12 +60,23 @@ namespace FreezingArcher.Renderer.Scene
                                   float fov = (float)System.Math.PI / 4.0f) : base (name, _cameraPosition,
                                                               _currentRotation, near, far, fov)
         {
-            Position = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+            Position = null;
             Person = person;
             ValidMessages = new int[] { (int)MessageId.Input, (int) MessageId.WindowResizeMessage };
             mssgmngr += this;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Renderer.Scene.ThirdPersonCamera"/> class.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="mssgmngr">Mssgmngr.</param>
+        /// <param name="position">Position.</param>
+        /// <param name="_cameraPosition">Camera position.</param>
+        /// <param name="_currentRotation">Current rotation.</param>
+        /// <param name="near">Near.</param>
+        /// <param name="far">Far.</param>
+        /// <param name="fov">Fov.</param>
         public ThirdPersonCamera (string name, MessageManager mssgmngr, Vector3 position=new Vector3(), Vector3 _cameraPosition = default(Vector3),
             Vector3 _currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
             float fov = (float)System.Math.PI / 4.0f) : base (name, _cameraPosition,
@@ -72,13 +87,16 @@ namespace FreezingArcher.Renderer.Scene
             mssgmngr += this;
         }
 
+        /// <summary>
+        /// Updates the camera.
+        /// </summary>
         private void UpdateCamera(){
-            if (Position.X != float.MinValue)
+            if (Position != null)
             {
-                currentRotation = Position - cameraPosition;
+                CurrentRotation = Position.Value - CameraPosition;
             }
             else{
-                currentRotation = Person.GetComponent<TransformComponent>().Position - cameraPosition;
+                CurrentRotation = Person.GetComponent<TransformComponent>().Position - CameraPosition;
             }
             base.UpdateCamera();
         }
@@ -94,27 +112,27 @@ namespace FreezingArcher.Renderer.Scene
             InputMessage im = msg as InputMessage;
             if (im != null) {
                 if (im.IsActionDown ("forward")) {
-                    MoveX (1 * fak);
+                    MoveX (1 * Fak);
                 }
 
                 if (im.IsActionDown ("backward")) {
-                    MoveX (-1 * fak);
+                    MoveX (-1 * Fak);
                 }
 
                 if (im.IsActionDown ("left")) {
-                    MoveZ (-1 * fak);
+                    MoveZ (-1 * Fak);
                 }
 
                 if (im.IsActionDown ("right")) {
-                    MoveZ (1 * fak);
+                    MoveZ (1 * Fak);
                 }
 
                 if (im.IsActionDown ("inventory")) {
-                    MoveY (-1 * fak);
+                    MoveY (-1 * Fak);
                 }
 
                 if (im.IsActionDown ("drop")) {
-                    MoveY (1 * fak);
+                    MoveY (1 * Fak);
                 }
             }
         }

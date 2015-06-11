@@ -25,9 +25,7 @@ using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
 using FreezingArcher.Game.Maze;
 using FreezingArcher.Core;
-using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Output;
-using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
 
@@ -53,6 +51,7 @@ namespace FreezingArcher.Game
 
             scene.CameraManager.AddCam (new FirstPersonCamera ("Player", msgmnr, default(Vector3), default(Vector3), 0.1f, 200));
             scene.CameraManager.AddCam (new FreeCamera ("Overview", msgmnr, default(Vector3), default(Vector3), 0.1f, 1000.0f));
+            scene.CameraManager.AddCam (new ThirdPersonCamera("third",msgmnr, new Vector3 (1,1,1),default(Vector3), default(Vector3)));
             BaseCamera test = scene.CameraManager.GetCam ("Player");
             scene.CameraManager.ActiveCamera = test;
 

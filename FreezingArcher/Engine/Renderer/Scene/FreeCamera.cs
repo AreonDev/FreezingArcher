@@ -38,11 +38,15 @@ namespace FreezingArcher.Renderer.Scene
 	 * Hinweis2: Gimbal-Locks sind böse ;)
 	 */
 
+    /// <summary>
+    /// Free camera.
+    /// </summary>
     public class FreeCamera : BaseCamera, IMessageConsumer
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Game.FreeCamera"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Renderer.Scene.FreeCamera"/> class.
         /// </summary>
+        /// <param name="name">Name.</param>
         /// <param name="mssgmngr">Mssgmngr.</param>
         /// <param name="_cameraPosition">Camera position.</param>
         /// <param name="_currentRotation">Current rotation.</param>
@@ -69,35 +73,35 @@ namespace FreezingArcher.Renderer.Scene
             InputMessage im = msg as InputMessage;
             if (im != null) {
                 if (im.IsActionDown ("forward")) {
-                    MoveX (-1 * fak);
+                    MoveX (-1 * Fak);
                 }
 
                 if (im.IsActionDown ("backward")) {
-                    MoveX (1 * fak);
+                    MoveX (1 * Fak);
                 }
 
                 if (im.IsActionDown ("left")) {
-                    MoveZ (-1 * fak);
+                    MoveZ (-1 * Fak);
                 }
 
                 if (im.IsActionDown ("right")) {
-                    MoveZ (1 * fak);
+                    MoveZ (1 * Fak);
                 }
 
                 if (im.IsActionDown ("inventory")) {
-                    MoveY (1 * fak);
+                    MoveY (1 * Fak);
                 }
 
                 if (im.IsActionDown ("drop")) {
-                    MoveY (-1 * fak);
+                    MoveY (-1 * Fak);
                 }
-                if (im.MouseMovement.X != 0)
+                if (System.Math.Abs(im.MouseMovement.X) > 0.001)
                 {
-                    rotateY(im.MouseMovement.X * 0.001f);
+                    RotateY(im.MouseMovement.X * 0.001f);
                 }
-                if (im.MouseMovement.Y != 0)
+                if (System.Math.Abs(im.MouseMovement.Y) > 0.001)
                 {
-                    rotateX(im.MouseMovement.Y * 0.001f);
+                    RotateX(im.MouseMovement.Y * 0.001f);
                 }
             }
         }

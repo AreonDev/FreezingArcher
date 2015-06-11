@@ -461,6 +461,12 @@ namespace FreezingArcher.Core
             return source.Where((c, i) => i % 2 != 0);
         }
 
+        /// <summary>
+        /// Format an enumerable as a human readable string.
+        /// </summary>
+        /// <param name="source">Source.</param>
+        /// <param name="conversion">Conversion.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static string Format<T>(this IEnumerable<T> source, Func<T, string> conversion)
         {
             string s = "[";

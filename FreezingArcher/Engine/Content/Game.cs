@@ -240,6 +240,9 @@ namespace FreezingArcher.Content
 
         #endregion
 
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
         public void Destroy()
         {
             foreach (var n in GameStateGraph.Nodes)

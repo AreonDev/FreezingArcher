@@ -379,7 +379,7 @@ namespace FreezingArcher.Core
             InputManager = new InputManager (MessageManager);
             updateStopwatch = new Stopwatch();
             frameStopwatch = new Stopwatch();
-            PeriodicUpdateTask = new PeriodicTask (32, () => {
+            PeriodicUpdateTask = new PeriodicTask (16, () => {
                 MessageCreated(new UpdateMessage(updateStopwatch.Elapsed));
                 updateStopwatch.Restart();
             });

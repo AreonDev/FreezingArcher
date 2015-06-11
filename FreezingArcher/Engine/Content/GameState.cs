@@ -87,6 +87,10 @@ namespace FreezingArcher.Content
 
         #region IMessageConsumer implementation
 
+        /// <summary>
+        /// Processes the incoming message
+        /// </summary>
+        /// <param name="msg">Message to process</param>
         public void ConsumeMessage(IMessage msg)
         {
             UpdateMessage um = msg as UpdateMessage;
@@ -97,10 +101,17 @@ namespace FreezingArcher.Content
             }
         }
 
+        /// <summary>
+        /// Gets the valid messages which can be used in the ConsumeMessage method
+        /// </summary>
+        /// <value>The valid messages</value>
         public int[] ValidMessages { get; private set; }
 
         #endregion
 
+        /// <summary>
+        /// Destroy this instance.
+        /// </summary>
         public void Destroy()
         {
             PhysicsManager.Dispose();

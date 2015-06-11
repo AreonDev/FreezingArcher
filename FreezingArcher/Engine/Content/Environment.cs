@@ -20,6 +20,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using System;
 
 namespace FreezingArcher.Content
 {
@@ -28,6 +29,18 @@ namespace FreezingArcher.Content
     /// </summary>
     public class Environment
     {
+        /// <summary>
+        /// Gets the default environment.
+        /// </summary>
+        /// <value>The default environment.</value>
+        public static Environment Default
+        {
+            get
+            {
+                return new Environment(new Weather(), new GameTime(new DateTime(), 3600));
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.Environment"/> class.
         /// </summary>

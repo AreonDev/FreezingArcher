@@ -25,21 +25,44 @@ using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Messaging
 {
+    /// <summary>
+    /// Mouse capture message.
+    /// </summary>
     public class MouseCaptureMessage : IMessage
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.MouseCaptureMessage"/> class.
+        /// </summary>
+        /// <param name="captured">If set to <c>true</c> captured.</param>
         public MouseCaptureMessage(bool captured)
         {
             IsMouseCaptured = captured;
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the mouse is captured.
+        /// </summary>
+        /// <value><c>true</c> if the mouse is captured; otherwise, <c>false</c>.</value>
         public bool IsMouseCaptured { get; protected set; }
 
         #region IMessage implementation
 
+        /// <summary>
+        /// Gets or sets the source.
+        /// </summary>
+        /// <value>The source.</value>
         public object Source { get; set; }
 
+        /// <summary>
+        /// Gets or sets the destination.
+        /// </summary>
+        /// <value>The destination.</value>
         public object Destination { get; set; }
 
+        /// <summary>
+        /// Gets the message identifier.
+        /// </summary>
+        /// <value>The message identifier.</value>
         public int MessageId
         {
             get

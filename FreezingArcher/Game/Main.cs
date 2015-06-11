@@ -47,24 +47,19 @@ namespace FreezingArcher.Game
 
             if (!Application.Instance.IsCommandLineInterface)
             {
-                Application.Instance.Game.AddGameState("default",
-                    new FreezingArcher.Content.Environment(new Weather(), new GameTime(new DateTime(), 3600)),
-                    Application.Instance.RendererContext.Scene);
+                Content.Game game = Application.Instance.Game;
+                var rc = Application.Instance.RendererContext;
+                var msgmnr = Application.Instance.MessageManager;
+                var objmnr = Application.Instance.ObjectManager;
 
-                Application.Instance.RendererContext.Scene = new CoreScene(Application.Instance.MessageManager);
-                Application.Instance.RendererContext.Scene.BackgroundColor = Color4.Crimson;
+                game.AddGameState("default", Content.Environment.Default, rc.Scene);
+                rc.Scene = new CoreScene(msgmnr);
+                rc.Scene.BackgroundColor = Color4.Crimson;
+                rc.Scene.CameraManager.AddCam (new FreeCamera ("free_cam", msgmnr));
+                var cammnr = rc.Scene.CameraManager;
+                cammnr.SetActiveCam (cammnr.GetCam ("free_cam"));
 
-                Application.Instance.RendererContext.Scene.CameraManager.AddCam (new FreeCamera ("free_cam",
-                    Application.Instance.MessageManager));
-                Application.Instance.RendererContext.Scene.CameraManager.SetActiveCam (
-                    Application.Instance.RendererContext.Scene.CameraManager.GetCam ("free_cam"));
-
-                //new MazeTest(Application.Instance.MessageManager, Application.Instance.ObjectManager,
-                //    Application.Instance.RendererContext.Scene);
-
-                //new RendererTest (Application.Instance.MessageManager, Application.Instance.ObjectManager,
-                //    Application.Instance.RendererContext.Scene);
-
+                new MazeTest(msgmnr, objmnr, rc.Scene);
                 new PhysicsTest(Application.Instance);
             }
 

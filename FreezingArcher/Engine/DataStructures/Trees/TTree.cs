@@ -102,6 +102,9 @@ namespace FreezingArcher.DataStructures.Trees
             #endregion
         }
 
+        /// <summary>
+        /// Depth first enumerable.
+        /// </summary>
         public class DepthFirstEnumerable : IEnumerable<TData>, IEnumerable<Tree<TData>>
         {
             readonly Tree<TData> root;

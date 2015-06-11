@@ -35,8 +35,15 @@ using FreezingArcher.Core;
 
 namespace FreezingArcher.Game
 {
+    /// <summary>
+    /// Physics test.
+    /// </summary>
     public class PhysicsTest
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Game.PhysicsTest"/> class.
+        /// </summary>
+        /// <param name="app">App.</param>
         public PhysicsTest(Application app)
         {
             Entity wall = EntityFactory.Instance.CreateWith("wall", null,

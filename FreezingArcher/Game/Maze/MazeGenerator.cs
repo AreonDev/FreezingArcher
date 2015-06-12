@@ -248,7 +248,8 @@ namespace FreezingArcher.Game.Maze
 
                 for (int i = 0; i < x; i++)
                 {
-                    mapnode = new MazeCell (k + "." + i, new Vector2i (i, k), rand.Next ());//, rectangles, theme);
+                    mapnode = new MazeCell (k + "." + i, new Vector2i (i, k),
+                        Quaternion.FromAxisAngle(Vector3.UnitY, rand.Next(0, 4) * MathHelper.PiOver2), rand.Next ());
 
                     edges.Clear ();
 
@@ -307,11 +308,11 @@ namespace FreezingArcher.Game.Maze
             skybox.Scaling = 500.0f * Vector3.One;
             scene.AddObject (skybox);
 
-            Vector3 scale = new Vector3 (4, 4, 4);
+            Vector3 scale = new Vector3 (8, 8, 8);
 
             var startNode = graph.Nodes.FirstOrDefault (n => n.Data.IsSpawn);
             if (startNode != null)
-                scene.CameraManager.ActiveCamera.MoveTo (new Vector3 (startNode.Data.Position.X * scale.X * 2 + xOffs, 1.5f, 
+                scene.CameraManager.ActiveCamera.MoveTo (new Vector3 (startNode.Data.Position.X * scale.X * 2 + xOffs, 4f, 
                     startNode.Data.Position.Y * scale.Y * 2 + yOffs));
 
             ModelSceneObject model;
@@ -357,6 +358,7 @@ namespace FreezingArcher.Game.Maze
 
                     transform = entities [x, y].GetComponent<TransformComponent>();
                     transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.5f, y * scale.Y * 2 + yOffs);
+                    transform.Rotation = node.Data.Rotation;
                     transform.Scale = scale;
                 }
 

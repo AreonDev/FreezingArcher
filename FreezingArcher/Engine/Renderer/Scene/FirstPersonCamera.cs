@@ -43,7 +43,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="far">Far.</param>
         /// <param name="fov">Fov.</param>
         public FirstPersonCamera (string name, MessageManager mssgmngr, Vector3 cameraPosition = default(Vector3),
-            Vector3 currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
+            Vector3 currentRotation = default(Vector3), float near = 0.1f, float far = 500.0f,
             float fov = MathHelper.PiOver4) : base (name, mssgmngr, cameraPosition,
                 currentRotation, near, far, fov)
         {

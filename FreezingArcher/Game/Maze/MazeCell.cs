@@ -37,12 +37,13 @@ namespace FreezingArcher.Game.Maze
         /// <param name="position">Position.</param>
         /// <param name="weight">Weight.</param>
         /// <param name="preview">If set to <c>true</c> preview.</param>
-        public MazeCell(string name, Vector2i position, int weight, bool preview = false)
+        public MazeCell(string name, Vector2i position, Quaternion rotation, int weight, bool preview = false)
         {
             Weight = weight;
             this.preview = preview;
             Name = name;
             Position = position;
+            Rotation = rotation;
             final = false;
         }
 
@@ -194,6 +195,12 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <value>The position.</value>
         public Vector2i Position { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the rotation.
+        /// </summary>
+        /// <value>The rotation.</value>
+        public Quaternion Rotation { get; private set; }
 
         /// <summary>
         /// Init this instance.

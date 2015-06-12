@@ -180,7 +180,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <summary>
         /// The fak.
         /// </summary>
-        protected const float Fak = 0.1f;
+        protected const float Fak = 0.15f;
 
         /// <summary>
         /// The camera reference.
@@ -215,8 +215,8 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="up">Up.</param>
         internal BaseCamera (string name,
             Vector3 cameraPosition = default(Vector3),
-            Vector3 currentRotation = default(Vector3), float near = 0.1f, float far = 100.0f,
-            float fov = MathHelper.PiOver4, Vector3 up = default(Vector3))
+            Vector3 currentRotation = default(Vector3), float near = 0.1f, float far = 400.0f,
+            float fov = MathHelper.PiOver2, Vector3 up = default(Vector3))
         {
             Name = name;
             CameraPosition = cameraPosition;

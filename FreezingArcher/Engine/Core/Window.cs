@@ -512,7 +512,7 @@ namespace FreezingArcher.Core
             Glfw.SetErrorCallback         (WindowError);
 
             CursorMode = 0;
-            CaptureMouse ();
+            //CaptureMouse ();
         }
     }
 }

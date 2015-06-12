@@ -182,6 +182,8 @@ namespace FreezingArcher.Renderer
         private Effect _2DEffect;
         private UniformBuffer _2DUniformBuffer;
 
+        public FreezingArcher.Core.Application Application{ get; private set;}
+
         #region Actions
         private interface RCAction { };
         private class RCActionNoAction { };
@@ -231,8 +233,10 @@ namespace FreezingArcher.Renderer
         /// <param name="RenderContext"></param>
         /// <param name="SharedLoadingContext"></param>
         /// <returns>True or False</returns>
-        public virtual bool Init(/*GlfwWindowPtr RenderContext, GlfwWindowPtr SharedLoadingContext*/)
+        public virtual bool Init(/*GlfwWindowPtr RenderContext, GlfwWindowPtr SharedLoadingContext*/FreezingArcher.Core.Application app)
         {
+            Application = app;
+
             /*
             try
             {

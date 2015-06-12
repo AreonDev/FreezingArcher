@@ -33,11 +33,9 @@ namespace FreezingArcher.Renderer.Scene
 {
     public class CoreScene
     {
-        private ConcurrentBag<SceneObject> Objects;
-
-        object ListLock = new object();
-
-        private ConcurrentBag<CoreScene> SubScenes;
+        private List<SceneObject> Objects;
+        private List<SceneObject> ObjectsToInit;
+        private List<CoreScene> SubScenes;
 
         private RendererContext PrivateRendererContext;
 
@@ -45,10 +43,15 @@ namespace FreezingArcher.Renderer.Scene
         {
             if (PrivateRendererContext != null)
             {
-                if (obj.Init(PrivateRendererContext))
-                    Objects.Add(obj);
-                else
-                    Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.ClimateChangeDrivenCatastrophicWeatherEvent);
+                if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
+                {
+                    if (obj.Init(PrivateRendererContext))
+                        Objects.Add(obj);
+                    else
+                        Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", 
+                            FreezingArcher.Core.Status.AKittenDies, "Object could not be initialized!");
+                }else
+                    ObjectsToInit.Add(obj);
             }
             else
                 Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.AKittenDies, "Scene is not initialized!"); 
@@ -57,32 +60,24 @@ namespace FreezingArcher.Renderer.Scene
 
         public void RemoveObject(SceneObject obj)
         {
-            lock (ListLock)
-            {
-                SceneObject obj2;
-
-                if(!Objects.TryTake(out obj2))
-                    Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", "Could not remove Object");
-            }
+            if (!Objects.Remove(obj))
+                Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", "Could not remove Object");
         }
 
         public List<string> GetObjectNames()
         {
             List<string> list = new List<string>();
 
-            lock (ListLock)
+            foreach (SceneObject obj in Objects)
             {
-                foreach (SceneObject obj in Objects)
-                {
-                    bool name_in_new_list = false;
+                bool name_in_new_list = false;
 
-                    foreach (string name in list)
-                        if (name == obj.GetName())
-                            name_in_new_list = true;
+                foreach (string name in list)
+                    if (name == obj.GetName())
+                        name_in_new_list = true;
 
-                    if (!name_in_new_list)
-                        list.Add(obj.GetName());
-                }
+                if (!name_in_new_list)
+                    list.Add(obj.GetName());
             }
 
             return list;
@@ -139,8 +134,9 @@ namespace FreezingArcher.Renderer.Scene
         public CoreScene(MessageManager messageManager)
         {
             CameraManager = new CameraManager(messageManager);
-            Objects = new ConcurrentBag<SceneObject>();
-            SubScenes = new ConcurrentBag<CoreScene>();
+            Objects = new List<SceneObject>();
+            ObjectsToInit = new List<SceneObject>();
+            SubScenes = new List<CoreScene>();
 
             FrameBuffer = null;
 
@@ -155,6 +151,24 @@ namespace FreezingArcher.Renderer.Scene
             FrameBufferSpecularTexture.Resize(width, height);
 
             FrameBufferDepthStencilTexture.Resize(width, height);
+        }
+
+        public void Update()
+        {
+            //Init objects, which are not initialized yet
+            if (ObjectsToInit.Count > 1)
+            {
+                foreach (SceneObject obj in ObjectsToInit)
+                {
+                    if (obj.Init(PrivateRendererContext))
+                        Objects.Add(obj);
+                    else
+                        Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", 
+                            FreezingArcher.Core.Status.AKittenDies, "Object could not be initialized!");
+                }
+
+                ObjectsToInit.Clear();
+            }
         }
 
         internal bool Init(RendererContext rc)

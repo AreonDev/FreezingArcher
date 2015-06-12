@@ -108,6 +108,14 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             return data;
         }
 
+        public bool IsInitialized { get; protected set;}
+
+        public void WaitTillInitialized()
+        {
+            while (!IsInitialized)
+                System.Threading.Thread.Sleep(2);
+        }
+
         public virtual void Update(){}
 
         public virtual bool Init(RendererContext rc){return true;}

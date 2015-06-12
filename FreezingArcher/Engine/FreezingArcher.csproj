@@ -95,9 +95,7 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Package>xbuild12</Package>
-    </Reference>
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -230,7 +228,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Scene\CoreScene.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\CubeSceneObject.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\SceneObjectArray.cs" />
-    <Compile Include="Renderer\Scene\SceneObjects\RectangleSceneObjectArray.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\SceneObject.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\ModelSceneObject.cs" />
     <Compile Include="Messaging\PositionChangedMessage.cs" />

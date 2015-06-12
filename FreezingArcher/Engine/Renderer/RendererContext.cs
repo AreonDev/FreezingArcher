@@ -70,9 +70,9 @@ namespace FreezingArcher.Renderer
             m_AssimpContext.Dispose();
         }
 
-        public override bool Init()
+        public override bool Init(FreezingArcher.Core.Application app)
         {
-            base.Init();
+            base.Init(app);
 
             SimpleMaterial = new SimpleMaterial();
             SimpleMaterial.Init(this);
@@ -410,6 +410,8 @@ namespace FreezingArcher.Renderer
         {
             if (Scene != null)
             {
+                Scene.Update();
+
                 if (Scene.FrameBufferDepthStencilTexture.Width != ViewportSize.X ||
                    Scene.FrameBufferDepthStencilTexture.Height != ViewportSize.Y)
                     Scene.ResizeTextures(ViewportSize.X, ViewportSize.Y);

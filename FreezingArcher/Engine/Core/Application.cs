@@ -99,6 +99,8 @@ namespace FreezingArcher.Core
             return app;
         }
 
+        public int ManagedThreadId { get; private set;}
+
         /// <summary>
         /// Indicating whether command line interface is active or not.
         /// </summary>
@@ -110,6 +112,8 @@ namespace FreezingArcher.Core
         // / <param name="game">The initial root game.</param>
         public Application (string name, string[] args)
         {
+            ManagedThreadId = Thread.CurrentThread.ManagedThreadId;
+
             Name = name;
             Frametime = 16;
             Logger.Initialize (name);
@@ -423,7 +427,7 @@ namespace FreezingArcher.Core
             Loaded = true;
 
             //Later some more stuff
-            RendererContext.Init();
+            RendererContext.Init(this);
             RendererContext.ViewportResize(0, 0, Window.Size.X, Window.Size.Y);
         }
 

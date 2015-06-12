@@ -50,7 +50,7 @@ namespace FreezingArcher.Content
             Scene = scene;
             PhysicsManager = new PhysicsManager();
             PhysicsManager.Initialize();
-            PhysicsManager.Gravity = new Vector3(0, -9.81f, 0);
+            PhysicsManager.Gravity = new Vector3(0, -1.81f, 0);
             ValidMessages = new[] { (int) MessageId.Update };
             msgmnr += this;
         }

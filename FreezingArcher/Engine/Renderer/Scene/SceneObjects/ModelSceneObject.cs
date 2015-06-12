@@ -30,7 +30,6 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         private string ModelPath;
         private bool LoadModel;
         private Model MyModel;
-        private bool IsInitialized = false;
 
         private RendererContext PrivateRendererContext = null;
 
@@ -96,7 +95,6 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                     msh.m_VertexBufferArray.UnbindVertexBufferArray();
                 }
             }
-            
         }
 
         public override bool Init(RendererContext rc)

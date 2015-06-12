@@ -123,6 +123,13 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             return this;
         }
 
+        public override bool Init(RendererContext rc)
+        {
+            IsInitialized = true;
+
+            return base.Init(rc);
+        }
+
         public override string GetName() {return "RectangleSceneObject_"+
             (Filled?"Filled":("Wired_"+LineWidth));}
     }

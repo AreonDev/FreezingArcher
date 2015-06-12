@@ -116,7 +116,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
     {
         private object ListLock = new object();
         private List<int> ObjectsChanged;
-        private List<int> ObjectsAdded;
+        private List<SceneObject> ObjectsAdded;
 
         public List<SceneObject> SceneObjects;
         public string ObjectName { get; private set;}
@@ -140,7 +140,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             SceneObjects = new List<SceneObject>();
 
             ObjectsChanged = new List<int>();
-            ObjectsAdded = new List<int>();
+            ObjectsAdded = new List<SceneObject>();
 
             InitSceneObject = null;
             InitSceneObjectCount = 0;
@@ -153,7 +153,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             SceneObjects = new List<SceneObject>(count);
 
             ObjectsChanged = new List<int>();
-            ObjectsAdded = new List<int>();
+            ObjectsAdded = new List<SceneObject>();
 
             InitSceneObject = scn;
             InitSceneObjectCount = count;
@@ -165,15 +165,46 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             if (obj.GetName() == ObjectName)
             {
-                lock (ListLock)
+                WaitTillInitialized();
+
+                if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
                 {
-                    SceneObjects.Add(obj);
-                    obj.SceneObjectChanged += SceneObjectChangedHandler;
+                    if (obj.Init(PrivateRendererContext))
+                    {
+                        lock (ListLock)
+                        {
+                            SceneObjects.Add(obj);
+                        
 
-                    ObjectsAdded.Add(SceneObjects.IndexOf(obj));
+                            obj.SceneObjectChanged += SceneObjectChangedHandler;
+
+                            PrepareBuffer();
+
+                            if (InstanceDataVertexBuffer != null)
+                            {
+                                SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { obj.GetData() };
+
+                                InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, SceneObjects.IndexOf(obj) * SceneObjectArrayInstanceData.SIZE,
+                                    SceneObjectArrayInstanceData.SIZE);
+                            }
+                        }
+                    }
+                    else
+                        Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", 
+                            FreezingArcher.Core.Status.AKittenDies, "Object could not be initialized!");
+                           
                 }
+                else
+                {
+                    lock (ListLock)
+                    {
+                        obj.SceneObjectChanged += SceneObjectChangedHandler;
 
-                NeedsInit = true;
+                        ObjectsAdded.Add(obj);
+
+                        NeedsInit = true;
+                    }
+                }
             }
             else
                 FreezingArcher.Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "SceneObjectArray", 
@@ -194,31 +225,13 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             if (InstanceDataVertexBuffer == null)
             {
-                if (SceneObjects.Count > 0)
+                lock (ListLock)
                 {
-                    InstanceDataVertexBuffer = PrivateRendererContext.CreateVertexBuffer(IntPtr.Zero,
-                        SceneObjectArrayInstanceData.SIZE, 
-                        RendererBufferUsage.DynamicDraw,"SceneObjectArrayInstanceData_VBO_" + ObjectName + "_" + DateTime.Now.Ticks);
-                }
-
-                SceneObjectArrayInstanceData[] data = CollectData();
-
-                InstanceDataVertexBuffer.Clear();
-
-                InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, 0, data.Length * SceneObjectArrayInstanceData.SIZE);
-            }
-            else
-            {
-                if ((SceneObjects.Count * SceneObjectArrayInstanceData.SIZE) > InstanceDataVertexBuffer.SizeInBytes)
-                {
-                    int actual_size = InstanceDataVertexBuffer.SizeInBytes + ((int)SceneObjects.Count / 3) * SceneObjectArrayInstanceData.SIZE;
-
-                    PrivateRendererContext.DeleteGraphicsResource(InstanceDataVertexBuffer);
-
                     if (SceneObjects.Count > 0)
                     {
-                        InstanceDataVertexBuffer = PrivateRendererContext.CreateVertexBuffer(IntPtr.Zero, actual_size * 2, 
-                           RendererBufferUsage.DynamicDraw, "SceneObjectArrayInstanceData_VBO_" + ObjectName + "_" + DateTime.Now.Ticks);
+                        InstanceDataVertexBuffer = PrivateRendererContext.CreateVertexBuffer(IntPtr.Zero,
+                            SceneObjectArrayInstanceData.SIZE, 
+                            RendererBufferUsage.DynamicDraw, "SceneObjectArrayInstanceData_VBO_" + ObjectName + "_" + DateTime.Now.Ticks);
                     }
 
                     SceneObjectArrayInstanceData[] data = CollectData();
@@ -228,16 +241,37 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                     InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, 0, data.Length * SceneObjectArrayInstanceData.SIZE);
                 }
             }
+            else
+            {
+                lock (ListLock)
+                {
+                    if ((SceneObjects.Count * SceneObjectArrayInstanceData.SIZE) > InstanceDataVertexBuffer.SizeInBytes)
+                    {
+                        int actual_size = InstanceDataVertexBuffer.SizeInBytes + ((int)SceneObjects.Count / 3) * SceneObjectArrayInstanceData.SIZE;
+
+                        PrivateRendererContext.DeleteGraphicsResource(InstanceDataVertexBuffer);
+
+                        if (SceneObjects.Count > 0)
+                        {
+                            InstanceDataVertexBuffer = PrivateRendererContext.CreateVertexBuffer(IntPtr.Zero, actual_size * 2, 
+                                RendererBufferUsage.DynamicDraw, "SceneObjectArrayInstanceData_VBO_" + ObjectName + "_" + DateTime.Now.Ticks);
+                        }
+
+                        SceneObjectArrayInstanceData[] data = CollectData();
+
+                        InstanceDataVertexBuffer.Clear();
+
+                        InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, 0, data.Length * SceneObjectArrayInstanceData.SIZE);
+                    }
+                }
+            }
         }
             
         private SceneObjectArrayInstanceData[] CollectData()
         {
             List<SceneObjectArrayInstanceData> data = new List<SceneObjectArrayInstanceData>();
 
-            lock (ListLock)
-            {
-                SceneObjects.ForEach(item => data.Add(item.GetData()));
-            }
+            SceneObjects.ForEach(item => data.Add(item.GetData()));
 
             return data.ToArray();
         }
@@ -246,13 +280,16 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             PrivateRendererContext = rc;
 
+            /*
             if (InitSceneObject != null)
             {
                 SceneObjects.Add(InitSceneObject);
 
                 for (int i = 1; i < InitSceneObjectCount; i++)
                     SceneObjects.Add(InitSceneObject.Clone());
-            }
+            }*/
+
+            IsInitialized = true;
 
             return true;
         }
@@ -271,29 +308,36 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public override void Update()
         {
-            lock (ListLock)
+            if (NeedsInit)
             {
-                if (NeedsInit)
+                lock (ListLock)
                 {
-                    PrepareBuffer();
-
-                    foreach (int index in ObjectsAdded)
+                    foreach (SceneObject obj in ObjectsAdded)
                     {
-                        SceneObjects[index].Init(PrivateRendererContext);
-
-                        if (InstanceDataVertexBuffer != null)
+                        if (obj.Init(PrivateRendererContext))
                         {
-                            SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] {SceneObjects[index].GetData()};
+                            SceneObjects.Add(obj);
+                            obj.SceneObjectChanged += SceneObjectChangedHandler;
 
-                            InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, index * SceneObjectArrayInstanceData.SIZE,
-                                SceneObjectArrayInstanceData.SIZE);
+                            PrepareBuffer();
+
+                            if (InstanceDataVertexBuffer != null)
+                            {
+                                SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { obj.GetData() };
+
+                                InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, SceneObjects.IndexOf(obj) * SceneObjectArrayInstanceData.SIZE,
+                                    SceneObjectArrayInstanceData.SIZE);
+                            }
                         }
                     }
-
-                    NeedsInit = false;
-                    ObjectsAdded.Clear();
                 }
 
+                NeedsInit = false;
+                ObjectsAdded.Clear();
+            }
+
+            lock (ListLock)
+            {
                 foreach (int index in ObjectsChanged)
                 {
                     SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { SceneObjects[index].GetData() };
@@ -311,39 +355,42 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public override void Draw(RendererContext rc)
         {
-            //Preparing
-            if (InstanceDataVertexBuffer != null && SceneObjects.Count > 0)
+            lock (ListLock)
             {
-                VertexBufferLayoutKind[] vblk = new VertexBufferLayoutKind[6];
-
-                //Set information
-                for (int i = 0; i < 4; i++)
+                //Preparing
+                if (InstanceDataVertexBuffer != null && SceneObjects.Count > 0)
                 {
-                    VertexBufferLayoutKind v = new VertexBufferLayoutKind();
-                    v.AttributeID = (uint)LayoutLocationOffset + (uint)i;
-                    v.AttributeSize = 4;
-                    v.AttributeType = RendererVertexAttribType.Float;
-                    v.Normalized = false;
-                    v.Offset = sizeof(float) * 4 * i;
-                    v.Stride = SceneObjectArrayInstanceData.SIZE;
+                    VertexBufferLayoutKind[] vblk = new VertexBufferLayoutKind[6];
 
-                    vblk[i] = v;
+                    //Set information
+                    for (int i = 0; i < 4; i++)
+                    {
+                        VertexBufferLayoutKind v = new VertexBufferLayoutKind();
+                        v.AttributeID = (uint)LayoutLocationOffset + (uint)i;
+                        v.AttributeSize = 4;
+                        v.AttributeType = RendererVertexAttribType.Float;
+                        v.Normalized = false;
+                        v.Offset = sizeof(float) * 4 * i;
+                        v.Stride = SceneObjectArrayInstanceData.SIZE;
+
+                        vblk[i] = v;
+                    }
+
+                    vblk[4] = new VertexBufferLayoutKind()
+                    {AttributeID = (uint)LayoutLocationOffset + 4, AttributeSize = 4, AttributeType = RendererVertexAttribType.Float,
+                        Normalized = false, Offset = sizeof(float) * 4 * 4, Stride = SceneObjectArrayInstanceData.SIZE
+                    };
+
+                    vblk[5] = new VertexBufferLayoutKind()
+                    {AttributeID = (uint)LayoutLocationOffset + 5, AttributeSize = 4, AttributeType = RendererVertexAttribType.Float,
+                        Normalized = false, Offset = sizeof(float) * 4 * 4 + sizeof(float) * 4, Stride = SceneObjectArrayInstanceData.SIZE
+                    };
+
+                    //Send it to Renderer
+                    SceneObjects[0].PrepareInstanced(rc, vblk, InstanceDataVertexBuffer);
+                    SceneObjects[0].DrawInstanced(rc, SceneObjects.Count);
+                    SceneObjects[0].UnPrepareInstanced(rc, vblk);
                 }
-
-                vblk[4] = new VertexBufferLayoutKind()
-                    {AttributeID = (uint) LayoutLocationOffset + 4, AttributeSize = 4, AttributeType = RendererVertexAttribType.Float,
-                    Normalized = false, Offset = sizeof(float) * 4 * 4, Stride = SceneObjectArrayInstanceData.SIZE
-                };
-
-                vblk[5] = new VertexBufferLayoutKind()
-                    {AttributeID = (uint) LayoutLocationOffset + 5, AttributeSize = 4, AttributeType = RendererVertexAttribType.Float,
-                    Normalized = false, Offset = sizeof(float) * 4 * 4 + sizeof(float) * 4, Stride = SceneObjectArrayInstanceData.SIZE
-                };
-
-                //Send it to Renderer
-                SceneObjects[0].PrepareInstanced(rc, vblk, InstanceDataVertexBuffer);
-                SceneObjects[0].DrawInstanced(rc, SceneObjects.Count);
-                SceneObjects[0].UnPrepareInstanced(rc, vblk);
             }
         }
 

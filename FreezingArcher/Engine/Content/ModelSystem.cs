@@ -61,18 +61,27 @@ namespace FreezingArcher.Content
 
             if (mc == null || mc.Model == null)
                 return;
+            
+            if (msg.MessageId == (int) MessageId.PositionChangedMessage)
+            {
+                PositionChangedMessage pcm = msg as PositionChangedMessage;
+                if (pcm.Entity.Name == Entity.Name)
+                    mc.Model.Position = tc.Position;
+            }
 
-            PositionChangedMessage pcm = msg as PositionChangedMessage;
-            if (pcm != null && pcm.Entity.Name == Entity.Name)
-                mc.Model.Position = tc.Position;
+            if (msg.MessageId == (int) MessageId.RotationChangedMessage)
+            {
+                RotationChangedMessage rcm = msg as RotationChangedMessage;
+                if (rcm.Entity.Name == Entity.Name)
+                    mc.Model.Rotation = tc.Rotation;
+            }
 
-            RotationChangedMessage rcm = msg as RotationChangedMessage;
-            if (rcm != null && rcm.Entity.Name == Entity.Name)
-                mc.Model.Rotation = tc.Rotation;
-
-            ScaleChangedMessage scm = msg as ScaleChangedMessage;
-            if (scm != null && scm.Entity.Name == Entity.Name)
-                mc.Model.Scaling = tc.Scale;
+            if (msg.MessageId == (int) MessageId.ScaleChangedMessage)
+            {
+                ScaleChangedMessage scm = msg as ScaleChangedMessage;
+                if (scm.Entity.Name == Entity.Name)
+                    mc.Model.Scaling = tc.Scale;
+            }
         }
     }
 }

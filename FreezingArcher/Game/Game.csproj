@@ -62,7 +62,6 @@
     <Compile Include="Maze\Extensions.cs" />
     <Compile Include="Maze\Maze.cs" />
     <Compile Include="MazeTest.cs" />
-    <Compile Include="Maze\MazeColorTheme.cs" />
     <Compile Include="PhysicsTest.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">

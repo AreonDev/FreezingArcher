@@ -43,7 +43,8 @@ namespace FreezingArcher.Content
 
             NeededComponents = new[] { typeof(TransformComponent), typeof(ModelComponent), typeof(PhysicsComponent) };
 
-            internalValidMessages = new[] { (int)MessageId.Update };
+            internalValidMessages = new[] { (int)MessageId.Update, (int) MessageId.PositionChangedMessage,
+                (int) MessageId.RotationChangedMessage, (int) MessageId.ScaleChangedMessage };
             msgmnr += this;
         }
 
@@ -53,14 +54,29 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            if (msg is UpdateMessage)
+            TransformComponent tc = Entity.GetComponent<TransformComponent>();
+            PhysicsComponent pc = Entity.GetComponent<PhysicsComponent>();
+
+            if (tc == null || pc == null || pc.RigidBody == null)
+                return;
+
+            /*if (msg.MessageId == (int) MessageId.PositionChangedMessage)
             {
-                TransformComponent tc = Entity.GetComponent<TransformComponent>();
-                PhysicsComponent pc = Entity.GetComponent<PhysicsComponent>();
+                pc.RigidBody.SetWorld(tc.Position);
+            }
 
-                if (tc == null || pc == null || pc.RigidBody == null)
-                    return;
+            if (msg.MessageId == (int) MessageId.RotationChangedMessage)
+            {
+                pc.RigidBody.SetWorld(tc.Position, tc.Rotation);
+            }
 
+            if (msg.MessageId == (int) MessageId.ScaleChangedMessage)
+            {
+                pc.RigidBody.SetWorld(tc.Scale.X, tc.Position, tc.Rotation);
+            }*/
+
+            if (msg.MessageId == (int) MessageId.Update && pc.RigidBody.IsMovable)
+            {
                 tc.Position = pc.RigidBody.Transform.Position;
                 tc.Rotation = pc.RigidBody.Transform.Orientation;
                 tc.Scale = new Vector3(pc.RigidBody.Transform.Scale, pc.RigidBody.Transform.Scale,

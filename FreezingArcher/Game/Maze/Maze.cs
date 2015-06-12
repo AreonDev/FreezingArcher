@@ -27,7 +27,9 @@ using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Math;
 using FreezingArcher.Core;
 using FreezingArcher.Output;
+using FreezingArcher.Content;
 using Pencil.Gaming.Graphics;
+using Henge3D.Physics;
 
 namespace FreezingArcher.Game.Maze
 {
@@ -35,8 +37,7 @@ namespace FreezingArcher.Game.Maze
     /// Initialize maze delegate.
     /// </summary>
     delegate void InitializeMazeDelegate(ref ObjectManager objectManager,
-        ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref ModelSceneObject[,] models, ref Random rand,
-        MazeColorTheme theme, uint x, uint y);
+        ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref Entity[,] entities, ref Random rand, uint x, uint y);
 
     /// <summary>
     /// Generate maze delegate.
@@ -48,7 +49,7 @@ namespace FreezingArcher.Game.Maze
     /// Add maze to scene delegate.
     /// </summary>
     delegate void AddMazeToSceneDelegate(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
-        ref ModelSceneObject[,] models, ref CoreScene scene, float scaling, uint maxX, int offsX, int offsY);
+        ref Entity[,] entities, ref CoreScene scene, PhysicsManager physics, float scaling, uint maxX, int offsX, int offsY);
 
     /// <summary>
     /// Calculate path to exit delegate.
@@ -75,7 +76,7 @@ namespace FreezingArcher.Game.Maze
         /// <param name="sizeX">Size x.</param>
         /// <param name="sizeY">Size y.</param>
         /// <param name="scale">Scale.</param>
-        /// <param name="theme">The theme of this maze.</param>
+        /// <param name="physics">The physics instance the maze should register to.</param>
         /// <param name="initFunc">Init func.</param>
         /// <param name="generateFunc">Generate func.</param>
         /// <param name="addToSceneDelegate">Add to scene delegate.</param>
@@ -84,7 +85,7 @@ namespace FreezingArcher.Game.Maze
         /// <param name="turbulence">Turbulence.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor.</param>
-        internal Maze (ObjectManager objmnr, int seed, int sizeX, int sizeY, float scale, MazeColorTheme theme,
+        internal Maze (ObjectManager objmnr, int seed, int sizeX, int sizeY, float scale, PhysicsManager physics,
             InitializeMazeDelegate initFunc, GenerateMazeDelegate generateFunc,
             AddMazeToSceneDelegate addToSceneDelegate, CalculatePathToExitDelegate exitFunc,
             PlaceFeaturesDelegate placeFeaturesFunc, double turbulence, int maximumContinuousPathLength,
@@ -93,7 +94,6 @@ namespace FreezingArcher.Game.Maze
             objectManager = objmnr;
             Seed = seed;
             Size = new Vector2i(sizeX, sizeY);
-            Theme = theme;
             this.scale = scale;
             Turbulence = turbulence;
             PortalSpawnFactor = portalSpawnFactor;
@@ -104,13 +104,14 @@ namespace FreezingArcher.Game.Maze
             addMazeToSceneDelegate = addToSceneDelegate;
             calcExitPathDelegate = exitFunc;
             placeFeaturesDelegate = placeFeaturesFunc;
+            this.physics = physics;
         }
 
         internal WeightedGraph<MazeCell, MazeCellEdgeWeight> graph;
 
         Random rand;
 
-        ModelSceneObject[,] models;
+        Entity[,] entities;
 
         ObjectManager objectManager;
 
@@ -126,10 +127,7 @@ namespace FreezingArcher.Game.Maze
 
         readonly float scale;
 
-        /// <summary>
-        /// The theme of this maze.
-        /// </summary>
-        public readonly MazeColorTheme Theme;
+        readonly PhysicsManager physics;
 
         /// <summary>
         /// Gets or sets the offset.
@@ -199,7 +197,7 @@ namespace FreezingArcher.Game.Maze
             if (initMazeDelegate != null)
             {
                 IsInitialized = true;
-                initMazeDelegate(ref objectManager, ref graph, ref models, ref rand, Theme, (uint) Size.X, (uint) Size.Y);
+                initMazeDelegate(ref objectManager, ref graph, ref entities, ref rand, (uint) Size.X, (uint) Size.Y);
             }
             else
             {
@@ -289,7 +287,7 @@ namespace FreezingArcher.Game.Maze
 
             if (addMazeToSceneDelegate != null)
             {
-                addMazeToSceneDelegate(ref graph, ref models, ref scene, scale, (uint) Size.X, Offset.X, Offset.Y);
+                addMazeToSceneDelegate(ref graph, ref entities, ref scene, physics, scale, (uint) Size.X, Offset.X, Offset.Y);
             }
             else
             {

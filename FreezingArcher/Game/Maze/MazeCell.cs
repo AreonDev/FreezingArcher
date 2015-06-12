@@ -37,28 +37,22 @@ namespace FreezingArcher.Game.Maze
         /// <param name="position">Position.</param>
         /// <param name="weight">Weight.</param>
         /// <param name="preview">If set to <c>true</c> preview.</param>
-        public MazeCell(string name, Vector2i position, int weight, //ModelSceneObject[,] rectangles,
-            /*MazeColorTheme theme,*/ bool preview = false)
+        public MazeCell(string name, Vector2i position, int weight, bool preview = false)
         {
             Weight = weight;
             this.preview = preview;
             Name = name;
-            //models = rectangles;
             Position = position;
-            //this.theme = theme;
             final = false;
         }
 
         MazeCellType mazeType;
-        //MazeColorTheme theme;
         bool preview;
         bool final;
         bool isPortal;
         bool isSpawn;
         bool isExit;
         bool isPath;
-
-        //readonly ModelSceneObject[,] models;
 
         /// <summary>
         /// The type of the labyrinth item.

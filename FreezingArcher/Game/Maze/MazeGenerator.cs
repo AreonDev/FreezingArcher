@@ -28,6 +28,9 @@ using System.Collections.Generic;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
+using FreezingArcher.Content;
+using Henge3D.Physics;
+using Henge3D;
 
 namespace FreezingArcher.Game.Maze
 {
@@ -52,18 +55,18 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <returns>The maze.</returns>
         /// <param name="seed">Seed.</param>
-        /// <param name="theme">The theme of this maze.</param>
+        /// <param name="physics">Physics manager instance.</param>
         /// <param name="sizeX">Size x.</param>
         /// <param name="sizeY">Size y.</param>
         /// <param name="scale">Scale.</param>
         /// <param name="turbulence">Turbulence. The higher the more straight the maze will be.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will appear.</param>
-        public Maze CreateMaze(int seed, MazeColorTheme theme, int sizeX = 50, int sizeY = 50,
+        public Maze CreateMaze(int seed, PhysicsManager physics, int sizeX = 10, int sizeY = 10,
             float scale = 10, double turbulence = 2, int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
         {
-            Maze maze = new Maze (objectManager, 1, sizeX, sizeY, scale, theme, InitializeMaze, CreateMaze,
-                AddMazeToScene, CalculatePathToExit, SpawnPortals, turbulence, maximumContinuousPathLength, 
+            Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, physics, InitializeMaze, CreateMaze,
+                AddMazeToScene, CalculatePathToExit, SpawnPortals, turbulence, maximumContinuousPathLength,
                 portalSpawnFactor);
             maze.Offset = Offset;
             var offs = Offset;
@@ -228,10 +231,10 @@ namespace FreezingArcher.Game.Maze
         }
 
         static void InitializeMaze (ref ObjectManager objectManager,
-            ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref ModelSceneObject[,] rectangles,
-            ref Random rand, MazeColorTheme theme, uint x, uint y)
+            ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref Entity[,] entities,
+            ref Random rand, uint x, uint y)
         {
-            rectangles = new ModelSceneObject[x, y];
+            entities = new Entity[x, y];
             graph = objectManager.CreateOrRecycle<WeightedGraph<MazeCell, MazeCellEdgeWeight>> ();
             graph.Init ();
 
@@ -284,7 +287,7 @@ namespace FreezingArcher.Game.Maze
         }
 
         static void AddMazeToScene (ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
-            ref ModelSceneObject[,] rectangles, ref CoreScene scene, float scaling, uint maxX, int xOffs, int yOffs)
+            ref Entity[,] entities, ref CoreScene scene, PhysicsManager physics, float scaling, uint maxX, int xOffs, int yOffs)
         {
             int x = 0;
             int y = 0;
@@ -297,6 +300,8 @@ namespace FreezingArcher.Game.Maze
             scnobjarr_ground.LayoutLocationOffset = 10;
             scene.AddObject (scnobjarr_ground);
 
+            var systems = new[] { typeof (ModelSystem), typeof (PhysicsSystem) };
+
             Vector3 scale = new Vector3 (4, 4, 4);
 
             var startNode = graph.Nodes.FirstOrDefault (n => n.Data.IsSpawn);
@@ -304,21 +309,48 @@ namespace FreezingArcher.Game.Maze
                 scene.CameraManager.ActiveCamera.MoveTo (new Vector3 (startNode.Data.Position.X * scale.X * 2 + xOffs, 1.5f, 
                     startNode.Data.Position.Y * scale.Y * 2 + yOffs));
 
+            ModelSceneObject model;
+            TransformComponent transform;
+
             foreach (var node in (IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>>) graph)
             {
                 if (node.Data.MazeCellType == MazeCellType.Ground)
                 {
-                    rectangles [x, y] = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
-                    rectangles [x, y].Position = new Vector3 (x * scale.X * 2 + xOffs, -0.0f, y * scale.Y * 2 + yOffs);
-                    rectangles [x, y].Scaling = scale;
-                    scnobjarr_ground.AddObject (rectangles [x, y]);
+                    entities [x, y] = EntityFactory.Instance.CreateWith("ground" + x + "." + y, null, systems);
+                    model = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
+                    entities [x, y].GetComponent<ModelComponent>().Model = model;
+                    scnobjarr_ground.AddObject (model);
+
+                    var groundRigidBody = new RigidBody();
+                    var groundPhysics = entities [x, y].GetComponent<PhysicsComponent>();
+                    groundPhysics.RigidBody = groundRigidBody;
+                    groundRigidBody.MassProperties = new MassProperties(float.PositiveInfinity, Matrix.Identity);
+                    groundRigidBody.Skin.DefaultMaterial = new Material(1f, 0.5f);
+                    groundRigidBody.Skin.Add(new PlanePart(Vector3.UnitZ, Vector3.UnitY));
+                    physics.Add(groundRigidBody);
+
+                    transform = entities [x, y].GetComponent<TransformComponent>();
+                    transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.0f, y * scale.Y * 2 + yOffs);
+                    transform.Scale = scale;
                 }
                 else
                 {
-                    rectangles [x, y] = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
-                    rectangles [x, y].Position = new Vector3 (x * scale.X * 2 + xOffs, -0.5f, y * scale.Y * 2 + yOffs);
-                    rectangles [x, y].Scaling = scale;
-                    scnobjarr_wall.AddObject (rectangles [x, y]);
+                    entities [x, y] = EntityFactory.Instance.CreateWith("wall" + x + "." + y, null, systems);
+                    model = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
+                    entities [x, y].GetComponent<ModelComponent>().Model = model;
+                    scnobjarr_wall.AddObject(model);
+                
+                    var wallRigidBody = new RigidBody();
+                    var wallPhysics = entities [x, y].GetComponent<PhysicsComponent>();
+                    wallPhysics.RigidBody = wallRigidBody;
+                    wallRigidBody.MassProperties = new MassProperties(float.PositiveInfinity, Matrix.Identity);
+                    Vector3 p1 = new Vector3(0, 0, 1), p2 = new Vector3(0, 0, -1);
+                    wallRigidBody.Skin.Add(new CapsulePart(new Capsule(p1, p2, 0.5f)), new Material(1f, 0.5f));
+                    physics.Add(wallRigidBody);
+
+                    transform = entities [x, y].GetComponent<TransformComponent>();
+                    transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.5f, y * scale.Y * 2 + yOffs);
+                    transform.Scale = scale;
                 }
 
                 if (++x >= maxX)

@@ -27,7 +27,6 @@ using FreezingArcher.Game.Maze;
 using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
-using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {
@@ -42,7 +41,8 @@ namespace FreezingArcher.Game
         /// <param name="msgmnr">Msgmnr.</param>
         /// <param name="objmnr">Objmnr.</param>
         /// <param name="scene">Scene.</param>
-        public MazeTest (MessageManager msgmnr, ObjectManager objmnr, CoreScene scene)
+        /// <param name="game">The game the maze should be generated in.</param>
+        public MazeTest (MessageManager msgmnr, ObjectManager objmnr, CoreScene scene, Content.Game game)
         {
             ValidMessages = new int[] { (int) MessageId.Input };
             msgmnr += this;
@@ -58,8 +58,8 @@ namespace FreezingArcher.Game
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze[0] = mazeGenerator.CreateMaze(rand.Next(), MazeColorTheme.Overworld);
-            maze[1] = mazeGenerator.CreateMaze(rand.Next(), MazeColorTheme.Underworld);
+            maze[0] = mazeGenerator.CreateMaze(rand.Next(), game.CurrentGameState.PhysicsManager);
+            maze[1] = mazeGenerator.CreateMaze(rand.Next(), game.CurrentGameState.PhysicsManager);
 
             //rect = new RectangleSceneObject();
             //rect.Color = Color4.CadetBlue;

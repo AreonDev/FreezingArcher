@@ -62,12 +62,13 @@ namespace FreezingArcher.Game
             Vector3 p1 = new Vector3(0f, 0f, 1), p2 = new Vector3(0f, 0f, -1);
             wallRigidBody.MassProperties = MassProperties.FromTriMesh (50.0f, wallModel.Model.Meshes [0].Vertices,
                 wallModel.Model.Meshes [0].Indices, out centerofmass);
+            wallRigidBody.Freeze ();
 
             Henge3D.Pipeline.CompiledMesh bla = new Henge3D.Pipeline.CompiledMesh (wallModel.Model.Meshes [0].Vertices, 
                 wallModel.Model.Meshes [0].Indices);
 
-            //wallRigidBody.Skin.Add(new MeshPart(bla), new Henge3D.Physics.Material(0.0f, 0.000000001f));
-            wallRigidBody.SetWorld(new Vector3(0, 10, 0));
+            wallRigidBody.Skin.Add(new MeshPart(bla), new Henge3D.Physics.Material(0.0f, 0.000000001f));
+            wallRigidBody.SetWorld(new Vector3(0, 0, 0));
 
             Entity ground = EntityFactory.Instance.CreateWith("ground", null,
                 new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
@@ -80,10 +81,11 @@ namespace FreezingArcher.Game
 
             groundRigidBody = new RigidBody();
             ground.GetComponent<PhysicsComponent>().RigidBody = groundRigidBody;
-            groundRigidBody.MassProperties = new MassProperties (float.PositiveInfinity, Matrix.Identity);
+            groundRigidBody.MassProperties = new MassProperties (0.001f, Matrix.Identity);
             //groundRigidBody.Freeze ();
-            //groundRigidBody.Skin.DefaultMaterial = new Henge3D.Physics.Material(1f, 0.1f);
-            //groundRigidBody.Skin.Add(new PlanePart(Vector3.Zero, Vector3.UnitY));
+            groundRigidBody.Skin.DefaultMaterial = new Henge3D.Physics.Material(1f, 0.1f);
+            groundRigidBody.Skin.Add(new MeshPart(groundModel.Model.Meshes [0].Vertices, groundModel.Model.Meshes [0].Indices));
+            groundRigidBody.SetWorld (new Vector3 (0, 10, 0));
 
             app.RendererContext.Scene.CameraManager.ActiveCamera.MoveTo(new Vector3(-1, 1, 0));
 

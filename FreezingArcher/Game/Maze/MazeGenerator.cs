@@ -302,6 +302,11 @@ namespace FreezingArcher.Game.Maze
 
             var systems = new[] { typeof (ModelSystem), typeof (PhysicsSystem) };
 
+            //Skybox
+            ModelSceneObject skybox = new ModelSceneObject ("lib/Renderer/TestGraphics/Skybox/skybox.xml");
+            skybox.Scaling = 500.0f * Vector3.One;
+            scene.AddObject (skybox);
+
             Vector3 scale = new Vector3 (4, 4, 4);
 
             var startNode = graph.Nodes.FirstOrDefault (n => n.Data.IsSpawn);

@@ -120,10 +120,21 @@ namespace FreezingArcher.Renderer
 
                             if (reader.HasAttributes)
                             {
-                                bla_mat.TextureDiffuse = 
-                                    CreateTexture2D(file_path + "_Material_XML_TextureDiffuse_" + DateTime.Now.Ticks, true, folder_path + "/" + reader.GetAttribute("diffuse"));
-                                bla_mat.TextureNormal = 
-                                    CreateTexture2D(file_path + "_Material_XML_TextureNormal_" + DateTime.Now.Ticks, true, folder_path + "/" + reader.GetAttribute("normal"));
+                                try
+                                {
+                                    bla_mat.TextureDiffuse = 
+                                        CreateTexture2D(file_path + "_Material_XML_TextureDiffuse_" + DateTime.Now.Ticks, true, folder_path + "/" + reader.GetAttribute("diffuse"));
+                                        
+                                    bla_mat.TextureDiffuse.Sampler.EdgeBehaviorX = EdgeBehaviour.ClampToEdge;
+                                    bla_mat.TextureDiffuse.Sampler.EdgeBehaviorY = EdgeBehaviour.ClampToEdge;
+                                    bla_mat.TextureDiffuse.Sampler.EdgeBehaviorZ = EdgeBehaviour.ClampToEdge;
+
+                                    bla_mat.TextureNormal = 
+                                        CreateTexture2D(file_path + "_Material_XML_TextureNormal_" + DateTime.Now.Ticks, true, folder_path + "/" + reader.GetAttribute("normal"));
+                                }catch(System.IO.FileNotFoundException e)
+                                {
+
+                                }
 
                                 //More material information
                                 bla_mat.ColorDiffuse = FreezingArcher.Math.Color4.White;
@@ -310,7 +321,7 @@ namespace FreezingArcher.Renderer
         {
             if (mdl != null)
             {
-                EnableDepthTest(true);
+                EnableDepthTest(mdl.EnableDepthTest);
 
                 foreach (Mesh msh in mdl.Meshes)
                 {
@@ -383,6 +394,8 @@ namespace FreezingArcher.Renderer
 
                     mat.OptionalEffect.UnbindPipeline();
                 }
+
+                EnableDepthTest(true);
             }
         }
 

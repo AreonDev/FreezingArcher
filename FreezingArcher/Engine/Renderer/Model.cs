@@ -14,12 +14,15 @@ namespace FreezingArcher.Renderer
     {
         public bool IsInitialized{ get; private set;}
 
+        public bool EnableDepthTest { get; set;}
+
         public List<Mesh> Meshes { get; internal set; }
         public List<Material> Materials { get; internal set;}
 
         internal Model()
         {
             IsInitialized = false;
+            EnableDepthTest = true;
         }
     }
 }

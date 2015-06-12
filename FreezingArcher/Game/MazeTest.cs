@@ -30,6 +30,8 @@ using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Content;
+using System.Globalization;
+using System.Security.AccessControl;
 
 namespace FreezingArcher.Game
 {
@@ -38,6 +40,8 @@ namespace FreezingArcher.Game
     /// </summary>
     public class MazeTest : IMessageConsumer
     {
+        double f = 0;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
         /// </summary>
@@ -54,7 +58,7 @@ namespace FreezingArcher.Game
 
             scene.CameraManager.AddCam (new FirstPersonCamera ("Player", msgmnr, default(Vector3), default(Vector3), 0.1f, 200));
             scene.CameraManager.AddCam (new FreeCamera ("Overview", msgmnr, default(Vector3), default(Vector3), 0.1f, 1000.0f));
-            scene.CameraManager.AddCam (new ThirdPersonCamera("third",msgmnr, new Vector3 (1,1,1),default(Vector3), default(Vector3)));
+//            scene.CameraManager.AddCam (new ThirdPersonCamera("third",msgmnr, new Vector3 (1,1,1),default(Vector3), default(Vector3)));
             BaseCamera test = scene.CameraManager.GetCam ("Player");
             scene.CameraManager.ActiveCamera = test;
 
@@ -132,7 +136,15 @@ namespace FreezingArcher.Game
 
             if (msg.MessageId == (int)MessageId.Update)
             {
-                player.GetComponent<TransformComponent> ().Position = scene.CameraManager.ActiveCamera.Position;
+                player.GetComponent<TransformComponent> ().Position = scene.CameraManager.ActiveCamera.CameraPosition;
+            }
+
+            var um = msg as UpdateMessage;
+            if (um != null)
+            {
+                f += 0.1;
+                const int fak = 1;
+//                scene.CameraManager.ActiveCamera.Fov = (float)(System.Math.Sin (f) + 1) > fak * MathHelper.Pi ? fak * MathHelper.Pi : (float)(System.Math.Sin (f) + 1);
             }
         }
 

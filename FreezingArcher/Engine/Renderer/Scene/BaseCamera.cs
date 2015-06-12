@@ -27,6 +27,7 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging.Interfaces;
+using Pencil.Gaming.Graphics;
 
 namespace FreezingArcher.Renderer.Scene
 {
@@ -61,7 +62,7 @@ namespace FreezingArcher.Renderer.Scene
         /// Gets or sets the camera position.
         /// </summary>
         /// <value>The camera position.</value>
-        public Vector3 Position { get; protected set; }
+        public Vector3 CameraPosition { get; protected set; }
 
         /// <summary>
         /// Gets or sets the current rotation.
@@ -219,8 +220,8 @@ namespace FreezingArcher.Renderer.Scene
             float fov = MathHelper.PiOver2, Vector3 up = default(Vector3))
         {
             Name = name;
-            Position = cameraPosition;
-            CurrentRotation = currentRotation;
+            CameraPosition = cameraPosition;
+            CurrentRotation = currentRotation == default(Vector3) ? Vector3.UnitY : currentRotation;
             cameraReference = new Vector3 (0, 0, -1);
             MZNear = near;
             MZFar = far;
@@ -266,21 +267,24 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         protected void UpdateCamera ()
         {
-            float sinx = (float) System.Math.Sin (CurrentRotation.X);
-            float cosx = (float) System.Math.Cos (CurrentRotation.X);
-            float siny = (float) System.Math.Sin (CurrentRotation.Y);
-            float cosy = (float) System.Math.Cos (CurrentRotation.Y);
-            float sinz = (float) System.Math.Sin (CurrentRotation.Z);
-            float cosz = (float) System.Math.Cos (CurrentRotation.Z);
 
-            cameraLookat = Position + transformedReference;
+                float sinx = (float)System.Math.Sin(CurrentRotation.X);
+                float cosx = (float)System.Math.Cos(CurrentRotation.X);
+                float siny = (float)System.Math.Sin(CurrentRotation.Y);
+                float cosy = (float)System.Math.Cos(CurrentRotation.Y);
+                float sinz = (float)System.Math.Sin(CurrentRotation.Z);
+                float cosz = (float)System.Math.Cos(CurrentRotation.Z);
 
+                cameraLookat = CameraPosition + transformedReference;
 
-            ViewMatrix = Matrix.LookAt(Position, cameraLookat, MUp);
+                ViewMatrix = Matrix.LookAt(CameraPosition, cameraLookat, MUp);
 
-            ViewMatrix *= Matrix.CreateFromQuaternion (new Quaternion (sinx, 0, 0, cosx) *
-                new Quaternion (0, siny, 0, cosy) *
-                new Quaternion (0, 0, sinz, cosz));
+//            if (System.Math.Abs(Vector3.Dot(new Vector3(ViewMatrix.Column0.X, ViewMatrix.Column0.Y, ViewMatrix.Column0.Z), CurrentRotation)) > 0.1)
+//            {
+                ViewMatrix *= Matrix.CreateFromQuaternion(new Quaternion(sinx, 0, 0, cosx) *
+                    new Quaternion(0, siny, 0, cosy) *
+                    new Quaternion(0, 0, sinz, cosz));
+//            }
         }
 
         /// <summary>
@@ -289,10 +293,9 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="position">Position.</param>
         public void MoveTo(Vector3 position)
         {
-            Position = position;
+            CameraPosition = position;
             UpdateCamera();
         }
-
 
         /// <summary>
         /// Rotates the x.
@@ -300,9 +303,29 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="rotation">Rotation.</param>
         public void RotateX (float rotation)
         {
-            var tmp = CurrentRotation;
-            tmp.X += rotation;
-            CurrentRotation = tmp;
+//            var tmp = CurrentRotation;
+//            tmp.X += rotation;
+//            CurrentRotation = tmp;
+            if (CurrentRotation.X <= 0.5)
+            {
+//                CurrentRotation += rotation * new Vector3(ViewMatrix.Column2.X < 0 ? ViewMatrix.Column2.X * -1 : ViewMatrix.Column2.X, 0, 0);
+                if (CurrentRotation.X >= -0.5)
+                {
+                    CurrentRotation += rotation * new Vector3(ViewMatrix.Column2.X < 0 ? ViewMatrix.Column2.X * -1 : ViewMatrix.Column2.X, 0, 0);
+                }
+                else
+                {
+                    var tmp = CurrentRotation;
+                    tmp.X = CurrentRotation.X < 0 ? -0.5f : 0.5f;
+                    CurrentRotation = tmp;
+                }
+            }else
+            {
+                var tmp = CurrentRotation;
+                tmp.X = CurrentRotation.X < 0 ? -0.5f : 0.5f;
+                CurrentRotation = tmp;
+            }
+            Logger.Log.AddLogEntry(LogLevel.Debug, "BaseCamera", "{0} {1} {2}", rotation, ViewMatrix.Column2.X, CurrentRotation.X);
             UpdateCamera ();
         }
 
@@ -312,9 +335,10 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="rotation">Rotation.</param>
         public void RotateY (float rotation)
         {
-            var tmp = CurrentRotation;
-            tmp.Y += rotation;
-            CurrentRotation = tmp;
+//            var tmp = CurrentRotation;
+//            tmp += rotation * new Vector3(ViewMatrix.Column2.X, 0, ViewMatrix.Column2.Z);
+            //tmp += CurrentRotation * new Vector3(ViewMatrix.Column2.X, 0, ViewMatrix.Column2.Z);
+            CurrentRotation += rotation * new Vector3(0,ViewMatrix.Column1.Y,0);
             UpdateCamera ();
         }
 
@@ -324,9 +348,10 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="rotation">Rotation.</param>
         public void RotateZ (float rotation)
         {
-            var tmp = CurrentRotation;
-            tmp.Z += rotation;
-            CurrentRotation = tmp;
+//            var tmp = CurrentRotation;
+//            tmp.Z += rotation;
+//            CurrentRotation = tmp;
+            CurrentRotation += rotation * new Vector3(0, 0, ViewMatrix.Column0.Z);
             UpdateCamera ();
         }
             
@@ -337,7 +362,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="position">Position.</param>
         public virtual void MoveX (float position)
         {
-            Position += position * new Vector3(ViewMatrix.Column2.X,ViewMatrix.Column2.Y,ViewMatrix.Column2.Z);
+            CameraPosition += position * new Vector3(ViewMatrix.Column2.X,ViewMatrix.Column2.Y,ViewMatrix.Column2.Z);
             UpdateCamera ();
         }
 
@@ -347,7 +372,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="position">Position.</param>
         public virtual void MoveY (float position)
         {
-            Position += position * new Vector3(ViewMatrix.Column1.X,ViewMatrix.Column1.Y,ViewMatrix.Column1.Z);
+            CameraPosition += position * new Vector3(ViewMatrix.Column1.X,ViewMatrix.Column1.Y,ViewMatrix.Column1.Z);
             UpdateCamera ();
         }
 
@@ -357,7 +382,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="position">Position.</param>
         public virtual void MoveZ (float position)
         {
-            Position += position * new Vector3(ViewMatrix.Column0.X,ViewMatrix.Column0.Y,ViewMatrix.Column0.Z);
+            CameraPosition += position * new Vector3(ViewMatrix.Column0.X,ViewMatrix.Column0.Y,ViewMatrix.Column0.Z);
             UpdateCamera ();
         }
 

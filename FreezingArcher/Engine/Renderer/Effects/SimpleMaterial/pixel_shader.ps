@@ -8,6 +8,7 @@ layout(location = 2) in vec3 vpos; // Position (View Space)
 layout(location = 3) in vec3 normal; // surface normal (view space)
 layout(location = 4) in vec3 tangent; // tangent vector (view space)
 layout(location = 5) in vec3 binormal; // binormal vector (view space)
+layout(location = 6) in vec3 view_position;
 //####################################################
 
 layout(location = 1) out vec4 normal_color;
@@ -22,6 +23,8 @@ uniform float Tile;
 uniform vec4 DiffuseColor;
 uniform vec4 SpecularColor;
 uniform vec2 PlaneInformation;
+
+uniform int EnableLighting;
 
 vec4 float_to_color(float f)
 {
@@ -38,6 +41,7 @@ vec4 float_to_color(float f)
 
 void main()
 {
+        /*
         vec2 texcrd = texcoord*Tile;
 
         vec3 normalcol = texture2D(NormalTexture, texcrd).xyz;
@@ -57,5 +61,34 @@ void main()
         specular_color = SpecularColor;
 
         float d = (gl_FragCoord.z - PlaneInformation.x) / (PlaneInformation.y);
-        depth_color = vec4(-vpos.z, -vpos.z, -vpos.z, 1);
+        depth_color = vec4(-vpos.z, -vpos.z, -vpos.z, 1);*/
+
+        //#######################################################################
+        if(EnableLighting == 1)
+        {
+        float invRadius = 0.0001;
+        vec4 vAmbient = vec4(0.01, 0.01, 0.01, 1.0);
+        float shininess = 1.0;
+
+        float distSqr = dot(vpos, vpos);
+        float att = clamp(1.0 - invRadius * sqrt(distSqr), 0.0, 1.0);
+        vec3 lvec = vpos * inversesqrt(distSqr);
+
+        vec3 vVec = normalize(hpos.xyz);
+
+        vec4 base = texture2D(ColorTexture, texcoord);
+
+        vec3 bump = normalize(texture2D(NormalTexture, texcoord).xyz * 2.0 - 1.0);
+
+        float diffuse = max(dot(lvec, bump) , 0.0);
+
+        vec4 vDiffuse = DiffuseColor * diffuse * (1.0 / (gl_FragCoord.z / gl_FragCoord.w) * 0.6);
+
+        float specular = pow(clamp(dot(reflect(-lvec, bump), vVec), 0.0, 1.0), shininess);
+
+        vec4 vSpecular = SpecularColor * specular * 0.2 * (1.0 / (gl_FragCoord.z / gl_FragCoord.w) * 1.1);
+
+        diffuse_color = (vAmbient*base + vDiffuse*base + vSpecular) * att;
+        }else
+                diffuse_color = vec4(texture2D(ColorTexture, texcoord).xyz*DiffuseColor.xyz * 0.3, 1);
 }

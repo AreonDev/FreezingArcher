@@ -57,8 +57,8 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="_position">Posotion.</param>
         public override void MoveX(float _position)
         {
-            CameraPosition += _position * new Vector3(ViewMatrix.Column2.X, 0, ViewMatrix.Column2.Z);
-            UpdateCamera();
+            Position += _position * new Vector3(ViewMatrix.Column2.X,0,ViewMatrix.Column2.Z);
+            UpdateCamera ();
         }
 
         float bobbing = 0;

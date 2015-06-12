@@ -254,6 +254,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Scene\FirstPersonCamera.cs" />
     <Compile Include="Renderer\Scene\FreeCamera.cs" />
     <Compile Include="Renderer\Scene\ThirdPersonCamera.cs" />
+    <Compile Include="Content\MovementSystem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

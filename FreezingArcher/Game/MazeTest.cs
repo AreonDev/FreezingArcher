@@ -28,6 +28,8 @@ using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Game
 {
@@ -45,7 +47,7 @@ namespace FreezingArcher.Game
         /// <param name="game">The game the maze should be generated in.</param>
         public MazeTest (MessageManager msgmnr, ObjectManager objmnr, CoreScene scene, Content.Game game)
         {
-            ValidMessages = new int[] { (int) MessageId.Input };
+            ValidMessages = new int[] { (int) MessageId.Input, (int) MessageId.PositionChangedMessage, (int) MessageId.Update };
             msgmnr += this;
             mazeGenerator = new MazeGenerator (objmnr);
             this.scene = scene;
@@ -55,6 +57,18 @@ namespace FreezingArcher.Game
             scene.CameraManager.AddCam (new ThirdPersonCamera("third",msgmnr, new Vector3 (1,1,1),default(Vector3), default(Vector3)));
             BaseCamera test = scene.CameraManager.GetCam ("Player");
             scene.CameraManager.ActiveCamera = test;
+
+            //Skybox
+            skybox = EntityFactory.Instance.CreateWith ("skybox", systems: new[] { typeof(ModelSystem) });
+            ModelSceneObject skyboxModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Skybox/skybox.xml");
+            skybox.GetComponent<TransformComponent>().Scale = 100.0f * Vector3.One;
+            scene.AddObject (skyboxModel);
+            skyboxModel.WaitTillInitialized ();
+            skyboxModel.Model.EnableDepthTest = false;
+            skyboxModel.Model.EnableLighting = false;
+            skybox.GetComponent<ModelComponent> ().Model = skyboxModel;
+
+            player = EntityFactory.Instance.CreateWith ("player", new[] { typeof(TransformComponent) }, new[] { typeof (MovementSystem) });
 
             int seed = new Random().Next();
             var rand = new Random(seed);
@@ -66,6 +80,10 @@ namespace FreezingArcher.Game
         readonly MazeGenerator mazeGenerator;
 
         readonly Maze.Maze[] maze = new Maze.Maze[2];
+
+        Entity player;
+
+        Entity skybox;
 
         CoreScene scene;
 
@@ -101,6 +119,20 @@ namespace FreezingArcher.Game
                     else if (maze[1].IsGenerated && !maze[1].AreFeaturesPlaced)
                         maze[1].SpawnFeatures(maze[0].graph);
                 }
+            }
+
+            if (msg.MessageId == (int)MessageId.PositionChangedMessage)
+            {
+                PositionChangedMessage pcm = msg as PositionChangedMessage;
+                if (pcm.Entity.Name == player.Name) 
+                {
+                    skybox.GetComponent<TransformComponent> ().Position = pcm.Entity.GetComponent<TransformComponent> ().Position;
+                }
+            }
+
+            if (msg.MessageId == (int)MessageId.Update)
+            {
+                player.GetComponent<TransformComponent> ().Position = scene.CameraManager.ActiveCamera.Position;
             }
         }
 

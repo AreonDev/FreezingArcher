@@ -76,7 +76,7 @@ namespace FreezingArcher.Renderer.Scene
                     float bobbX = (float)System.Math.Sin(bobbing * 2);
                     float bobbY = (float)System.Math.Sin(bobbing);
                     bobbX *= 0.03f;
-                    bobbY *= 0.05f;
+                    bobbY *= 0.02f;
                     MoveY(bobbX);
                     MoveZ(bobbY);
                     bobbing += 0.05f;

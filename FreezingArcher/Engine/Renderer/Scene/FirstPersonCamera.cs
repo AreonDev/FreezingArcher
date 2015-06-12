@@ -42,12 +42,12 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="near">Near.</param>
         /// <param name="far">Far.</param>
         /// <param name="fov">Fov.</param>
-        public FirstPersonCamera (string name, MessageManager mssgmngr, Vector3 cameraPosition = default(Vector3),
-            Vector3 currentRotation = default(Vector3), float near = 0.1f, float far = 500.0f,
-            float fov = MathHelper.PiOver4) : base (name, mssgmngr, cameraPosition,
-                currentRotation, near, far, fov)
+        public FirstPersonCamera(string name, MessageManager mssgmngr, Vector3 cameraPosition = default(Vector3),
+                                  Vector3 currentRotation = default(Vector3), float near = 0.1f, float far = 1000.0f,
+                                  float fov = MathHelper.PiOver4)
+            : base(name, mssgmngr, cameraPosition, currentRotation, near, far, fov)
         {
-            ValidMessages = new int[] { (int)MessageId.Input, (int) MessageId.WindowResizeMessage };
+            ValidMessages = new int[] { (int)MessageId.Input, (int)MessageId.WindowResizeMessage };
             mssgmngr += this;
         }
 
@@ -55,12 +55,34 @@ namespace FreezingArcher.Renderer.Scene
         /// Moves the x.
         /// </summary>
         /// <param name="_position">Posotion.</param>
-        public override void MoveX (float _position)
+        public override void MoveX(float _position)
         {
-            CameraPosition += _position * new Vector3(ViewMatrix.Column2.X,0,ViewMatrix.Column2.Z);
-            UpdateCamera ();
+            CameraPosition += _position * new Vector3(ViewMatrix.Column2.X, 0, ViewMatrix.Column2.Z);
+            UpdateCamera();
         }
 
+        float bobbing = 0;
+
+        public override void ConsumeMessage(IMessage msg)
+        {
+            base.ConsumeMessage(msg);
+
+            if(msg.MessageId == (int) MessageId.Input)
+            {
+                var im = msg as InputMessage;
+
+                if (im.IsActionDown("forward") || im.IsActionDown("backward"))
+                {
+                    float bobbX = (float)System.Math.Sin(bobbing * 2);
+                    float bobbY = (float)System.Math.Sin(bobbing);
+                    bobbX *= 0.03f;
+                    bobbY *= 0.05f;
+                    MoveY(bobbX);
+                    MoveZ(bobbY);
+                    bobbing += 0.05f;
+                }
+            }
+        }
     }
 }
 

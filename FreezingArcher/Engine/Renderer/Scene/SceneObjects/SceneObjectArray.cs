@@ -340,6 +340,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             {
                 foreach (int index in ObjectsChanged)
                 {
+                    if (index < 0)
+                        continue;
                     SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { SceneObjects[index].GetData() };
 
                     if (InstanceDataVertexBuffer != null)

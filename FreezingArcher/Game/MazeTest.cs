@@ -27,6 +27,7 @@ using FreezingArcher.Game.Maze;
 using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
+using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {
@@ -60,19 +61,11 @@ namespace FreezingArcher.Game
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
             maze[0] = mazeGenerator.CreateMaze(rand.Next(), game.CurrentGameState.PhysicsManager);
             maze[1] = mazeGenerator.CreateMaze(rand.Next(), game.CurrentGameState.PhysicsManager);
-
-            //rect = new RectangleSceneObject();
-            //rect.Color = Color4.CadetBlue;
-            //rect.Position = new Vector3(4, 4, 0);
-            //rect.Scaling = new Vector3(50, 50, 1);
-            //scene.AddObject(rect);
         }
 
         readonly MazeGenerator mazeGenerator;
 
         readonly Maze.Maze[] maze = new Maze.Maze[2];
-
-        //RectangleSceneObject rect;
 
         CoreScene scene;
 
@@ -108,29 +101,6 @@ namespace FreezingArcher.Game
                     else if (maze[1].IsGenerated && !maze[1].AreFeaturesPlaced)
                         maze[1].SpawnFeatures(maze[0].graph);
                 }
-                /*var pos = rect.Position;
-                const int fac = 10;
-                if (im.IsActionDown("right"))
-                {
-                    pos.X += (float) (im.DeltaTime.TotalMilliseconds / fac);
-                }
-                if (im.IsActionDown("left"))
-                {
-                    pos.X -= (float) (im.DeltaTime.TotalMilliseconds / fac);
-                }
-                if (im.IsActionDown("backward"))
-                {
-                    pos.Y += (float) (im.DeltaTime.TotalMilliseconds / fac);
-                }
-                if (im.IsActionDown("forward"))
-                {
-                    pos.Y -= (float) (im.DeltaTime.TotalMilliseconds / fac);
-                }
-                if (im.IsActionPressed("frame"))
-                {
-                    Logger.Log.AddLogEntry(LogLevel.Debug, "Maze", "FPS: {0}", Application.Instance.FPSCounter);
-                }
-                rect.Position = pos;*/
             }
         }
 

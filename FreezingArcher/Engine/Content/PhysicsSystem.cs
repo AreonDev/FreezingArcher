@@ -43,8 +43,7 @@ namespace FreezingArcher.Content
 
             NeededComponents = new[] { typeof(TransformComponent), typeof(ModelComponent), typeof(PhysicsComponent) };
 
-            internalValidMessages = new[] { (int)MessageId.Update, (int) MessageId.PositionChangedMessage,
-                (int) MessageId.RotationChangedMessage, (int) MessageId.ScaleChangedMessage };
+            internalValidMessages = new[] { (int)MessageId.Update };
             msgmnr += this;
         }
 
@@ -54,29 +53,17 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            TransformComponent tc = Entity.GetComponent<TransformComponent>();
-            PhysicsComponent pc = Entity.GetComponent<PhysicsComponent>();
-
-            if (tc == null || pc == null || pc.RigidBody == null)
-                return;
-
-            /*if (msg.MessageId == (int) MessageId.PositionChangedMessage)
+            if (msg.MessageId == (int) MessageId.Update)
             {
-                pc.RigidBody.SetWorld(tc.Position);
-            }
+                PhysicsComponent pc = Entity.GetComponent<PhysicsComponent>();
+                if (pc == null || pc.RigidBody == null || !pc.RigidBody.IsMovable)
+                    return;
 
-            if (msg.MessageId == (int) MessageId.RotationChangedMessage)
-            {
-                pc.RigidBody.SetWorld(tc.Position, tc.Rotation);
-            }
+                TransformComponent tc = Entity.GetComponent<TransformComponent>();
 
-            if (msg.MessageId == (int) MessageId.ScaleChangedMessage)
-            {
-                pc.RigidBody.SetWorld(tc.Scale.X, tc.Position, tc.Rotation);
-            }*/
+                if (tc == null)
+                    return;
 
-            if (msg.MessageId == (int) MessageId.Update && pc.RigidBody.IsMovable)
-            {
                 tc.Position = pc.RigidBody.Transform.Position;
                 tc.Rotation = pc.RigidBody.Transform.Orientation;
                 tc.Scale = new Vector3(pc.RigidBody.Transform.Scale, pc.RigidBody.Transform.Scale,

@@ -62,7 +62,7 @@ namespace FreezingArcher.Game.Maze
         /// <param name="turbulence">Turbulence. The higher the more straight the maze will be.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will appear.</param>
-        public Maze CreateMaze(int seed, PhysicsManager physics, int sizeX = 10, int sizeY = 10,
+        public Maze CreateMaze(int seed, PhysicsManager physics, int sizeX = 40, int sizeY = 40,
             float scale = 10, double turbulence = 2, int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
         {
             Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, physics, InitializeMaze, CreateMaze,
@@ -321,13 +321,14 @@ namespace FreezingArcher.Game.Maze
                     entities [x, y].GetComponent<ModelComponent>().Model = model;
                     scnobjarr_ground.AddObject (model);
 
-                    var groundRigidBody = new RigidBody();
-                    var groundPhysics = entities [x, y].GetComponent<PhysicsComponent>();
-                    groundPhysics.RigidBody = groundRigidBody;
-                    groundRigidBody.MassProperties = new MassProperties(float.PositiveInfinity, Matrix.Identity);
-                    groundRigidBody.Skin.DefaultMaterial = new Material(1f, 0.5f);
-                    groundRigidBody.Skin.Add(new PlanePart(Vector3.UnitZ, Vector3.UnitY));
-                    physics.Add(groundRigidBody);
+                    // FIXME creates massive input lag and is glitchy as hell
+                    //var groundRigidBody = new RigidBody();
+                    //var groundPhysics = entities [x, y].GetComponent<PhysicsComponent>();
+                    //groundPhysics.RigidBody = groundRigidBody;
+                    //groundRigidBody.MassProperties = new MassProperties(float.PositiveInfinity, Matrix.Identity);
+                    //groundRigidBody.Skin.DefaultMaterial = new Material(1f, 0.5f);
+                    //groundRigidBody.Skin.Add(new PlanePart(Vector3.UnitZ, Vector3.UnitY));
+                    //physics.Add(groundRigidBody);
 
                     transform = entities [x, y].GetComponent<TransformComponent>();
                     transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.0f, y * scale.Y * 2 + yOffs);
@@ -339,14 +340,15 @@ namespace FreezingArcher.Game.Maze
                     model = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
                     entities [x, y].GetComponent<ModelComponent>().Model = model;
                     scnobjarr_wall.AddObject(model);
-                
-                    var wallRigidBody = new RigidBody();
-                    var wallPhysics = entities [x, y].GetComponent<PhysicsComponent>();
-                    wallPhysics.RigidBody = wallRigidBody;
-                    wallRigidBody.MassProperties = new MassProperties(float.PositiveInfinity, Matrix.Identity);
-                    Vector3 p1 = new Vector3(0, 0, 1), p2 = new Vector3(0, 0, -1);
-                    wallRigidBody.Skin.Add(new CapsulePart(new Capsule(p1, p2, 0.5f)), new Material(1f, 0.5f));
-                    physics.Add(wallRigidBody);
+
+                    // FIXME creates massive input lag and is glitchy as hell
+                    //var wallRigidBody = new RigidBody();
+                    //var wallPhysics = entities [x, y].GetComponent<PhysicsComponent>();
+                    //wallPhysics.RigidBody = wallRigidBody;
+                    //wallRigidBody.MassProperties = new MassProperties(float.PositiveInfinity, Matrix.Identity);
+                    //Vector3 p1 = new Vector3(0, 0, 1), p2 = new Vector3(0, 0, -1);
+                    //wallRigidBody.Skin.Add(new CapsulePart(new Capsule(p1, p2, 0.5f)), new Material(1f, 0.5f));
+                    //physics.Add(wallRigidBody);
 
                     transform = entities [x, y].GetComponent<TransformComponent>();
                     transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.5f, y * scale.Y * 2 + yOffs);

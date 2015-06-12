@@ -21,12 +21,8 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Core;
-using FreezingArcher.Content;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
-using FreezingArcher.Renderer.Scene.SceneObjects;
-using System;
-using FreezingArcher.Game.Maze;
 
 namespace FreezingArcher.Game
 {

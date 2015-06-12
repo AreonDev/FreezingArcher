@@ -67,7 +67,7 @@ void main()
         if(EnableLighting == 1)
         {
         float invRadius = 0.0001;
-        vec4 vAmbient = vec4(0.01, 0.01, 0.01, 1.0);
+        vec4 vAmbient = vec4(0.02, 0.02, 0.02, 1.0);
         float shininess = 1.0;
 
         float distSqr = dot(vpos, vpos);
@@ -82,11 +82,11 @@ void main()
 
         float diffuse = max(dot(lvec, bump) , 0.0);
 
-        vec4 vDiffuse = DiffuseColor * diffuse * (1.0 / (gl_FragCoord.z / gl_FragCoord.w) * 0.6);
+        vec4 vDiffuse = DiffuseColor * diffuse * (1.0 / (gl_FragCoord.z / gl_FragCoord.w) * 0.2);
 
         float specular = pow(clamp(dot(reflect(-lvec, bump), vVec), 0.0, 1.0), shininess);
 
-        vec4 vSpecular = SpecularColor * specular * 0.2 * (1.0 / (gl_FragCoord.z / gl_FragCoord.w) * 1.1);
+        vec4 vSpecular = SpecularColor * specular * 0.2 * (1.0 / (gl_FragCoord.z / gl_FragCoord.w) * 2.5);
 
         diffuse_color = (vAmbient*base + vDiffuse*base + vSpecular) * att;
         }else

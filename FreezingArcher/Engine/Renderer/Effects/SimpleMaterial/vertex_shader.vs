@@ -96,7 +96,7 @@ void main()
 
         tmpVec = -vVertex;
         hpos.x = dot(tmpVec, t);
-        hpos.y = dot(tmpVec, b);
+        hpos.y = dot(tmpVec, b) + 1.0;
         hpos.z = dot(tmpVec, n);
         hpos.w = 0.0;
 

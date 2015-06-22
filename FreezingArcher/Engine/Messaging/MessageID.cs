@@ -101,6 +101,20 @@ namespace FreezingArcher.Messaging
         /// <summary>
         /// Occurs when the scaling of an entity changes.
         /// </summary>
-        ScaleChangedMessage
+        ScaleChangedMessage,
+        /// <summary>
+        /// Occurs when a movement of an entity is requested on a MovementSystem.
+        /// </summary>
+        MovementMessage,
+        /// <summary>
+        /// Occurs when a forward or backward movement along the view direction of an entity is requested on a
+        /// MovementSystem.
+        /// </summary>
+        MoveStraightMessage,
+        /// <summary>
+        /// Occurs when a left or right movement orthogonally to the view direction of an entity is requested on a
+        /// MovementSystem.
+        /// </summary>
+        MoveSidewardsMessage
     }
 }

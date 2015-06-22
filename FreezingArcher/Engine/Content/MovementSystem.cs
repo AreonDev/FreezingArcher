@@ -26,29 +26,56 @@ using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Content
 {
+    /// <summary>
+    /// The movement system applies movements specified with MovementMessage, MoveStraightMessage or
+    /// MoveSidewardsMessage to an entity.
+    /// </summary>
     public sealed class MovementSystem : EntitySystem
     {
-        public override void Init(FreezingArcher.Messaging.MessageManager msgmnr, Entity entity)
+        /// <summary>
+        /// Initialize this system. This may be used as a constructor replacement.
+        /// </summary>
+        /// <param name="msgmnr">Msgmnr.</param>
+        /// <param name="entity">Entity.</param>
+        public override void Init(MessageManager msgmnr, Entity entity)
         {
             base.Init(msgmnr, entity);
 
             //Added needed components
             NeededComponents = new[] { typeof(TransformComponent) };
 
-            //Needs more Initializing?
-            //Scene does this for me, so no!
-            internalValidMessages = new[] { (int) MessageId.Input };
+            internalValidMessages = new[] { (int) MessageId.MovementMessage, (int) MessageId.MoveStraightMessage,
+                (int) MessageId.MoveSidewardsMessage };
             msgmnr += this;
         }
 
+        /// <summary>
+        /// Processes the incoming message
+        /// </summary>
+        /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            if (msg.MessageId == (int)MessageId.Input)
+            if (msg.MessageId == (int) MessageId.MovementMessage)
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
-                InputMessage im = msg as InputMessage;
+                MovementMessage mm = msg as MovementMessage;
 
-                // TODO willy
+                tc.Position += mm.Movement;
+                tc.Rotation = mm.Rotation * tc.Rotation;
+            }
+            else if (msg.MessageId == (int) MessageId.MoveStraightMessage)
+            {
+                TransformComponent tc = Entity.GetComponent<TransformComponent>();
+                MoveStraightMessage msm = msg as MoveStraightMessage;
+
+                //new Vector3((float)(Math.Sin(_cameraProvider.rotX) * gameTime.ElapsedGameTime.Milliseconds / speed), 0, (float)(Math.Cos(_cameraProvider.rotX) * gameTime.ElapsedGameTime.Milliseconds / speed));
+            }
+            else if (msg.MessageId == (int) MessageId.MoveSidewardsMessage)
+            {
+                TransformComponent tc = Entity.GetComponent<TransformComponent>();
+                MoveSidewardsMessage msm = msg as MoveSidewardsMessage;
+
+                // TODO Fin
             }
         }
     }

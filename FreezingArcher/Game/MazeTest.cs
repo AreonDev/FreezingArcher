@@ -30,8 +30,6 @@ using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Content;
-using System.Globalization;
-using System.Security.AccessControl;
 
 namespace FreezingArcher.Game
 {

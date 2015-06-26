@@ -23,6 +23,7 @@
 using System;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Content
 {
@@ -58,7 +59,7 @@ namespace FreezingArcher.Content
             if (msg.MessageId == (int) MessageId.MovementMessage)
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
-                MovementMessage mm = msg as MovementMessage;
+                TransformMessage mm = msg as TransformMessage;
 
                 tc.Position += mm.Movement;
                 tc.Rotation = mm.Rotation * tc.Rotation;
@@ -68,14 +69,18 @@ namespace FreezingArcher.Content
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 MoveStraightMessage msm = msg as MoveStraightMessage;
 
-                //new Vector3((float)(Math.Sin(_cameraProvider.rotX) * gameTime.ElapsedGameTime.Milliseconds / speed), 0, (float)(Math.Cos(_cameraProvider.rotX) * gameTime.ElapsedGameTime.Milliseconds / speed));
+                Vector3 rot = Vector3.Transform(Vector3.UnitX, tc.Rotation);
+                Vector3 mov = Vector3.UnitX * msm.Movement;
+                tc.Position += mov * new Vector3(rot.X, 0, rot.Z);
             }
             else if (msg.MessageId == (int) MessageId.MoveSidewardsMessage)
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 MoveSidewardsMessage msm = msg as MoveSidewardsMessage;
 
-                // TODO Fin
+                Vector3 rot = Vector3.Transform(Vector3.UnitZ, tc.Rotation);
+                Vector3 mov = Vector3.UnitX * msm.Movement;
+                tc.Position += mov * new Vector3(rot.X, 0, rot.Z);
             }
         }
     }

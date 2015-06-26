@@ -92,11 +92,16 @@ namespace FreezingArcher.Input
 
             lock(keys)
             {
-            foreach (KeyboardInput i in keys)
-                if (CachedConfig.TryGetValue (i.Key, out s))
+                foreach (KeyboardInput i in keys)
                 {
-                    if (s != null)
-                       i.KeyAction = s;
+                    if (i == null)
+                        continue;
+                    
+                    if (CachedConfig.TryGetValue (i.Key, out s))
+                    {
+                        if (s != null)
+                            i.KeyAction = s;
+                    }
                 }
             }
 

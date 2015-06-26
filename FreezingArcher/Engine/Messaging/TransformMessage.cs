@@ -1,5 +1,5 @@
 ﻿//
-//  MovementMessage.cs
+//  TransformMessage.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -31,17 +31,17 @@ namespace FreezingArcher.Messaging
     /// (view direction) of the entity. The rotation of the entity is only affected by the rotation given with this
     /// message.
     /// </summary>
-    public class MovementMessage : IMessage
+    public class TransformMessage : IMessage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.MovementMessage"/> class. This message
+        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.TransformMessage"/> class. This message
         /// describes a movement and rotation request on an entity. The movement does not affect the rotation (view
         /// direction) of the entity. The rotation of the entity is only affected by the rotation given with this
         /// message.
         /// </summary>
         /// <param name="movement">Movement.</param>
         /// <param name="rotation">Rotation.</param>
-        public MovementMessage(Vector3 movement, Quaternion  rotation)
+        public TransformMessage(Vector3 movement, Quaternion rotation)
         {
             Movement = movement;
             Rotation = rotation;

@@ -83,7 +83,7 @@ namespace PostProcessor
 		    BindingFlags.Instance |
 		    BindingFlags.DeclaredOnly);
 
-		var fields2 = fields.Where(k => !k.IsDefined(typeof(CompilerGeneratedAttribute), false)).ToArray();
+                var fields2 = fields.Where(k => !k.IsPrivate && !k.IsDefined(typeof(CompilerGeneratedAttribute), false)).ToArray();
 
 		if (fields2.Length > 0)
 		{

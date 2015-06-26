@@ -34,7 +34,7 @@ namespace FreezingArcher.Content
     /// Inheritance of this class must be sealed, only overriden fields and methods may be contained in this class.
     /// If any of the constraints listed above is not met the build will fail on post processing.
     /// </summary>
-    public abstract class EntitySystem : FAObject, IMessageConsumer
+    public abstract class EntitySystem : FAObject, IMessageConsumer, IMessageCreator
     {
         /// <summary>
         /// Initialize this system. This may be used as a constructor replacement.
@@ -70,5 +70,21 @@ namespace FreezingArcher.Content
             }
         }
         #endregion
+
+        #region IMessageCreator implementation
+
+        public event MessageEvent MessageCreated;
+
+        #endregion
+
+        /// <summary>
+        /// Creates the message.
+        /// </summary>
+        /// <param name="msg">Message.</param>
+        protected void CreateMessage(IMessage msg)
+        {
+            if (MessageCreated != null)
+                MessageCreated(msg);
+        }
     }
 }

@@ -257,8 +257,11 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Scene\FreeCamera.cs" />
     <Compile Include="Renderer\Scene\ThirdPersonCamera.cs" />
     <Compile Include="Content\MovementSystem.cs" />
-    <Compile Include="Messaging\MovementMessage.cs" />
     <Compile Include="Messaging\MoveStraightMessage.cs" />
+    <Compile Include="Messaging\MoveSidewardsMessage.cs" />
+    <Compile Include="Content\KeyboardControllerSystem.cs" />
+    <Compile Include="Content\MouseControllerSystem.cs" />
+    <Compile Include="Messaging\TransformMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

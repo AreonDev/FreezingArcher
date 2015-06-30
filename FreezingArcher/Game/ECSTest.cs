@@ -29,8 +29,16 @@ using FreezingArcher.Renderer.Scene.SceneObjects;
 
 namespace FreezingArcher.Game
 {
+    /// <summary>
+    /// Entity Component System Tests.
+    /// </summary>
     public class ECSTest
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Game.ECSTest"/> class.
+        /// </summary>
+        /// <param name="msgmnr">Msgmnr.</param>
+        /// <param name="scene">Scene.</param>
         public ECSTest (MessageManager msgmnr, CoreScene scene)
         {
             scene.CameraManager.AddCam (
@@ -50,7 +58,8 @@ namespace FreezingArcher.Game
 
             player = EntityFactory.Instance.CreateWith ("player",
                 new[] { typeof (TransformComponent) },
-                new[] { typeof (MovementSystem), typeof (KeyboardControllerSystem), typeof (MouseControllerSystem), typeof (ModelSystem) });
+                new[] { typeof (MovementSystem), typeof (KeyboardControllerSystem), typeof (MouseControllerSystem),
+                typeof (ModelSystem) });
 
             ModelSceneObject cube = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
             scene.AddObject(cube);

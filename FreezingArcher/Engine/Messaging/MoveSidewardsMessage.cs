@@ -22,6 +22,7 @@
 //
 using System;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Messaging
 {
@@ -37,9 +38,11 @@ namespace FreezingArcher.Messaging
         /// value creates a left movement and a positive value creates a right movement.
         /// </summary>
         /// <param name="movement">Movement.</param>
-        public MoveSidewardsMessage(float movement)
+        /// <param name="entity">Entity.</param>
+        public MoveSidewardsMessage(Entity entity, float movement)
         {
             Movement = movement;
+            Entity = entity;
             MessageId = (int) Messaging.MessageId.MoveSidewardsMessage;
         }
 
@@ -49,6 +52,12 @@ namespace FreezingArcher.Messaging
         /// </summary>
         /// <value>The movement.</value>
         public float Movement { get; private set; }
+
+        /// <summary>
+        /// Gets the entity this transform should be applied to.
+        /// </summary>
+        /// <value>The entity.</value>
+        public Entity Entity { get; private set; }
 
         #region IMessage implementation
 

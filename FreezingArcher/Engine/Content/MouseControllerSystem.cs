@@ -28,8 +28,16 @@ using FreezingArcher.Configuration;
 
 namespace FreezingArcher.Content
 {
+    /// <summary>
+    /// Mouse controller system. This system converts mouse movement to rotation messages.
+    /// </summary>
     public sealed class MouseControllerSystem : EntitySystem
     {
+        /// <summary>
+        /// Initialize this system. This may be used as a constructor replacement.
+        /// </summary>
+        /// <param name="msgmnr">Msgmnr.</param>
+        /// <param name="entity">Entity.</param>
         public override void Init(MessageManager msgmnr, Entity entity)
         {
             base.Init(msgmnr, entity);
@@ -38,8 +46,13 @@ namespace FreezingArcher.Content
             msgmnr += this;
         }
 
-        readonly float movement = (float) ConfigManager.Instance ["freezing_archer"].GetDouble("general", "mouse_speed") * 0.0001f;
+        readonly float movement =
+            (float) ConfigManager.Instance ["freezing_archer"].GetDouble("general", "mouse_speed") * 0.0001f;
 
+        /// <summary>
+        /// Processes the incoming message
+        /// </summary>
+        /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
             if (msg.MessageId == (int) MessageId.Input)
@@ -55,7 +68,7 @@ namespace FreezingArcher.Content
                         Vector3.UnitX,
                         im.MouseMovement.Y * movement * (float) im.DeltaTime.TotalMilliseconds);
                 
-                CreateMessage(new TransformMessage(Vector3.Zero, rot));
+                CreateMessage(new TransformMessage(Entity, Vector3.Zero, rot));
             }
         }
     }

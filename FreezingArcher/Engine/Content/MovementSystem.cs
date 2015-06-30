@@ -61,6 +61,9 @@ namespace FreezingArcher.Content
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 TransformMessage mm = msg as TransformMessage;
 
+                if (mm.Entity.Name != Entity.Name)
+                    return;
+
                 tc.Position += mm.Movement;
                 tc.Rotation = mm.Rotation * tc.Rotation;
             }
@@ -68,6 +71,9 @@ namespace FreezingArcher.Content
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 MoveStraightMessage msm = msg as MoveStraightMessage;
+
+                if (msm.Entity.Name != Entity.Name)
+                    return;
 
                 Vector3 rot = Vector3.Transform(Vector3.UnitX, tc.Rotation);
                 Vector3 mov = Vector3.UnitX * msm.Movement;
@@ -78,6 +84,9 @@ namespace FreezingArcher.Content
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 MoveSidewardsMessage msm = msg as MoveSidewardsMessage;
 
+                if (msm.Entity.Name != Entity.Name)
+                    return;
+                
                 Vector3 rot = Vector3.Transform(Vector3.UnitZ, tc.Rotation);
                 Vector3 mov = Vector3.UnitX * msm.Movement;
                 tc.Position += mov * new Vector3(rot.X, 0, rot.Z);

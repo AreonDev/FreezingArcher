@@ -23,6 +23,7 @@
 using System;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Messaging
 {
@@ -41,10 +42,12 @@ namespace FreezingArcher.Messaging
         /// </summary>
         /// <param name="movement">Movement.</param>
         /// <param name="rotation">Rotation.</param>
-        public TransformMessage(Vector3 movement, Quaternion rotation)
+        /// <param name="entity">Entity.</param>
+        public TransformMessage(Entity entity, Vector3 movement, Quaternion rotation)
         {
             Movement = movement;
             Rotation = rotation;
+            Entity = entity;
             MessageId = (int) Messaging.MessageId.MovementMessage;
         }
 
@@ -61,6 +64,12 @@ namespace FreezingArcher.Messaging
         /// </summary>
         /// <value>The rotation.</value>
         public Quaternion Rotation { get; private set; }
+
+        /// <summary>
+        /// Gets the entity this transform should be applied to.
+        /// </summary>
+        /// <value>The entity.</value>
+        public Entity Entity { get; private set; }
 
         #region IMessage implementation
 

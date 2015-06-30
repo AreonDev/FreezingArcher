@@ -25,8 +25,16 @@ using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Content
 {
+    /// <summary>
+    /// Keyboard controller system. This system converts keyboard input to movement messages.
+    /// </summary>
     public sealed class KeyboardControllerSystem : EntitySystem
     {
+        /// <summary>
+        /// Initialize this system. This may be used as a constructor replacement.
+        /// </summary>
+        /// <param name="msgmnr">Msgmnr.</param>
+        /// <param name="entity">Entity.</param>
         public override void Init(MessageManager msgmnr, Entity entity)
         {
             base.Init(msgmnr, entity);
@@ -35,6 +43,10 @@ namespace FreezingArcher.Content
             msgmnr += this;
         }
 
+        /// <summary>
+        /// Processes the incoming message
+        /// </summary>
+        /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
             const float movement = 0.1f;
@@ -45,19 +57,19 @@ namespace FreezingArcher.Content
 
                 if (im.IsActionDown("forward"))
                 {
-                    CreateMessage(new MoveStraightMessage(movement));
+                    CreateMessage(new MoveStraightMessage(Entity, movement));
                 }
                 else if (im.IsActionDown("backward"))
                 {
-                    CreateMessage(new MoveStraightMessage(-movement));
+                    CreateMessage(new MoveStraightMessage(Entity, -movement));
                 }
                 else if (im.IsActionDown("left"))
                 {
-                    CreateMessage(new MoveSidewardsMessage(-movement));
+                    CreateMessage(new MoveSidewardsMessage(Entity, -movement));
                 }
                 else if (im.IsActionDown("right"))
                 {
-                    CreateMessage(new MoveSidewardsMessage(movement));
+                    CreateMessage(new MoveSidewardsMessage(Entity, movement));
                 }
             }
         }

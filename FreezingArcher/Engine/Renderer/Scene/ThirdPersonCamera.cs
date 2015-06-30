@@ -93,10 +93,10 @@ namespace FreezingArcher.Renderer.Scene
         private void UpdateCamera(){
             if (Position != null)
             {
-                CurrentRotation = Position.Value - Position.Value;
+                Rotation = Position.Value - Position.Value;
             }
             else{
-                CurrentRotation = Person.GetComponent<TransformComponent>().Position - Position.Value;
+                Rotation = Person.GetComponent<TransformComponent>().Position - Position.Value;
             }
             base.UpdateCamera();
         }

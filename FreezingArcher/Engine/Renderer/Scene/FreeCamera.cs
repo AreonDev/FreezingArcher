@@ -25,6 +25,7 @@ using System;
 using FreezingArcher.Math;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Renderer.Scene
 {
@@ -58,7 +59,12 @@ namespace FreezingArcher.Renderer.Scene
                                    float fov = (float)System.Math.PI / 4.0f) : base (name, _cameraPosition,
                                                                            _currentRotation, near, far, fov)
         {
-            ValidMessages = new int[] { (int)MessageId.Input, (int) MessageId.WindowResizeMessage };
+            ValidMessages = new int[] {
+                (int) MessageId.WindowResizeMessage,
+                (int) MessageId.PositionChangedMessage,
+                (int) MessageId.RotationChangedMessage
+            };
+
             mssgmngr += this;
         }
 
@@ -70,6 +76,21 @@ namespace FreezingArcher.Renderer.Scene
         {
             base.ConsumeMessage(msg);
 
+            if (msg.MessageId == (int) MessageId.PositionChangedMessage)
+            {
+                var pcm = msg as PositionChangedMessage;
+                // todo
+                pcm.Entity.GetComponent<TransformComponent>().Position;
+            }
+
+            if (msg.MessageId == (int) MessageId.RotationChangedMessage)
+            {
+                var rcm = msg as RotationChangedMessage;
+                // todo
+                rcm.Entity.GetComponent<TransformComponent>().Rotation;
+            }
+
+            /*
             InputMessage im = msg as InputMessage;
             if (im != null) {
                 if (im.IsActionDown ("forward")) {
@@ -103,7 +124,7 @@ namespace FreezingArcher.Renderer.Scene
                 {
                     //RotateX(im.MouseMovement.Y * 0.001f);
                 }
-            }
+            }*/
         }
     }
 }

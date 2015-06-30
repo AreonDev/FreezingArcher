@@ -94,7 +94,7 @@ namespace FreezingArcher.Content
         }
 
         /// <summary>
-        /// Gets or sets the scale.
+        /// Gets or sets the scale of this entity instance.
         /// </summary>
         /// <value>The scale.</value>
         public Vector3 Scale

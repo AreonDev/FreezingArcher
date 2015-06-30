@@ -62,49 +62,23 @@ namespace FreezingArcher.Renderer.Scene
         /// Gets or sets the camera position.
         /// </summary>
         /// <value>The camera position.</value>
-        public Vector3 CameraPosition { get; protected set; }
+        protected Vector3 Position;
 
         /// <summary>
         /// Gets or sets the current rotation.
         /// </summary>
         /// <value>The current rotation.</value>
-        protected Vector3 CurrentRotation { get; set; }
+        protected Quaternion Rotation;
 
         /// <summary>
         /// The M window x.
         /// </summary>
-        protected float MWindowX;
-        /// <summary>
-        /// Gets or sets the window x.
-        /// </summary>
-        /// <value>The window x.</value>
-        public float WindowX
-        {
-            get{ return this.MWindowX; }
-            set
-            {
-                this.MWindowX = value;
-                UpdateProjectionMatrix();
-            }
-        }
+        protected float WindowX;
 
         /// <summary>
         /// The M window y.
         /// </summary>
-        protected float MWindowY;
-        /// <summary>
-        /// Gets or sets the window y.
-        /// </summary>
-        /// <value>The window y.</value>
-        public float WindowY
-        {
-            get{ return this.MWindowY; }
-            set
-            {
-                this.MWindowY = value;
-                UpdateProjectionMatrix();
-            }
-        }
+        protected float WindowY;
 
         /// <summary>
         /// The MZ near.
@@ -215,13 +189,13 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="fov">Fov.</param>
         /// <param name="up">Up.</param>
         internal BaseCamera (string name,
-            Vector3 cameraPosition = default(Vector3),
-            Vector3 currentRotation = default(Vector3), float near = 0.1f, float far = 400.0f,
+            Vector3 position = default(Vector3),
+            Quaternion rotation = default(Quaternion), float near = 0.1f, float far = 400.0f,
             float fov = MathHelper.PiOver2, Vector3 up = default(Vector3))
         {
             Name = name;
-            CameraPosition = cameraPosition;
-            CurrentRotation = currentRotation == default(Vector3) ? Vector3.UnitY : currentRotation;
+            Position = position;
+            Rotation = rotation;
             cameraReference = new Vector3 (0, 0, -1);
             MZNear = near;
             MZFar = far;
@@ -251,139 +225,18 @@ namespace FreezingArcher.Renderer.Scene
         public Matrix ViewMatrix { get; protected set; }
 
         /// <summary>
-        /// Gets or sets the width.
-        /// </summary>
-        /// <value>The width.</value>
-        public int Width { get; set; }
-
-        /// <summary>
-        /// Gets or sets the height.
-        /// </summary>
-        /// <value>The height.</value>
-        public int Height { get; set; }
-
-        /// <summary>
         /// Updates the camera.
         /// </summary>
         protected void UpdateCamera ()
         {
+            cameraLookat = Position + transformedReference;
 
-                float sinx = (float)System.Math.Sin(CurrentRotation.X);
-                float cosx = (float)System.Math.Cos(CurrentRotation.X);
-                float siny = (float)System.Math.Sin(CurrentRotation.Y);
-                float cosy = (float)System.Math.Cos(CurrentRotation.Y);
-                float sinz = (float)System.Math.Sin(CurrentRotation.Z);
-                float cosz = (float)System.Math.Cos(CurrentRotation.Z);
+            ViewMatrix = Matrix.LookAt(Position, cameraLookat, MUp);
 
-                cameraLookat = CameraPosition + transformedReference;
-
-                ViewMatrix = Matrix.LookAt(CameraPosition, cameraLookat, MUp);
-
-//            if (System.Math.Abs(Vector3.Dot(new Vector3(ViewMatrix.Column0.X, ViewMatrix.Column0.Y, ViewMatrix.Column0.Z), CurrentRotation)) > 0.1)
-//            {
-                ViewMatrix *= Matrix.CreateFromQuaternion(new Quaternion(sinx, 0, 0, cosx) *
-                    new Quaternion(0, siny, 0, cosy) *
-                    new Quaternion(0, 0, sinz, cosz));
-//            }
-        }
-
-        /// <summary>
-        /// Moves to.
-        /// </summary>
-        /// <param name="position">Position.</param>
-        public void MoveTo(Vector3 position)
-        {
-            CameraPosition = position;
-            UpdateCamera();
-        }
-
-        /// <summary>
-        /// Rotates the x.
-        /// </summary>
-        /// <param name="rotation">Rotation.</param>
-        public void RotateX (float rotation)
-        {
-//            var tmp = CurrentRotation;
-//            tmp.X += rotation;
-//            CurrentRotation = tmp;
-            if (CurrentRotation.X <= 0.5)
-            {
-//                CurrentRotation += rotation * new Vector3(ViewMatrix.Column2.X < 0 ? ViewMatrix.Column2.X * -1 : ViewMatrix.Column2.X, 0, 0);
-                if (CurrentRotation.X >= -0.5)
-                {
-                    CurrentRotation += rotation * new Vector3(ViewMatrix.Column2.X < 0 ? ViewMatrix.Column2.X * -1 : ViewMatrix.Column2.X, 0, 0);
-                }
-                else
-                {
-                    var tmp = CurrentRotation;
-                    tmp.X = CurrentRotation.X < 0 ? -0.5f : 0.5f;
-                    CurrentRotation = tmp;
-                }
-            }else
-            {
-                var tmp = CurrentRotation;
-                tmp.X = CurrentRotation.X < 0 ? -0.5f : 0.5f;
-                CurrentRotation = tmp;
-            }
-            Logger.Log.AddLogEntry(LogLevel.Debug, "BaseCamera", "{0} {1} {2}", rotation, ViewMatrix.Column2.X, CurrentRotation.X);
-            UpdateCamera ();
-        }
-
-        /// <summary>
-        /// Rotates the y.
-        /// </summary>
-        /// <param name="rotation">Rotation.</param>
-        public void RotateY (float rotation)
-        {
-//            var tmp = CurrentRotation;
-//            tmp += rotation * new Vector3(ViewMatrix.Column2.X, 0, ViewMatrix.Column2.Z);
-            //tmp += CurrentRotation * new Vector3(ViewMatrix.Column2.X, 0, ViewMatrix.Column2.Z);
-            CurrentRotation += rotation * new Vector3(0,ViewMatrix.Column1.Y,0);
-            UpdateCamera ();
-        }
-
-        /// <summary>
-        /// Rotates the z.
-        /// </summary>
-        /// <param name="rotation">Rotation.</param>
-        public void RotateZ (float rotation)
-        {
-//            var tmp = CurrentRotation;
-//            tmp.Z += rotation;
-//            CurrentRotation = tmp;
-            CurrentRotation += rotation * new Vector3(0, 0, ViewMatrix.Column0.Z);
-            UpdateCamera ();
-        }
-            
-
-        /// <summary>
-        /// Moves the x.
-        /// </summary>
-        /// <param name="position">Position.</param>
-        public virtual void MoveX (float position)
-        {
-            CameraPosition += position * new Vector3(ViewMatrix.Column2.X,ViewMatrix.Column2.Y,ViewMatrix.Column2.Z);
-            UpdateCamera ();
-        }
-
-        /// <summary>
-        /// Moves the y.
-        /// </summary>
-        /// <param name="position">Position.</param>
-        public virtual void MoveY (float position)
-        {
-            CameraPosition += position * new Vector3(ViewMatrix.Column1.X,ViewMatrix.Column1.Y,ViewMatrix.Column1.Z);
-            UpdateCamera ();
-        }
-
-        /// <summary>
-        /// Moves the z.
-        /// </summary>
-        /// <param name="position">Position.</param>
-        public virtual void MoveZ (float position)
-        {
-            CameraPosition += position * new Vector3(ViewMatrix.Column0.X,ViewMatrix.Column0.Y,ViewMatrix.Column0.Z);
-            UpdateCamera ();
+            //            if (System.Math.Abs(Vector3.Dot(new Vector3(ViewMatrix.Column0.X, ViewMatrix.Column0.Y, ViewMatrix.Column0.Z), CurrentRotation)) > 0.1)
+            //            {
+            ViewMatrix *= Matrix.CreateFromQuaternion(Rotation);
+            //            }
         }
 
         /// <summary>
@@ -392,7 +245,7 @@ namespace FreezingArcher.Renderer.Scene
         protected void UpdateProjectionMatrix ()
         {
             ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (MFov, 
-                (float)MWindowX / (float)MWindowY, MZNear, MZFar); 
+                (float)WindowX / (float)WindowY, MZNear, MZFar); 
         }
 
         /// <summary>
@@ -401,11 +254,12 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="msg">Message to process</param>
         public virtual void ConsumeMessage (Messaging.Interfaces.IMessage msg)
         {
-            WindowResizeMessage wrm = msg as WindowResizeMessage;
-            if (wrm != null)
+            if (msg.MessageId == (int) MessageId.WindowResizeMessage)
             {
+                WindowResizeMessage wrm = msg as WindowResizeMessage;
                 WindowX = wrm.Width;
                 WindowY = wrm.Height;
+                UpdateProjectionMatrix();
             }
         }
     }

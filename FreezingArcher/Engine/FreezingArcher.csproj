@@ -262,6 +262,13 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\KeyboardControllerSystem.cs" />
     <Compile Include="Content\MouseControllerSystem.cs" />
     <Compile Include="Messaging\TransformMessage.cs" />
+    <Compile Include="Content\ItemLocation.cs" />
+    <Compile Include="Content\ItemUsage.cs" />
+    <Compile Include="Content\AttackClass.cs" />
+    <Compile Include="Content\Protection.cs" />
+    <Compile Include="Content\ItemComponent.cs" />
+    <Compile Include="Content\Inventory.cs" />
+    <Compile Include="DataStructures\Orientation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

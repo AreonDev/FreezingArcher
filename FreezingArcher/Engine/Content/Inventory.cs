@@ -29,7 +29,8 @@ namespace FreezingArcher.Content
 {
     public sealed class Inventory
     {
-        public Inventory(int sizeX, int sizeY) : this(new Vector2i(sizeX, sizeY));
+        public Inventory(int sizeX, int sizeY) : this(new Vector2i(sizeX, sizeY))
+        {}
 
         public Inventory(Vector2i size)
         {

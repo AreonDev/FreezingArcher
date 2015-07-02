@@ -1,5 +1,5 @@
 ﻿//
-//  DefferedShading.cs
+//  CompositorNode.cs
 //
 //  Author:
 //       dboeg <${AuthorEmail}>
@@ -21,32 +21,28 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Collections.Generic;
 
-namespace FreezingArcher.Renderer
+using FreezingArcher.Configuration;
+using FreezingArcher.Renderer;
+using FreezingArcher.DataStructures;
+
+namespace FreezingArcher.Renderer.Compositor
 {
-    public class DefferedShading : Effect
+    public class CompositorNode
     {
-        public DefferedShading(string name, int id) : base (name, id)
+        public int OutputCount{ get; private set;}
+        public string[] OutputNames{ get; private set;}
+        FrameBuffer OutputFrameBuffer { get; private set;}
+
+        public int InputCount{ get; private set;}
+        public string[] InputNames{ get; private set;}
+        FrameBuffer InputFrameBuffer {get; private set;}
+
+        Dictionary<string, Value> Settings;
+
+        public CompositorNode()
         {
-            
-        }
-
-        public bool Init(RendererCore rc)
-        {
-            long ticks = DateTime.Now.Ticks;
-
-            this.VertexProgram = rc.CreateShaderProgramFromFile("DefferedShading_VertexProgram_" + ticks, ShaderType.VertexShader,
-                "lib/Renderer/Effects/DefferedShading/vertex_shader.vs");
-
-            this.PixelProgram = rc.CreateShaderProgramFromFile("DefferedShading_PixelProgram_" + ticks, ShaderType.PixelShader,
-                "lib/Renderer/Effects/DefferedShading/pixel_shader.ps");
-
-            return true;
-        }
-
-        public void Use()
-        {
-            this.BindPipeline();
         }
     }
 }

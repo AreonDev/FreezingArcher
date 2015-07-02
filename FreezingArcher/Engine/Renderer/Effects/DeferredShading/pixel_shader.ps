@@ -1,0 +1,47 @@
+﻿//Struct definition
+struct LightDefinition
+{
+        vec4 LightPosition;
+        vec4 LightDirection;
+        vec4 LightColor;
+};
+
+//Input
+layout(location = 0) in vec2 texcoord; // texture coordinate
+
+//Output
+layout(location = 0) out vec4 resulting_color;
+
+//Sampler textures
+uniform sampler2D TextureNormal;
+uniform sampler2D TextureDiffuse;
+uniform sampler2D TextureSpecular;
+uniform sampler2D TexturePosition;
+
+//Camera Position
+uniform vec3 CameraPosition;
+
+layout(std430, binding = 15) buffer LightBuffer
+{
+        LightDefinition Lights[];       
+}
+
+void main ()
+{
+        vec4 image = texture2D(textureDiffuse, texcoord);
+        vec4 position = texture2D(texturePosition, texcoord);
+        vec4 normal = texture2D(textureNormal,  texcoord);
+
+        //hard coded life
+        vec3 light = vec3(50, 100, 50);
+        vec3 lightDir = light - position.xyz; //?
+
+        normal = normalize(normal);
+        lightDir = normalize(lightDir);
+
+        vec3 eyeDir = normalize(cameraPosition-position.xyz);
+        vec3 vHalfVector = normalize(lightDir.xyz - eyeDir);
+
+        resulting_color = max(dot(normal, lightDir), 0) * image + 
+                pow(max(dot(normal, vHalfVector), 0.0), 100) * 1.5;
+}

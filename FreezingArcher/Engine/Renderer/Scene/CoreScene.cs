@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 using FreezingArcher.Renderer;
 using FreezingArcher.Math;
@@ -107,6 +108,9 @@ namespace FreezingArcher.Renderer.Scene
                     obj.WaitTillInitialized();
                     Objects.Add(obj);
                 }
+
+                if (obj.Priority == -1)
+                    obj.Priority = Objects.Count;
             }
             else
                 Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.AKittenDies, "Scene is not initialized!"); 
@@ -174,6 +178,11 @@ namespace FreezingArcher.Renderer.Scene
             return scnobj;
         }
 
+        public IOrderedEnumerable<SceneObject> GetObjectsSorted()
+        {
+           return Objects.OrderBy(o => o.Priority);
+        }
+
         public Color4 BackgroundColor{ get; set;}
         public string SceneName{ get; set;}
         public CameraManager CameraManager{ get; set;}
@@ -208,6 +217,8 @@ namespace FreezingArcher.Renderer.Scene
             FrameBufferSpecularTexture.Resize(width, height);
 
             FrameBufferDepthStencilTexture.Resize(width, height);
+
+            FrameBufferRenderedImamge.Resize(width, height);
         }
 
         public void Update()
@@ -226,6 +237,8 @@ namespace FreezingArcher.Renderer.Scene
 
                 ObjectsToInit.Clear();
             }*/
+
+            IOrderedEnumerable<SceneObject> sorted = Objects.OrderBy(o => o.Priority);
         }
 
         internal bool InitFromJob(RendererContext rc)
@@ -248,6 +261,9 @@ namespace FreezingArcher.Renderer.Scene
 
             FrameBufferDepthStencilTexture = rc.CreateTextureDepthStencil("CoreSceneFrameBufferDepthStencil_" + ticks,
                 rc.ViewportSize.X, rc.ViewportSize.Y, IntPtr.Zero, false);
+
+            //FrameBufferRenderedImamge = rc.CreateTexture2D("CoreSceneFrameBufferRendererImage_" + , rc.ViewportSize.Y, true,
+            //    IntPtr.Zero, );
 
             FrameBuffer.BeginPrepare();
 

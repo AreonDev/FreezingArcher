@@ -1,5 +1,5 @@
 ﻿//
-//  DefferedShading.cs
+//  BasicCompositor.cs
 //
 //  Author:
 //       dboeg <${AuthorEmail}>
@@ -22,31 +22,22 @@
 //
 using System;
 
-namespace FreezingArcher.Renderer
+using FreezingArcher.DataStructures.Graphs;
+using FreezingArcher.Core;
+
+namespace FreezingArcher.Renderer.Compositor
 {
-    public class DefferedShading : Effect
+    public class BasicCompositor
     {
-        public DefferedShading(string name, int id) : base (name, id)
+        DirectedGraph<CompositorNode> _CompositorGraph;
+
+        public BasicCompositor(ObjectManager objm)
         {
-            
-        }
+            //Hard borken!
+            _CompositorGraph = objm.CreateOrRecycle<DirectedGraph<CompositorNode>>();
+            _CompositorGraph.Init();
 
-        public bool Init(RendererCore rc)
-        {
-            long ticks = DateTime.Now.Ticks;
 
-            this.VertexProgram = rc.CreateShaderProgramFromFile("DefferedShading_VertexProgram_" + ticks, ShaderType.VertexShader,
-                "lib/Renderer/Effects/DefferedShading/vertex_shader.vs");
-
-            this.PixelProgram = rc.CreateShaderProgramFromFile("DefferedShading_PixelProgram_" + ticks, ShaderType.PixelShader,
-                "lib/Renderer/Effects/DefferedShading/pixel_shader.ps");
-
-            return true;
-        }
-
-        public void Use()
-        {
-            this.BindPipeline();
         }
     }
 }

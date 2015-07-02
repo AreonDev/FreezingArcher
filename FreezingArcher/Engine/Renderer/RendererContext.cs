@@ -464,19 +464,21 @@ namespace FreezingArcher.Renderer
                         FrameBuffer.AttachmentUsage.Color3
                     });
 
-                //Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
+                Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
 
                 this.Clear(Scene.BackgroundColor, 1);
 
-                foreach (SceneObject obj in Scene.GetObjects())
+                foreach (SceneObject obj in Scene.GetObjectsSorted())
                 {
                     obj.Update();
 
                     obj.Draw(this);
                 }
 
-                //Scene.FrameBuffer.Unbind();
+                Scene.FrameBuffer.Unbind();
             }
+
+            //Now.... use Funny stupid Deferred Shading shader
 
             //Sprite spr = new Sprite();
             //spr.Init(Scene.FrameBufferColorTexture);

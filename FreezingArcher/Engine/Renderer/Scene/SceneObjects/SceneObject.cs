@@ -35,6 +35,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         private Quaternion m_Rotation;
         private Vector3 m_Scaling;
 
+        public int Priority{ get; set;}
+
         public Vector3 Position 
         {
             get
@@ -135,6 +137,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             Position = Vector3.Zero;
             Rotation = Quaternion.Identity;
             Scaling = new Vector3(1.0f, 1.0f, 1.0f);
+
+            Priority = -1;
         }
     }
 }

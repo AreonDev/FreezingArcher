@@ -66,44 +66,11 @@ void main()
         else
                 normalmat = transpose(inverse(ViewMatrix * WorldMatrix));
 
-        /*
         //Vertex position in view space (with model transformations)
         vpos = (ViewMatrix * WorldMatrix * vec4(InPosition, 1.0)).xyz;
 
         //Tangent space vectors in view space (with model transformations)
         normal = (normalmat * vec4(InNormal, 1.0)).xyz;
         tangent = (normalmat * vec4(InTangent, 1.0)).xyz;
-        binormal = (normalmat * vec4(InBiNormal, 1.0)).xyz;*/
-
-        vec3 n = normalize(vec3(normalmat * vec4(InNormal, 0.0)));
-        vec3 t = normalize(vec3(normalmat * vec4(InTangent, 0.0)));
-        vec3 b = normalize(cross(n, t));
-
-        vec3 vVertex;
-
-        if(InstancedDrawing == 1)
-                vVertex = vec3(ViewMatrix * WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0));
-        else
-                vVertex = vec3(ViewMatrix * WorldMatrix * vec4(InPosition, 1.0));
-        
-        view_position = vVertex;
-
-        vec3 tmpVec = LightPosition.xyz - vVertex;
-
-        vpos.x = dot(tmpVec, t);
-        vpos.y = dot(tmpVec, b);
-        vpos.z = dot(tmpVec, n);
-
-        tmpVec = -vVertex;
-        hpos.x = dot(tmpVec, t);
-        hpos.y = dot(tmpVec, b) + 1.0;
-        hpos.z = dot(tmpVec, n);
-        hpos.w = 0.0;
-
-        vec3 world;
-
-        if(InstancedDrawing == 1)
-                world = vec3(WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0));
-        else
-                world = vec3(WorldMatrix * vec4(InPosition, 1.0));
+        binormal = (normalmat * vec4(InBiNormal, 1.0)).xyz;
 }

@@ -306,9 +306,9 @@ namespace FreezingArcher.Game.Maze
             Vector3 scale = new Vector3 (4, 4, 4);
 
             var startNode = graph.Nodes.FirstOrDefault (n => n.Data.IsSpawn);
-            if (startNode != null)
-                scene.CameraManager.ActiveCamera.MoveTo (new Vector3 (startNode.Data.Position.X * scale.X * 2 + xOffs, 4f, 
-                    startNode.Data.Position.Y * scale.Y * 2 + yOffs));
+            //if (startNode != null)
+                //scene.CameraManager.ActiveCamera.MoveTo (new Vector3 (startNode.Data.Position.X * scale.X * 2 + xOffs, 4f, 
+                //    startNode.Data.Position.Y * scale.Y * 2 + yOffs));
 
             ModelSceneObject model;
             TransformComponent transform;

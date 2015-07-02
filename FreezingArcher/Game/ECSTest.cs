@@ -41,10 +41,14 @@ namespace FreezingArcher.Game
         /// <param name="scene">Scene.</param>
         public ECSTest (MessageManager msgmnr, CoreScene scene)
         {
-            scene.CameraManager.AddCam (
-                new FirstPersonCamera ("Player", msgmnr, default(Vector3), default(Vector3), 0.1f, 200));
-            BaseCamera test = scene.CameraManager.GetCam ("Player");
-            scene.CameraManager.ActiveCamera = test;
+            player = EntityFactory.Instance.CreateWith ("player",
+                new[] { typeof (TransformComponent) },
+                new[] { typeof (MovementSystem), typeof (KeyboardControllerSystem), typeof (MouseControllerSystem),
+                    typeof (ModelSystem) });
+
+            //scene.CameraManager.AddCam (new FirstPersonCamera (player, msgmnr, default(Vector3), default(Quaternion)),"Player");
+            scene.CameraManager.AddCam (new BaseCamera (player, msgmnr, default(Vector3), default(Quaternion)), "test");
+
 
             //Skybox
             skybox = EntityFactory.Instance.CreateWith ("skybox", systems: new[] { typeof(ModelSystem) });
@@ -55,11 +59,6 @@ namespace FreezingArcher.Game
             skyboxModel.Model.EnableDepthTest = false;
             skyboxModel.Model.EnableLighting = false;
             skybox.GetComponent<ModelComponent> ().Model = skyboxModel;
-
-            player = EntityFactory.Instance.CreateWith ("player",
-                new[] { typeof (TransformComponent) },
-                new[] { typeof (MovementSystem), typeof (KeyboardControllerSystem), typeof (MouseControllerSystem),
-                typeof (ModelSystem) });
 
             ModelSceneObject cube = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
             scene.AddObject(cube);

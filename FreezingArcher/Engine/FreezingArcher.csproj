@@ -95,9 +95,7 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Package>xbuild12</Package>
-    </Reference>
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
@@ -254,9 +252,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\PhysicsComponent.cs" />
     <Compile Include="Content\PhysicsSystem.cs" />
     <Compile Include="Renderer\Scene\BaseCamera.cs" />
-    <Compile Include="Renderer\Scene\FirstPersonCamera.cs" />
-    <Compile Include="Renderer\Scene\FreeCamera.cs" />
-    <Compile Include="Renderer\Scene\ThirdPersonCamera.cs" />
     <Compile Include="Content\MovementSystem.cs" />
     <Compile Include="Messaging\MoveStraightMessage.cs" />
     <Compile Include="Messaging\MoveSidewardsMessage.cs" />

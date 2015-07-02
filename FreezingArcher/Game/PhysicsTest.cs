@@ -87,7 +87,7 @@ namespace FreezingArcher.Game
             groundRigidBody.Skin.Add(new MeshPart(groundModel.Model.Meshes [0].Vertices, groundModel.Model.Meshes [0].Indices));
             groundRigidBody.SetWorld (new Vector3 (0, 10, 0));
 
-            app.RendererContext.Scene.CameraManager.ActiveCamera.MoveTo(new Vector3(-1, 1, 0));
+            //app.RendererContext.Scene.CameraManager.ActiveCamera.MoveTo(new Vector3(-1, 1, 0));
 
             app.Game.CurrentGameState.PhysicsManager.Add(groundRigidBody);
             app.Game.CurrentGameState.PhysicsManager.Add(wallRigidBody);

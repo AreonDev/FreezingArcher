@@ -386,7 +386,7 @@ namespace FreezingArcher.Renderer
                                 scene.CameraManager.ActiveCamera.ProjectionMatrix);
 
                             mat.OptionalEffect.VertexProgram.SetUniform(mat.OptionalEffect.VertexProgram.GetUniformLocation("EyePosition"), 
-                                scene.CameraManager.ActiveCamera.CameraPosition);
+                                scene.CameraManager.ActiveCamera.Position);
                         }
                     }
 

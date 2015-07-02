@@ -28,6 +28,7 @@ using FreezingArcher.Core;
 using System.Linq;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
+using System.IO;
 
 namespace FreezingArcher.Renderer.Scene
 {
@@ -40,6 +41,17 @@ namespace FreezingArcher.Renderer.Scene
         /// The cam tree.
         /// </summary>
         internal Tree<Pair<string, BaseCamera>> CamTree;
+        internal Tree<Pair<string, BaseCamera>> ActiveCameraNode { get; set;}
+        internal List<string> TouchedCameras;
+
+        public BaseCamera ActiveCamera
+        {
+            get
+            {
+                return ActiveCameraNode.Data.B;
+            }
+        }
+            
 
         /// <summary>
         /// Gets the valid messages which can be used in the ConsumeMessage method
@@ -53,28 +65,12 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="msgmngr">Msgmngr.</param>
         /// <param name="name">Name.</param>
         /// <param name="cam">Cam.</param>
-        public CameraManager (MessageManager msgmngr, string name = "root", BaseCamera cam = null)
+        public CameraManager (MessageManager msgmngr, string name = "firstCam", BaseCamera cam = null)
         {
-            CamTree = new Tree<Pair<string, BaseCamera>> (new Pair<string, BaseCamera>(name, cam));
-            CamTree.AddChild(new Pair<string, BaseCamera>("ActiveCam", null));
+            CamTree = new Tree<Pair<string, BaseCamera>> (new Pair<string, BaseCamera>("root", null));
+            ActiveCameraNode = new Tree<Pair<string, BaseCamera>> (new Pair<string, BaseCamera>(name, cam));
             ValidMessages = new int[] { (int)MessageId.Input };
             msgmngr += this;
-        }
-
-        /// <summary>
-        /// Gets or sets the active camera.
-        /// </summary>
-        /// <value>The active camera.</value>
-        public BaseCamera ActiveCamera
-        {
-            get
-            {
-                return GetCam("ActiveCam");
-            }
-            set
-            {
-                SetCam("ActiveCam", value);
-            }
         }
 
         /// <summary>
@@ -84,7 +80,6 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="cam">Cam.</param>
         public void SetCam(string camName, BaseCamera cam){
             var test = ((IEnumerable<Tree<Pair<string, BaseCamera>>>) CamTree.LevelOrder).First(i => i.Data.A == camName).Data;
-            test.B = cam;
             ((IEnumerable<Tree<Pair<string, BaseCamera>>>) CamTree.LevelOrder).First(i => i.Data.A == camName).Data.B = cam;
         }
 
@@ -101,10 +96,10 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         /// <param name="cam">Cam.</param>
         /// <param name="groupID">Group I.</param>
-        public void AddCam(BaseCamera cam, string groupID="root")
+        public void AddCam(BaseCamera cam, string name, string groupID="root")
         {
             ((IEnumerable<Tree<Pair<string, BaseCamera>>>) CamTree.LevelOrder).First(i => i.Data.A == groupID)
-                .AddChild (new Pair<string, BaseCamera>(cam.Name, cam));
+                .AddChild (new Pair<string, BaseCamera>(name, cam));
         }
 
         /// <summary>
@@ -120,20 +115,21 @@ namespace FreezingArcher.Renderer.Scene
         /// Toggles the camera.
         /// </summary>
         /// <returns>The camera.</returns>
-        public BaseCamera ToggleCamera(){
-            Tree<Pair<string, BaseCamera>> TmpNode = ((IEnumerable<Tree<Pair<string, BaseCamera>>>) CamTree.LevelOrder)
-                .First(i => i.Data.A == ActiveCamera.Name);
+        public void ToggleCamera(){
+            if(TouchedCameras == null) TouchedCameras = new List<string>();
 
-            var TmpGroup = TmpNode.Parent;
-
-            foreach(var node in (IEnumerable<Tree<Pair<string, BaseCamera>>>) TmpGroup.DepthFirst)
+            foreach(var node in (IEnumerable<Tree<Pair<string, BaseCamera>>>) CamTree.DepthFirst)
                 {
-                if(node != TmpNode && null != node.Data.B){
-                    ActiveCamera = node.Data.B;
-                    return node.Data.B;
+                if (TouchedCameras.Count != 0 && TouchedCameras.Contains(node.Data.A))
+                    continue;
+                if(null != node.Data.B){
+                    TouchedCameras.Add(node.Data.A);
+                    ActiveCameraNode = node;
+                    return;
                 }
             }
-            return TmpNode.Data.B;
+            TouchedCameras.Clear();
+            ToggleCamera();
         }
 
         /// <summary>

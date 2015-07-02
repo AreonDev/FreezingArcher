@@ -54,11 +54,11 @@ namespace FreezingArcher.Game
             mazeGenerator = new MazeGenerator (objmnr);
             this.scene = scene;
 
-            scene.CameraManager.AddCam (new FirstPersonCamera ("Player", msgmnr, default(Vector3), default(Vector3), 0.1f, 200));
-            scene.CameraManager.AddCam (new FreeCamera ("Overview", msgmnr, default(Vector3), default(Vector3), 0.1f, 1000.0f));
-//            scene.CameraManager.AddCam (new ThirdPersonCamera("third",msgmnr, new Vector3 (1,1,1),default(Vector3), default(Vector3)));
-            BaseCamera test = scene.CameraManager.GetCam ("Player");
-            scene.CameraManager.ActiveCamera = test;
+            CamMan =new CameraManager(msgmnr, "player", new FirstPersonCamera (player, msgmnr, default(Vector3), default(Quaternion)));
+            CamMan.AddCam (new FreeCamera (msgmnr, default(Vector3), default(Quaternion)), "overview");
+            CamMan.AddCam (new ThirdPersonCamera(msgmnr, new Vector3 (1,1,1),default(Vector3), default(Quaternion)), "test");
+//            BaseCamera test = scene.CameraManager.GetCam ("Player");
+            //scene.CameraManager.ActiveCamera = test;
 
             //Skybox
             skybox = EntityFactory.Instance.CreateWith ("skybox", systems: new[] { typeof(ModelSystem) });
@@ -88,6 +88,8 @@ namespace FreezingArcher.Game
         Entity skybox;
 
         CoreScene scene;
+
+        CameraManager CamMan;
 
         #region IMessageConsumer implementation
 
@@ -134,7 +136,7 @@ namespace FreezingArcher.Game
 
             if (msg.MessageId == (int)MessageId.Update)
             {
-                player.GetComponent<TransformComponent> ().Position = scene.CameraManager.ActiveCamera.CameraPosition;
+                player.GetComponent<TransformComponent> ().Position = scene.CameraManager.ActiveCamera.Position;
             }
 
             var um = msg as UpdateMessage;

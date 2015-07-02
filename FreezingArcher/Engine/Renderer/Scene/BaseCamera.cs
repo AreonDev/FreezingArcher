@@ -28,6 +28,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging.Interfaces;
 using Pencil.Gaming.Graphics;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Renderer.Scene
 {
@@ -50,25 +51,46 @@ namespace FreezingArcher.Renderer.Scene
     /// <summary>
     /// My first freezing archer cam.
     /// </summary>
-    abstract public class BaseCamera : IMessageConsumer
+    public class BaseCamera : IMessageConsumer
     {
         /// <summary>
         /// Gets the valid messages which can be used in the ConsumeMessage method
         /// </summary>
         /// <value>The valid messages</value>
         public int[] ValidMessages { get; protected set; }
+        public System.Type[] NeededComponents { get; protected set; }
+
+        protected Entity Entity;
 
         /// <summary>
         /// Gets or sets the camera position.
         /// </summary>
         /// <value>The camera position.</value>
-        protected Vector3 Position;
+        protected Vector3 MPosition;
+        public Vector3 Position
+        {
+            get{ return this.MPosition; }
+            set
+            {
+                this.MPosition = value;
+                UpdateCamera();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the current rotation.
         /// </summary>
         /// <value>The current rotation.</value>
-        protected Quaternion Rotation;
+        protected Quaternion MRotation;
+        public Quaternion Rotation
+        {
+            get{ return this.MRotation; }
+            set
+            {
+                this.MRotation = value;
+                UpdateCamera();
+            }
+        }
 
         /// <summary>
         /// The M window x.
@@ -171,14 +193,6 @@ namespace FreezingArcher.Renderer.Scene
         Vector3 cameraLookat;
 
         /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
-        /// <value>The name.</value>
-        public string Name { get; set; }
-
-        //const Vector3 defaultUp = Vector3.UnitY;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Renderer.Scene.BaseCamera"/> class.
         /// </summary>
         /// <param name="name">Name.</param>
@@ -188,28 +202,28 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="far">Far.</param>
         /// <param name="fov">Fov.</param>
         /// <param name="up">Up.</param>
-        internal BaseCamera (string name,
-            Vector3 position = default(Vector3),
+        public BaseCamera (Entity entity, MessageManager mssgmngr, Vector3 position = default(Vector3),
             Quaternion rotation = default(Quaternion), float near = 0.1f, float far = 400.0f,
             float fov = MathHelper.PiOver2, Vector3 up = default(Vector3))
         {
-            Name = name;
-            Position = position;
-            Rotation = rotation;
+            MPosition = position;
+            MRotation = rotation;
             cameraReference = new Vector3 (0, 0, -1);
             MZNear = near;
             MZFar = far;
             MFov = fov;
             MUp = up != Vector3.Zero ? up : Vector3.UnitY;
-
-
+            ValidMessages = new int[] { (int)MessageId.PositionChangedMessage, (int)MessageId.RotationChangedMessage };
+            NeededComponents = new[] { typeof(TransformComponent) };
+            mssgmngr += this;
+            Entity = entity;
 
             ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (MFov,
                 (float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y,
                 MZNear, MZFar); 
             
             UpdateCamera ();
-            Logger.Log.AddLogEntry (LogLevel.Debug, "BaseCamera", Status.Computing, "Creating new camera {0}", Name);
+            Logger.Log.AddLogEntry (LogLevel.Debug, "BaseCamera", Status.Computing, "Creating new camera {0}");
         }
 
         /// <summary>
@@ -229,14 +243,11 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         protected void UpdateCamera ()
         {
-            cameraLookat = Position + transformedReference;
+            //cameraLookat = MPosition + transformedReference;
 
-            ViewMatrix = Matrix.LookAt(Position, cameraLookat, MUp);
+            ViewMatrix = Matrix.LookAt(MPosition, Vector3.Transform(Vector3.UnitX, MRotation), MUp);
 
-            //            if (System.Math.Abs(Vector3.Dot(new Vector3(ViewMatrix.Column0.X, ViewMatrix.Column0.Y, ViewMatrix.Column0.Z), CurrentRotation)) > 0.1)
-            //            {
-            ViewMatrix *= Matrix.CreateFromQuaternion(Rotation);
-            //            }
+            //ViewMatrix *= Matrix.CreateFromQuaternion(MRotation);
         }
 
         /// <summary>
@@ -254,6 +265,22 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="msg">Message to process</param>
         public virtual void ConsumeMessage (Messaging.Interfaces.IMessage msg)
         {
+            TransformComponent tc = Entity.GetComponent<TransformComponent>();
+
+            if (msg.MessageId == (int)MessageId.PositionChangedMessage)
+            {
+                PositionChangedMessage pcm = msg as PositionChangedMessage;
+                if (pcm.Entity.Name == Entity.Name)
+                    Position = tc.Position;
+            }
+
+            if (msg.MessageId == (int)MessageId.RotationChangedMessage)
+            {
+                RotationChangedMessage rcm = msg as RotationChangedMessage;
+                if (rcm.Entity.Name == Entity.Name)
+                    Rotation = tc.Rotation;
+            }
+
             if (msg.MessageId == (int) MessageId.WindowResizeMessage)
             {
                 WindowResizeMessage wrm = msg as WindowResizeMessage;
@@ -261,6 +288,7 @@ namespace FreezingArcher.Renderer.Scene
                 WindowY = wrm.Height;
                 UpdateProjectionMatrix();
             }
+
         }
     }
 }

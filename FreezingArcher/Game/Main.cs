@@ -58,6 +58,8 @@ namespace FreezingArcher.Game
                 //new MazeTest(msgmnr, objmnr, rc.Scene, game);
                 new ECSTest(msgmnr, rc.Scene);
                 //new PhysicsTest(Application.Instance);
+
+                new InventoryTest();
             }
 
             Application.Instance.Run ();

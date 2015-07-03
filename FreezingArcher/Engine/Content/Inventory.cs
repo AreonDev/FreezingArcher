@@ -35,23 +35,37 @@ namespace FreezingArcher.Content
         public Inventory(Vector2i size)
         {
             Size = size;
-            Storage = new int?[Size.X, Size.Y];
+            storage = new int?[Size.X, Size.Y];
         }
 
         public Vector2i Size { get; private set; }
 
-        public int?[,] Storage { get; private set; }
+        readonly int?[,] storage;
 
         SortedDictionary<int, ItemComponent> items = new SortedDictionary<int, ItemComponent>();
+
+        public ItemComponent GetItemAt(Vector2i position)
+        {
+            return GetItemAt(position.X, position.Y);
+        }
+
+        public ItemComponent GetItemAt(int positionX, int positionY)
+        {
+            ItemComponent res = null;
+            var id = storage[positionX, positionY];
+            if (id != null)
+                items.TryGetValue(id.Value, out res);
+            return res;
+        }
 
         public bool Insert(ItemComponent item)
         {
             bool result = false;
             Orientation orientation = Orientation.Horizontal;
             int x = 0, y = 0;
-            for (; x < Storage.GetLength(0); x++)
+            for (; x < storage.GetLength(0); x++)
             {
-                for (; y < Storage.GetLength(1); y++)
+                for (; y < storage.GetLength(1); y++)
                 {
                     if (fits(new Vector2i(x, y), item.Size))
                     {
@@ -74,14 +88,14 @@ namespace FreezingArcher.Content
 
         public bool Insert(ItemComponent item, Vector2i position, Orientation orientation)
         {
-            var pos = orientation == Orientation.Vertical ? new Vector2i(position.Y, position.X) : position;
-            if (fits(pos, item.Size))
+            var size = orientation == Orientation.Vertical ? new Vector2i(item.Size.X, item.Size.Y) : item.Size;
+            if (fits(position, size))
             {
-                for (int i = 0; i < Size.X; i++)
+                for (int i = 0; i < size.X; i++)
                 {
-                    for (int k = 0; k < Size.Y; k++)
+                    for (int k = 0; k < size.Y; k++)
                     {
-                        Storage[pos.X + i, pos.Y + k] = item.GetHashCode();
+                        storage[position.X + i, position.Y + k] = item.GetHashCode();
                     }
                 }
 
@@ -98,7 +112,7 @@ namespace FreezingArcher.Content
             {
                 for (int k = 0; k < size.Y; k++)
                 {
-                    if (Storage[position.X + i, position.Y + k] != null)
+                    if (storage[position.X + i, position.Y + k] != null)
                         return false;
                 }
             }

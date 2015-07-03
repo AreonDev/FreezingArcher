@@ -44,7 +44,7 @@ namespace FreezingArcher.Content
 
         #endregion
 
-        protected Entity Entity;
+        public Entity Entity { get; private set; }
 
         /// <summary>
         /// Initialize this component. Within this method all properties may be reseted and reloaded from the attribute
@@ -68,7 +68,8 @@ namespace FreezingArcher.Content
 
             foreach (var prop in props)
             {
-                prop.SetValue(this, t.GetField("Default" + prop.Name).GetValue(this));
+                if (prop.Name != "Entity")
+                    prop.SetValue(this, t.GetField("Default" + prop.Name).GetValue(this));
             }
 
             // set blueprint based default parameters for fields and properties

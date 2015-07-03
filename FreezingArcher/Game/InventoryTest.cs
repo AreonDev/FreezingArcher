@@ -106,16 +106,16 @@ namespace FreezingArcher.Game
             inv.Insert(item8comp);
             inv.Insert(item9comp);
 
-            PrintInventory(inv);
+            PrintInventory("Filled inventory:", inv);
 
             inv.TakeOut(3, 2);
 
-            PrintInventory(inv);
+            PrintInventory("Remove test:", inv);
         }
 
-        public void PrintInventory(Inventory inv)
+        private void PrintInventory(string message, Inventory inv)
         {
-            string s = "";
+            string s = message;
             for (int i = 0; i < inv.Size.Y; i++)
             {
                 s += "\n";

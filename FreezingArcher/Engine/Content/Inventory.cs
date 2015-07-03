@@ -24,6 +24,7 @@ using System;
 using FreezingArcher.Math;
 using FreezingArcher.DataStructures;
 using System.Collections.Generic;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -63,9 +64,10 @@ namespace FreezingArcher.Content
             bool result = false;
             Orientation orientation = Orientation.Horizontal;
             int x = 0, y = 0;
-            for (; x < storage.GetLength(0); x++)
+            for (; y < storage.GetLength(0); y++)
             {
-                for (; y < storage.GetLength(1); y++)
+                x = 0;
+                for (; x < storage.GetLength(1); x++)
                 {
                     if (fits(new Vector2i(x, y), item.Size))
                     {
@@ -73,7 +75,7 @@ namespace FreezingArcher.Content
                         orientation = Orientation.Horizontal;
                         break;
                     }
-                    if (fits(new Vector2i(y, x), item.Size))
+                    if (fits(new Vector2i(x, y), item.Size.Yx))
                     {
                         result = true;
                         orientation = Orientation.Vertical;
@@ -83,12 +85,12 @@ namespace FreezingArcher.Content
                 if (result)
                     break;
             }
-            return Insert(item, new Vector2i(x, y), orientation);
+            return result && Insert(item, new Vector2i(x, y), orientation);
         }
 
         public bool Insert(ItemComponent item, Vector2i position, Orientation orientation)
         {
-            var size = orientation == Orientation.Vertical ? new Vector2i(item.Size.X, item.Size.Y) : item.Size;
+            var size = orientation == Orientation.Vertical ? item.Size.Yx : item.Size;
             if (fits(position, size))
             {
                 for (int i = 0; i < size.X; i++)
@@ -103,7 +105,59 @@ namespace FreezingArcher.Content
 
                 return true;
             }
+            else
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, "Inventory",
+                    "Failed to insert inventory item '{0}' at position <{1},{2}> - position already in use!",
+                    item.Entity.Name, position.X, position.Y);
+            }
             return false;
+        }
+
+        public ItemComponent TakeOut(Vector2i position)
+        {
+            return TakeOut(position.X, position.Y);
+        }
+
+        public ItemComponent TakeOut(int positionX, int positionY)
+        {
+            var id = storage[positionX, positionY];
+
+            if (id == null)
+                return null;
+
+            int x = positionX, y = positionY;
+
+            storage[x, y] = null;
+
+            while (x - 1 >= 0 && storage[x - 1, y] == id)
+            {
+                x--;
+                while (y - 1 >= 0 && storage[x, y - 1] == id)
+                {
+                    y--;
+                    storage[x, y] = null;
+                }
+            }
+
+            x = positionX;
+            y = positionY;
+
+            while (x + 1 < Size.X && storage[x + 1, y] == id)
+            {
+                x++;
+                while (y + 1 < Size.Y && storage[x, y + 1] == id)
+                {
+                    y++;
+                    storage[x, y] = null;
+                }
+            }
+
+            ItemComponent item;
+            items.TryGetValue(id.Value, out item);
+            items.Remove(id.Value);
+
+            return item;
         }
 
         private bool fits(Vector2i position, Vector2i size)
@@ -112,7 +166,8 @@ namespace FreezingArcher.Content
             {
                 for (int k = 0; k < size.Y; k++)
                 {
-                    if (storage[position.X + i, position.Y + k] != null)
+                    if (position.X + i >= Size.X || position.Y + k >= Size.Y ||
+                        storage[position.X + i, position.Y + k] != null)
                         return false;
                 }
             }

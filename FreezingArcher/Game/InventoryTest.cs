@@ -60,17 +60,68 @@ namespace FreezingArcher.Game
             item2comp.ThrowPower = 1f;
             item2comp.Usage = 0;
 
-            Inventory inv = new Inventory(10, 20);
-            inv.Insert(item1comp, new Vector2i(0, 3), Orientation.Horizontal);
-            inv.Insert(item2comp);
+            Entity item3 = EntityFactory.Instance.CreateWith("C", new[] { typeof(ItemComponent) });
+            var item3comp = item3.GetComponent<ItemComponent>();
+            item3comp.Location = ItemLocation.Inventory;
+            item3comp.Size = new Vector2i(2, 3);
 
+            Entity item4 = EntityFactory.Instance.CreateWith("D", new[] { typeof(ItemComponent) });
+            var item4comp = item4.GetComponent<ItemComponent>();
+            item4comp.Location = ItemLocation.Inventory;
+            item4comp.Size = new Vector2i(1, 3);
+
+            Entity item5 = EntityFactory.Instance.CreateWith("E", new[] { typeof(ItemComponent) });
+            var item5comp = item5.GetComponent<ItemComponent>();
+            item5comp.Location = ItemLocation.Inventory;
+            item5comp.Size = new Vector2i(1, 1);
+
+            Entity item6 = EntityFactory.Instance.CreateWith("F", new[] { typeof(ItemComponent) });
+            var item6comp = item6.GetComponent<ItemComponent>();
+            item6comp.Location = ItemLocation.Inventory;
+            item6comp.Size = new Vector2i(1, 1);
+
+            Entity item7 = EntityFactory.Instance.CreateWith("G", new[] { typeof(ItemComponent) });
+            var item7comp = item7.GetComponent<ItemComponent>();
+            item7comp.Location = ItemLocation.Inventory;
+            item7comp.Size = new Vector2i(2, 1);
+
+            Entity item8 = EntityFactory.Instance.CreateWith("H", new[] { typeof(ItemComponent) });
+            var item8comp = item8.GetComponent<ItemComponent>();
+            item8comp.Location = ItemLocation.Inventory;
+            item8comp.Size = new Vector2i(1, 3);
+
+            Entity item9 = EntityFactory.Instance.CreateWith("I", new[] { typeof(ItemComponent) });
+            var item9comp = item9.GetComponent<ItemComponent>();
+            item9comp.Location = ItemLocation.Inventory;
+            item9comp.Size = new Vector2i(1, 2);
+
+            Inventory inv = new Inventory(5, 5);
+            inv.Insert(item1comp);
+            inv.Insert(item3comp);
+            inv.Insert(item4comp);
+            inv.Insert(item2comp);
+            inv.Insert(item5comp);
+            inv.Insert(item6comp);
+            inv.Insert(item7comp);
+            inv.Insert(item8comp);
+            inv.Insert(item9comp);
+
+            PrintInventory(inv);
+
+            inv.TakeOut(3, 2);
+
+            PrintInventory(inv);
+        }
+
+        public void PrintInventory(Inventory inv)
+        {
             string s = "";
-            for (int i = 0; i < inv.Size.X; i++)
+            for (int i = 0; i < inv.Size.Y; i++)
             {
                 s += "\n";
-                for (int k = 0; k < inv.Size.Y; k++)
+                for (int k = 0; k < inv.Size.X; k++)
                 {
-                    var item = inv.GetItemAt(i, k);
+                    var item = inv.GetItemAt(k, i);
                     if (item != null)
                     {
                         s += item.Entity.Name;

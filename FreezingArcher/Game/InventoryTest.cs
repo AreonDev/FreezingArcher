@@ -23,7 +23,6 @@
 using System;
 using FreezingArcher.Content;
 using FreezingArcher.Math;
-using FreezingArcher.DataStructures;
 using FreezingArcher.Output;
 
 namespace FreezingArcher.Game
@@ -37,7 +36,7 @@ namespace FreezingArcher.Game
             item1comp.AttackClasses = AttackClass.Enemy;
             item1comp.AttackStrength = 2.5f;
             item1comp.HealthDelta = 0f;
-            item1comp.ItemUsages = ItemUsage.Throwable | ItemUsage.Usable;
+            item1comp.ItemUsages = ItemUsage.Throwable | ItemUsage.Hitable;
             item1comp.Location = ItemLocation.Inventory;
             item1comp.Protection.Cold = 0.1f;
             item1comp.Protection.Heat = 0.3f;
@@ -95,7 +94,7 @@ namespace FreezingArcher.Game
             item9comp.Location = ItemLocation.Inventory;
             item9comp.Size = new Vector2i(1, 2);
 
-            Inventory inv = new Inventory(5, 5);
+            Inventory inv = new Inventory(5, 5, 9);
             inv.Insert(item1comp);
             inv.Insert(item3comp);
             inv.Insert(item4comp);

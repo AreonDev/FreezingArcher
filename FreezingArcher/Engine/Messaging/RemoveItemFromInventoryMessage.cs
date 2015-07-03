@@ -1,5 +1,5 @@
 ﻿//
-//  ItemUsage.cs
+//  RemoveItemFromInventoryMessage.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -22,29 +22,13 @@
 //
 using System;
 
-namespace FreezingArcher.Content
+namespace FreezingArcher.Messaging
 {
-    /// <summary>
-    /// This enum describes the usages an item can handle.
-    /// </summary>
-    [Flags]
-    public enum ItemUsage
+    public class RemoveItemFromInventoryMessage
     {
-        /// <summary>
-        /// The item has no effect.
-        /// </summary>
-        Placebo = 0,
-        /// <summary>
-        /// The item is eatable.
-        /// </summary>
-        Eatable = 1,
-        /// <summary>
-        /// The item is throwable.
-        /// </summary>
-        Throwable = 2,
-        /// <summary>
-        /// The item is usable.
-        /// </summary>
-        Hitable = 4
+        public RemoveItemFromInventoryMessage()
+        {
+        }
     }
 }
+

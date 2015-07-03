@@ -269,6 +269,13 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\ItemComponent.cs" />
     <Compile Include="Content\Inventory.cs" />
     <Compile Include="DataStructures\Orientation.cs" />
+    <Compile Include="Content\ItemSystem.cs" />
+    <Compile Include="Messaging\ItemUseMessage.cs" />
+    <Compile Include="Messaging\ItemCollectedMessage.cs" />
+    <Compile Include="Messaging\RemoveItemFromInventoryMessage.cs" />
+    <Compile Include="Messaging\ItemDroppedMessage.cs" />
+    <Compile Include="Messaging\AddItemToInventoryBarMessage.cs" />
+    <Compile Include="Messaging\SetActiveInventoryBarItemMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

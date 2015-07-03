@@ -115,6 +115,10 @@ namespace FreezingArcher.Messaging
         /// Occurs when a left or right movement orthogonally to the view direction of an entity is requested on a
         /// MovementSystem.
         /// </summary>
-        MoveSidewardsMessage
+        MoveSidewardsMessage,
+        /// <summary>
+        /// Occurs when an item is used.
+        /// </summary>
+        ItemUseMessage = 40,
     }
 }

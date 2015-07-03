@@ -30,13 +30,22 @@ namespace FreezingArcher.Content
 {
     public sealed class Inventory
     {
-        public Inventory(int sizeX, int sizeY) : this(new Vector2i(sizeX, sizeY))
+        public Inventory(int sizeX, int sizeY, byte barSize) : this(new Vector2i(sizeX, sizeY), barSize)
         {}
 
-        public Inventory(Vector2i size)
+        public Inventory(Vector2i size, byte barSize)
         {
             Size = size;
             storage = new int?[Size.X, Size.Y];
+
+            if (barSize < 1 || barSize > 10)
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, "Inventory",
+                    "Inventory bar size must be between 1 and 10 but is {0}!", barSize);
+                return;
+            }
+
+            inventoryBar = new int?[barSize];
         }
 
         public Vector2i Size { get; private set; }
@@ -44,6 +53,103 @@ namespace FreezingArcher.Content
         readonly int?[,] storage;
 
         SortedDictionary<int, ItemComponent> items = new SortedDictionary<int, ItemComponent>();
+
+        int?[] inventoryBar;
+
+        byte activeBarPosition;
+
+        public bool PutInBar(int invPositionX, int invPositionY, byte barPosition)
+        {
+            if (barPosition > 0 && barPosition < inventoryBar.Length &&
+                invPositionX > 0 && invPositionX < storage.GetLength(0) &&
+                invPositionY > 0 && invPositionY < storage.GetLength(1))
+            {
+                inventoryBar[barPosition] = storage[invPositionX, invPositionY];
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool PutInBar(Vector2i invPosition, byte barPosition)
+        {
+            return PutInBar(invPosition.X, invPosition.Y, barPosition);
+        }
+
+        public bool PutInBar(int invPositionX, int invPositionY)
+        {
+            byte barPosition = 0;
+
+            while (inventoryBar[barPosition] != null && barPosition < inventoryBar.Length)
+                barPosition++;
+
+            if (barPosition >= inventoryBar.Length)
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, "Inventory",
+                    "Inventory bar is full. Cannot add new item to inventory bar!");
+                return false;
+            }
+
+            return PutInBar(invPositionX, invPositionY, barPosition);
+        }
+
+        public bool PutInBar(Vector2i position)
+        {
+            return PutInBar(position.X, position.Y);
+        }
+
+        public ItemComponent GetBarItemAt(byte position)
+        {
+            if (position < 0 || position >= inventoryBar.Length)
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, "Inventory",
+                    "The given inventory bar position '{0}' is out of range!", position);
+                return null;
+            }
+
+            var id = inventoryBar[position];
+            ItemComponent item;
+            items.TryGetValue(id.Value, out item);
+            return item;
+        }
+
+        public bool SetActiveBarItem(byte position)
+        {
+            if (position < 0 || position >= inventoryBar.Length)
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, "Inventory",
+                    "The given inventory bar position '{0}' is out of range!", position);
+                return false;
+            }
+
+            activeBarPosition = position;
+            return true;
+        }
+
+        public ItemComponent ActiveBarItem
+        {
+            get
+            {
+                ItemComponent item;
+                items.TryGetValue(inventoryBar[activeBarPosition].Value, out item);
+                return item;
+            }
+        }
+
+        public ItemComponent[] InventoryBar
+        {
+            get
+            {
+                var bar = new ItemComponent[inventoryBar.Length];
+
+                for (int i = 0; i < inventoryBar.Length; i++)
+                {
+                    items.TryGetValue(inventoryBar[i].Value, out bar[i]);
+                }
+
+                return bar;
+            }
+        }
 
         public ItemComponent GetItemAt(Vector2i position)
         {
@@ -152,6 +258,13 @@ namespace FreezingArcher.Content
                     storage[x, y] = null;
                 }
             }
+
+            byte barpos = 0;
+            while(barpos < inventoryBar.Length && inventoryBar[barpos] != id)
+                barpos++;
+
+            if (barpos < inventoryBar.Length)
+                inventoryBar[barpos] = null;
 
             ItemComponent item;
             items.TryGetValue(id.Value, out item);

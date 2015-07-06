@@ -59,7 +59,7 @@ namespace FreezingArcher.Game
                 new ECSTest(msgmnr, rc.Scene);
                 //new PhysicsTest(Application.Instance);
 
-                new InventoryTest();
+                //new InventoryTest();
             }
 
             Application.Instance.Run ();

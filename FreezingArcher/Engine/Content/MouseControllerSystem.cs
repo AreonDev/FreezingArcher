@@ -25,6 +25,7 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
 using FreezingArcher.Configuration;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -41,6 +42,8 @@ namespace FreezingArcher.Content
         public override void Init(MessageManager msgmnr, Entity entity)
         {
             base.Init(msgmnr, entity);
+
+            NeededComponents = new[] { typeof(TransformComponent) };
 
             internalValidMessages = new[] { (int) MessageId.Input };
             msgmnr += this;
@@ -59,16 +62,17 @@ namespace FreezingArcher.Content
             {
                 InputMessage im = msg as InputMessage;
 
-                Quaternion rot =
+                Quaternion rotation =
+                    Quaternion.FromAxisAngle(
+                        Vector3.Transform(Vector3.UnitX, Entity.GetComponent<TransformComponent>().Rotation),
+                        im.MouseMovement.Y * movement * (float) im.DeltaTime.TotalMilliseconds
+                    ) *
                     Quaternion.FromAxisAngle(
                         Vector3.UnitY,
                         im.MouseMovement.X * movement * (float) im.DeltaTime.TotalMilliseconds
-                    ) *
-                    Quaternion.FromAxisAngle(
-                        Vector3.UnitX,
-                        im.MouseMovement.Y * movement * (float) im.DeltaTime.TotalMilliseconds);
-                
-                CreateMessage(new TransformMessage(Entity, Vector3.Zero, rot));
+                    );
+
+                CreateMessage(new TransformMessage(Entity, Vector3.Zero, rotation));
             }
         }
     }

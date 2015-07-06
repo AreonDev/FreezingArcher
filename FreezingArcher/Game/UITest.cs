@@ -27,12 +27,19 @@ using FreezingArcher.Output;
 
 namespace FreezingArcher.Game
 {
-    public class UITest : Base
+    public class UITest
     {
         readonly Button[] buttons = new Button[6];
 
-        public UITest (Base parent) : base (parent)
+        public UITest ()
         {
+            Gwen.Renderer.Base renderer = null;// = new ...; TODO: create renderer here
+            var skin = new Gwen.Skin.TexturedBase(renderer, "DefaultSkin.png");
+            var canvas = new Canvas(skin);
+            //var input = new FreezingArcher.UI.Input.FreezingArcher(canvas); TODO
+            canvas.SetSize(1024, 576);
+            canvas.ShouldDrawBackground = false;
+
             var messages = new[] {
                 "I'm a truely buttonshit!",
                 "Don't click me, I'm scared!",
@@ -53,7 +60,7 @@ namespace FreezingArcher.Game
 
             for (int i = 0; i < messages.Length; i++)
             {
-                buttons[i] = new Button(this);
+                buttons[i] = new Button(canvas);
                 buttons[i].Text = messages[i];
                 buttons[i].SetBounds(recs[i]);
                 buttons[i].Pressed += onButtonPressed;

@@ -217,8 +217,6 @@ namespace FreezingArcher.Renderer.Scene
             FrameBufferSpecularTexture.Resize(width, height);
 
             FrameBufferDepthStencilTexture.Resize(width, height);
-
-            FrameBufferRenderedImamge.Resize(width, height);
         }
 
         public void Update()

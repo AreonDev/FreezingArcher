@@ -33,11 +33,11 @@ namespace FreezingArcher.Renderer.Compositor
     {
         public int OutputCount{ get; private set;}
         public string[] OutputNames{ get; private set;}
-        FrameBuffer OutputFrameBuffer { get; private set;}
+        public FrameBuffer OutputFrameBuffer { get; private set;}
 
         public int InputCount{ get; private set;}
         public string[] InputNames{ get; private set;}
-        FrameBuffer InputFrameBuffer {get; private set;}
+        public FrameBuffer InputFrameBuffer {get; private set;}
 
         Dictionary<string, Value> Settings;
 

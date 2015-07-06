@@ -43,7 +43,7 @@ namespace FreezingArcher.Content
         /// </summary>
         Throwable = 2,
         /// <summary>
-        /// The item is usable.
+        /// The item is hitable.
         /// </summary>
         Hitable = 4
     }

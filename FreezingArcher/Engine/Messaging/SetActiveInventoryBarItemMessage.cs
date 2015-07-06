@@ -20,15 +20,52 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Messaging
 {
-    public class SetActiveInventoryBarItemMessage
+    /// <summary>
+    /// This message occurs when the active inventory position should be changed.
+    /// </summary>
+    public sealed class SetActiveInventoryBarItemMessage : IMessage
     {
-        public SetActiveInventoryBarItemMessage()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.SetActiveInventoryBarItemMessage"/>
+        /// class.
+        /// </summary>
+        /// <param name="position">Position.</param>
+        public SetActiveInventoryBarItemMessage(byte position)
         {
+            Position = position;
+            MessageId = (int) Messaging.MessageId.SetActiveInventoryBarItemMessage;
         }
+
+        /// <summary>
+        /// Gets the position the item should have in the inventory bar.
+        /// </summary>
+        /// <value>The position.</value>
+        public byte Position { get; private set; }
+
+        #region IMessage implementation
+
+        /// <summary>
+        /// Gets or sets the source.
+        /// </summary>
+        /// <value>The source.</value>
+        public object Source { get; set; }
+
+        /// <summary>
+        /// Gets or sets the destination.
+        /// </summary>
+        /// <value>The destination.</value>
+        public object Destination { get; set; }
+
+        /// <summary>
+        /// Gets the message identifier.
+        /// </summary>
+        /// <value>The message identifier.</value>
+        public int MessageId { get; private set; }
+
+        #endregion
     }
 }
-

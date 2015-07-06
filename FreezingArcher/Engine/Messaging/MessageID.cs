@@ -31,6 +31,10 @@ namespace FreezingArcher.Messaging
     public enum MessageId
     {
         /// <summary>
+        /// The type of this message is unknown.
+        /// </summary>
+        Unknown = 0,
+        /// <summary>
         /// Occurs when the locale is updated.
         /// </summary>
         UpdateLocale = 1,
@@ -120,5 +124,25 @@ namespace FreezingArcher.Messaging
         /// Occurs when an item is used.
         /// </summary>
         ItemUseMessage = 40,
+        /// <summary>
+        /// Occurs when an entity collects an item.
+        /// </summary>
+        ItemCollectedMessage,
+        /// <summary>
+        /// Occurs when an item is removed from the inventory.
+        /// </summary>
+        RemoveItemFromInventoryMessage,
+        /// <summary>
+        /// Occurs when an entity drops an item from its inventory.
+        /// </summary>
+        ItemDroppedMessage,
+        /// <summary>
+        /// Occurs when an item from the inventory should be added to the inventory bar.
+        /// </summary>
+        AddItemToInventoryBar,
+        /// <summary>
+        /// Occurs when the active item in the inventory bar should be changed to a given position.
+        /// </summary>
+        SetActiveInventoryBarItemMessage,
     }
 }

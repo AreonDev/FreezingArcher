@@ -20,15 +20,66 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Messaging
 {
-    public class AddItemToInventoryBarMessage
+    /// <summary>
+    /// This message occurs when an item should be added to the inventory bar.
+    /// </summary>
+    public sealed class AddItemToInventoryBarMessage : IMessage
     {
-        public AddItemToInventoryBarMessage()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.AddItemToInventoryBarMessage"/> class.
+        /// </summary>
+        /// <param name="itemPositionInInventory">Item position in inventory.</param>
+        /// <param name="inventoryBarPosition">Inventory bar position.</param>
+        public AddItemToInventoryBarMessage(Vector2i itemPositionInInventory, byte? inventoryBarPosition = null)
         {
+            ItemPositionInInventory = itemPositionInInventory;
+            InventoryBarPosition = inventoryBarPosition;
+            MessageId = (int) Messaging.MessageId.AddItemToInventoryBar;
         }
+
+        public AddItemToInventoryBarMessage(int itemPositionInInventoryX, int itemPositionInInventoryY,
+            byte? inventoryBarPosition = null) :
+        this(new Vector2i(itemPositionInInventoryX, itemPositionInInventoryY), inventoryBarPosition)
+        {}
+
+        /// <summary>
+        /// Gets the position of the item in the inventory.
+        /// </summary>
+        /// <value>The item position in inventory.</value>
+        public Vector2i ItemPositionInInventory { get; private set; }
+
+        /// <summary>
+        /// Gets the position that the item should have in the inventory bar.
+        /// </summary>
+        /// <value>The inventory bar position.</value>
+        public byte? InventoryBarPosition { get; private set; }
+
+        #region IMessage implementation
+
+        /// <summary>
+        /// Gets or sets the source.
+        /// </summary>
+        /// <value>The source.</value>
+        public object Source { get; set; }
+
+        /// <summary>
+        /// Gets or sets the destination.
+        /// </summary>
+        /// <value>The destination.</value>
+        public object Destination { get; set; }
+
+        /// <summary>
+        /// Gets the message identifier.
+        /// </summary>
+        /// <value>The message identifier.</value>
+        public int MessageId { get; private set; }
+
+        #endregion
     }
 }
 

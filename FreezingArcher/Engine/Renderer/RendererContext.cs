@@ -464,7 +464,7 @@ namespace FreezingArcher.Renderer
                         FrameBuffer.AttachmentUsage.Color3
                     });
 
-                Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
+                //Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
 
                 this.Clear(Scene.BackgroundColor, 1);
 
@@ -475,7 +475,7 @@ namespace FreezingArcher.Renderer
                     obj.Draw(this);
                 }
 
-                Scene.FrameBuffer.Unbind();
+                //Scene.FrameBuffer.Unbind();
             }
 
             //Now.... use Funny stupid Deferred Shading shader

@@ -24,6 +24,7 @@ using System;
 using Gwen.Control;
 using System.Drawing;
 using FreezingArcher.Output;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Game
 {
@@ -33,7 +34,7 @@ namespace FreezingArcher.Game
 
         public UITest ()
         {
-            Gwen.Renderer.Base renderer = null;// = new ...; TODO: create renderer here
+            Gwen.Renderer.Base renderer = new Gwen.Renderer.FreezingArcherGwenRenderer (Application.Instance.RendererContext);
             var skin = new Gwen.Skin.TexturedBase(renderer, "DefaultSkin.png");
             var canvas = new Canvas(skin);
             //var input = new FreezingArcher.UI.Input.FreezingArcher(canvas); TODO

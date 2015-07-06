@@ -51,6 +51,8 @@ namespace Gwen.Renderer
         {
             PrivateRendererContext = rc;
 
+            m_StringCache = new Dictionary<Tuple<string, Font>, TextRenderer>();
+
             m_StringFormat = new StringFormat(StringFormat.GenericTypographic);
             m_StringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
@@ -447,12 +449,13 @@ namespace Gwen.Renderer
                 return new Point(tex.Width, tex.Height);
             }
 
-            SizeF TabSize = m_Graphics.MeasureString("....", sysFont);
+            //SizeF TabSize = m_Graphics.MeasureString("....", sysFont);
 
-            m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
-            SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
+            //m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
+            //SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
 
-            return new Point((int)Math.Round(size.Width), (int)Math.Round(size.Height));
+            //return new Point((int)Math.Round(size.Width), (int)Math.Round(size.Height));
+            return new Point(0, 0);
         }
 
         /// <summary>

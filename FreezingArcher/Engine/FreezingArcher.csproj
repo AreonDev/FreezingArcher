@@ -95,9 +95,7 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Package>xbuild12</Package>
-    </Reference>
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
@@ -399,6 +397,8 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\SkyboxSystem.cs" />
     <Compile Include="Renderer\Compositor\BasicCompositor.cs" />
     <Compile Include="Renderer\Compositor\CompositorNode.cs" />
+    <Compile Include="UI\Renderer\FreezingArcherGwenRenderer.cs" />
+    <Compile Include="UI\Renderer\TextRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

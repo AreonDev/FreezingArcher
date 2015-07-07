@@ -1,10 +1,10 @@
 ﻿//
-//  ModelSystem.cs
+//  SkyboxSystem.cs
 //
 //  Author:
-//       dboeg <${AuthorEmail}>
+//       Fin Christensen <christensen.fin@gmail.com>
 //
-//  Copyright (c) 2015 dboeg
+//  Copyright (c) 2015 Fin Christensen
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -20,33 +20,28 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Content
 {
-    /// <summary>
-    /// Model system. Updates scene data.
-    /// </summary>
-    public sealed class ModelSystem : EntitySystem
+    public sealed class SkyboxSystem : EntitySystem
     {
         /// <summary>
         /// Initialize this system. This may be used as a constructor replacement.
         /// </summary>
         /// <param name="msgmnr">Msgmnr.</param>
         /// <param name="entity">Entity.</param>
-        public override void Init(FreezingArcher.Messaging.MessageManager msgmnr, Entity entity)
+        public override void Init(MessageManager msgmnr, Entity entity)
         {
             base.Init(msgmnr, entity);
 
             //Added needed components
-            NeededComponents = new[] { typeof(TransformComponent), typeof(ModelComponent) };
+            NeededComponents = new[] { typeof(TransformComponent), typeof(SkyboxComponent) };
 
             //Needs more Initializing?
             //Scene does this for me, so no!
-            internalValidMessages = new[] { (int) MessageId.PositionChangedMessage,
-                (int) MessageId.RotationChangedMessage, (int) MessageId.ScaleChangedMessage };
+            internalValidMessages = new[] { (int)MessageId.PositionChangedMessage };
             msgmnr += this;
         }
 
@@ -56,31 +51,17 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            ModelComponent mc = Entity.GetComponent<ModelComponent>();
+            SkyboxComponent sc = Entity.GetComponent<SkyboxComponent>();
             TransformComponent tc = Entity.GetComponent<TransformComponent>();
 
-            if (mc == null || mc.Model == null)
+            if (sc == null || sc.Skybox == null)
                 return;
-            
-            if (msg.MessageId == (int) MessageId.PositionChangedMessage)
+
+            if (msg.MessageId == (int)MessageId.PositionChangedMessage)
             {
                 PositionChangedMessage pcm = msg as PositionChangedMessage;
                 if (pcm.Entity.Name == Entity.Name)
-                    mc.Model.Position = tc.Position;
-            }
-
-            if (msg.MessageId == (int) MessageId.RotationChangedMessage)
-            {
-                RotationChangedMessage rcm = msg as RotationChangedMessage;
-                if (rcm.Entity.Name == Entity.Name)
-                    mc.Model.Rotation = tc.Rotation;
-            }
-
-            if (msg.MessageId == (int) MessageId.ScaleChangedMessage)
-            {
-                ScaleChangedMessage scm = msg as ScaleChangedMessage;
-                if (scm.Entity.Name == Entity.Name)
-                    mc.Model.Scaling = tc.Scale;
+                    sc.Skybox.Position = tc.Position;
             }
         }
     }

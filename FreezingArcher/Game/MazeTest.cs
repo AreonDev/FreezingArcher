@@ -49,7 +49,7 @@ namespace FreezingArcher.Game
         /// <param name="game">The game the maze should be generated in.</param>
         public MazeTest (MessageManager msgmnr, ObjectManager objmnr, CoreScene scene, Content.Game game)
         {
-            ValidMessages = new int[] { (int) MessageId.Input, (int) MessageId.PositionChangedMessage, (int) MessageId.Update };
+            ValidMessages = new int[] { (int) MessageId.Input, (int) MessageId.Update };
             msgmnr += this;
             mazeGenerator = new MazeGenerator (objmnr);
             this.scene = scene;
@@ -57,21 +57,21 @@ namespace FreezingArcher.Game
             player = EntityFactory.Instance.CreateWith ("player", systems: new[] {
                 typeof (MovementSystem),
                 typeof (KeyboardControllerSystem),
-                typeof (MouseControllerSystem)
+                typeof (MouseControllerSystem),
+                typeof (SkyboxSystem)
             });
 
             player.GetComponent<TransformComponent>().Position = new Vector3(0, 1.85f, 0);
 
             scene.CameraManager.AddCam (new BaseCamera (player, msgmnr), "player");
 
-            skybox = EntityFactory.Instance.CreateWith ("skybox", systems: new[] { typeof(ModelSystem) });
             ModelSceneObject skyboxModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Skybox/skybox.xml");
-            skybox.GetComponent<TransformComponent>().Scale = 100.0f * Vector3.One;
+            skyboxModel.Scaling = 100.0f * Vector3.One;
             scene.AddObject (skyboxModel);
             skyboxModel.WaitTillInitialized ();
             skyboxModel.Model.EnableDepthTest = false;
             skyboxModel.Model.EnableLighting = false;
-            skybox.GetComponent<ModelComponent> ().Model = skyboxModel;
+            player.GetComponent<SkyboxComponent> ().Skybox = skyboxModel;
 
             int seed = new Random().Next();
             var rand = new Random(seed);
@@ -85,8 +85,6 @@ namespace FreezingArcher.Game
         readonly Maze.Maze[] maze = new Maze.Maze[2];
 
         readonly Entity player;
-
-        readonly Entity skybox;
 
         readonly CoreScene scene;
 
@@ -124,20 +122,20 @@ namespace FreezingArcher.Game
                 }
             }
 
-            if (msg.MessageId == (int)MessageId.PositionChangedMessage)
-            {
-                PositionChangedMessage pcm = msg as PositionChangedMessage;
-                if (pcm.Entity.Name == player.Name) 
-                {
-                    skybox.GetComponent<TransformComponent> ().Position = pcm.Entity.GetComponent<TransformComponent> ().Position;
-                }
-            }
+//            if (msg.MessageId == (int)MessageId.PositionChangedMessage)
+//            {
+//                PositionChangedMessage pcm = msg as PositionChangedMessage;
+//                if (pcm.Entity.Name == player.Name)
+//                {
+//                    skybox.GetComponent<TransformComponent> ().Position = pcm.Entity.GetComponent<TransformComponent> ().Position;
+//                }
+//            }
 
             var um = msg as UpdateMessage;
             if (um != null)
             {
-                f += 0.1;
-                const int fak = 1;
+//                f += 0.1;
+//                const int fak = 1;
 //                scene.CameraManager.ActiveCamera.Fov = (float)(System.Math.Sin (f) + 1) > fak * MathHelper.Pi ? fak * MathHelper.Pi : (float)(System.Math.Sin (f) + 1);
             }
         }

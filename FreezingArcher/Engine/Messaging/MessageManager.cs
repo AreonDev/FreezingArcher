@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using FreezingArcher.Core;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
 
@@ -34,118 +33,87 @@ namespace FreezingArcher.Messaging
     /// Class for passing messages from IMessageProducers to IMessageConsumers
     /// A n-to-m relationship can be modeled.
     /// </summary>
-    public class MessageManager
+    public class MessageManager : MessageProvider
     {
-        /// <summary>
-        /// The name of the class.
-        /// </summary>
-        public static readonly string ClassName = "MessageManager";
+        readonly Thread messageThread;
 
-        readonly Dictionary<int, List<IMessageConsumer>> messageList = new Dictionary<int, List<IMessageConsumer>> ();
-        Thread messageThread = null;
-        bool run = false;
-        //default does not work
-        internal readonly Queue<IMessage> MessageQueue = null;
+        readonly Queue<IMessage> MessageQueue;
+
+        static MessageManager()
+        {
+            ClassName = "MessageManager";
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.MessageManager"/> class.
         /// </summary>
-        public MessageManager ()
+        public MessageManager() : base(null)
         {
-            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new message manager");
-            messageThread = new Thread (FlushQueue);
-            MessageQueue = new Queue<IMessage> (2000);
+            messageThread = new Thread(Process);
+            MessageQueue = new Queue<IMessage>(2000);
         }
 
         /// <summary>
-        /// Registers the message consumer.
+        /// Handles the message created event.
         /// </summary>
-        /// <param name="m">Message Consumer to register</param>
-        public void RegisterMessageConsumer (IMessageConsumer m)
+        /// <param name="message">Message.</param>
+        internal override void HandleMessageCreated (IMessage message)
         {
-            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Registering new message consumer '{0}'",
-                m.GetType ().ToString ());
-            m.ValidMessages.ForEach (i =>
-            {
-                List<IMessageConsumer> tmp = null;
-                if (messageList.TryGetValue (i, out tmp))
-                    tmp.Add (m);
-                else
-                {
-                    tmp = new List<IMessageConsumer> (m.ToCollection ());
-                    messageList [i] = tmp;
-                }
-            });
-        }
-
-        /// <summary>
-        /// Unregisters the message consumer.
-        /// </summary>
-        /// <param name="m">Message Consumer to unregister</param>
-        public void UnregisterMessageConsumer (IMessageConsumer m)
-        {
-            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Removing message consumer '{0}'",
-                m.GetType ().ToString ());
-            m.ValidMessages.ForEach (i =>
-            {
-                List<IMessageConsumer> tmp = null;
-                if (messageList.TryGetValue (i, out tmp))
-                    tmp.Remove (m);
-            });
-        }
-
-        /// <summary>
-        /// Adds the message creator.
-        /// </summary>
-        /// <param name="c">Message Creator to add</param>
-        public void AddMessageCreator (IMessageCreator c)
-        {
-            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Adding message creator '{0}'",
-                c.GetType ().ToString ());
-            c.MessageCreated -= HandleMessageCreated;
-            c.MessageCreated += HandleMessageCreated;
-        }
-
-        void HandleMessageCreated (IMessage m)
-        {
-            lock (MessageQueue)
-                MessageQueue.Enqueue (m);
-
+            if (Running)
+                lock (MessageQueue)
+                    MessageQueue.Enqueue (message);
         }
 
         /// <summary>
         /// Starts the processing of messages.
         /// </summary>
-        public void StartProcessing ()
+        public override void StartProcessing ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Starting processing messages ...");
-            if (run)
-                return;
-            run = true;
+            base.StartProcessing();
             messageThread.Start ();
         }
 
-        /// <summary>
-        /// Stops the processing of messages.
-        /// </summary>
-        public void StopProcessing ()
-        {
-            Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Stopping processing messages ...");
-            if (!run)
-                return;
-            run = false;
-        }
+        int pauseTime;
 
         /// <summary>
         /// Pauses the processing.
         /// <remarks>>Not implemented!</remarks>
         /// </summary>
         /// <param name="time">Time.</param>
-        public void PauseProcessing (int time)
+        public override void PauseProcessing (int time)
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Pausing processing messages ...");
-            //MessageThread.Sleep (Time);TODO
-            throw new NotImplementedException ();
+            pauseTime = time;
+        }
+
+        /// <summary>
+        /// Process messages.
+        /// </summary>
+        void Process ()
+        {
+            while (Running)
+            {
+                if (MessageQueue.Count != 0)
+                {
+                    IMessage Message = null;
+                    lock (MessageQueue)
+                        Message = MessageQueue.Dequeue ();
+                    List<IMessageConsumer> tmp;
+                    if (MessageList.TryGetValue (Message.MessageId, out tmp))
+                        tmp.ForEach (i => i.ConsumeMessage (Message));
+                    if (MessageList.TryGetValue((int) MessageId.All, out tmp))
+                        tmp.ForEach(i => i.ConsumeMessage(Message));
+                }
+                else
+                    Thread.Sleep (5);
+
+                if (pauseTime > 0)
+                    Thread.Sleep (new TimeSpan(0, 0, pauseTime));
+                
+                pauseTime = 0;
+            }
+            //ensure queue is empty
+            MessageQueue.Clear ();
         }
 
         /// <param name="j">MessageManager to register object to</param>
@@ -158,29 +126,6 @@ namespace FreezingArcher.Messaging
             if (o is IMessageCreator)
                 j.AddMessageCreator (o as IMessageCreator);
             return j;
-        }
-
-        /// <summary>
-        /// Flushs the queue.
-        /// </summary>
-        public void FlushQueue ()
-        {
-            while (run)
-            {
-                if (MessageQueue.Count != 0)
-                {
-                    IMessage Message = null;
-                    lock (MessageQueue)
-                        Message = MessageQueue.Dequeue ();
-                    List<IMessageConsumer> tmp = null;
-                    if (messageList.TryGetValue (Message.MessageId, out tmp))
-                        tmp.ForEach (i => i.ConsumeMessage (Message));
-                }
-                else
-                    Thread.Sleep (5);
-            }
-            //ensure queue is empty
-            MessageQueue.Clear ();
         }
     }
 }

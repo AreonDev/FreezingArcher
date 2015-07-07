@@ -28,6 +28,7 @@ using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Renderer;
 using FreezingArcher.Audio;
 using Pencil.Gaming.Graphics;
+using System.Windows.Threading;
 
 namespace FreezingArcher.Core
 {
@@ -473,6 +474,27 @@ namespace FreezingArcher.Core
             foreach (var i in source)
                 s += conversion(i) + ", ";
             return s.Substring(0, s.Length - 2) + "]";
+        }
+
+        /// <summary>
+        /// Run an action after a specific time span.
+        /// </summary>
+        /// <param name="action">Action.</param>
+        /// <param name="span">Span.</param>
+        public static void RunAfter(this Action action, TimeSpan span)
+        {
+            var dispatcherTimer = new DispatcherTimer { Interval = span };
+            dispatcherTimer.Tick += (sender, args) =>
+                {
+                    var timer = sender as DispatcherTimer;
+                    if (timer != null)
+                    {
+                        timer.Stop();
+                    }
+
+                    action();
+                };
+            dispatcherTimer.Start();
         }
     }
 }

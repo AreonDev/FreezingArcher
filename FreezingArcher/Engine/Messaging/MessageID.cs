@@ -31,9 +31,9 @@ namespace FreezingArcher.Messaging
     public enum MessageId
     {
         /// <summary>
-        /// The type of this message is unknown.
+        /// This type tells the message providers to send all messages to the consumer.
         /// </summary>
-        Unknown = 0,
+        All = 0,
         /// <summary>
         /// Occurs when the locale is updated.
         /// </summary>

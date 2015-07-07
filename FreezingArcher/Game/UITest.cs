@@ -25,6 +25,7 @@ using Gwen.Control;
 using System.Drawing;
 using FreezingArcher.Output;
 using FreezingArcher.Core;
+using FreezingArcher.Renderer.Scene.SceneObjects;
 
 namespace FreezingArcher.Game
 {
@@ -32,14 +33,16 @@ namespace FreezingArcher.Game
     {
         readonly Button[] buttons = new Button[6];
 
+        UISceneObject sceneobj;
+
         public UITest ()
         {
-            Gwen.Renderer.Base renderer = new Gwen.Renderer.FreezingArcherGwenRenderer (Application.Instance.RendererContext);
-            var skin = new Gwen.Skin.TexturedBase(renderer, "DefaultSkin.png");
-            var canvas = new Canvas(skin);
+            sceneobj = new UISceneObject ();
+            Application.Instance.RendererContext.Scene.AddObject (sceneobj);
+
             //var input = new FreezingArcher.UI.Input.FreezingArcher(canvas); TODO
-            canvas.SetSize(1024, 576);
-            canvas.ShouldDrawBackground = false;
+            sceneobj.Canvas.SetSize(1024, 576);
+            sceneobj.Canvas.ShouldDrawBackground = false;
 
             var messages = new[] {
                 "I'm a truely buttonshit!",
@@ -61,7 +64,7 @@ namespace FreezingArcher.Game
 
             for (int i = 0; i < messages.Length; i++)
             {
-                buttons[i] = new Button(canvas);
+                buttons[i] = new Button(sceneobj.Canvas);
                 buttons[i].Text = messages[i];
                 buttons[i].SetBounds(recs[i]);
                 buttons[i].Pressed += onButtonPressed;

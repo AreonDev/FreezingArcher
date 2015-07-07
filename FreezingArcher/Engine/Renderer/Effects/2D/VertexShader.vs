@@ -8,6 +8,8 @@ layout(location = 3) in mat4 InInstanceWorldMatrix;
 layout(location = 7) in vec4 InInstanceColor;
 layout(location = 8) in vec4 InOther;
 
+layout(location = 11) in vec2 InTexCoordOverride;
+
 out gl_PerVertex
 {
     vec4 gl_Position;
@@ -26,6 +28,8 @@ uniform MatricesBlock
 
 uniform int InstancedDrawing;
 
+uniform int OverrideTextureCoords;
+
 void main() 
 {
     if(InstancedDrawing == 1)
@@ -33,7 +37,10 @@ void main()
     else
         gl_Position = ProjectionMatrix * WorldMatrix * vec4(InPosition, 1.0);
 
-    OutTexCoord1 = InTexCoord1;
+    if(OverrideTextureCoords == 1)
+        OutTexCoord1 = InTexCoordOverride;
+    else
+        OutTexCoord1 = InTexCoord1;
 
     OutColor = InColor * (1 - InInstanceColor.a) + InInstanceColor;
 }

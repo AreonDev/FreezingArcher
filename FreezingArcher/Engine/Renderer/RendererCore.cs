@@ -901,7 +901,7 @@ namespace FreezingArcher.Renderer
             {
                 System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromFile(data);
                
-                bmp.RotateFlip(System.Drawing.RotateFlipType.RotateNoneFlipY);
+                //bmp.RotateFlip(System.Drawing.RotateFlipType.RotateNoneFlipY);
 
                 System.Drawing.Imaging.BitmapData bmp_data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
@@ -1061,6 +1061,7 @@ namespace FreezingArcher.Renderer
         }
 
         private VertexBuffer _2DVertexBuffer;
+        private VertexBuffer _2DVertexTextureOverride;
         internal VertexBufferArray _2DVertexBufferArray;
 
         private unsafe void GenerateBuffer(/*FreezingArcher.Math.Color4 color*/)
@@ -1100,14 +1101,33 @@ namespace FreezingArcher.Renderer
             vblk[2].Offset = sizeof(Vector3) + sizeof(Vector4);
             vblk[2].Stride = Vertex2D.SIZE;
 
+            Random rnd = new Random();
+
+            Vector2[] tex_override = new Vector2[6];
+            for (int i = 0; i < 6; i++)
+                tex_override[i] = new Vector2(1, 1);
+
             _2DVertexBuffer = CreateVertexBuffer<Vertex2D>(v2d, Vertex2D.SIZE * 9, RendererBufferUsage.StaticDraw, "Internal2DVertexBuffer");
+            _2DVertexTextureOverride = CreateVertexBuffer<Vector2>(tex_override, Vector2.SizeInBytes * 6, RendererBufferUsage.StaticDraw, "Internal2DVertexTextureOverride");
+
             _2DVertexBufferArray = CreateVertexBufferArray(_2DVertexBuffer, vblk, "Internal2DVertexBufferArray");
+
+            VertexBufferLayoutKind[] vblk2 = new VertexBufferLayoutKind[1];
+            vblk2[0].AttributeID = 11;
+            vblk2[0].AttributeSize = 2;
+            vblk2[0].AttributeType = RendererVertexAttribType.Float;
+            vblk2[0].Normalized = false;
+            vblk2[0].Offset = 0;
+            vblk2[0].Stride = Vector2.SizeInBytes;
+
+            _2DVertexBufferArray.AddVertexBuffer(vblk2, _2DVertexTextureOverride);
         }
 
         private void DeleteResources()
         {
             DeleteGraphicsResource(_2DVertexBufferArray);
             DeleteGraphicsResource(_2DVertexBuffer);
+            DeleteGraphicsResource(_2DVertexTextureOverride);
         }
 
         private void DrawFilledCircle(ref Vector2 position, ref Vector2 screen_size, float radius, float max_angle, ref FreezingArcher.Math.Color4 color, bool relative = false)
@@ -1342,6 +1362,58 @@ namespace FreezingArcher.Renderer
             GL.Disable(EnableCap.Blend);
         }
 
+        private void DrawTexturedRectangle(ref Vector2 position, ref Vector2 size, 
+            Vector2[] tex_override, ref Vector2 screen_size, int count = 1, bool relative = false)
+        {
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            GL.Disable(EnableCap.DepthTest);
+
+            MatricesBlock2D md = new MatricesBlock2D();
+            md.World = Matrix.CreateScale(size.X, size.Y, 1.0f) * Matrix.CreateTranslation(new Vector3(position.X, position.Y, 0.0f));
+
+            md.Projection = Matrix.CreateOrthographicOffCenter(0.0f, screen_size.X, screen_size.Y, 0.0f, 1.0f, 100.0f);
+
+            _2DVertexTextureOverride.UpdateBuffer<Vector2>(tex_override, tex_override.Length * Vector2.SizeInBytes);
+            _2DUniformBuffer.UpdateBuffer<MatricesBlock2D>(md, sizeof(float) * 4 * 4 * 2);
+
+            _2DVertexBufferArray.BindVertexBufferArray();
+
+            _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("UseTexture"), 1.0f);
+            _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("Texture1"), 0);
+
+            _2DEffect.VertexProgram.SetUniform(_2DEffect.VertexProgram.GetUniformLocation("OverrideTextureCoords"), 1);
+
+            if (count > 1)
+            {
+                _2DEffect.VertexProgram.SetUniform(_2DEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 1);
+                _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("InstancedDrawing"), 1);
+
+                _2DEffect.BindPipeline();
+
+                DrawArraysInstanced(RendererBeginMode.Triangles, 0, 6, count);
+            }
+            else
+            {
+                _2DEffect.VertexProgram.SetUniform(_2DEffect.VertexProgram.GetUniformLocation("InstancedDrawing"), 0);
+                _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("InstancedDrawing"), 0);
+
+                _2DEffect.BindPipeline();
+
+                DrawArrays(0, 6, RendererBeginMode.Triangles);
+            }
+
+            _2DVertexBufferArray.UnbindVertexBufferArray();
+
+            _2DUniformBuffer.UnbindBuffer();
+
+            GL.Enable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.Blend);
+        }
+
+
         public void DrawRectangleAbsolute(ref Vector2 position, ref Vector2 size, float line_width, ref FreezingArcher.Math.Color4 color, int count = 1)
         {
             Vector2 vs = new FreezingArcher.Math.Vector2(ViewportSize.X, ViewportSize.Y);
@@ -1349,7 +1421,7 @@ namespace FreezingArcher.Renderer
             DrawRectangle(ref position, ref size, ref vs, line_width, ref color);
         }
 
-        public void DrawRectangleRelative(ref Vector2 position, ref Vector2 size, float line_width, ref FreezingArcher.Math.Color4 color, int count = 1)
+        public void DrawRectangleRelative(ref Vector2 position, ref Vector2 size, ref FreezingArcher.Math.Color4 color, float line_width, int count = 1)
         {
             Vector2 vs = new FreezingArcher.Math.Vector2(1.0f, 1.0f);
 
@@ -1363,6 +1435,28 @@ namespace FreezingArcher.Renderer
             DrawFilledRectangle(ref position, ref size, ref vs, ref color, count);
         }
 
+        public void DrawTexturedRectangleAbsolute(Texture2D tex, ref Vector2 position, ref Vector2 size, Vector2[] texcoords, int count = 1)
+        {
+            Vector2 vs = new Vector2(ViewportSize.X, ViewportSize.Y);
+
+            tex.Bind(0);
+
+            DrawTexturedRectangle(ref position, ref size, texcoords, ref vs, count);
+
+            tex.Unbind();
+        }
+
+        public void DrawTexturedRectangleRelative(Texture2D tex, ref Vector2 position, ref Vector2 size, Vector2[] texcoords, int count = 1)
+        {
+            Vector2 vs = new Vector2(1.0f, 1.0f);
+
+            tex.Bind(0);
+
+            DrawTexturedRectangle(ref position, ref size, texcoords, ref vs, count);
+
+            tex.Unbind();
+        }
+
         public void DrawSpriteAbsolute(Sprite spr)
         {
             Vector2 vs = new FreezingArcher.Math.Vector2(ViewportSize.X, ViewportSize.Y);
@@ -1370,7 +1464,7 @@ namespace FreezingArcher.Renderer
             DrawSprite(ref vs, spr);
         }
 
-        public void DrawFilledRectangleRelaive(ref Vector2 position, ref Vector2 size, ref FreezingArcher.Math.Color4 color, int count)
+        public void DrawFilledRectangleRelative(ref Vector2 position, ref Vector2 size, ref FreezingArcher.Math.Color4 color, int count)
         {
             Vector2 vs = new FreezingArcher.Math.Vector2(1.0f, 1.0f);
 

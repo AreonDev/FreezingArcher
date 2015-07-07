@@ -104,7 +104,15 @@ namespace Gwen.Renderer
         /// <param name="b"></param>
         public override void DrawLine(int x, int y, int a, int b)
         {
-            
+            Translate(ref x, ref y);
+            Translate(ref a, ref b);
+
+            Vector2 posa = new Vector2((float)x, (float)y);
+            Vector2 posb = new Vector2((float)a, (float)b);
+
+            FreezingArcher.Math.Color4 col = new Color4(DrawColor.R, DrawColor.G, DrawColor.B, DrawColor.A);
+
+            PrivateRendererContext.DrawLineAbsolute(ref posa, ref posb, 1.0f, ref col);
         }
 
         /// <summary>
@@ -364,12 +372,19 @@ namespace Gwen.Renderer
                     u2 -= du * (u2 - u1);
                 }
             }
+                
+            Vector2 pos = new Vector2(rect.X, rect.Y);
+            Vector2 size = new Vector2(rect.Width, rect.Height);
 
-            Sprite spr = new Sprite();
-            spr.Init((Texture2D)t.RendererData);
-            spr.AbsolutePosition = new Vector2(rect.X, rect.Y);
+            Vector2[] texcoords = new Vector2[6];
+            texcoords[0] = new Vector2(u1, v1);
+            texcoords[1] = new Vector2(u2, v1);
+            texcoords[2] = new Vector2(u1, v2);
+            texcoords[3] = new Vector2(u1, v2);
+            texcoords[4] = new Vector2(u2, v1);
+            texcoords[5] = new Vector2(u2, v2);
 
-            PrivateRendererContext.DrawSpriteAbsolute(spr);
+            PrivateRendererContext.DrawTexturedRectangleAbsolute((Texture2D)t.RendererData, ref pos, ref size, texcoords);
         }
 
         /// <summary>
@@ -402,6 +417,7 @@ namespace Gwen.Renderer
                 sysFont.Dispose();
 
             sysFont = new System.Drawing.Font(font.FaceName, font.Size);
+            font.RendererData = sysFont;
             
             return true;
         }
@@ -449,13 +465,12 @@ namespace Gwen.Renderer
                 return new Point(tex.Width, tex.Height);
             }
 
-            //SizeF TabSize = m_Graphics.MeasureString("....", sysFont);
+            SizeF TabSize = m_Graphics.MeasureString("....", sysFont);
 
-            //m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
-            //SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
+            m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
+            SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
 
-            //return new Point((int)Math.Round(size.Width), (int)Math.Round(size.Height));
-            return new Point(0, 0);
+            return new Point((int)Math.Round(size.Width), (int)Math.Round(size.Height));
         }
 
         /// <summary>
@@ -481,7 +496,7 @@ namespace Gwen.Renderer
             {
                 Point size = MeasureText(font, text);
                 TextRenderer tr = new TextRenderer(size.X, size.Y, this);
-                tr.DrawString(text, sysFont, Brushes.White, Point.Empty, m_StringFormat);
+                tr.DrawString(text, sysFont, new SolidBrush(DrawColor), Point.Empty, m_StringFormat);
 
                 DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
 
@@ -492,6 +507,33 @@ namespace Gwen.Renderer
                 TextRenderer tr = m_StringCache[key];
                 DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
             }
+        }
+
+        public override Color PixelColor(Texture texture, uint x, uint y)
+        {
+            return PixelColor(texture, x, y, Color.Yellow);
+        }
+
+        /// <summary>
+        /// Gets pixel color of a specified texture, returning default if otherwise failed. Slow.
+        /// </summary>
+        /// <param name="texture">Texture.</param>
+        /// <param name="x">X.</param>
+        /// <param name="y">Y.</param>
+        /// <param name="defaultColor">Color to return on failure.</param>
+        /// <returns>Pixel color.</returns>
+        public override Color PixelColor(Texture texture, uint x, uint y, Color defaultColor)
+        {
+            Texture2D tex = texture.RendererData as Texture2D;
+
+            if (tex != null)
+            {
+                Color4 col = tex.GetPixelColor((int)x, (int)y);
+
+                return Color.FromArgb((int)(col.A*255), (int)(col.R*255), (int)(col.G*255), (int)(col.B*255));
+            }
+
+            return defaultColor;
         }
     }
 }

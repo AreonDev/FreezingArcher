@@ -385,6 +385,11 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="UI\Platform\Windows.cs" />
     <Compile Include="UI\Renderer\Base.cs" />
     <Compile Include="UI\Renderer\ICacheToTexture.cs" />
+    <Compile Include="Renderer\Compositor\BasicCompositor.cs" />
+    <Compile Include="Renderer\Compositor\CompositorNode.cs" />
+    <Compile Include="UI\Renderer\FreezingArcherGwenRenderer.cs" />
+    <Compile Include="UI\Renderer\TextRenderer.cs" />
+    <Compile Include="Renderer\Scene\SceneObjects\UISceneObject.cs" />
     <Compile Include="UI\Skin\Base.cs" />
     <Compile Include="UI\Skin\Simple.cs" />
     <Compile Include="UI\Skin\SkinColors.cs" />
@@ -536,6 +541,9 @@ echo Successfully finished!</PostBuildEvent>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Renderer\Effects\DeferredShading\pixel_shader.ps" />
+    <None Include="UI\Skins\DefaultSkin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />
@@ -544,6 +552,7 @@ echo Successfully finished!</PostBuildEvent>
     <Folder Include="Renderer\Effects\SimpleMaterial\" />
     <Folder Include="Renderer\Scene\SceneObjects\" />
     <Folder Include="UI\" />
+    <Folder Include="UI\Skins\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

@@ -251,6 +251,7 @@ namespace Gwen.Renderer
                     r.Height = 2;
                 }
 
+
                 if (chr == 'o' || chr == 'O' || chr == '0')
                     DrawLinedRect(r);
                 else

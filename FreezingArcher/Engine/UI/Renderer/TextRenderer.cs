@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Text;
 
@@ -31,6 +31,9 @@ namespace Gwen.Renderer
 
             bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             gfx = Graphics.FromImage(bmp);
+            gfx.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            gfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
             // NOTE:    TextRenderingHint.AntiAliasGridFit looks sharper and in most cases better
             //          but it comes with a some problems.
@@ -61,7 +64,12 @@ namespace Gwen.Renderer
            
             FreezingArcherGwenRenderer rend = texture.m_Renderer as FreezingArcherGwenRenderer;
 
-            texture.RendererData = rend.PrivateRendererContext.CreateTexture2D("" + DateTime.Now.Ticks, true, bmp);
+            FreezingArcher.Renderer.Texture2D tex = rend.PrivateRendererContext.CreateTexture2D("" + DateTime.Now.Ticks, true, bmp);
+
+            tex.Sampler.MagnificationFilter = FreezingArcher.Renderer.MagnificationFilter.InterpolateLinear;
+            tex.Sampler.MinificationFilter = FreezingArcher.Renderer.MinificationFilter.InterpolateLinear;
+
+            texture.RendererData = tex;
         }
 
         void Dispose(bool manual)

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Pencil.Gaming;
 using Pencil.Gaming.Graphics;
 
 namespace FreezingArcher.Renderer
@@ -101,6 +100,26 @@ namespace FreezingArcher.Renderer
 
             Width = width;
             Height = height;
+        }
+
+        public FreezingArcher.Math.Color4 GetPixelColor(int x, int y)
+        {
+            FreezingArcher.Math.Color4 col;
+
+            Bind(0);
+
+            byte[] data = new byte[Width * Height * 4];
+
+            GL.GetTexImage<byte>(TextureTarget.Texture2D, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+
+            Unbind();
+
+            int index = (y * Width + x) * 4;
+
+            col = new FreezingArcher.Math.Color4(data[index], data[index + 1], data[index + 2],
+                data[index + 3]);
+
+            return col;
         }
     }
 

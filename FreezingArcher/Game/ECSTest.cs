@@ -20,11 +20,10 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-using System;
-using FreezingArcher.Renderer.Scene;
-using FreezingArcher.Messaging;
-using FreezingArcher.Math;
 using FreezingArcher.Content;
+using FreezingArcher.Math;
+using FreezingArcher.Messaging;
+using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 
 namespace FreezingArcher.Game
@@ -41,17 +40,15 @@ namespace FreezingArcher.Game
         /// <param name="scene">Scene.</param>
         public ECSTest (MessageManager msgmnr, CoreScene scene)
         {
-            player = EntityFactory.Instance.CreateWith ("player",
-                new[] { typeof (TransformComponent) },
-                new[] { typeof (MovementSystem), typeof (KeyboardControllerSystem), typeof (MouseControllerSystem),
-                    typeof (ModelSystem) });
+            Entity player = EntityFactory.Instance.CreateWith ("player", systems: new[] {
+                typeof (MovementSystem),
+                typeof (KeyboardControllerSystem),
+                typeof (MouseControllerSystem)
+            });
 
-            //scene.CameraManager.AddCam (new FirstPersonCamera (player, msgmnr, default(Vector3), default(Quaternion)),"Player");
-            scene.CameraManager.AddCam (new BaseCamera (player, msgmnr, default(Vector3), default(Quaternion)), "test");
+            scene.CameraManager.AddCam (new BaseCamera (player, msgmnr), "player");
 
-
-            //Skybox
-            skybox = EntityFactory.Instance.CreateWith ("skybox", systems: new[] { typeof(ModelSystem) });
+            Entity skybox = EntityFactory.Instance.CreateWith ("skybox", systems: new[] { typeof(ModelSystem) });
             ModelSceneObject skyboxModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Skybox/skybox.xml");
             skybox.GetComponent<TransformComponent>().Scale = 100.0f * Vector3.One;
             scene.AddObject (skyboxModel);
@@ -59,17 +56,7 @@ namespace FreezingArcher.Game
             skyboxModel.Model.EnableDepthTest = false;
             skyboxModel.Model.EnableLighting = false;
             skybox.GetComponent<ModelComponent> ().Model = skyboxModel;
-
-            ModelSceneObject cube = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
-            scene.AddObject(cube);
-            cube.WaitTillInitialized();
-            player.GetComponent<ModelComponent>().Model = cube;
+            // as we do not update skybox position the player is able to leave the skybox ... i dont wanna fix it cause its just a test...
         }
-
-        Entity player;
-
-        Entity skybox;
-
-        CoreScene scene;
     }
 }

@@ -48,8 +48,8 @@ namespace FreezingArcher.Game.Maze
     /// <summary>
     /// Add maze to scene delegate.
     /// </summary>
-    delegate void AddMazeToSceneDelegate(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
-        ref Entity[,] entities, ref CoreScene scene, PhysicsManager physics, float scaling, uint maxX, int offsX, int offsY);
+    delegate void AddMazeToSceneDelegate(WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, Entity[,] entities,
+        Entity player, CoreScene scene, PhysicsManager physics, float scaling, uint maxX, int xOffs, int yOffs);
 
     /// <summary>
     /// Calculate path to exit delegate.
@@ -77,6 +77,7 @@ namespace FreezingArcher.Game.Maze
         /// <param name="sizeY">Size y.</param>
         /// <param name="scale">Scale.</param>
         /// <param name="physics">The physics instance the maze should register to.</param>
+        /// <param name="player">The player that should be positioned at the spawn.</param>
         /// <param name="initFunc">Init func.</param>
         /// <param name="generateFunc">Generate func.</param>
         /// <param name="addToSceneDelegate">Add to scene delegate.</param>
@@ -86,7 +87,7 @@ namespace FreezingArcher.Game.Maze
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor.</param>
         internal Maze (ObjectManager objmnr, int seed, int sizeX, int sizeY, float scale, PhysicsManager physics,
-            InitializeMazeDelegate initFunc, GenerateMazeDelegate generateFunc,
+            Entity player, InitializeMazeDelegate initFunc, GenerateMazeDelegate generateFunc,
             AddMazeToSceneDelegate addToSceneDelegate, CalculatePathToExitDelegate exitFunc,
             PlaceFeaturesDelegate placeFeaturesFunc, double turbulence, int maximumContinuousPathLength,
             uint portalSpawnFactor)
@@ -105,6 +106,7 @@ namespace FreezingArcher.Game.Maze
             calcExitPathDelegate = exitFunc;
             placeFeaturesDelegate = placeFeaturesFunc;
             this.physics = physics;
+            this.player = player;
         }
 
         internal WeightedGraph<MazeCell, MazeCellEdgeWeight> graph;
@@ -112,6 +114,8 @@ namespace FreezingArcher.Game.Maze
         Random rand;
 
         Entity[,] entities;
+
+        Entity player;
 
         ObjectManager objectManager;
 
@@ -287,7 +291,7 @@ namespace FreezingArcher.Game.Maze
 
             if (addMazeToSceneDelegate != null)
             {
-                addMazeToSceneDelegate(ref graph, ref entities, ref scene, physics, scale, (uint) Size.X, Offset.X, Offset.Y);
+                addMazeToSceneDelegate(graph, entities, player, scene, physics, scale, (uint) Size.X, Offset.X, Offset.Y);
             }
             else
             {

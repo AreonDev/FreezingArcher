@@ -25,7 +25,6 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
 using FreezingArcher.Configuration;
-using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -52,6 +51,11 @@ namespace FreezingArcher.Content
         readonly float movement =
             (float) ConfigManager.Instance ["freezing_archer"].GetDouble("general", "mouse_speed") * 0.0001f;
 
+        readonly float clampTop    =  MathHelper.PiOver2;
+        readonly float clampBottom = -MathHelper.PiOver2;
+
+        float rotationX = 0;
+
         /// <summary>
         /// Processes the incoming message
         /// </summary>
@@ -62,15 +66,23 @@ namespace FreezingArcher.Content
             {
                 InputMessage im = msg as InputMessage;
 
+                float x = im.MouseMovement.Y * movement * (float) im.DeltaTime.TotalMilliseconds;
+                float y = im.MouseMovement.X * -movement * (float) im.DeltaTime.TotalMilliseconds;
+
+                if (rotationX + x > clampTop)
+                    x = clampTop - rotationX;
+                else if (rotationX + x < clampBottom)
+                    x = clampBottom - rotationX;
+
                 Quaternion rotation =
                     Quaternion.FromAxisAngle(
-                        Vector3.Transform(Vector3.UnitX, Entity.GetComponent<TransformComponent>().Rotation),
-                        im.MouseMovement.Y * movement * (float) im.DeltaTime.TotalMilliseconds
-                    ) *
-                    Quaternion.FromAxisAngle(
-                        Vector3.UnitY,
-                        im.MouseMovement.X * movement * (float) im.DeltaTime.TotalMilliseconds
-                    );
+                        Vector3.Transform(
+                            Vector3.UnitX,
+                            Entity.GetComponent<TransformComponent>().Rotation)
+                        , x) *
+                    Quaternion.FromAxisAngle(Vector3.UnitY, y);
+
+                rotationX += x;
 
                 CreateMessage(new TransformMessage(Entity, Vector3.Zero, rotation));
             }

@@ -54,8 +54,8 @@ namespace FreezingArcher.Game
                 //rc.Scene.CameraManager.AddCam (new BaseCamera (msgmnr),"test");
                 var cammnr = rc.Scene.CameraManager;
 
-                //new MazeTest(msgmnr, objmnr, rc.Scene, game);
-                new ECSTest(msgmnr, rc.Scene);
+                new MazeTest(msgmnr, objmnr, rc.Scene, game);
+                //new ECSTest(msgmnr, rc.Scene);
                 //new PhysicsTest(Application.Instance);
 
                 //new InventoryTest();

@@ -32,22 +32,6 @@ using FreezingArcher.Content;
 
 namespace FreezingArcher.Renderer.Scene
 {
-
-    /*
-	 * Dies wird deine allererste Kamera... 
-	 * Hier sollst du dich mit dem aktuellen FreezingArcher auseinandersetzen,
-	 * das heißt, du wirst UNSERE API benutzen und kennenlernen.
-	 * 
-	 * Die erste Aufgabe ist eigentlich ganz einfach... 
-	 * Hier sollst du eine simple Kamera schreiben, die du nach links, rechts, oben, unten,
-	 * hinten und vorne verschieben kannst. Dabei sollst du auf Tastendrücke reagieren, und diese
-	 * richtig verarbeiten. Wie du das genau tust, dass erfährst du in den Docs.
-	 * Fin hat da gute Arbeit geleistet
-	 * 
-	 * Hinweis: Größe des Fensters erhälst du auch über Fins MessagingAPI
-	 * Achtung: Da gibt es einen fiesen gemeinen BUG, aber das muss sich fin angucken
-	 */
-
     /// <summary>
     /// My first freezing archer cam.
     /// </summary>
@@ -204,7 +188,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="up">Up.</param>
         public BaseCamera (Entity entity, MessageManager mssgmngr, Vector3 position = default(Vector3),
             Quaternion rotation = default(Quaternion), float near = 0.1f, float far = 400.0f,
-            float fov = MathHelper.PiOver2, Vector3 up = default(Vector3))
+            float fov = MathHelper.PiOver2)
         {
             MPosition = position;
             MRotation = rotation;
@@ -212,7 +196,6 @@ namespace FreezingArcher.Renderer.Scene
             MZNear = near;
             MZFar = far;
             MFov = fov;
-            MUp = up != Vector3.Zero ? up : Vector3.UnitY;
             ValidMessages = new int[] { (int)MessageId.PositionChangedMessage, (int)MessageId.RotationChangedMessage };
             NeededComponents = new[] { typeof(TransformComponent) };
             mssgmngr += this;
@@ -243,11 +226,8 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         protected void UpdateCamera ()
         {
-            //cameraLookat = MPosition + transformedReference;
-
-            ViewMatrix = Matrix.LookAt(MPosition, Vector3.Transform(Vector3.UnitX, MRotation), MUp);
-
-            //ViewMatrix *= Matrix.CreateFromQuaternion(MRotation);
+            ViewMatrix = Matrix.LookAt(MPosition, MPosition + Vector3.Transform(Vector3.UnitZ, MRotation),
+                Vector3.Transform(Vector3.UnitY, MRotation));
         }
 
         /// <summary>
@@ -292,4 +272,3 @@ namespace FreezingArcher.Renderer.Scene
         }
     }
 }
-

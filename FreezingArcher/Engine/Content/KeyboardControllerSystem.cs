@@ -59,15 +59,15 @@ namespace FreezingArcher.Content
                 {
                     CreateMessage(new MoveStraightMessage(Entity, movement));
                 }
-                else if (im.IsActionDown("backward"))
+                if (im.IsActionDown("backward"))
                 {
                     CreateMessage(new MoveStraightMessage(Entity, -movement));
                 }
-                else if (im.IsActionDown("left"))
+                if (im.IsActionDown("left"))
                 {
                     CreateMessage(new MoveSidewardsMessage(Entity, -movement));
                 }
-                else if (im.IsActionDown("right"))
+                if (im.IsActionDown("right"))
                 {
                     CreateMessage(new MoveSidewardsMessage(Entity, movement));
                 }

@@ -75,9 +75,10 @@ namespace FreezingArcher.Content
                 if (msm.Entity.Name != Entity.Name)
                     return;
 
-                Vector3 rot = Vector3.Transform(Vector3.UnitX, tc.Rotation);
-                Vector3 mov = Vector3.UnitX * msm.Movement;
-                tc.Position += mov * new Vector3(rot.X, 0, rot.Z);
+                Vector3 rotation = Vector3.Transform(Vector3.UnitZ, tc.Rotation);
+                rotation = new Vector3(rotation.X, 0, rotation.Z);
+                rotation.Normalize();
+                tc.Position += rotation * msm.Movement;
             }
             else if (msg.MessageId == (int) MessageId.MoveSidewardsMessage)
             {
@@ -87,9 +88,10 @@ namespace FreezingArcher.Content
                 if (msm.Entity.Name != Entity.Name)
                     return;
                 
-                Vector3 rot = Vector3.Transform(Vector3.UnitZ, tc.Rotation);
-                Vector3 mov = Vector3.UnitX * msm.Movement;
-                tc.Position += mov * new Vector3(rot.X, 0, rot.Z);
+                Vector3 rotation = Vector3.Transform(Vector3.UnitX, tc.Rotation);
+                rotation = new Vector3(rotation.X, 0, rotation.Z);
+                rotation.Normalize();
+                tc.Position += rotation * -msm.Movement;
             }
         }
     }

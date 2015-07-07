@@ -54,9 +54,9 @@ namespace FreezingArcher.Game
             mazeGenerator = new MazeGenerator (objmnr);
             this.scene = scene;
 
-            CamMan =new CameraManager(msgmnr, "player", new FirstPersonCamera (player, msgmnr, default(Vector3), default(Quaternion)));
-            CamMan.AddCam (new FreeCamera (msgmnr, default(Vector3), default(Quaternion)), "overview");
-            CamMan.AddCam (new ThirdPersonCamera(msgmnr, new Vector3 (1,1,1),default(Vector3), default(Quaternion)), "test");
+//            CamMan =new CameraManager(msgmnr, "player", new FirstPersonCamera (player, msgmnr, default(Vector3), default(Quaternion)));
+//            CamMan.AddCam (new FreeCamera (msgmnr, default(Vector3), default(Quaternion)), "overview");
+//            CamMan.AddCam (new ThirdPersonCamera(msgmnr, new Vector3 (1,1,1),default(Vector3), default(Quaternion)), "test");
 //            BaseCamera test = scene.CameraManager.GetCam ("Player");
             //scene.CameraManager.ActiveCamera = test;
 

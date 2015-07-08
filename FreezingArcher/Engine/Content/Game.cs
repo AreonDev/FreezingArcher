@@ -261,6 +261,31 @@ namespace FreezingArcher.Content
             return true;
         }
 
+        /// <summary>
+        /// Moves an entity from one game state to antother.
+        /// </summary>
+        /// <param name="entity">Entity.</param>
+        /// <param name="source">Source.</param>
+        /// <param name="destination">Destination.</param>
+        public void MoveEntityToGameState(Entity entity, GameState source, GameState destination)
+        {
+            if (entity.HasComponent<ModelComponent>())
+            {
+                var model = entity.GetComponent<ModelComponent>().Model;
+                source.Scene.RemoveObject(model);
+                destination.Scene.AddObject(model);
+            }
+
+            if (entity.HasComponent<SkyboxComponent>())
+            {
+                var model = entity.GetComponent<SkyboxComponent>().Skybox;
+                source.Scene.RemoveObject(model);
+                destination.Scene.AddObject(model);
+            }
+
+            entity.SwitchMessageProvider(source.MessageProxy, destination.MessageProxy);
+        }
+
         #region IManageable implementation
 
         /// <summary>

@@ -46,7 +46,7 @@ namespace FreezingArcher.Game
                 typeof (MouseControllerSystem)
             });
 
-            scene.CameraManager.AddCam (new BaseCamera (player, messageProvider), "player");
+            scene.CameraManager.AddCamera (new BaseCamera (player, messageProvider), "player");
 
             Entity skybox = EntityFactory.Instance.CreateWith ("skybox", messageProvider, systems: new[] { typeof(ModelSystem) });
             ModelSceneObject skyboxModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Skybox/skybox.xml");

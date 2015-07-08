@@ -58,19 +58,18 @@ namespace FreezingArcher.Game.Maze
         /// <param name="seed">Seed.</param>
         /// <param name="messageProvider">The message provider for the maze scenes.</param>
         /// <param name="physics">Physics manager instance.</param>
-        /// <param name="player">The player that should be positioned at the spawn.</param>
         /// <param name="sizeX">Size x.</param>
         /// <param name="sizeY">Size y.</param>
         /// <param name="scale">Scale.</param>
         /// <param name="turbulence">Turbulence. The higher the more straight the maze will be.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will appear.</param>
-        public Maze CreateMaze(int seed, MessageProvider messageProvider, PhysicsManager physics, Entity player,
+        public Maze CreateMaze(int seed, MessageProvider messageProvider, PhysicsManager physics,
             int sizeX = 40, int sizeY = 40, float scale = 10, double turbulence = 2,
             int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
         {
-            Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, physics, player, InitializeMaze, CreateMaze,
-                AddMazeToScene, CalculatePathToExit, SpawnPortals, turbulence, maximumContinuousPathLength,
+            Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, physics, InitializeMaze, CreateMaze,
+                AddMazeToGameState, CalculatePathToExit, SpawnPortals, turbulence, maximumContinuousPathLength,
                 portalSpawnFactor);
             maze.Offset = Offset;
             var offs = Offset;
@@ -291,8 +290,8 @@ namespace FreezingArcher.Game.Maze
             }
         }
 
-        static void AddMazeToScene (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, MessageProvider messageProvider,
-            Entity[,] entities, Entity player, CoreScene scene, PhysicsManager physics,
+        static void AddMazeToGameState (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, MessageProvider messageProvider,
+            Entity[,] entities, ref Vector3 playerPosition, CoreScene scene, PhysicsManager physics,
             float scaling, uint maxX, int xOffs, int yOffs)
         {
             int x = 0;
@@ -313,11 +312,9 @@ namespace FreezingArcher.Game.Maze
             var startNode = graph.Nodes.FirstOrDefault (n => n.Data.IsSpawn);
             if (startNode != null)
             {
-                var pos = player.GetComponent<TransformComponent>().Position;
-                player.GetComponent<TransformComponent>().Position =
-                    new Vector3 (
-                        startNode.Data.Position.X * scale.X * 2 + xOffs, pos.Y,
-                        startNode.Data.Position.Y * scale.Y * 2 + yOffs);
+                playerPosition = new Vector3 (
+                    startNode.Data.Position.X * scale.X * 2 + xOffs, 0,
+                    startNode.Data.Position.Y * scale.Y * 2 + yOffs);
             }
 
             ModelSceneObject model;

@@ -71,18 +71,21 @@ namespace FreezingArcher.Game
             // embed new maze into game state logic and create a MoveEntityToScene
             SkyboxSystem.CreateSkybox(state.Scene, player);
             player.GetComponent<TransformComponent>().Position = new Vector3(0, 1.85f, 0);
-            state.Scene.CameraManager.AddCam (new BaseCamera (player, state.MessageProxy), "player");
+            state.Scene.CameraManager.AddCamera (new BaseCamera (player, state.MessageProxy), "player");
 
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, player);
+            maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager);
+            maze[0].PlayerPosition += player.GetComponent<TransformComponent>().Position;
 
             game.AddGameState("maze_underworld", Content.Environment.Default, null);
             state = game.GetGameState("maze_underworld");
             state.Scene = new CoreScene(rendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.AliceBlue;
-            maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, player);
+            state.Scene.CameraManager.AddCamera (new BaseCamera (player, state.MessageProxy), "player");
+            maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager);
+            maze[1].PlayerPosition += player.GetComponent<TransformComponent>().Position;
 
             game.SwitchToGameState("maze_overworld");
         }
@@ -94,6 +97,22 @@ namespace FreezingArcher.Game
         readonly Entity player;
 
         readonly Content.Game game;
+
+        void SwitchMaze(int mazeIdx)
+        {
+            if (mazeIdx == 0)
+            {
+                maze[1].PlayerPosition = player.GetComponent<TransformComponent>().Position;
+                game.MoveEntityToGameState(player, game.CurrentGameState, game.GetGameState("maze_overworld"));
+                player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
+            }
+            else if (mazeIdx == 1)
+            {
+                maze[0].PlayerPosition = player.GetComponent<TransformComponent>().Position;
+                game.MoveEntityToGameState(player, game.CurrentGameState, game.GetGameState("maze_underworld"));
+                player.GetComponent<TransformComponent>().Position = maze[1].PlayerPosition;
+            }
+        }
 
         #region IMessageConsumer implementation
 

@@ -71,6 +71,17 @@ namespace FreezingArcher.Content
         }
         #endregion
 
+        /// <summary>
+        /// Switchs the message provider.
+        /// </summary>
+        /// <param name="providerFrom">Provider from.</param>
+        /// <param name="providerTo">Provider to.</param>
+        public void SwitchMessageProvider(MessageProvider providerFrom, MessageProvider providerTo)
+        {
+            providerFrom -= this;
+            providerTo += this;
+        }
+
         #region IMessageCreator implementation
 
         public event MessageEvent MessageCreated;

@@ -75,11 +75,12 @@ namespace FreezingArcher.Messaging
         /// <param name="mouseScroll">Mouse scroll.</param>
         /// <param name="deltaTime">Delta time.</param>
         internal InputMessage (List<KeyboardInput> keys, List<MouseInput> mouse,
-            Vector2 mouseMovement, Vector2 mouseScroll, TimeSpan deltaTime)
+            Vector2 mouseMovement, Vector2 mousePosition, Vector2 mouseScroll, TimeSpan deltaTime)
         {
             Keys = keys;
             Mouse = mouse;
             MouseMovement = mouseMovement;
+            MousePosition = mousePosition;
             MouseScroll = mouseScroll;
             DeltaTime = deltaTime;
 
@@ -109,6 +110,12 @@ namespace FreezingArcher.Messaging
         /// </summary>
         /// <value>The mouse movement.</value>
         public Vector2 MouseMovement { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the mouse position.
+        /// </summary>
+        /// <value>The mouse position.</value>
+        public Vector2 MousePosition { get; protected set; }
 
         /// <summary>
         /// Gets or sets the mouse scroll.

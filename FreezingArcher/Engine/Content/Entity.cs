@@ -83,6 +83,16 @@ namespace FreezingArcher.Content
         }
 
         /// <summary>
+        /// Determines whether this instance has a given component.
+        /// </summary>
+        /// <returns><c>true</c> if this instance has component; otherwise, <c>false</c>.</returns>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public bool HasComponent<T> () where T : EntityComponent
+        {
+            return Components.ContainsKey(typeof(T).GetHashCode());
+        }
+
+        /// <summary>
         /// Adds the component.
         /// </summary>
         /// <returns><c>true</c>, if component was added, <c>false</c> otherwise.</returns>
@@ -212,6 +222,20 @@ namespace FreezingArcher.Content
         }
 
         /// <summary>
+        /// Switchs the message provider.
+        /// </summary>
+        /// <param name="providerFrom">Provider from.</param>
+        /// <param name="providerTo">Provider to.</param>
+        public void SwitchMessageProvider(MessageProvider providerFrom, MessageProvider providerTo)
+        {
+            foreach (var pair in Systems)
+                pair.Value.SwitchMessageProvider(providerFrom, providerTo);
+
+            foreach (var pair in Components)
+                pair.Value.SwitchMessageProvider(providerFrom, providerTo);
+        }
+
+        /// <summary>
         /// The message provider.
         /// </summary>
         MessageProvider MessageProvider;
@@ -236,4 +260,3 @@ namespace FreezingArcher.Content
         }
     }
 }
-

@@ -81,6 +81,17 @@ namespace FreezingArcher.Content
         }
 
         /// <summary>
+        /// Switchs the message provider.
+        /// </summary>
+        /// <param name="providerFrom">Provider from.</param>
+        /// <param name="providerTo">Provider to.</param>
+        public void SwitchMessageProvider(MessageProvider providerFrom, MessageProvider providerTo)
+        {
+            providerFrom -= this;
+            providerTo += this;
+        }
+
+        /// <summary>
         /// Creates the message.
         /// </summary>
         /// <param name="msg">Message.</param>

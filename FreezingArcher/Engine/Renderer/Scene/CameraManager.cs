@@ -96,7 +96,7 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         /// <param name="cam">Cam.</param>
         /// <param name="groupID">Group I.</param>
-        public void AddCam(BaseCamera cam, string name, string groupID="root")
+        public void AddCamera(BaseCamera cam, string name, string groupID="root")
         {
             ((IEnumerable<Tree<Pair<string, BaseCamera>>>) CamTree.LevelOrder).First(i => i.Data.A == groupID)
                 .AddChild (new Pair<string, BaseCamera>(name, cam));

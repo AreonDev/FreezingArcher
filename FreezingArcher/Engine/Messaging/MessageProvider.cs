@@ -140,6 +140,18 @@ namespace FreezingArcher.Messaging
         }
 
         /// <summary>
+        /// Removes the message creator.
+        /// </summary>
+        /// <param name="creator">Creator.</param>
+        public void RemoveMessageCreator(IMessageCreator creator)
+        {
+            Logger.Log.AddLogEntry(LogLevel.Fine, ClassName, "Removing message creator '{0}'",
+                creator.GetType().ToString());
+
+            creator.MessageCreated -= HandleMessageCreated;
+        }
+
+        /// <summary>
         /// Handles the message created event.
         /// </summary>
         /// <param name="message">Message.</param>
@@ -199,6 +211,19 @@ namespace FreezingArcher.Messaging
 
             if (o is IMessageCreator)
                 j.AddMessageCreator (o as IMessageCreator);
+            return j;
+        }
+
+        /// <param name="j">MessageManager to remove object from.</param>
+        /// <param name="o">Object to remove.</param>
+        public static MessageProvider operator - (MessageProvider j, object o)
+        {
+            if (o is IMessageConsumer)
+                j.UnregisterMessageConsumer(o as IMessageConsumer);
+
+            if (o is IMessageCreator)
+                j.RemoveMessageCreator(o as IMessageCreator);
+
             return j;
         }
     }

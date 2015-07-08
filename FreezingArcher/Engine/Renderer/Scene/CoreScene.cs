@@ -105,6 +105,7 @@ namespace FreezingArcher.Renderer.Scene
 
                     PrivateRendererContext.AddRCActionJob(new RCActionInitSceneObject(obj, PrivateRendererContext));
                     obj.WaitTillInitialized();
+                    Objects.Add(obj);
                 }
             }
             else

@@ -57,10 +57,16 @@ namespace FreezingArcher.Messaging
 
             List<IMessageConsumer> tmp;
             if (MessageList.TryGetValue((int) MessageId.All, out tmp))
-                tmp.ForEach(i => i.ConsumeMessage(msg));
+            {
+                lock (tmp)
+                    tmp.ForEach(i => i.ConsumeMessage(msg));
+            }
 
             if (MessageList.TryGetValue(msg.MessageId, out tmp))
-                tmp.ForEach(i => i.ConsumeMessage(msg));
+            {
+                lock (tmp)
+                    tmp.ForEach(i => i.ConsumeMessage(msg));
+            }
         }
 
         public int[] ValidMessages { get; private set; }

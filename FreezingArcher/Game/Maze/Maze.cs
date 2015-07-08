@@ -30,6 +30,8 @@ using FreezingArcher.Output;
 using FreezingArcher.Content;
 using Pencil.Gaming.Graphics;
 using Henge3D.Physics;
+using FreezingArcher.Messaging;
+using System.Threading;
 
 namespace FreezingArcher.Game.Maze
 {
@@ -48,8 +50,9 @@ namespace FreezingArcher.Game.Maze
     /// <summary>
     /// Add maze to scene delegate.
     /// </summary>
-    delegate void AddMazeToSceneDelegate(WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, Entity[,] entities,
-        Entity player, CoreScene scene, PhysicsManager physics, float scaling, uint maxX, int xOffs, int yOffs);
+    delegate void AddMazeToGameStateDelegate(WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
+        MessageProvider messageProvider, Entity[,] entities, Entity player, CoreScene scene, PhysicsManager physics,
+        float scaling, uint maxX, int xOffs, int yOffs);
 
     /// <summary>
     /// Calculate path to exit delegate.
@@ -88,7 +91,7 @@ namespace FreezingArcher.Game.Maze
         /// <param name="portalSpawnFactor">Portal spawn factor.</param>
         internal Maze (ObjectManager objmnr, int seed, int sizeX, int sizeY, float scale, PhysicsManager physics,
             Entity player, InitializeMazeDelegate initFunc, GenerateMazeDelegate generateFunc,
-            AddMazeToSceneDelegate addToSceneDelegate, CalculatePathToExitDelegate exitFunc,
+            AddMazeToGameStateDelegate addToSceneDelegate, CalculatePathToExitDelegate exitFunc,
             PlaceFeaturesDelegate placeFeaturesFunc, double turbulence, int maximumContinuousPathLength,
             uint portalSpawnFactor)
         {
@@ -102,7 +105,7 @@ namespace FreezingArcher.Game.Maze
             rand = new Random (seed);
             initMazeDelegate = initFunc;
             generateMazeDelegate = generateFunc;
-            addMazeToSceneDelegate = addToSceneDelegate;
+            addMazeToGameStateDelegate = addToSceneDelegate;
             calcExitPathDelegate = exitFunc;
             placeFeaturesDelegate = placeFeaturesFunc;
             this.physics = physics;
@@ -123,7 +126,7 @@ namespace FreezingArcher.Game.Maze
 
         readonly GenerateMazeDelegate generateMazeDelegate;
 
-        readonly AddMazeToSceneDelegate addMazeToSceneDelegate;
+        readonly AddMazeToGameStateDelegate addMazeToGameStateDelegate;
 
         readonly CalculatePathToExitDelegate calcExitPathDelegate;
 
@@ -212,7 +215,7 @@ namespace FreezingArcher.Game.Maze
         /// <summary>
         /// Generate this instance.
         /// </summary>
-        public void Generate(CoreScene scene = null)
+        public void Generate(GameState state = null)
         {
             if (!IsInitialized)
             {
@@ -229,10 +232,14 @@ namespace FreezingArcher.Game.Maze
             if (generateMazeDelegate != null)
             {
                 IsGenerated = true;
-                generateMazeDelegate(ref graph, ref rand, MaximumContinuousPathLength, Turbulence);
 
-                if (scene != null)
-                    AddToScene(scene);
+                var generationThread = new Thread(() => 
+                {
+                    generateMazeDelegate(ref graph, ref rand, MaximumContinuousPathLength, Turbulence);
+                    if (state != null)
+                        AddToGameState(state);
+                });
+                generationThread.Start();
             }
             else
             {
@@ -280,8 +287,8 @@ namespace FreezingArcher.Game.Maze
         /// <summary>
         /// Adds to scene.
         /// </summary>
-        /// <param name="scene">Scene.</param>
-        public void AddToScene(CoreScene scene)
+        /// <param name="state">The game state the maze should be added to.</param>
+        public void AddToGameState(GameState state)
         {
             if (!IsInitialized)
             {
@@ -289,9 +296,10 @@ namespace FreezingArcher.Game.Maze
                 return;
             }
 
-            if (addMazeToSceneDelegate != null)
+            if (addMazeToGameStateDelegate != null)
             {
-                addMazeToSceneDelegate(graph, entities, player, scene, physics, scale, (uint) Size.X, Offset.X, Offset.Y);
+                addMazeToGameStateDelegate(graph, state.MessageProxy, entities, player, state.Scene, physics, scale,
+                    (uint) Size.X, Offset.X, Offset.Y);
             }
             else
             {

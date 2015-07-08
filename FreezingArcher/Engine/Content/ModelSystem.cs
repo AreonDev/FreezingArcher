@@ -36,9 +36,9 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <param name="msgmnr">Msgmnr.</param>
         /// <param name="entity">Entity.</param>
-        public override void Init(FreezingArcher.Messaging.MessageManager msgmnr, Entity entity)
+        public override void Init(MessageProvider messageProvider, Entity entity)
         {
-            base.Init(msgmnr, entity);
+            base.Init(messageProvider, entity);
 
             //Added needed components
             NeededComponents = new[] { typeof(TransformComponent), typeof(ModelComponent) };
@@ -47,7 +47,7 @@ namespace FreezingArcher.Content
             //Scene does this for me, so no!
             internalValidMessages = new[] { (int) MessageId.PositionChangedMessage,
                 (int) MessageId.RotationChangedMessage, (int) MessageId.ScaleChangedMessage };
-            msgmnr += this;
+            messageProvider += this;
         }
 
         /// <summary>

@@ -62,15 +62,15 @@ namespace FreezingArcher.Renderer.Scene
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Renderer.Scene.CameraManager"/> class.
         /// </summary>
-        /// <param name="msgmngr">Msgmngr.</param>
+        /// <param name="messageProvider">The message provider for this camera manager instance.</param>
         /// <param name="name">Name.</param>
         /// <param name="cam">Cam.</param>
-        public CameraManager (MessageManager msgmngr, string name = "firstCam", BaseCamera cam = null)
+        public CameraManager (MessageProvider messageProvider, string name = "firstCam", BaseCamera cam = null)
         {
             CamTree = new Tree<Pair<string, BaseCamera>> (new Pair<string, BaseCamera>("root", null));
             ActiveCameraNode = new Tree<Pair<string, BaseCamera>> (new Pair<string, BaseCamera>(name, cam));
             ValidMessages = new int[] { (int)MessageId.Input };
-            msgmngr += this;
+            messageProvider += this;
         }
 
         /// <summary>

@@ -25,9 +25,7 @@ using FreezingArcher.Core.Interfaces;
 using Henge3D.Physics;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
-using System;
 using FreezingArcher.Math;
-using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -42,8 +40,8 @@ namespace FreezingArcher.Content
         /// <param name="name">Name.</param>
         /// <param name="env">Environment.</param>
         /// <param name="scene">Scene.</param>
-        /// <param name="msgmnr">Message Manager.</param>
-        public GameState(string name, Environment env, CoreScene scene, MessageManager msgmnr)
+        /// <param name="messageProvider">Message Manager.</param>
+        public GameState(string name, Environment env, CoreScene scene, MessageProvider messageProvider)
         {
             Name = name;
             Environment = env;
@@ -52,7 +50,7 @@ namespace FreezingArcher.Content
             PhysicsManager.Initialize();
             PhysicsManager.Gravity = new Vector3(0, -1.81f, 0);
             ValidMessages = new[] { (int) MessageId.Update };
-            msgmnr += this;
+            MessageProxy = new MessageProxy(messageProvider);
         }
 
         /// <summary>
@@ -60,6 +58,12 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <value>The environment.</value>
         public Environment Environment { get; set; }
+
+        /// <summary>
+        /// Gets the message proxy.
+        /// </summary>
+        /// <value>The message proxy.</value>
+        public MessageProxy MessageProxy { get; private set; }
 
         /// <summary>
         /// Gets or sets the scene.

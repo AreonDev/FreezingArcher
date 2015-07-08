@@ -53,7 +53,7 @@ namespace FreezingArcher.Input
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Input.InputManager"/> class.
         /// </summary>
-        internal InputManager (MessageManager messageManager)
+        internal InputManager (MessageProvider messageProvider)
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new input manager");
             Keys = new List<KeyboardInput> ();
@@ -61,9 +61,9 @@ namespace FreezingArcher.Input
             MouseMovement = Vector2.Zero;
             MouseScroll = Vector2.Zero;
             OldMousePosition = Vector2.Zero;
-            KeyRegistry.Instance = new KeyRegistry (messageManager);
+            KeyRegistry.Instance = new KeyRegistry (messageProvider);
             Stopwatch = new Stopwatch();
-            messageManager += this;
+            messageProvider += this;
         }
 
         /// <summary>

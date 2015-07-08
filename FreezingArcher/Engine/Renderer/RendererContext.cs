@@ -60,7 +60,7 @@ namespace FreezingArcher.Renderer
 
         public SimpleMaterial SimpleMaterial { get; private set;}
 
-        public RendererContext(MessageManager mssgmngr) : base(mssgmngr)
+        public RendererContext(MessageProvider messageProvider) : base(messageProvider)
         {
             m_AssimpContext = new AssimpContext();
         }

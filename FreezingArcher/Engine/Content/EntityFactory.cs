@@ -47,27 +47,25 @@ namespace FreezingArcher.Content
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.EntityFactory"/> class.
         /// </summary>
         /// <param name="objectManager">Object manager.</param>
-        /// <param name="messageManager">Message manager.</param>
-        public EntityFactory(ObjectManager objectManager, MessageManager messageManager)
+        public EntityFactory(ObjectManager objectManager)
         {
             ObjectManager = objectManager;
-            MessageManager = messageManager;
         }
 
         readonly ObjectManager ObjectManager;
-        readonly MessageManager MessageManager;
 
         /// <summary>
         /// Creates an entity with the specified parameters.
         /// </summary>
         /// <returns>The entity.</returns>
         /// <param name="name">Name.</param>
+        /// <param name="messageProvider"></param>
         /// <param name="components">Components.</param>
         /// <param name="systems">Systems.</param>
-        public Entity CreateWith(string name, Type[] components = null, Type[] systems = null)
+        public Entity CreateWith(string name, MessageProvider messageProvider, Type[] components = null, Type[] systems = null)
         {
             Entity e = ObjectManager.CreateOrRecycle<Entity>();
-            e.Init(name, MessageManager);
+            e.Init(name, messageProvider);
 
             if (components != null)
             {

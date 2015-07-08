@@ -44,9 +44,9 @@ namespace FreezingArcher.Game
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.PhysicsTest"/> class.
         /// </summary>
         /// <param name="app">App.</param>
-        public PhysicsTest(Application app)
+        public PhysicsTest(Application app, MessageProvider messageProvider)
         {
-            Entity wall = EntityFactory.Instance.CreateWith("wall", null,
+            Entity wall = EntityFactory.Instance.CreateWith("wall", messageProvider, null,
                 new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
 
             var wallModel = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
@@ -70,7 +70,7 @@ namespace FreezingArcher.Game
             wallRigidBody.Skin.Add(new MeshPart(bla), new Henge3D.Physics.Material(0.0f, 0.000000001f));
             wallRigidBody.SetWorld(new Vector3(0, 0, 0));
 
-            Entity ground = EntityFactory.Instance.CreateWith("ground", null,
+            Entity ground = EntityFactory.Instance.CreateWith("ground", messageProvider, null,
                 new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
 
             var groundModel = new ModelSceneObject("lib/Renderer/TestGraphics/Ground/ground.xml");

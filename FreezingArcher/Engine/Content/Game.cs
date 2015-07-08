@@ -21,16 +21,14 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using FreezingArcher.Core.Interfaces;
-using FreezingArcher.Input;
-using FreezingArcher.Output;
-using FreezingArcher.DataStructures.Graphs;
+using System.Linq;
 using FreezingArcher.Core;
-using FreezingArcher.Renderer.Scene;
-using System.Drawing;
+using FreezingArcher.Core.Interfaces;
+using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Messaging;
+using FreezingArcher.Output;
+using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Content
 {
@@ -49,12 +47,12 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="objmnr">Object Manager.</param>
-        /// <param name="msgmnr">Message Manager.</param>
-        public Game (string name, ObjectManager objmnr, MessageManager msgmnr)
+        /// <param name="messageProvider">Message Manager.</param>
+        public Game (string name, ObjectManager objmnr, MessageProvider messageProvider)
         {
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new game '{0}'", name);
             Name = name;
-            MessageManager = msgmnr;
+            MessageProvider = messageProvider;
             GameStateGraph = objmnr.CreateOrRecycle<DirectedWeightedGraph<GameState, GameStateTransition>>();
             GameStateGraph.Init();
         }
@@ -72,7 +70,7 @@ namespace FreezingArcher.Content
         }
 
         DirectedWeightedNode<GameState, GameStateTransition> currentNode;
-        MessageManager MessageManager;
+        MessageProvider MessageProvider;
 
         /// <summary>
         /// Gets the game state graph.
@@ -87,6 +85,9 @@ namespace FreezingArcher.Content
         /// <param name="name">Game state name.</param>
         public bool SwitchToGameState(string name)
         {
+            if (currentNode.Data.Name == name)
+                return true;
+
             var newstate = currentNode.OutgoingEdges.FirstOrDefault(e =>
                 e.DestinationNode.Data.Name == name).DestinationNode;
 
@@ -103,7 +104,9 @@ namespace FreezingArcher.Content
                     "The game state '{0}' is not reachable from the current game state!", name);
                 return false;
             }
+            currentNode.Data.MessageProxy.StopProcessing();
             currentNode = newstate;
+            currentNode.Data.MessageProxy.StartProcessing();
             return true;
         }
 
@@ -135,7 +138,7 @@ namespace FreezingArcher.Content
             IEnumerable<Tuple<string, GameStateTransition>> from = null,
             IEnumerable<Tuple<string, GameStateTransition>> to = null)
         {
-            return AddGameState(new GameState(name, env, scene, MessageManager), from, to);
+            return AddGameState(new GameState(name, env, scene, MessageProvider), from, to);
         }
 
         /// <summary>
@@ -226,6 +229,7 @@ namespace FreezingArcher.Content
 
             if (currentNode == null)
                 currentNode = GameStateGraph.Nodes[0];
+            currentNode.Data.MessageProxy.StartProcessing();
 
             return true;
         }

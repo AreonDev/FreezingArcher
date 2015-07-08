@@ -36,23 +36,23 @@ namespace FreezingArcher.Content
         /// <summary>
         /// Initialize this system. This may be used as a constructor replacement.
         /// </summary>
-        /// <param name="msgmnr">Msgmnr.</param>
+        /// <param name="messageProvider">Msgmnr.</param>
         /// <param name="entity">Entity.</param>
-        public override void Init(MessageManager msgmnr, Entity entity)
+        public override void Init(MessageProvider messageProvider, Entity entity)
         {
-            base.Init(msgmnr, entity);
+            base.Init(messageProvider, entity);
 
             NeededComponents = new[] { typeof(TransformComponent) };
 
             internalValidMessages = new[] { (int) MessageId.Input };
-            msgmnr += this;
+            messageProvider += this;
         }
 
         readonly float movement =
             (float) ConfigManager.Instance ["freezing_archer"].GetDouble("general", "mouse_speed") * 0.0001f;
 
-        readonly float clampTop    =  MathHelper.PiOver2;
-        readonly float clampBottom = -MathHelper.PiOver2;
+        readonly float clampTop    =  MathHelper.PiOver2 - 0.0001f;
+        readonly float clampBottom = -MathHelper.PiOver2 + 0.0001f;
 
         float rotationX;
         float rotationY;

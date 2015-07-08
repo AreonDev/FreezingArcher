@@ -218,10 +218,10 @@ namespace FreezingArcher.Renderer
 
         #region Public Methods
 
-        public RendererCore(Messaging.MessageManager mssgmngr)
+        public RendererCore(Messaging.MessageProvider messageProvider)
         {
             ValidMessages = new int[] { (int)Messaging.MessageId.WindowResizeMessage };
-            mssgmngr += this;
+            messageProvider += this;
 
             _RendererCoreActionsListLock = new object();
             _RendererCoreActionsList = new List<RCAction>();

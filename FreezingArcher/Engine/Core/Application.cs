@@ -122,7 +122,7 @@ namespace FreezingArcher.Core
             MessageManager = new MessageManager ();
             MessageManager += this;
             ConfigManager.Initialize (MessageManager);
-            EntityFactory.Instance = new EntityFactory(ObjectManager, MessageManager);
+            EntityFactory.Instance = new EntityFactory(ObjectManager);
 
             CommandLineInterface.Instance.SetHelp ("Freezing Archer 3D game engine/framework", "Alpha 0.0.1",
                 "AreonDev", 2015, 'h', "help", true, true, null,

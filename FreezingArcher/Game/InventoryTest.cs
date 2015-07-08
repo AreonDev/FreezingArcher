@@ -24,14 +24,15 @@ using System;
 using FreezingArcher.Content;
 using FreezingArcher.Math;
 using FreezingArcher.Output;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Game
 {
     public class InventoryTest
     {
-        public InventoryTest ()
+        public InventoryTest (MessageProvider messageProvider)
         {
-            Entity item1 = EntityFactory.Instance.CreateWith("A", new[] { typeof(ItemComponent) });
+            Entity item1 = EntityFactory.Instance.CreateWith("A", messageProvider, new[] { typeof(ItemComponent) });
             var item1comp = item1.GetComponent<ItemComponent>();
             item1comp.AttackClasses = AttackClass.Enemy;
             item1comp.AttackStrength = 2.5f;
@@ -45,7 +46,7 @@ namespace FreezingArcher.Game
             item1comp.ThrowPower = 5f;
             item1comp.Usage = 0;
 
-            Entity item2 = EntityFactory.Instance.CreateWith("B", new[] { typeof(ItemComponent) });
+            Entity item2 = EntityFactory.Instance.CreateWith("B", messageProvider, new[] { typeof(ItemComponent) });
             var item2comp = item2.GetComponent<ItemComponent>();
             item2comp.AttackClasses = AttackClass.Nothing;
             item2comp.AttackStrength = 0f;
@@ -59,37 +60,37 @@ namespace FreezingArcher.Game
             item2comp.ThrowPower = 1f;
             item2comp.Usage = 0;
 
-            Entity item3 = EntityFactory.Instance.CreateWith("C", new[] { typeof(ItemComponent) });
+            Entity item3 = EntityFactory.Instance.CreateWith("C", messageProvider, new[] { typeof(ItemComponent) });
             var item3comp = item3.GetComponent<ItemComponent>();
             item3comp.Location = ItemLocation.Inventory;
             item3comp.Size = new Vector2i(2, 3);
 
-            Entity item4 = EntityFactory.Instance.CreateWith("D", new[] { typeof(ItemComponent) });
+            Entity item4 = EntityFactory.Instance.CreateWith("D", messageProvider, new[] { typeof(ItemComponent) });
             var item4comp = item4.GetComponent<ItemComponent>();
             item4comp.Location = ItemLocation.Inventory;
             item4comp.Size = new Vector2i(1, 3);
 
-            Entity item5 = EntityFactory.Instance.CreateWith("E", new[] { typeof(ItemComponent) });
+            Entity item5 = EntityFactory.Instance.CreateWith("E", messageProvider, new[] { typeof(ItemComponent) });
             var item5comp = item5.GetComponent<ItemComponent>();
             item5comp.Location = ItemLocation.Inventory;
             item5comp.Size = new Vector2i(1, 1);
 
-            Entity item6 = EntityFactory.Instance.CreateWith("F", new[] { typeof(ItemComponent) });
+            Entity item6 = EntityFactory.Instance.CreateWith("F", messageProvider, new[] { typeof(ItemComponent) });
             var item6comp = item6.GetComponent<ItemComponent>();
             item6comp.Location = ItemLocation.Inventory;
             item6comp.Size = new Vector2i(1, 1);
 
-            Entity item7 = EntityFactory.Instance.CreateWith("G", new[] { typeof(ItemComponent) });
+            Entity item7 = EntityFactory.Instance.CreateWith("G", messageProvider, new[] { typeof(ItemComponent) });
             var item7comp = item7.GetComponent<ItemComponent>();
             item7comp.Location = ItemLocation.Inventory;
             item7comp.Size = new Vector2i(2, 1);
 
-            Entity item8 = EntityFactory.Instance.CreateWith("H", new[] { typeof(ItemComponent) });
+            Entity item8 = EntityFactory.Instance.CreateWith("H", messageProvider, new[] { typeof(ItemComponent) });
             var item8comp = item8.GetComponent<ItemComponent>();
             item8comp.Location = ItemLocation.Inventory;
             item8comp.Size = new Vector2i(1, 3);
 
-            Entity item9 = EntityFactory.Instance.CreateWith("I", new[] { typeof(ItemComponent) });
+            Entity item9 = EntityFactory.Instance.CreateWith("I", messageProvider, new[] { typeof(ItemComponent) });
             var item9comp = item9.GetComponent<ItemComponent>();
             item9comp.Location = ItemLocation.Inventory;
             item9comp.Size = new Vector2i(1, 2);

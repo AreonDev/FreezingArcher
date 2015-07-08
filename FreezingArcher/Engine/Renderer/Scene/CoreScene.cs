@@ -131,9 +131,9 @@ namespace FreezingArcher.Renderer.Scene
         public Texture2D   FrameBufferDepthTexture { get; private set;}
         public TextureDepthStencil FrameBufferDepthStencilTexture { get; private set;}
 
-        public CoreScene(MessageManager messageManager)
+        public CoreScene(MessageProvider messageProvider)
         {
-            CameraManager = new CameraManager(messageManager);
+            CameraManager = new CameraManager(messageProvider);
             Objects = new List<SceneObject>();
             ObjectsToInit = new List<SceneObject>();
             SubScenes = new List<CoreScene>();

@@ -46,12 +46,12 @@ namespace FreezingArcher.Configuration
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="defaults">Defaults values.</param>
-        /// <param name="messageManager">Message manager.</param>
-        public ConfigFile (string name, Dictionary<string, Section> defaults, MessageManager messageManager)
+        /// <param name="messageProvider">Message manager.</param>
+        public ConfigFile (string name, Dictionary<string, Section> defaults, MessageProvider messageProvider)
         {
             Name = name;
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Reading {0}.conf", Name);
-            messageManager += this;
+            messageProvider += this;
             IniConfig = new IniConfig (name + ".conf");
             Defaults = defaults;
             Overrides = new Dictionary<string, Section> ();

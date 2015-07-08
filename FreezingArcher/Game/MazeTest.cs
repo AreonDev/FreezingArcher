@@ -30,6 +30,7 @@ using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Content;
+using FreezingArcher.Renderer;
 
 namespace FreezingArcher.Game
 {
@@ -43,18 +44,26 @@ namespace FreezingArcher.Game
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
         /// </summary>
-        /// <param name="msgmnr">Msgmnr.</param>
-        /// <param name="objmnr">Objmnr.</param>
-        /// <param name="scene">Scene.</param>
+        /// <param name="messageProvider">The message provider for this instance.</param>
+        /// <param name="objmnr">The object manager for this instance.</param>
+        /// <param name="rendererContext">The renderer context for the maze scenes.</param>
         /// <param name="game">The game the maze should be generated in.</param>
-        public MazeTest (MessageManager msgmnr, ObjectManager objmnr, CoreScene scene, Content.Game game)
+        public MazeTest (MessageProvider messageProvider, ObjectManager objmnr, RendererContext rendererContext,
+            Content.Game game)
         {
-            ValidMessages = new int[] { (int) MessageId.Input };
-            msgmnr += this;
+            ValidMessages = new[] { (int) MessageId.Input };
+            messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
-            this.scene = scene;
+            this.game = game;
 
-            player = EntityFactory.Instance.CreateWith ("player", systems: new[] {
+            game.AddGameState("default", Content.Environment.Default, null);
+            game.SwitchToGameState("default");
+            var state = game.CurrentGameState;
+            state.Scene = new CoreScene(game.CurrentGameState.MessageProxy);
+            state.Scene.BackgroundColor = Color4.Crimson;
+            rendererContext.Scene = state.Scene;
+
+            player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, systems: new[] {
                 typeof (MovementSystem),
                 typeof (KeyboardControllerSystem),
                 typeof (MouseControllerSystem),
@@ -63,11 +72,11 @@ namespace FreezingArcher.Game
 
             player.GetComponent<TransformComponent>().Position = new Vector3(0, 1.85f, 0);
 
-            scene.CameraManager.AddCam (new BaseCamera (player, msgmnr), "player");
+            state.Scene.CameraManager.AddCam (new BaseCamera (player, state.MessageProxy), "player");
 
             ModelSceneObject skyboxModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Skybox/skybox.xml");
             skyboxModel.Scaling = 100.0f * Vector3.One;
-            scene.AddObject (skyboxModel);
+            state.Scene.AddObject (skyboxModel);
             skyboxModel.WaitTillInitialized ();
             skyboxModel.Model.EnableDepthTest = false;
             skyboxModel.Model.EnableLighting = false;
@@ -76,8 +85,8 @@ namespace FreezingArcher.Game
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze[0] = mazeGenerator.CreateMaze(rand.Next(), game.CurrentGameState.PhysicsManager, player);
-            maze[1] = mazeGenerator.CreateMaze(rand.Next(), game.CurrentGameState.PhysicsManager, player);
+            maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, player);
+            maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, player);
         }
 
         readonly MazeGenerator mazeGenerator;
@@ -86,7 +95,7 @@ namespace FreezingArcher.Game
 
         readonly Entity player;
 
-        readonly CoreScene scene;
+        readonly Content.Game game;
 
         #region IMessageConsumer implementation
 
@@ -102,7 +111,7 @@ namespace FreezingArcher.Game
                 if (im.IsActionPressed("jump"))
                 {
                     if (!maze[0].IsGenerated)
-                        maze[0].Generate(scene);
+                        maze[0].Generate(game.CurrentGameState);
                     else if (!maze[1].IsGenerated)
                         maze[1].Generate();
                 }

@@ -36,19 +36,19 @@ namespace FreezingArcher.Game
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.ECSTest"/> class.
         /// </summary>
-        /// <param name="msgmnr">Msgmnr.</param>
+        /// <param name="messageProvider">The message provider for this instance.</param>
         /// <param name="scene">Scene.</param>
-        public ECSTest (MessageManager msgmnr, CoreScene scene)
+        public ECSTest (MessageProvider messageProvider, CoreScene scene)
         {
-            Entity player = EntityFactory.Instance.CreateWith ("player", systems: new[] {
+            Entity player = EntityFactory.Instance.CreateWith ("player", messageProvider, systems: new[] {
                 typeof (MovementSystem),
                 typeof (KeyboardControllerSystem),
                 typeof (MouseControllerSystem)
             });
 
-            scene.CameraManager.AddCam (new BaseCamera (player, msgmnr), "player");
+            scene.CameraManager.AddCam (new BaseCamera (player, messageProvider), "player");
 
-            Entity skybox = EntityFactory.Instance.CreateWith ("skybox", systems: new[] { typeof(ModelSystem) });
+            Entity skybox = EntityFactory.Instance.CreateWith ("skybox", messageProvider, systems: new[] { typeof(ModelSystem) });
             ModelSceneObject skyboxModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Skybox/skybox.xml");
             skybox.GetComponent<TransformComponent>().Scale = 100.0f * Vector3.One;
             scene.AddObject (skyboxModel);

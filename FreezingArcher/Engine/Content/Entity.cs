@@ -43,11 +43,11 @@ namespace FreezingArcher.Content
         /// Initialize this entity with the specified name and message manager.
         /// </summary>
         /// <param name="name">Name.</param>
-        /// <param name="messageManager">Message manager.</param>
-        public void Init(string name, MessageManager messageManager)
+        /// <param name="messageProvider">Message manager.</param>
+        public void Init(string name, MessageProvider messageProvider)
         {
             Name = name;
-            MessageManager = messageManager;
+            MessageProvider = messageProvider;
 
             if (Components == null)
                 Components = new Dictionary<int, EntityComponent>();
@@ -114,7 +114,7 @@ namespace FreezingArcher.Content
             }
 
             var component = ObjectManager.CreateOrRecycle(type) as EntityComponent;
-            component.Init(this, MessageManager);
+            component.Init(this, MessageProvider);
 
             Components.Add(typeid, component);
 
@@ -172,7 +172,7 @@ namespace FreezingArcher.Content
             }
 
             var system = ObjectManager.CreateOrRecycle(type) as EntitySystem;
-            system.Init(MessageManager, this);
+            system.Init(MessageProvider, this);
 
             Systems.Add(typeid, system);
 
@@ -212,9 +212,9 @@ namespace FreezingArcher.Content
         }
 
         /// <summary>
-        /// The message manager.
+        /// The message provider.
         /// </summary>
-        MessageManager MessageManager;
+        MessageProvider MessageProvider;
 
         #region IManageable implementation
         /// <summary>
@@ -230,7 +230,7 @@ namespace FreezingArcher.Content
         public override void Destroy()
         {
             Name = null;
-            MessageManager = null;
+            MessageProvider = null;
             Components.Clear();
             base.Destroy();
         }

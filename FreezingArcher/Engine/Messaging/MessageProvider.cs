@@ -96,7 +96,8 @@ namespace FreezingArcher.Messaging
             consumer.ValidMessages.ForEach(i => {
                 List<IMessageConsumer> tmp;
                 if (MessageList.TryGetValue(i, out tmp))
-                    tmp.Add(consumer);
+                    lock (tmp)
+                        tmp.Add(consumer);
                 else
                 {
                     tmp = new List<IMessageConsumer>(consumer.ToCollection());
@@ -118,7 +119,10 @@ namespace FreezingArcher.Messaging
                 {
                     List<IMessageConsumer> tmp;
                     if (MessageList.TryGetValue(i, out tmp))
-                        tmp.Remove(consumer);
+                    {
+                        lock (tmp)
+                            tmp.Remove(consumer);
+                    }
                 });
         }
 

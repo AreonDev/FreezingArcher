@@ -74,7 +74,7 @@ namespace FreezingArcher.Configuration
         /// <summary>
         /// Initialize the global instance.
         /// </summary>
-        public static void Initialize (MessageManager messageManager)
+        public static void Initialize (MessageProvider messageProvider)
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Initializing config manager ...");
 
@@ -84,17 +84,17 @@ namespace FreezingArcher.Configuration
             foreach (var k in KeyRegistry.Keys)
                 keymap.Add (k.Key, new Value (k.Value.ToString ()));
 
-            Instance = new ConfigManager (messageManager);
-            Instance.Add (new ConfigFile (DefaultConfig.A, DefaultConfig.B, messageManager));
+            Instance = new ConfigManager (messageProvider);
+            Instance.Add (new ConfigFile (DefaultConfig.A, DefaultConfig.B, messageProvider));
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Configuration.ConfigManager"/> class.
         /// </summary>
-        /// <param name="messageManager">Message manager.</param>
-        public ConfigManager (MessageManager messageManager)
+        /// <param name="messageProvider">Message manager.</param>
+        public ConfigManager (MessageProvider messageProvider)
         {
-            messageManager += this;
+            messageProvider += this;
             ConfigFiles = new List<ConfigFile> ();
         }
 

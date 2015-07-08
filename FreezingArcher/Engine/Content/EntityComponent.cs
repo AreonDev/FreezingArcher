@@ -51,10 +51,11 @@ namespace FreezingArcher.Content
         /// manager.
         /// </summary>
         /// <param name="entity">The entity this component is bounded to.</param>
-        public virtual void Init(Entity entity, MessageManager msgmnr)
+        /// <param name="messageProvider">The message provider instance for the component.</param>
+        public virtual void Init(Entity entity, MessageProvider messageProvider)
         {
             Entity = entity;
-            msgmnr += this;
+            messageProvider += this;
             // set type based default parameters for fields and properties
             Type t = GetType();
             var fields = t.GetFields().Where(f => !f.IsDefined(typeof(CompilerGeneratedAttribute), false) &&

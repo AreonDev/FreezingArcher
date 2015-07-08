@@ -186,7 +186,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="far">Far.</param>
         /// <param name="fov">Fov.</param>
         /// <param name="up">Up.</param>
-        public BaseCamera (Entity entity, MessageManager mssgmngr, Vector3 position = default(Vector3),
+        public BaseCamera (Entity entity, MessageProvider messageProvider, Vector3 position = default(Vector3),
             Quaternion rotation = default(Quaternion), float near = 0.1f, float far = 400.0f,
             float fov = MathHelper.PiOver2)
         {
@@ -198,7 +198,7 @@ namespace FreezingArcher.Renderer.Scene
             MFov = fov;
             ValidMessages = new int[] { (int)MessageId.PositionChangedMessage, (int)MessageId.RotationChangedMessage };
             NeededComponents = new[] { typeof(TransformComponent) };
-            mssgmngr += this;
+            messageProvider += this;
             Entity = entity;
 
             ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (MFov,

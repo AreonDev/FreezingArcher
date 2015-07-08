@@ -31,6 +31,7 @@ using FreezingArcher.Math;
 using FreezingArcher.Content;
 using Henge3D.Physics;
 using Henge3D;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Game.Maze
 {
@@ -55,6 +56,7 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <returns>The maze.</returns>
         /// <param name="seed">Seed.</param>
+        /// <param name="messageProvider">The message provider for the maze scenes.</param>
         /// <param name="physics">Physics manager instance.</param>
         /// <param name="player">The player that should be positioned at the spawn.</param>
         /// <param name="sizeX">Size x.</param>
@@ -63,8 +65,9 @@ namespace FreezingArcher.Game.Maze
         /// <param name="turbulence">Turbulence. The higher the more straight the maze will be.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will appear.</param>
-        public Maze CreateMaze(int seed, PhysicsManager physics, Entity player, int sizeX = 40, int sizeY = 40,
-            float scale = 10, double turbulence = 2, int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
+        public Maze CreateMaze(int seed, MessageProvider messageProvider, PhysicsManager physics, Entity player,
+            int sizeX = 40, int sizeY = 40, float scale = 10, double turbulence = 2,
+            int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
         {
             Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, physics, player, InitializeMaze, CreateMaze,
                 AddMazeToScene, CalculatePathToExit, SpawnPortals, turbulence, maximumContinuousPathLength,
@@ -288,8 +291,9 @@ namespace FreezingArcher.Game.Maze
             }
         }
 
-        static void AddMazeToScene (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, Entity[,] entities,
-            Entity player, CoreScene scene, PhysicsManager physics, float scaling, uint maxX, int xOffs, int yOffs)
+        static void AddMazeToScene (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, MessageProvider messageProvider,
+            Entity[,] entities, Entity player, CoreScene scene, PhysicsManager physics,
+            float scaling, uint maxX, int xOffs, int yOffs)
         {
             int x = 0;
             int y = 0;
@@ -323,7 +327,7 @@ namespace FreezingArcher.Game.Maze
             {
                 if (node.Data.MazeCellType == MazeCellType.Ground)
                 {
-                    entities [x, y] = EntityFactory.Instance.CreateWith("ground" + x + "." + y, null, systems);
+                    entities [x, y] = EntityFactory.Instance.CreateWith("ground" + x + "." + y, messageProvider, systems: systems);
                     model = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
                     entities [x, y].GetComponent<ModelComponent>().Model = model;
                     scnobjarr_ground.AddObject (model);
@@ -343,7 +347,7 @@ namespace FreezingArcher.Game.Maze
                 }
                 else
                 {
-                    entities [x, y] = EntityFactory.Instance.CreateWith("wall" + x + "." + y, null, systems);
+                    entities [x, y] = EntityFactory.Instance.CreateWith("wall" + x + "." + y, messageProvider, systems: systems);
                     model = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
                     entities [x, y].GetComponent<ModelComponent>().Model = model;
                     scnobjarr_wall.AddObject(model);

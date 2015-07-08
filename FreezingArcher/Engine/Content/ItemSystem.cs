@@ -33,14 +33,14 @@ namespace FreezingArcher.Content
         /// <summary>
         /// Initialize this system. This may be used as a constructor replacement.
         /// </summary>
-        /// <param name="msgmnr">Msgmnr.</param>
+        /// <param name="messageProvider">The message provider for this system instance.</param>
         /// <param name="entity">Entity.</param>
-        public override void Init(MessageManager msgmnr, Entity entity)
+        public override void Init(MessageProvider messageProvider, Entity entity)
         {
-            base.Init(msgmnr, entity);
+            base.Init(messageProvider, entity);
 
             internalValidMessages = new[] { (int) MessageId.Input };
-            msgmnr += this;
+            messageProvider += this;
         }
 
         /// <summary>

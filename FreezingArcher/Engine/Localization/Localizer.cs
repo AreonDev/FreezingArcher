@@ -48,22 +48,22 @@ namespace FreezingArcher.Localization
         /// <summary>
         /// Initializes the <see cref="FreezingArcher.Localization.Localizer"/> class.
         /// </summary>
-        public static void Initialize (MessageManager messageManager)
+        public static void Initialize (MessageProvider messageProvider)
         {
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Initializing global localizer instance ...");
             Dictionary<LocaleEnum, LocalizationData> dic = new Dictionary<LocaleEnum, LocalizationData> ();
             dic.Add (LocaleEnum.en_US, new LocalizationData ("Localization/en_US.xml"));
             dic.Add (LocaleEnum.de_DE, new LocalizationData ("Localization/de_DE.xml"));
-            Instance = new Localizer (dic, messageManager);
+            Instance = new Localizer (dic, messageProvider);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Localization.Localizer"/> class.
         /// </summary>
         /// <param name="locales">Locales.</param>
-        /// <param name="messageManager">Message manager instance.</param>
+        /// <param name="messageProvider">Message manager instance.</param>
         /// <param name="initialLocale">Initial locale.</param>
-        public Localizer (Dictionary<LocaleEnum, LocalizationData> locales, MessageManager messageManager,
+        public Localizer (Dictionary<LocaleEnum, LocalizationData> locales, MessageProvider messageProvider,
             LocaleEnum initialLocale = LocaleEnum.en_US)
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating localizer instance with initial locale '{0}'",
@@ -71,8 +71,8 @@ namespace FreezingArcher.Localization
             Locales = locales;
             CurrentLocale = initialLocale;
 
-            if (messageManager != null)
-                messageManager += this;
+            if (messageProvider != null)
+                messageProvider += this;
         }
 
         /// <summary>

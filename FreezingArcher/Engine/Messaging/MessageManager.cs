@@ -4,6 +4,7 @@
 //  Author:
 //       Martin Koppehel <martin.koppehel@st.ovgu.de>
 //       Willy Failla <wfailla@wfailla.de>
+//       Fin Christensen <christensen.fin@gmail.com>
 //
 //  Copyright (c) 2015 Fin Christensen
 //
@@ -100,9 +101,15 @@ namespace FreezingArcher.Messaging
                         Message = MessageQueue.Dequeue ();
                     List<IMessageConsumer> tmp;
                     if (MessageList.TryGetValue (Message.MessageId, out tmp))
-                        tmp.ForEach (i => i.ConsumeMessage (Message));
+                    {
+                        lock (tmp)
+                            tmp.ForEach (i => i.ConsumeMessage (Message));
+                    }
                     if (MessageList.TryGetValue((int) MessageId.All, out tmp))
-                        tmp.ForEach(i => i.ConsumeMessage(Message));
+                    {
+                        lock (tmp)
+                            tmp.ForEach(i => i.ConsumeMessage(Message));
+                    }
                 }
                 else
                     Thread.Sleep (5);

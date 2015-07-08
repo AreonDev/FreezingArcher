@@ -68,11 +68,11 @@ namespace FreezingArcher.Input
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Input.KeyRegistry"/> class.
         /// </summary>
-        /// <param name="messageManager">The message manager.</param>
-        internal KeyRegistry (MessageManager messageManager)
+        /// <param name="messageProvider">The message manager.</param>
+        internal KeyRegistry (MessageProvider messageProvider)
         {
             ValidMessages = new int[] { (int) MessageId.ConfigFileValueSet };
-            messageManager += this;
+            messageProvider += this;
             RecacheConfig ();
         }
 

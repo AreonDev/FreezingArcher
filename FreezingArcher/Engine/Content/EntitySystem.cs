@@ -39,7 +39,7 @@ namespace FreezingArcher.Content
         /// <summary>
         /// Initialize this system. This may be used as a constructor replacement.
         /// </summary>
-        public virtual void Init(MessageManager msgmnr, Entity entity)
+        public virtual void Init(MessageProvider messageProvider, Entity entity)
         {
             Entity = entity;
             NeededComponents = null;

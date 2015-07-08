@@ -21,8 +21,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Core;
-using FreezingArcher.Math;
-using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {
@@ -41,32 +39,20 @@ namespace FreezingArcher.Game
             Application.Instance.Init ();
             Application.Instance.Load ();
 
-            MessagingTest test = null;
-
             if (!Application.Instance.IsCommandLineInterface)
             {
                 Content.Game game = Application.Instance.Game;
                 var rc = Application.Instance.RendererContext;
-                var msgmnr = Application.Instance.MessageManager;
+                var messageManager = Application.Instance.MessageManager;
                 var objmnr = Application.Instance.ObjectManager;
 
-                game.AddGameState("default", Content.Environment.Default, rc.Scene);
-                rc.Scene = new CoreScene(msgmnr);
-                rc.Scene.BackgroundColor = Color4.Crimson;
-                //rc.Scene.CameraManager.AddCam (new BaseCamera (msgmnr),"test");
-                var cammnr = rc.Scene.CameraManager;
-
-                new MazeTest(msgmnr, objmnr, rc.Scene, game);
+                new MazeTest(messageManager, objmnr, rc, game);
                 //new ECSTest(msgmnr, rc.Scene);
                 //new PhysicsTest(Application.Instance);
-                //test = new MessagingTest();
-
                 //new InventoryTest();
             }
 
             Application.Instance.Run ();
-            if (test != null)
-                test.Dispose();
             Application.Instance.Destroy ();
         }
     }

@@ -406,6 +406,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="UI\Renderer\TextRenderer.cs" />
     <Compile Include="Renderer\Compositor\CompositorInputSlot.cs" />
     <Compile Include="Renderer\Compositor\CompositorOutputSlot.cs" />
+    <Compile Include="UI\Input\FreezingArcherInput.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

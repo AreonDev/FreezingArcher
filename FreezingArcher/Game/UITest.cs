@@ -32,6 +32,8 @@ namespace FreezingArcher.Game
     public class UITest
     {
         readonly Button[] buttons = new Button[6];
+        readonly WindowControl window;
+        readonly ScrollControl scroll;
 
         UISceneObject sceneobj;
 
@@ -62,15 +64,27 @@ namespace FreezingArcher.Game
                 new Rectangle(330, 80, 150, 20)
             };
 
+            window = new WindowControl (sceneobj.Canvas);
+            window.SetSize (400, 400);
+            window.SetPosition (30, 30);
+            window.Show ();
+
+            scroll = new ScrollControl (window);
+            scroll.SetBounds (10, 10, 370, 350);
+            scroll.EnableScroll (true, false);
+
             for (int i = 0; i < messages.Length; i++)
             {
-                buttons[i] = new Button(sceneobj.Canvas);
+                buttons [i] = new Button (scroll);
                 buttons[i].Text = messages[i];
                 buttons[i].SetBounds(recs[i]);
                 buttons[i].Pressed += onButtonPressed;
                 buttons[i].Clicked += onButtonClicked;
                 buttons[i].Released += onButtonReleased;
             }
+                
+            scroll.ScrollToLeft ();
+            scroll.ScrollToLeft ();
         }
 
         void onButtonPressed(Base btn, EventArgs args)

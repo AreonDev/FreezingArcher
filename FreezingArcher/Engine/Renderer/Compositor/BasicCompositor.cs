@@ -24,6 +24,7 @@ using System;
 
 using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Core;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Renderer.Compositor
 {
@@ -45,6 +46,7 @@ namespace FreezingArcher.Renderer.Compositor
     public class BasicCompositor
     {
         DirectedWeightedGraph<CompositorNode, CompositorEdgeDescription> _CompositorGraph;
+        object graphLock;
 
         public BasicCompositor(ObjectManager objm)
         {
@@ -53,8 +55,47 @@ namespace FreezingArcher.Renderer.Compositor
 
 
         }
-    }
 
-    public void AddNode(CompositorNode )
+        public void AddNode(CompositorNode node)
+        {
+            lock (graphLock)
+            {
+                node.Active = true;
+                _CompositorGraph.AddNode(node);
+            }
+        }
+
+        public void DeleteNode(CompositorNode node)
+        {
+            lock (graphLock)
+            {
+                //_CompositorGraph.RemoveNode
+            }
+        }
+
+        public void AddConnection(CompositorNode begin, CompositorNode end, int begin_slot = 0, int end_slot = 0)
+        {
+            lock (graphLock)
+            {
+                CompositorEdgeDescription desc = new CompositorEdgeDescription();
+                desc.InputSlotIndex = begin_slot;
+                desc.OutputSlotIndex = end_slot;
+                desc.Active = true;
+
+                if (begin == null || end == null)
+                {
+                    Logger.Log.AddLogEntry(LogLevel.Error, "BasicCompositor", Status.Meh);
+                    return;
+                }
+                    
+                //_CompositorGraph.AddEdge(begin, end, desc);
+            }
+        }
+
+        public void DeleteConnection()
+        {
+            
+        }
+    }
 }
 

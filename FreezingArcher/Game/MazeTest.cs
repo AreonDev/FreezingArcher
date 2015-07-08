@@ -58,7 +58,7 @@ namespace FreezingArcher.Game
 
             game.AddGameState("maze_overworld", Content.Environment.Default, null);
             var state = game.GetGameState("maze_overworld");
-            state.Scene = new CoreScene(state.MessageProxy);
+            state.Scene = new CoreScene(rendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.Crimson;
 
             player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, systems: new[] {
@@ -80,7 +80,7 @@ namespace FreezingArcher.Game
 
             game.AddGameState("maze_underworld", Content.Environment.Default, null);
             state = game.GetGameState("maze_underworld");
-            state.Scene = new CoreScene(state.MessageProxy);
+            state.Scene = new CoreScene(rendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.AliceBlue;
             maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, player);
 

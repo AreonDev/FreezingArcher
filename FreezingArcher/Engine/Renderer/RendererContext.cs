@@ -37,6 +37,30 @@ namespace FreezingArcher.Renderer
 {
     public class RendererContext : RendererCore
     {
+        private class RCActionInitSceneObject : RCAction
+        {
+            public SceneObject Object;
+            public RendererContext Context;
+
+            public RCActionInitSceneObject(SceneObject toinit, RendererContext ctx) 
+            {
+                Object = toinit;
+                Context = ctx;
+            }
+
+            public RCActionDelegate Action
+            {
+                get
+                {
+                    return delegate()
+                    {
+                        if(!Object.IsInitialized)
+                            Object.Init(Context);
+                    };
+                }
+            }
+        }
+
         private AssimpContext m_AssimpContext;
 
 
@@ -54,7 +78,7 @@ namespace FreezingArcher.Renderer
             set
             {
                 PrivateScene = value;
-                PrivateScene.Init(this);
+                //PrivateScene.Init(this);
             }
         }
 

@@ -33,15 +33,64 @@ namespace FreezingArcher.Renderer.Scene
 {
     public class CoreScene
     {
+        private class RCActionInitSceneObject : RendererCore.RCAction
+        {
+            public SceneObject Object;
+            public RendererContext Context;
+
+            public RCActionInitSceneObject(SceneObject toinit, RendererContext ctx) 
+            {
+                Object = toinit;
+                Context = ctx;
+            }
+
+            public RendererCore.RCActionDelegate Action
+            {
+                get
+                {
+                    return delegate()
+                    {
+                        if(!Object.IsInitialized)
+                            Object.Init(Context);
+                    };
+                }
+            }
+        }
+
+        private class RCActionInitCoreScene : RendererCore.RCAction
+        {
+            public CoreScene Scene;
+            public RendererContext Context;
+
+            public RCActionInitCoreScene(CoreScene scene, RendererContext rc)
+            {
+                Scene = scene;
+                Context = rc;
+            }
+
+            public RendererCore.RCActionDelegate Action
+            {
+                get
+                {
+                    return delegate()
+                    {
+                        if (!Scene.IsInitialized)
+                            Scene.InitFromJob(Context);
+                    };
+                }
+            }
+        }
+
         private List<SceneObject> Objects;
-        private List<SceneObject> ObjectsToInit;
+        //private List<SceneObject> ObjectsToInit;
         private List<CoreScene> SubScenes;
 
         private RendererContext PrivateRendererContext;
+        public bool IsInitialized { get; private set;}
 
         public void AddObject(SceneObject obj)
         {
-            if (PrivateRendererContext != null)
+            if (IsInitialized)
             {
                 if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
                 {
@@ -50,8 +99,13 @@ namespace FreezingArcher.Renderer.Scene
                     else
                         Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", 
                             FreezingArcher.Core.Status.AKittenDies, "Object could not be initialized!");
-                }else
-                    ObjectsToInit.Add(obj);
+                }
+                else
+                {
+
+                    PrivateRendererContext.AddRCActionJob(new RCActionInitSceneObject(obj, PrivateRendererContext));
+                    obj.WaitTillInitialized();
+                }
             }
             else
                 Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.AKittenDies, "Scene is not initialized!"); 
@@ -131,16 +185,18 @@ namespace FreezingArcher.Renderer.Scene
         public Texture2D   FrameBufferDepthTexture { get; private set;}
         public TextureDepthStencil FrameBufferDepthStencilTexture { get; private set;}
 
-        public CoreScene(MessageProvider messageProvider)
+        public CoreScene(RendererContext rc, MessageProvider messageProvider)
         {
             CameraManager = new CameraManager(messageProvider);
             Objects = new List<SceneObject>();
-            ObjectsToInit = new List<SceneObject>();
+            //ObjectsToInit = new List<SceneObject>();
             SubScenes = new List<CoreScene>();
 
             FrameBuffer = null;
 
             SceneName = "CoreScene";
+
+            Init(rc);
         }
 
         public void ResizeTextures(int width, int height)
@@ -156,7 +212,7 @@ namespace FreezingArcher.Renderer.Scene
         public void Update()
         {
             //Init objects, which are not initialized yet
-            if (ObjectsToInit.Count > 1)
+            /*if (ObjectsToInit.Count > 1)
             {
                 foreach (SceneObject obj in ObjectsToInit)
                 {
@@ -168,14 +224,11 @@ namespace FreezingArcher.Renderer.Scene
                 }
 
                 ObjectsToInit.Clear();
-            }
+            }*/
         }
 
-        internal bool Init(RendererContext rc)
+        internal bool InitFromJob(RendererContext rc)
         {
-            PrivateRendererContext = rc;
-
-            //Init Framebuffer
             long ticks = DateTime.Now.Ticks;
 
             FrameBuffer = rc.CreateFrameBuffer("CoreSceneFrameBuffer_" + ticks);
@@ -205,6 +258,27 @@ namespace FreezingArcher.Renderer.Scene
             FrameBuffer.AddTexture(FrameBufferDepthStencilTexture, FrameBuffer.AttachmentUsage.DepthStencil);
 
             FrameBuffer.EndPrepare();
+
+            return true;
+        }
+
+        internal bool Init(RendererContext rc)
+        {
+            PrivateRendererContext = rc;
+
+            if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
+            {
+                InitFromJob(rc);
+            }
+            else
+            {
+                rc.AddRCActionJob(new RCActionInitCoreScene(this, rc));
+
+                while (!IsInitialized)
+                    System.Threading.Thread.Sleep(2);
+            }
+
+            IsInitialized = true;
 
             return true;
         }

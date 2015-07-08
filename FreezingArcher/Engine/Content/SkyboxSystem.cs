@@ -59,7 +59,6 @@ namespace FreezingArcher.Content
             ModelSceneObject skyboxModel = new ModelSceneObject (path);
             skyboxModel.Scaling = 100.0f * Vector3.One;
             scene.AddObject (skyboxModel);
-            skyboxModel.WaitTillInitialized ();
             skyboxModel.Model.EnableDepthTest = false;
             skyboxModel.Model.EnableLighting = false;
             player.GetComponent<SkyboxComponent> ().Skybox = skyboxModel;

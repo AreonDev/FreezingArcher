@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -185,29 +186,57 @@ namespace FreezingArcher.Renderer
         public FreezingArcher.Core.Application Application{ get; private set;}
 
         #region Actions
-        private interface RCAction { };
-        private class RCActionNoAction { };
+        public delegate void RCActionDelegate();
+
+        public interface RCAction { RCActionDelegate Action {get;} };
+        private class RCActionNoAction : RCAction { public RCActionDelegate Action { get { return delegate() {}; } }}
 
         private class RCActionViewportSizeChange : RCAction
         {
-            public RCActionViewportSizeChange(int width, int height, int x, int y) { Width = width; Height = height; X = x; Y = y; }
+            public RCActionViewportSizeChange(int width, int height, int x, int y, RendererCore core) { Width = width; Height = height; X = x; Y = y; Renderer = core;}
 
             public int X { get; private set; }
             public int Y { get; private set; }
             public int Width { get; private set; }
             public int Height { get; private set; }
+
+            public RendererCore Renderer;
+
+            public RCActionDelegate Action
+            {
+                get
+                {
+                    return delegate ()
+                    {
+                        Renderer.ViewportResize(X, Y, Width, Height);
+                    };
+                }
+            }
         }
 
         private class RCActionDeleteGraphicsResource : RCAction
         {
-            public RCActionDeleteGraphicsResource(GraphicsResource gr){GraphicsResource = gr;}
+            public RCActionDeleteGraphicsResource(GraphicsResource gr, RendererCore core){GraphicsResource = gr; Renderer = core;}
+
             public GraphicsResource GraphicsResource;
+
+            public RendererCore Renderer;
+
+            public RCActionDelegate Action
+            { 
+                get
+                {
+                    return delegate()
+                    {
+                        Renderer.DeleteGraphicsResource(GraphicsResource);
+                    };
+                } 
+            }
         }
 
         #endregion
 
-        private object _RendererCoreActionsListLock;
-        private List<RCAction> _RendererCoreActionsList;
+        private ConcurrentQueue<RCAction> _RendererCoreActionsList;
 
         #endregion
 
@@ -223,8 +252,7 @@ namespace FreezingArcher.Renderer
             ValidMessages = new int[] { (int)Messaging.MessageId.WindowResizeMessage };
             messageProvider += this;
 
-            _RendererCoreActionsListLock = new object();
-            _RendererCoreActionsList = new List<RCAction>();
+            _RendererCoreActionsList = new ConcurrentQueue<RCAction>();
         }
 
         /// <summary>
@@ -773,20 +801,9 @@ namespace FreezingArcher.Renderer
 
         public void Begin()
         {
-            lock (_RendererCoreActionsListLock)
+            foreach (RCAction rca in _RendererCoreActionsList)
             {
-                foreach (RCAction rca in _RendererCoreActionsList)
-                {
-                    RCActionViewportSizeChange rcavsc = rca as RCActionViewportSizeChange;
-                    if (rcavsc != null)
-                        ViewportResize(rcavsc.X, rcavsc.Y, rcavsc.Width, rcavsc.Height);
-
-                    RCActionDeleteGraphicsResource rcdgr = rca as RCActionDeleteGraphicsResource;
-                    if (rcdgr != null)
-                        DeleteGraphicsResource(rcdgr.GraphicsResource);
-                }
-
-                _RendererCoreActionsList.Clear();
+                rca.Action();
             }
         }
 
@@ -1227,10 +1244,12 @@ namespace FreezingArcher.Renderer
 
         public void DeleteGraphicsResourceAsync(GraphicsResource gr)
         {
-            lock (_RendererCoreActionsListLock)
-            {
-                _RendererCoreActionsList.Add(new RCActionDeleteGraphicsResource(gr));
-            }
+            _RendererCoreActionsList.Enqueue(new RCActionDeleteGraphicsResource(gr, this));
+        }
+
+        public void AddRCActionJob(RCAction act)
+        {
+            _RendererCoreActionsList.Enqueue(act);
         }
 
         public void DeleteGraphicsResource(GraphicsResource gr)
@@ -1343,10 +1362,7 @@ namespace FreezingArcher.Renderer
             Messaging.WindowResizeMessage wrm = msg as Messaging.WindowResizeMessage;
             if (wrm != null)
             {
-                lock (_RendererCoreActionsListLock)
-                {
-                    _RendererCoreActionsList.Add(new RCActionViewportSizeChange(wrm.Width, wrm.Height, 0, 0));
-                }
+                _RendererCoreActionsList.Enqueue(new RCActionViewportSizeChange(wrm.Width, wrm.Height, 0, 0, this));
             }
         }
 

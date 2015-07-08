@@ -79,13 +79,13 @@ namespace FreezingArcher.Game
             maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager);
             maze[0].PlayerPosition += player.GetComponent<TransformComponent>().Position;
 
-            game.AddGameState("maze_underworld", Content.Environment.Default, null);
+            /*game.AddGameState("maze_underworld", Content.Environment.Default, null);
             state = game.GetGameState("maze_underworld");
             state.Scene = new CoreScene(rendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.AliceBlue;
             state.Scene.CameraManager.AddCamera (new BaseCamera (player, state.MessageProxy), "player");
             maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager);
-            maze[1].PlayerPosition += player.GetComponent<TransformComponent>().Position;
+            maze[1].PlayerPosition += player.GetComponent<TransformComponent>().Position;*/
 
             game.SwitchToGameState("maze_overworld");
         }
@@ -128,7 +128,10 @@ namespace FreezingArcher.Game
                 if (im.IsActionPressed("jump"))
                 {
                     if (!maze[0].IsGenerated)
+                    {
                         maze[0].Generate(game.CurrentGameState);
+                        player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
+                    }
                     else if (!maze[1].IsGenerated)
                         maze[1].Generate();
                 }

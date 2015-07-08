@@ -54,7 +54,9 @@ namespace FreezingArcher.Content
         readonly float clampTop    =  MathHelper.PiOver2;
         readonly float clampBottom = -MathHelper.PiOver2;
 
-        float rotationX = 0;
+        float rotationX;
+        float rotationY;
+        float rotationZ;
 
         /// <summary>
         /// Processes the incoming message
@@ -70,21 +72,33 @@ namespace FreezingArcher.Content
                 float y = im.MouseMovement.X * -movement * (float) im.DeltaTime.TotalMilliseconds;
 
                 if (rotationX + x > clampTop)
-                    x = clampTop - rotationX;
+                {
+                    rotationX = clampTop;
+                }
                 else if (rotationX + x < clampBottom)
-                    x = clampBottom - rotationX;
+                {
+                    rotationX = clampBottom;
+                }
+                else
+                {
+                    rotationX += x;
+                }
 
+                rotationY += y;
+
+                if (im.IsActionDown("drop"))
+                    rotationZ += 0.01f;
+                if (im.IsActionDown("inventory"))
+                    rotationZ -= 0.01f;
+
+                var quaternionHelper = Quaternion.FromAxisAngle(Vector3.UnitY, rotationY);
+                
                 Quaternion rotation =
-                    Quaternion.FromAxisAngle(
-                        Vector3.Transform(
-                            Vector3.UnitX,
-                            Entity.GetComponent<TransformComponent>().Rotation)
-                        , x) *
-                    Quaternion.FromAxisAngle(Vector3.UnitY, y);
+                    Quaternion.FromAxisAngle(Vector3.Transform(Vector3.UnitX, quaternionHelper), rotationX) *
+                    Quaternion.FromAxisAngle(Vector3.Transform(Vector3.UnitZ, quaternionHelper), rotationZ) *
+                    quaternionHelper;
 
-                rotationX += x;
-
-                CreateMessage(new TransformMessage(Entity, Vector3.Zero, rotation));
+                Entity.GetComponent<TransformComponent>().Rotation = rotation;
             }
         }
     }

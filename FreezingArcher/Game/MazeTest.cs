@@ -49,7 +49,7 @@ namespace FreezingArcher.Game
         /// <param name="game">The game the maze should be generated in.</param>
         public MazeTest (MessageManager msgmnr, ObjectManager objmnr, CoreScene scene, Content.Game game)
         {
-            ValidMessages = new int[] { (int) MessageId.Input, (int) MessageId.Update };
+            ValidMessages = new int[] { (int) MessageId.Input };
             msgmnr += this;
             mazeGenerator = new MazeGenerator (objmnr);
             this.scene = scene;
@@ -120,23 +120,6 @@ namespace FreezingArcher.Game
                     else if (maze[1].IsGenerated && !maze[1].AreFeaturesPlaced)
                         maze[1].SpawnFeatures(maze[0].graph);
                 }
-            }
-
-//            if (msg.MessageId == (int)MessageId.PositionChangedMessage)
-//            {
-//                PositionChangedMessage pcm = msg as PositionChangedMessage;
-//                if (pcm.Entity.Name == player.Name)
-//                {
-//                    skybox.GetComponent<TransformComponent> ().Position = pcm.Entity.GetComponent<TransformComponent> ().Position;
-//                }
-//            }
-
-            var um = msg as UpdateMessage;
-            if (um != null)
-            {
-//                f += 0.1;
-//                const int fak = 1;
-//                scene.CameraManager.ActiveCamera.Fov = (float)(System.Math.Sin (f) + 1) > fak * MathHelper.Pi ? fak * MathHelper.Pi : (float)(System.Math.Sin (f) + 1);
             }
         }
 

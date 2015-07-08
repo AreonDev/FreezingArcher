@@ -64,7 +64,7 @@ namespace PostProcessor
 		    BindingFlags.Instance |
 		    BindingFlags.DeclaredOnly);
 
-		var methods2 = methods.Where (k => !k.IsSpecialName && k.GetBaseDefinition() == k).ToArray ();
+                var methods2 = methods.Where (k => !(k.IsStatic && k.IsPublic) && !k.IsSpecialName && k.GetBaseDefinition() == k).ToArray ();
 
 		if (methods2.Length > 0)
 		{

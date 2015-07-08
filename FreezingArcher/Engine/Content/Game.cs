@@ -29,6 +29,8 @@ using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Messaging;
 using FreezingArcher.Output;
 using FreezingArcher.Renderer.Scene;
+using System.Windows.Forms;
+using FreezingArcher.Renderer;
 
 namespace FreezingArcher.Content
 {
@@ -48,11 +50,12 @@ namespace FreezingArcher.Content
         /// <param name="name">Name.</param>
         /// <param name="objmnr">Object Manager.</param>
         /// <param name="messageProvider">Message Manager.</param>
-        public Game (string name, ObjectManager objmnr, MessageProvider messageProvider)
+        public Game (string name, ObjectManager objmnr, MessageProvider messageProvider, RendererContext rendererContext)
         {
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new game '{0}'", name);
             Name = name;
             MessageProvider = messageProvider;
+            RendererContext = rendererContext;
             GameStateGraph = objmnr.CreateOrRecycle<DirectedWeightedGraph<GameState, GameStateTransition>>();
             GameStateGraph.Init();
         }
@@ -71,6 +74,7 @@ namespace FreezingArcher.Content
 
         DirectedWeightedNode<GameState, GameStateTransition> currentNode;
         MessageProvider MessageProvider;
+        RendererContext RendererContext;
 
         /// <summary>
         /// Gets the game state graph.
@@ -85,6 +89,22 @@ namespace FreezingArcher.Content
         /// <param name="name">Game state name.</param>
         public bool SwitchToGameState(string name)
         {
+            if (currentNode == null)
+            {
+                currentNode = GameStateGraph.Nodes.FirstOrDefault(n => n.Data.Name == name);
+
+                if (currentNode == null)
+                {
+                    Logger.Log.AddLogEntry(LogLevel.Error, "Game",
+                        "Cannot switch game state as '{0}' does not exist!", name);
+                    return false;
+                }
+
+                RendererContext.Scene = currentNode.Data.Scene;
+                currentNode.Data.MessageProxy.StartProcessing();
+                return true;
+            }
+
             if (currentNode.Data.Name == name)
                 return true;
 
@@ -106,8 +126,20 @@ namespace FreezingArcher.Content
             }
             currentNode.Data.MessageProxy.StopProcessing();
             currentNode = newstate;
+            RendererContext.Scene = currentNode.Data.Scene;
             currentNode.Data.MessageProxy.StartProcessing();
             return true;
+        }
+
+        /// <summary>
+        /// Gets a game state by name.
+        /// </summary>
+        /// <returns>The game state.</returns>
+        /// <param name="name">Name.</param>
+        public GameState GetGameState(string name)
+        {
+            var node = GameStateGraph.Nodes.FirstOrDefault(n => n.Data.Name == name);
+            return node != null ? node.Data : null;
         }
 
         /// <summary>
@@ -131,14 +163,13 @@ namespace FreezingArcher.Content
         /// <returns><c>true</c>, if game state was added, <c>false</c> otherwise.</returns>
         /// <param name="name">Name.</param>
         /// <param name="env">Env.</param>
-        /// <param name="scene">Scene.</param>
         /// <param name="from">From.</param>
         /// <param name="to">To.</param>
-        public bool AddGameState(string name, Environment env, CoreScene scene,
+        public bool AddGameState(string name, Environment env,
             IEnumerable<Tuple<string, GameStateTransition>> from = null,
             IEnumerable<Tuple<string, GameStateTransition>> to = null)
         {
-            return AddGameState(new GameState(name, env, scene, MessageProvider), from, to);
+            return AddGameState(new GameState(name, env, MessageProvider), from, to);
         }
 
         /// <summary>
@@ -226,10 +257,6 @@ namespace FreezingArcher.Content
                 Logger.Log.AddLogEntry(LogLevel.Severe, ClassName, Status.UnreachableLineReached);
                 return false;
             }
-
-            if (currentNode == null)
-                currentNode = GameStateGraph.Nodes[0];
-            currentNode.Data.MessageProxy.StartProcessing();
 
             return true;
         }

@@ -22,6 +22,9 @@
 //
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.Math;
+using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Content
 {
@@ -43,6 +46,23 @@ namespace FreezingArcher.Content
             //Scene does this for me, so no!
             internalValidMessages = new[] { (int)MessageId.PositionChangedMessage };
             messageProvider += this;
+        }
+
+        /// <summary>
+        /// Creates the skybox.
+        /// </summary>
+        /// <param name="scene">Scene.</param>
+        /// <param name="path">Path to skybox xml.</param>
+        public static void CreateSkybox(CoreScene scene, Entity player,
+            string path = "lib/Renderer/TestGraphics/Skybox/skybox.xml")
+        {
+            ModelSceneObject skyboxModel = new ModelSceneObject (path);
+            skyboxModel.Scaling = 100.0f * Vector3.One;
+            scene.AddObject (skyboxModel);
+            skyboxModel.WaitTillInitialized ();
+            skyboxModel.Model.EnableDepthTest = false;
+            skyboxModel.Model.EnableLighting = false;
+            player.GetComponent<SkyboxComponent> ().Skybox = skyboxModel;
         }
 
         /// <summary>

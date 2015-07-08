@@ -186,7 +186,7 @@ namespace FreezingArcher.Core
                     ConfigManager.Instance["freezing_archer"].GetString ("general", "resolution")),
                 name);
             MessageManager += Window;
-            Game = new Game (name, ObjectManager, MessageManager);
+            Game = new Game (name, ObjectManager, MessageManager, RendererContext);
             LoadAgain = false;
             InitAgain = false;
 

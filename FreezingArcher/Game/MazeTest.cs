@@ -56,12 +56,10 @@ namespace FreezingArcher.Game
             mazeGenerator = new MazeGenerator (objmnr);
             this.game = game;
 
-            game.AddGameState("default", Content.Environment.Default, null);
-            game.SwitchToGameState("default");
-            var state = game.CurrentGameState;
-            state.Scene = new CoreScene(game.CurrentGameState.MessageProxy);
+            game.AddGameState("maze_overworld", Content.Environment.Default, null);
+            var state = game.GetGameState("maze_overworld");
+            state.Scene = new CoreScene(state.MessageProxy);
             state.Scene.BackgroundColor = Color4.Crimson;
-            rendererContext.Scene = state.Scene;
 
             player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, systems: new[] {
                 typeof (MovementSystem),
@@ -70,23 +68,23 @@ namespace FreezingArcher.Game
                 typeof (SkyboxSystem)
             });
 
+            // embed new maze into game state logic and create a MoveEntityToScene
+            SkyboxSystem.CreateSkybox(state.Scene, player);
             player.GetComponent<TransformComponent>().Position = new Vector3(0, 1.85f, 0);
-
             state.Scene.CameraManager.AddCam (new BaseCamera (player, state.MessageProxy), "player");
-
-            ModelSceneObject skyboxModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Skybox/skybox.xml");
-            skyboxModel.Scaling = 100.0f * Vector3.One;
-            state.Scene.AddObject (skyboxModel);
-            skyboxModel.WaitTillInitialized ();
-            skyboxModel.Model.EnableDepthTest = false;
-            skyboxModel.Model.EnableLighting = false;
-            player.GetComponent<SkyboxComponent> ().Skybox = skyboxModel;
 
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
             maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, player);
+
+            game.AddGameState("maze_underworld", Content.Environment.Default, null);
+            state = game.GetGameState("maze_underworld");
+            state.Scene = new CoreScene(state.MessageProxy);
+            state.Scene.BackgroundColor = Color4.AliceBlue;
             maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, player);
+
+            game.SwitchToGameState("maze_overworld");
         }
 
         readonly MazeGenerator mazeGenerator;

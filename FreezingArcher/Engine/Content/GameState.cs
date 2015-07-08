@@ -39,13 +39,11 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="env">Environment.</param>
-        /// <param name="scene">Scene.</param>
         /// <param name="messageProvider">Message Manager.</param>
-        public GameState(string name, Environment env, CoreScene scene, MessageProvider messageProvider)
+        public GameState(string name, Environment env, MessageProvider messageProvider)
         {
             Name = name;
             Environment = env;
-            Scene = scene;
             PhysicsManager = new PhysicsManager();
             PhysicsManager.Initialize();
             PhysicsManager.Gravity = new Vector3(0, -1.81f, 0);

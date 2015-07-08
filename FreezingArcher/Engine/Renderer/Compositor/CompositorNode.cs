@@ -29,20 +29,68 @@ using FreezingArcher.DataStructures;
 
 namespace FreezingArcher.Renderer.Compositor
 {
-    public class CompositorNode
+    public enum CompositorSlotType
     {
-        public int OutputCount{ get; private set;}
-        public string[] OutputNames{ get; private set;}
-        public FrameBuffer OutputFrameBuffer { get; private set;}
+        Value,
+        ValueTexture,
+        Texture
+    }
 
-        public int InputCount{ get; private set;}
-        public string[] InputNames{ get; private set;}
-        public FrameBuffer InputFrameBuffer {get; private set;}
+    public abstract class CompositorNode
+    {
+        public CompositorInputSlot[] InputSlots { get; protected set;}
+        public CompositorOutputSlot[] OutputSlots { get; protected set;}
+        public Effect NodeEffect { get; private set;}
+        public string Name {get; private set;}
+
+        protected FrameBuffer OutputFramebuffer;
+        protected RendererContext PrivateRendererContext;
+
+        public bool Active {get; set;}
+
+        public bool IsInitialized { get; private set;}
 
         Dictionary<string, Value> Settings;
 
-        public CompositorNode()
+        public CompositorNode(string name)
         {
+            Name = name;
+        }
+            
+        public virtual bool Init(RendererContext rc)
+        {
+            PrivateRendererContext = rc;
+
+            IsInitialized = false;
+
+            return true;
+        }
+
+        public virtual void Begin(RendererContext rc)
+        {
+            if (!IsInitialized)
+            {
+                OutputFramebuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
+
+                NodeEffect.BindPipeline();
+            }
+        }
+
+        public virtual void Draw(RendererContext rc)
+        {
+            Sprite spr = new Sprite();
+
+
+        }
+
+        public virtual void End(RendererContext rc)
+        {
+            if (!IsInitialized)
+            {
+                NodeEffect.UnbindPipeline();
+
+                OutputFramebuffer.Unbind();
+            }
         }
     }
 }

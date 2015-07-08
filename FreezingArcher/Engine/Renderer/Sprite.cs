@@ -23,6 +23,7 @@ namespace FreezingArcher.Renderer
         public Vector2 RelativePosition { get; set; }
         public float Rotation { get; set; }
         public Vector2 RotationPoint { get; set; }
+        public bool CustomEffect { get; set;}
 
         public bool Init(Texture2D tex)
         {

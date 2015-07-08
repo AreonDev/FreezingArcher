@@ -1,5 +1,5 @@
 ﻿//
-//  BasicCompositor.cs
+//  CompositorOutputSlot.cs
 //
 //  Author:
 //       dboeg <${AuthorEmail}>
@@ -22,39 +22,31 @@
 //
 using System;
 
-using FreezingArcher.DataStructures.Graphs;
-using FreezingArcher.Core;
+using FreezingArcher.Output;
+using FreezingArcher.Renderer;
 
 namespace FreezingArcher.Renderer.Compositor
 {
-    public class CompositorEdgeDescription : IComparable
+    public class CompositorOutputSlot
     {
-        public int InputSlotIndex;
-        public int OutputSlotIndex;
+        public string Name { get; private set;}
+        public int SlotNumber { get; private set;}
+        public Texture2D SlotTexture;
+        public CompositorSlotType SlotType { get; private set;}
 
-        public bool Active;
+        bool IsConnected {get; set;}
 
-        #region IComparable implementation
-        public int CompareTo(object obj)
+        public CompositorOutputSlot(string name, int number, Texture2D output, CompositorSlotType type)
         {
-            return 0;
-        }
-        #endregion
-    }
+            Name = name;
+            SlotNumber = number;
+            SlotTexture = output;
+            SlotType = type;
 
-    public class BasicCompositor
-    {
-        DirectedWeightedGraph<CompositorNode, CompositorEdgeDescription> _CompositorGraph;
+            if ((SlotType == CompositorSlotType.Texture || SlotType == CompositorSlotType.ValueTexture) && SlotTexture == null)
+                Logger.Log.AddLogEntry(LogLevel.Error, "CompositorInputSlot: " + Name, FreezingArcher.Core.Status.BadArgument);
 
-        public BasicCompositor(ObjectManager objm)
-        {
-            _CompositorGraph = new DirectedWeightedGraph<CompositorNode, CompositorEdgeDescription>();
-            _CompositorGraph.Init();
-
-
+            IsConnected = false;
         }
     }
-
-    public void AddNode(CompositorNode )
 }
-

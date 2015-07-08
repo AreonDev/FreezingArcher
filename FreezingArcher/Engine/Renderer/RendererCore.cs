@@ -1206,11 +1206,14 @@ namespace FreezingArcher.Renderer
 
             spr.Texture.Bind(0);
 
-            _2DEffect.BindPipeline();
+            if(!spr.CustomEffect)
+                _2DEffect.BindPipeline();
 
             DrawArrays(0, 6, RendererBeginMode.Triangles);
 
-            _2DVertexBuffer.UnbindBuffer();
+            if(!spr.CustomEffect)
+                _2DVertexBuffer.UnbindBuffer();
+
             spr.Texture.Unbind();
 
             GL.Enable(EnableCap.DepthTest);

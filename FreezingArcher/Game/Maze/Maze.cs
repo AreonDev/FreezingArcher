@@ -227,7 +227,7 @@ namespace FreezingArcher.Game.Maze
         /// <summary>
         /// Generate this instance.
         /// </summary>
-        public void Generate(GameState state = null)
+        public void Generate(Action postGenerateHook = null, GameState state = null)
         {
             if (!IsInitialized)
             {
@@ -250,6 +250,9 @@ namespace FreezingArcher.Game.Maze
                     generateMazeDelegate(ref graph, ref rand, MaximumContinuousPathLength, Turbulence);
                     if (state != null)
                         AddToGameState(state);
+
+                    if (postGenerateHook != null)
+                        postGenerateHook();
                 });
                 generationThread.Start();
             }

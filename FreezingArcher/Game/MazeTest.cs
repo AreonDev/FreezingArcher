@@ -129,8 +129,9 @@ namespace FreezingArcher.Game
                 {
                     if (!maze[0].IsGenerated)
                     {
-                        maze[0].Generate(game.CurrentGameState);
-                        player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
+                        maze[0].Generate(
+                            () => player.GetComponent<TransformComponent>().Position += maze[0].PlayerPosition,
+                            game.CurrentGameState);
                     }
                     else if (!maze[1].IsGenerated)
                         maze[1].Generate();

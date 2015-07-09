@@ -34,7 +34,7 @@ namespace FreezingArcher.Renderer.Scene
 {
     public class CoreScene
     {
-        private class RCActionInitSceneObject : RendererCore.RCAction
+        public class RCActionInitSceneObject : RendererCore.RCAction
         {
             public SceneObject Object;
             public RendererContext Context;
@@ -95,17 +95,22 @@ namespace FreezingArcher.Renderer.Scene
             {
                 if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
                 {
-                    if (obj.Init(PrivateRendererContext))
-                        Objects.Add(obj);
-                    else
-                        Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", 
-                            FreezingArcher.Core.Status.AKittenDies, "Object could not be initialized!");
+                    if (!obj.IsInitialized)
+                    {
+                        if (obj.Init(PrivateRendererContext))
+                            Objects.Add(obj);
+                        else
+                            Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", 
+                                FreezingArcher.Core.Status.AKittenDies, "Object could not be initialized!");
+                    }
                 }
                 else
                 {
-
-                    PrivateRendererContext.AddRCActionJob(new RCActionInitSceneObject(obj, PrivateRendererContext));
-                    obj.WaitTillInitialized();
+                    if (!obj.IsInitialized)
+                    {
+                        PrivateRendererContext.AddRCActionJob(new RCActionInitSceneObject(obj, PrivateRendererContext));
+                        obj.WaitTillInitialized();
+                    }
                     Objects.Add(obj);
                 }
 
@@ -236,7 +241,7 @@ namespace FreezingArcher.Renderer.Scene
                 ObjectsToInit.Clear();
             }*/
 
-            IOrderedEnumerable<SceneObject> sorted = Objects.OrderBy(o => o.Priority);
+            //IOrderedEnumerable<SceneObject> sorted = Objects.OrderBy(o => o.Priority);
         }
 
         internal bool InitFromJob(RendererContext rc)
@@ -289,8 +294,7 @@ namespace FreezingArcher.Renderer.Scene
             {
                 rc.AddRCActionJob(new RCActionInitCoreScene(this, rc));
 
-                while (!IsInitialized)
-                    System.Threading.Thread.Sleep(2);
+                while (!IsInitialized);
             }
 
             IsInitialized = true;

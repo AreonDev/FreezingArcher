@@ -169,38 +169,40 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
                 if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
                 {
-                    if (obj.Init(PrivateRendererContext))
+     
+                    if (!obj.IsInitialized)
+                        obj.Init(PrivateRendererContext);
+
+                    lock (ListLock)
                     {
-                        lock (ListLock)
+                        SceneObjects.Add(obj);
+
+                        obj.SceneObjectChanged += SceneObjectChangedHandler;
+
+                        PrepareBuffer();
+
+                        if (InstanceDataVertexBuffer != null)
                         {
-                            SceneObjects.Add(obj);
-                        
+                            SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { obj.GetData() };
 
-                            obj.SceneObjectChanged += SceneObjectChangedHandler;
-
-                            PrepareBuffer();
-
-                            if (InstanceDataVertexBuffer != null)
-                            {
-                                SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { obj.GetData() };
-
-                                InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, SceneObjects.IndexOf(obj) * SceneObjectArrayInstanceData.SIZE,
-                                    SceneObjectArrayInstanceData.SIZE);
-                            }
+                            InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, SceneObjects.IndexOf(obj) * SceneObjectArrayInstanceData.SIZE,
+                                SceneObjectArrayInstanceData.SIZE);
                         }
                     }
-                    else
-                        Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", 
-                            FreezingArcher.Core.Status.AKittenDies, "Object could not be initialized!");
                            
                 }
                 else
                 {
                     lock (ListLock)
                     {
+                        PrivateRendererContext.AddRCActionJob(new CoreScene.RCActionInitSceneObject(obj, PrivateRendererContext));
+
+                        //obj.WaitTillInitialized();
+
                         obj.SceneObjectChanged += SceneObjectChangedHandler;
 
-                        ObjectsAdded.Add(obj);
+                        SceneObjects.Add(obj);
+                        ObjectsChanged.Add(SceneObjects.IndexOf(obj));
 
                         NeedsInit = true;
                     }
@@ -308,34 +310,6 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public override void Update()
         {
-            if (NeedsInit)
-            {
-                lock (ListLock)
-                {
-                    foreach (SceneObject obj in ObjectsAdded)
-                    {
-                        if (obj.Init(PrivateRendererContext))
-                        {
-                            SceneObjects.Add(obj);
-                            obj.SceneObjectChanged += SceneObjectChangedHandler;
-
-                            PrepareBuffer();
-
-                            if (InstanceDataVertexBuffer != null)
-                            {
-                                SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { obj.GetData() };
-
-                                InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, SceneObjects.IndexOf(obj) * SceneObjectArrayInstanceData.SIZE,
-                                    SceneObjectArrayInstanceData.SIZE);
-                            }
-                        }
-                    }
-                }
-
-                NeedsInit = false;
-                ObjectsAdded.Clear();
-            }
-
             lock (ListLock)
             {
                 foreach (int index in ObjectsChanged)

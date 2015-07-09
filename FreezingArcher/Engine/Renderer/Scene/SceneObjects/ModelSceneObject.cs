@@ -139,25 +139,25 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             LoadModel = load;
             ModelPath = path;
+
             lock (CachingListLock)
             {
                 if (CachingList == null)
                     CachingList = new List<ModelSceneObject>();
-
-                if (CachingList.Count > 0)
+                
+                foreach (ModelSceneObject obj in CachingList)
                 {
-                    foreach (ModelSceneObject obj in CachingList)
+                    if (obj.ModelPath == path)
                     {
-                        if (obj.ModelPath == path)
-                        {
-                            LoadModel = false;
-                            this.MyModel = obj.MyModel;
-                        }
+                        LoadModel = false;
+                        this.MyModel = obj.MyModel;
+
+                        break;
                     }
                 }
-            }
 
-            CachingList.Add(this);
+                CachingList.Add(this);
+            }
         }
 
         bool disposed = false;

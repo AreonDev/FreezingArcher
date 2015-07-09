@@ -141,24 +141,6 @@ namespace FreezingArcher.Renderer.Scene
         }
 
         /// <summary>
-        /// The M up.
-        /// </summary>
-        protected Vector3 MUp;
-        /// <summary>
-        /// Gets or sets up.
-        /// </summary>
-        /// <value>Up.</value>
-        public Vector3 Up
-        {
-            get{ return this.MUp; }
-            set
-            {
-                this.MUp = value;
-                UpdateProjectionMatrix();
-            }
-        }
-
-        /// <summary>
         /// The fak.
         /// </summary>
         protected const float Fak = 0.15f;

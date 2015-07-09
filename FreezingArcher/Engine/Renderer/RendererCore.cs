@@ -995,9 +995,11 @@ namespace FreezingArcher.Renderer
 
         public void Begin()
         {
-            foreach (RCAction rca in _RendererCoreActionsList)
+            RCAction ac;
+
+            while (_RendererCoreActionsList.TryDequeue(out ac))
             {
-                rca.Action();
+                ac.Action();
             }
         }
 

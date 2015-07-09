@@ -387,7 +387,7 @@ namespace FreezingArcher.Core
                 MessageCreated(new UpdateMessage(updateStopwatch.Elapsed));
                 updateStopwatch.Restart();
             });
-            PeriodicInputTask = new PeriodicTask (16, InputManager.GenerateInputMessage);
+            PeriodicInputTask = new PeriodicTask (8, InputManager.GenerateInputMessage);
             PeriodicFramecounterTask = new PeriodicTask(1000, () => {
                 FPSCounter = frames;
                 frames = 0;

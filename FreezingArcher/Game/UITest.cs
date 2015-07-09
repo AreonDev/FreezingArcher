@@ -26,6 +26,8 @@ using System.Drawing;
 using FreezingArcher.Output;
 using FreezingArcher.Core;
 using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.Messaging;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Game
 {
@@ -37,12 +39,24 @@ namespace FreezingArcher.Game
 
         UISceneObject sceneobj;
 
-        public UITest ()
-        {
-            sceneobj = new UISceneObject ();
-            Application.Instance.RendererContext.Scene.AddObject (sceneobj);
+        MessageProvider MessageProvider;
 
-            //var input = new FreezingArcher.UI.Input.FreezingArcher(canvas); TODO
+        public UITest (Content.Game game)
+        {
+            game.AddGameState ("UITestState", Content.Environment.Default);
+
+            var state = game.GetGameState ("UITestState");
+            state.Scene = new FreezingArcher.Renderer.Scene.CoreScene (Application.Instance.RendererContext, state.MessageProxy);
+            state.Scene.BackgroundColor = FreezingArcher.Math.Color4.AliceBlue;
+
+            game.SwitchToGameState ("UITestState");
+
+            sceneobj = new UISceneObject ();
+            state.Scene.AddObject (sceneobj);
+
+            var input = new FreezingArcher.UI.Input.FreezingArcherInput(state.MessageProxy);
+            input.Initialize (sceneobj.Canvas);
+
             sceneobj.Canvas.SetSize(1024, 576);
             sceneobj.Canvas.ShouldDrawBackground = false;
 

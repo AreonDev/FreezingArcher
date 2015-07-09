@@ -23,6 +23,7 @@
 using System;
 
 using FreezingArcher.Messaging;
+using FreezingArcher.Input;
 
 using Gwen;
 using Gwen.Control;
@@ -32,12 +33,12 @@ namespace FreezingArcher.UI.Input
     public class FreezingArcherInput : Messaging.Interfaces.IMessageConsumer
     {
         private Canvas m_Canvas = null;
-        private MessageManager MessageManager;
+        private MessageProvider MessageManager;
 
         private int m_MouseX;
         private int m_MouseY;
 
-        public FreezingArcherInput(MessageManager mssgmngr)
+        public FreezingArcherInput(MessageProvider mssgmngr)
         {
             MessageManager = mssgmngr;
 
@@ -52,10 +53,20 @@ namespace FreezingArcher.UI.Input
 
         public void ConsumeMessage(Messaging.Interfaces.IMessage msg)
         {
-            Messaging.InputMessage input = msg as Messaging.InputMessage;
-            if (input != null)
+            if (msg.MessageId == (int) MessageId.Input)
             {
-                int ButtonID = -1;
+                var input = msg as Messaging.InputMessage;
+                int dx = (int)input.MousePosition.X - m_MouseX;
+                int dy = (int)input.MousePosition.Y - m_MouseY;
+
+                m_MouseX = (int)input.MousePosition.X;
+                m_MouseY = (int)input.MousePosition.Y;
+
+                m_Canvas.Input_MouseMoved(m_MouseX, m_MouseY, dx, dy);
+
+                m_Canvas.Input_MouseButton(0, input.IsMouseButtonDown(Pencil.Gaming.MouseButton.LeftButton));
+                m_Canvas.Input_MouseButton(1, input.IsMouseButtonPressed(Pencil.Gaming.MouseButton.RightButton));
+                m_Canvas.Input_MouseButton(2, input.IsMouseButtonPressed(Pencil.Gaming.MouseButton.MiddleButton));
             }
         }
 

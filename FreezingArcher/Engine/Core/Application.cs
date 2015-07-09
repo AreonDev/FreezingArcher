@@ -380,7 +380,7 @@ namespace FreezingArcher.Core
             Loaded = false;
 
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing application '{0}' ...", Name);
-            InputManager = new InputManager (MessageManager);
+            InputManager = new InputManager (MessageManager, this);
             updateStopwatch = new Stopwatch();
             frameStopwatch = new Stopwatch();
             PeriodicUpdateTask = new PeriodicTask (16, () => {

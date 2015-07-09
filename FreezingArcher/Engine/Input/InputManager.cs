@@ -53,7 +53,7 @@ namespace FreezingArcher.Input
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Input.InputManager"/> class.
         /// </summary>
-        internal InputManager (MessageProvider messageProvider)
+        internal InputManager (MessageProvider messageProvider, FreezingArcher.Core.Application app)
         {
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Creating new input manager");
             Keys = new List<KeyboardInput> ();
@@ -64,6 +64,7 @@ namespace FreezingArcher.Input
             KeyRegistry.Instance = new KeyRegistry (messageProvider);
             Stopwatch = new Stopwatch();
             messageProvider += this;
+            ApplicationInstance = app;
         }
 
         /// <summary>
@@ -95,6 +96,8 @@ namespace FreezingArcher.Input
         /// The stopwatch for input update.
         /// </summary>
         protected Stopwatch Stopwatch;
+
+        protected FreezingArcher.Core.Application ApplicationInstance;
 
         /// <summary>
         /// Handles the keyboard input.
@@ -150,7 +153,7 @@ namespace FreezingArcher.Input
         internal void GenerateInputMessage ()
         {
             InputMessage id = KeyRegistry.Instance.GenerateInputMessage (
-                Keys, Mouse, MouseMovement, OldMousePosition, MouseScroll, Stopwatch.Elapsed);
+                Keys, Mouse, MouseMovement, OldMousePosition, MouseScroll, Stopwatch.Elapsed, ApplicationInstance);
             Keys = new List<KeyboardInput>();
             Mouse = new List<MouseInput>();
             MouseMovement = Vector2.Zero;
@@ -164,5 +167,6 @@ namespace FreezingArcher.Input
         /// Internal use only. Do not modify.
         /// </summary>
         internal List<string> CurrentlyDownKeys = new List<string>();
+        internal List<MouseButton> CurrentlyDownMouseButtons = new List<MouseButton>();
     }
 }

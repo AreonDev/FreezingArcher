@@ -75,7 +75,7 @@ namespace FreezingArcher.Messaging
         /// <param name="mouseScroll">Mouse scroll.</param>
         /// <param name="deltaTime">Delta time.</param>
         internal InputMessage (List<KeyboardInput> keys, List<MouseInput> mouse,
-            Vector2 mouseMovement, Vector2 mousePosition, Vector2 mouseScroll, TimeSpan deltaTime)
+            Vector2 mouseMovement, Vector2 mousePosition, Vector2 mouseScroll, TimeSpan deltaTime, Application app)
         {
             Keys = keys;
             Mouse = mouse;
@@ -83,6 +83,8 @@ namespace FreezingArcher.Messaging
             MousePosition = mousePosition;
             MouseScroll = mouseScroll;
             DeltaTime = deltaTime;
+
+            ApplicationInstance = app;
 
             #if DEBUG_PERFORMANCE
             if (Keys.Count > 0)
@@ -129,6 +131,8 @@ namespace FreezingArcher.Messaging
         /// <value>The delta time.</value>
         public TimeSpan DeltaTime { get; protected set; }
 
+        public Application ApplicationInstance { get; protected set;}
+
         /// <summary>
         /// Determines whether a key is pressed.
         /// </summary>
@@ -138,6 +142,22 @@ namespace FreezingArcher.Messaging
         {
             var key = Keys.Find (k => k.KeyAction == action);
             return key != null && (key.Action == KeyAction.Press || key.Action == KeyAction.Repeat);
+        }
+
+        public bool IsMouseButtonPressed(MouseButton btn)
+        {
+            var key = Mouse.Find(k => k.Button == btn);
+            return key != null;
+        }
+
+        public bool IsMouseButtonDown(MouseButton btn)
+        {
+            var key = Mouse.Find(k => k.Button == btn);
+
+            if (key == null)
+                ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Remove(btn);
+
+            return ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Contains(btn);
         }
 
         /// <summary>
@@ -153,26 +173,26 @@ namespace FreezingArcher.Messaging
             {
                 if (key == null)
                 {
-                    return Application.Instance.InputManager.CurrentlyDownKeys.Contains(action);
+                    return ApplicationInstance.InputManager.CurrentlyDownKeys.Contains(action);
                 }
 
                 if (key.Action == KeyAction.Press && !Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
                 {
-                    Application.Instance.InputManager.CurrentlyDownKeys.Add(action);
+                    ApplicationInstance.InputManager.CurrentlyDownKeys.Add(action);
                 }
 
                 if (key.Action == KeyAction.Release && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
                 {
-                    Application.Instance.InputManager.CurrentlyDownKeys.RemoveAll(s => s == action);
+                    ApplicationInstance.InputManager.CurrentlyDownKeys.RemoveAll(s => s == action);
                 }
 
                 if (key.Action != KeyAction.Repeat && key.Action != KeyAction.Press && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
                 {
-                    Application.Instance.InputManager.CurrentlyDownKeys.RemoveAll(s => s == action);
+                    ApplicationInstance.InputManager.CurrentlyDownKeys.RemoveAll(s => s == action);
                 }
             }
 
-            return Application.Instance.InputManager.CurrentlyDownKeys.Contains(action);
+            return ApplicationInstance.InputManager.CurrentlyDownKeys.Contains(action);
         }
     }
 }

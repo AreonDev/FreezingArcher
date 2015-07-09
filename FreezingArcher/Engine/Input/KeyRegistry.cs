@@ -87,7 +87,7 @@ namespace FreezingArcher.Input
         /// <param name="mouseScroll">Mouse scroll.</param>
         /// <param name="deltaTime">Delta time.</param>
         internal InputMessage GenerateInputMessage (List<KeyboardInput> keys, List<MouseInput> mouse,
-            Vector2 mouseMovement, Vector2 mousePosition, Vector2 mouseScroll, TimeSpan deltaTime)
+            Vector2 mouseMovement, Vector2 mousePosition, Vector2 mouseScroll, TimeSpan deltaTime, FreezingArcher.Core.Application app)
         {
             string s;
 
@@ -106,7 +106,7 @@ namespace FreezingArcher.Input
                 }
             }
 
-            return new InputMessage (keys, mouse, mouseMovement, mousePosition, mouseScroll, deltaTime);
+            return new InputMessage (keys, mouse, mouseMovement, mousePosition, mouseScroll, deltaTime, app);
         }
 
         Dictionary<Key, string> CachedConfig = new Dictionary<Key, string> ();

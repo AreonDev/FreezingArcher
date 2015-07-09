@@ -97,6 +97,7 @@ echo Successfully finished!</PostBuildEvent>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -400,10 +401,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\MessageProxy.cs" />
     <Compile Include="Content\SkyboxComponent.cs" />
     <Compile Include="Content\SkyboxSystem.cs" />
-    <Compile Include="Renderer\Compositor\BasicCompositor.cs" />
-    <Compile Include="Renderer\Compositor\CompositorNode.cs" />
-    <Compile Include="UI\Renderer\FreezingArcherGwenRenderer.cs" />
-    <Compile Include="UI\Renderer\TextRenderer.cs" />
     <Compile Include="Renderer\Compositor\CompositorInputSlot.cs" />
     <Compile Include="Renderer\Compositor\CompositorOutputSlot.cs" />
     <Compile Include="UI\Input\FreezingArcherInput.cs" />

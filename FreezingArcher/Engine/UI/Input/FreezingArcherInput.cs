@@ -27,23 +27,19 @@ using FreezingArcher.Input;
 
 using Gwen;
 using Gwen.Control;
+using System.Linq;
+using Pencil.Gaming;
 
 namespace FreezingArcher.UI.Input
 {
     public class FreezingArcherInput : Messaging.Interfaces.IMessageConsumer
     {
-        private Canvas m_Canvas = null;
-        private MessageProvider MessageManager;
+        Canvas m_Canvas;
 
-        private int m_MouseX;
-        private int m_MouseY;
-
-        public FreezingArcherInput(MessageProvider mssgmngr)
+        public FreezingArcherInput(MessageProvider messageProvider)
         {
-            MessageManager = mssgmngr;
-
-            ValidMessages = new int[] { (int)Messaging.MessageId.Input };
-            mssgmngr += this;
+            ValidMessages = new int[] { (int) MessageId.Input };
+            messageProvider += this;
         }
 
         public void Initialize(Canvas c)
@@ -55,26 +51,30 @@ namespace FreezingArcher.UI.Input
         {
             if (msg.MessageId == (int) MessageId.Input)
             {
-                var input = msg as Messaging.InputMessage;
-                int dx = (int)input.MousePosition.X - m_MouseX;
-                int dy = (int)input.MousePosition.Y - m_MouseY;
+                var input = msg as InputMessage;
 
-                m_MouseX = (int)input.MousePosition.X;
-                m_MouseY = (int)input.MousePosition.Y;
+                m_Canvas.Input_MouseMoved(
+                    (int) input.MousePosition.X, (int) input.MousePosition.Y,
+                    (int) input.MouseMovement.X, (int) input.MouseMovement.Y);
 
-                m_Canvas.Input_MouseMoved(m_MouseX, m_MouseY, dx, dy);
+                if (input.Mouse.Any(m => m.Action == KeyAction.Press && m.Button == MouseButton.LeftButton))
+                    m_Canvas.Input_MouseButton(0, true);
+                if (input.Mouse.Any(m => m.Action == KeyAction.Release && m.Button == MouseButton.LeftButton))
+                    m_Canvas.Input_MouseButton(0, false);
 
-                m_Canvas.Input_MouseButton(0, input.IsMouseButtonDown(Pencil.Gaming.MouseButton.LeftButton));
-                m_Canvas.Input_MouseButton(1, input.IsMouseButtonPressed(Pencil.Gaming.MouseButton.RightButton));
-                m_Canvas.Input_MouseButton(2, input.IsMouseButtonPressed(Pencil.Gaming.MouseButton.MiddleButton));
+                if (input.Mouse.Any(m => m.Action == KeyAction.Press && m.Button == MouseButton.MiddleButton))
+                    m_Canvas.Input_MouseButton(1, true);
+                if (input.Mouse.Any(m => m.Action == KeyAction.Release && m.Button == MouseButton.MiddleButton))
+                    m_Canvas.Input_MouseButton(1, false);
+
+                if (input.Mouse.Any(m => m.Action == KeyAction.Press && m.Button == MouseButton.RightButton))
+                    m_Canvas.Input_MouseButton(2, true);
+                if (input.Mouse.Any(m => m.Action == KeyAction.Release && m.Button == MouseButton.RightButton))
+                    m_Canvas.Input_MouseButton(2, false);
             }
         }
 
-        public int[] ValidMessages
-        {
-            get;
-            private set;
-        }
+        public int[] ValidMessages { get; private set; }
     }
 }
 

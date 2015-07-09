@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using FreezingArcher.Output;
 
 namespace Gwen.Skin
 {
@@ -56,8 +57,11 @@ namespace Gwen.Skin
 #if DEBUG
         ~Base()
         {
-            throw new InvalidOperationException(String.Format("IDisposable object finalized: {0}", GetType()));
+            //throw new InvalidOperationException(String.Format("IDisposable object finalized: {0}", GetType()));
             //Debug.Print(String.Format("IDisposable object finalized: {0}", GetType()));
+
+            Logger.Log.AddLogEntry(LogLevel.Error, "UI.Skin.Base", "IDisposable object finalized [{1:X}]: {0}",
+                this, GetHashCode());
         }
 #endif
 

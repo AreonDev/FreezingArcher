@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using FreezingArcher.Output;
 
 namespace Gwen.Renderer
 {
@@ -42,8 +43,11 @@ namespace Gwen.Renderer
 #if DEBUG
         ~Base()
         {
-            throw new InvalidOperationException(String.Format("IDisposable object finalized: {0}", GetType()));
+            //throw new InvalidOperationException(String.Format("IDisposable object finalized: {0}", GetType()));
             //Debug.Print(String.Format("IDisposable object finalized: {0}", GetType()));
+
+            Logger.Log.AddLogEntry(LogLevel.Error, "UI.Renderer.Base", "IDisposable object finalized [{1:X}]: {0}",
+                this, GetHashCode());
         }
 #endif
 

@@ -147,15 +147,38 @@ namespace FreezingArcher.Messaging
         public bool IsMouseButtonPressed(MouseButton btn)
         {
             var key = Mouse.Find(k => k.Button == btn);
-            return key != null;
+            return key != null && (key.Action == KeyAction.Press || key.Action == KeyAction.Repeat);
         }
 
         public bool IsMouseButtonDown(MouseButton btn)
         {
-            var key = Mouse.Find(k => k.Button == btn);
+            var keys = Mouse.Where(k => k.Button == btn);
 
-            if (key == null)
-                ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Remove(btn);
+            foreach (var key in keys)
+            {
+                if (key == null)
+                {
+                    ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Contains(btn);
+                }
+
+                if (key.Action == KeyAction.Press &&
+                    !ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Contains(btn))
+                {
+                    ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Add(btn);
+                }
+
+                if (key.Action == KeyAction.Release &&
+                    ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Contains(btn))
+                {
+                    ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Remove(btn);
+                }
+
+                if (key.Action != KeyAction.Repeat && key.Action != KeyAction.Press &&
+                    ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Contains(btn))
+                {
+                    ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Remove(btn);
+                }
+            }
 
             return ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Contains(btn);
         }
@@ -176,17 +199,17 @@ namespace FreezingArcher.Messaging
                     return ApplicationInstance.InputManager.CurrentlyDownKeys.Contains(action);
                 }
 
-                if (key.Action == KeyAction.Press && !Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
+                if (key.Action == KeyAction.Press && !ApplicationInstance.InputManager.CurrentlyDownKeys.Contains(action))
                 {
                     ApplicationInstance.InputManager.CurrentlyDownKeys.Add(action);
                 }
 
-                if (key.Action == KeyAction.Release && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
+                if (key.Action == KeyAction.Release && ApplicationInstance.InputManager.CurrentlyDownKeys.Contains(action))
                 {
                     ApplicationInstance.InputManager.CurrentlyDownKeys.RemoveAll(s => s == action);
                 }
 
-                if (key.Action != KeyAction.Repeat && key.Action != KeyAction.Press && Application.Instance.InputManager.CurrentlyDownKeys.Contains(action))
+                if (key.Action != KeyAction.Repeat && key.Action != KeyAction.Press && ApplicationInstance.InputManager.CurrentlyDownKeys.Contains(action))
                 {
                     ApplicationInstance.InputManager.CurrentlyDownKeys.RemoveAll(s => s == action);
                 }

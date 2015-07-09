@@ -7,6 +7,7 @@ using System.Windows.Forms;//FIXME
 using Gwen.Anim;
 using Gwen.DragDrop;
 using Gwen.Input;
+using FreezingArcher.Output;
 
 namespace Gwen.Control
 {
@@ -509,8 +510,11 @@ namespace Gwen.Control
 #if DEBUG
         ~Base()
         {
-            throw new InvalidOperationException(String.Format("IDisposable object finalized [{1:X}]: {0}", this, GetHashCode()));
+            //throw new InvalidOperationException(String.Format("IDisposable object finalized [{1:X}]: {0}", this, GetHashCode()));
             //Debug.Print(String.Format("IDisposable object finalized: {0}", GetType()));
+
+            Logger.Log.AddLogEntry(LogLevel.Error, "UI.Base", "IDisposable object finalized [{1:X}]: {0}",
+                this, GetHashCode());
         }
 #endif
 

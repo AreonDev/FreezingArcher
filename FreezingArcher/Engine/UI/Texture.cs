@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using FreezingArcher.Output;
 
 namespace Gwen
 {
@@ -87,8 +88,11 @@ namespace Gwen
 #if DEBUG
         ~Texture()
         {
-            throw new InvalidOperationException(String.Format("IDisposable object finalized: {0}", GetType()));
+            //throw new InvalidOperationException(String.Format("IDisposable object finalized: {0}", GetType()));
             //Debug.Print(String.Format("IDisposable object finalized: {0}", GetType()));
+
+            Logger.Log.AddLogEntry(LogLevel.Error, "UI.Base", "IDisposable object finalized [{1:X}]: {0}",
+                this, GetHashCode());
         }
 #endif
 

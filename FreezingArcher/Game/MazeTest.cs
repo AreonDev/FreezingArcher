@@ -79,13 +79,15 @@ namespace FreezingArcher.Game
             maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager);
             maze[0].PlayerPosition += player.GetComponent<TransformComponent>().Position;
 
-            /*game.AddGameState("maze_underworld", Content.Environment.Default, null);
+            game.AddGameState("maze_underworld", Content.Environment.Default,
+                new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
+                new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) });
             state = game.GetGameState("maze_underworld");
             state.Scene = new CoreScene(rendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.AliceBlue;
             state.Scene.CameraManager.AddCamera (new BaseCamera (player, state.MessageProxy), "player");
             maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager);
-            maze[1].PlayerPosition += player.GetComponent<TransformComponent>().Position;*/
+            maze[1].PlayerPosition += player.GetComponent<TransformComponent>().Position;
 
             game.SwitchToGameState("maze_overworld");
         }
@@ -98,19 +100,25 @@ namespace FreezingArcher.Game
 
         readonly Content.Game game;
 
-        void SwitchMaze(int mazeIdx)
+        int currentMaze;
+
+        void SwitchMaze()
         {
-            if (mazeIdx == 0)
+            if (currentMaze == 0)
             {
-                maze[1].PlayerPosition = player.GetComponent<TransformComponent>().Position;
-                game.MoveEntityToGameState(player, game.CurrentGameState, game.GetGameState("maze_overworld"));
-                player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
+                //maze[0].PlayerPosition = player.GetComponent<TransformComponent>().Position;
+                game.MoveEntityToGameState(player, game.GetGameState("maze_overworld"), game.GetGameState("maze_underworld"));
+                game.SwitchToGameState("maze_underworld");
+                //player.GetComponent<TransformComponent>().Position = maze[1].PlayerPosition;
+                currentMaze = 1;
             }
-            else if (mazeIdx == 1)
+            else if (currentMaze == 1)
             {
-                maze[0].PlayerPosition = player.GetComponent<TransformComponent>().Position;
-                game.MoveEntityToGameState(player, game.CurrentGameState, game.GetGameState("maze_underworld"));
-                player.GetComponent<TransformComponent>().Position = maze[1].PlayerPosition;
+                //maze[1].PlayerPosition = player.GetComponent<TransformComponent>().Position;
+                game.MoveEntityToGameState(player, game.GetGameState("maze_underworld"), game.GetGameState("maze_overworld"));
+                game.SwitchToGameState("maze_overworld");
+                //player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
+                currentMaze = 0;
             }
         }
 
@@ -127,14 +135,9 @@ namespace FreezingArcher.Game
             {
                 if (im.IsActionPressed("jump"))
                 {
-                    if (!maze[0].IsGenerated)
-                    {
-                        maze[0].Generate(
-                            () => player.GetComponent<TransformComponent>().Position += maze[0].PlayerPosition,
-                            game.CurrentGameState);
-                    }
-                    else if (!maze[1].IsGenerated)
-                        maze[1].Generate();
+                    maze[0].Generate(
+                        () => maze [1].Generate (state: game.GetGameState ("maze_underworld")),
+                        game.GetGameState("maze_overworld"));
                 }
                 if (im.IsActionPressed("run"))
                 {
@@ -149,6 +152,10 @@ namespace FreezingArcher.Game
                         maze[0].SpawnFeatures(null, maze[1].graph);
                     else if (maze[1].IsGenerated && !maze[1].AreFeaturesPlaced)
                         maze[1].SpawnFeatures(maze[0].graph);
+                }
+                if (im.IsActionPressed("frame"))
+                {
+                    SwitchMaze();
                 }
             }
         }

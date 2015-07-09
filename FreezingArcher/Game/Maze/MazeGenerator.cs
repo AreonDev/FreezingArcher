@@ -313,7 +313,7 @@ namespace FreezingArcher.Game.Maze
             if (startNode != null)
             {
                 playerPosition = new Vector3 (
-                    startNode.Data.Position.X * scale.X * 2 + xOffs, 0,
+                    startNode.Data.Position.X * scale.X * 2 + xOffs, playerPosition.Y,
                     startNode.Data.Position.Y * scale.Y * 2 + yOffs);
             }
 

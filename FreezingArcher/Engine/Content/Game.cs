@@ -108,8 +108,16 @@ namespace FreezingArcher.Content
             if (currentNode.Data.Name == name)
                 return true;
 
-            var newstate = currentNode.OutgoingEdges.FirstOrDefault(e =>
-                e.DestinationNode.Data.Name == name).DestinationNode;
+            var newstateEdge = currentNode.OutgoingEdges.FirstOrDefault(e =>
+                e.DestinationNode.Data.Name == name);
+
+            if (newstateEdge == null)
+            {
+                Logger.Log.AddLogEntry(LogLevel.Error, "Game", "Cannot change game state to '{0}'!", name);
+                return false;
+            }
+
+            var newstate = newstateEdge.DestinationNode;
 
             if (newstate == null)
             {

@@ -75,6 +75,7 @@ namespace FreezingArcher.Game
                 "__click__"
             };
 
+            /*
             var recs = new[] {
                 new Rectangle(10, 50, 200, 20),
                 new Rectangle(220, 50, 200, 20),
@@ -82,8 +83,9 @@ namespace FreezingArcher.Game
                 new Rectangle(10, 80, 200, 20),
                 new Rectangle(220, 80, 100, 20),
                 new Rectangle(330, 80, 150, 20)
-            };
+            };*/
 
+            /*
             window = new WindowControl (sceneobj.Canvas);
             window.SetSize (400, 400);
             window.SetPosition (30, 30);
@@ -106,6 +108,7 @@ namespace FreezingArcher.Game
                 
             scroll.ScrollToLeft ();
             scroll.ScrollToLeft ();
+            */
 
             new InventoryGUI(new Inventory(new Vector2i(10,5), 6), sceneobj.Canvas);
         }

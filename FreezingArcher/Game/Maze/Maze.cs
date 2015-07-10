@@ -263,7 +263,7 @@ namespace FreezingArcher.Game.Maze
 
                     if (proxy)
                     {
-                            Thread.Sleep(20); // we don't wanna loose messages here :)
+                            Thread.Sleep(10000); // we don't wanna loose messages here :)
                         state.MessageProxy.StopProcessing();
                     }
                 });

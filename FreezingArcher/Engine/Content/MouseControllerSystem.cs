@@ -25,6 +25,7 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
 using FreezingArcher.Configuration;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Content
 {
@@ -67,6 +68,9 @@ namespace FreezingArcher.Content
             if (msg.MessageId == (int) MessageId.Input)
             {
                 InputMessage im = msg as InputMessage;
+
+                if (!im.ApplicationInstance.Window.IsMouseCaptured())
+                    return;
 
                 float x = im.MouseMovement.Y * movement * (float) im.DeltaTime.TotalMilliseconds;
                 float y = im.MouseMovement.X * -movement * (float) im.DeltaTime.TotalMilliseconds;

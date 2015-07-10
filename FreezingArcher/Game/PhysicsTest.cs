@@ -44,6 +44,8 @@ namespace FreezingArcher.Game
         List<Entity> grounds;
         List<Entity> walls;
 
+        Entity wall_to_throw;
+
         GameState state;
 
         /// <summary>
@@ -129,7 +131,7 @@ namespace FreezingArcher.Game
         void InitializeTest()
         {
             //Init grounds
-            /*for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 10; j++) {
                     Entity ground = EntityFactory.Instance.CreateWith ("ground." + i + "." + j, state.MessageProxy, null,
                                         new[] { typeof(ModelSystem), typeof(PhysicsSystem) });
@@ -143,8 +145,25 @@ namespace FreezingArcher.Game
                     tc.Position = new Vector3 (i * 2, 0, j * 2);
 
                     grounds.Add (ground);
+
+                    //Physics
+                    Vector3 centerofmass;
+
+                    var groundRigidBody = new RigidBody ();
+                    ground.GetComponent<PhysicsComponent> ().RigidBody = groundRigidBody;
+
+                    groundRigidBody.MassProperties = MassProperties.FromTriMesh (100.0f, groundModel.Model.Meshes [0].Vertices,
+                        groundModel.Model.Meshes [0].Indices, out centerofmass);
+
+                    Henge3D.Pipeline.CompiledMesh bla = new Henge3D.Pipeline.CompiledMesh (groundModel.Model.Meshes [0].Vertices,
+                                                            groundModel.Model.Meshes [0].Indices);
+
+                    groundRigidBody.Skin.Add (new MeshPart (bla), new Henge3D.Physics.Material (0.0f, 0.001f));
+                    groundRigidBody.SetWorld (tc.Position);
+                   
+                    state.PhysicsManager.Add (groundRigidBody);
                 }
-            }*/
+            }
 
             //Init walls
             for (int i = 0; i < 10; i++) {
@@ -158,7 +177,7 @@ namespace FreezingArcher.Game
 
 
                 var tc = wall.GetComponent<TransformComponent> ();
-                tc.Position = new Vector3 (i * 2, 0.0f, 0.0f);
+                tc.Position = new Vector3 (i * 2, 0.0f, 20.0f);
 
                 walls.Add (wall);
 
@@ -177,9 +196,46 @@ namespace FreezingArcher.Game
                     
                 wallRigidBody.Skin.Add (new MeshPart (bla), new Henge3D.Physics.Material (0.0f, 0.0001f));
                 wallRigidBody.SetWorld (tc.Position);
-
+                wallRigidBody.Freeze ();
+    
                 state.PhysicsManager.Add (wallRigidBody);
             }
+
+            InitStupidWall ();
+        }
+           
+        private void InitStupidWall()
+        {
+            wall_to_throw = EntityFactory.Instance.CreateWith ("wall_throw", state.MessageProxy, null,
+                new[] { typeof(ModelSystem), typeof(PhysicsSystem) });
+
+            var wallModel2 = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
+            state.Scene.AddObject (wallModel2);
+
+            wall_to_throw.GetComponent<ModelComponent> ().Model = wallModel2;
+
+            var tc2 = wall_to_throw.GetComponent<TransformComponent>();
+            tc2.Position = new Vector3 (10.0f, 20.0f, 10.0f);
+
+
+            //Physics
+            Vector3 centerofmass;
+
+            var wallRigidBody = new RigidBody ();
+            wall_to_throw.GetComponent<PhysicsComponent> ().RigidBody = wallRigidBody;
+
+            wallRigidBody.MassProperties = MassProperties.FromTriMesh (50.0f, wallModel2.Model.Meshes [0].Vertices,
+                wallModel2.Model.Meshes [0].Indices, out centerofmass);
+            //wallRigidBody.Freeze ();
+
+            Henge3D.Pipeline.CompiledMesh bla = new Henge3D.Pipeline.CompiledMesh (wallModel2.Model.Meshes [0].Vertices, 
+                wallModel2.Model.Meshes [0].Indices);
+
+            wallRigidBody.Skin.Add (new MeshPart (bla), new Henge3D.Physics.Material (0.0f, 0.0001f));
+            wallRigidBody.SetWorld (tc2.Position);
+            //wallRigidBody.Freeze ();
+
+            state.PhysicsManager.Add (wallRigidBody);
         }
 
         #region IMessageConsumer implementation

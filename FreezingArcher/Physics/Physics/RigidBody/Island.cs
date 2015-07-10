@@ -139,6 +139,9 @@ namespace Henge3D.Physics
 
         private void ProcessVelocityConstraints ()
         {
+            if (_manager == null)
+                return;
+
             bool reverse = false;
             for (int i = 0; i < _constraints.Count; i++)
             {

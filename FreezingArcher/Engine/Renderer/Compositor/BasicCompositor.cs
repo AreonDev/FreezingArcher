@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Collections.Generic;
 
 using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Core;
@@ -30,8 +31,18 @@ namespace FreezingArcher.Renderer.Compositor
 {
     public class CompositorEdgeDescription : IComparable
     {
+        public CompositorEdgeDescription()
+        {
+            ID = (int)DateTime.Now.Ticks;
+        }
+
+        public int ID {get; private set;}
+
         public int InputSlotIndex;
         public int OutputSlotIndex;
+
+        public CompositorNode Input;
+        public CompositorNode Output;
 
         public bool Active;
 
@@ -46,6 +57,9 @@ namespace FreezingArcher.Renderer.Compositor
     public class BasicCompositor
     {
         DirectedWeightedGraph<CompositorNode, CompositorEdgeDescription> _CompositorGraph;
+        List<DirectedWeightedNode<CompositorNode, CompositorEdgeDescription>> _Nodes;
+        List<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescription>> _Edges;
+
         object graphLock;
 
         public BasicCompositor(ObjectManager objm)
@@ -53,7 +67,8 @@ namespace FreezingArcher.Renderer.Compositor
             _CompositorGraph = new DirectedWeightedGraph<CompositorNode, CompositorEdgeDescription>();
             _CompositorGraph.Init();
 
-
+            _Nodes = new List<DirectedWeightedNode<CompositorNode, CompositorEdgeDescription>>();
+            _Edges = new List<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescription>>();
         }
 
         public void AddNode(CompositorNode node)
@@ -61,7 +76,7 @@ namespace FreezingArcher.Renderer.Compositor
             lock (graphLock)
             {
                 node.Active = true;
-                _CompositorGraph.AddNode(node);
+                _Nodes.Add(_CompositorGraph.AddNode(node));
             }
         }
 
@@ -69,7 +84,12 @@ namespace FreezingArcher.Renderer.Compositor
         {
             lock (graphLock)
             {
-                //_CompositorGraph.RemoveNode
+                DirectedWeightedNode<CompositorNode, CompositorEdgeDescription> gnode = null;
+
+                _Nodes.ForEach(x => {if(x.Data.ID == node.ID) gnode = x;});
+
+                _Nodes.Remove(gnode);
+                _CompositorGraph.RemoveNode(gnode);
             }
         }
 
@@ -81,6 +101,8 @@ namespace FreezingArcher.Renderer.Compositor
                 desc.InputSlotIndex = begin_slot;
                 desc.OutputSlotIndex = end_slot;
                 desc.Active = true;
+                desc.Input = begin;
+                desc.Output = end;
 
                 if (begin == null || end == null)
                 {
@@ -88,13 +110,41 @@ namespace FreezingArcher.Renderer.Compositor
                     return;
                 }
                     
-                //_CompositorGraph.AddEdge(begin, end, desc);
+                DirectedWeightedNode<CompositorNode, CompositorEdgeDescription> gnodestart = null;
+                _Nodes.ForEach(x => {if (x.Data.ID == begin.ID) gnodestart = x;});
+
+                DirectedWeightedNode<CompositorNode, CompositorEdgeDescription> gnodeend = null;
+                _Nodes.ForEach(x => {if (x.Data.ID == end.ID) gnodeend = x;});
+
+                _Edges.Add(_CompositorGraph.AddEdge(gnodestart, gnodeend, desc));
             }
         }
 
-        public void DeleteConnection()
+        public DirectedWeightedNode<CompositorNode, CompositorEdgeDescription>[] GetNodes()
         {
-            
+            return _Nodes.ToArray();
+        }
+
+        public DirectedWeightedEdge<CompositorNode, CompositorEdgeDescription>[] GetEdges()
+        {
+            return _Edges.ToArray();
+        }
+
+        public void DeleteConnection(CompositorEdgeDescription edge)
+        {
+            lock (graphLock)
+            {
+                DirectedWeightedEdge<CompositorNode, CompositorEdgeDescription> gedge = null;
+
+                _Edges.ForEach(x =>
+                    {
+                        if (x.Weight.ID == edge.ID)
+                            gedge = x;
+                    });
+
+                _Edges.Remove(gedge);
+                _CompositorGraph.RemoveEdge(gedge);
+            }
         }
     }
 }

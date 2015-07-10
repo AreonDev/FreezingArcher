@@ -39,18 +39,17 @@ namespace FreezingArcher.Renderer.Compositor
         public string Name { get; private set;}
         public CompositorInputSlotImportance SlotImportance { get; private set;}
         public int SlotNumber { get; private set;}
-        public Texture2D SlotTexture { get; private set;}
-        public CompositorSlotType SlotType { get; private set;}
+        public Texture2D SlotTexture { get; set;}
+        public CompositorSlotType SlotType { get; set;}
 
         bool IsConnected {get; set;}
 
-        public CompositorInputSlot(string name, CompositorInputSlotImportance importance, int number, Texture2D texture, CompositorSlotType type)
+        public CompositorInputSlot(string name, CompositorInputSlotImportance importance, int number, CompositorSlotType type)
         {
             Name = name;
             SlotImportance = importance;
             SlotNumber = number;
 
-            SlotTexture = texture;
             SlotType = type;
 
             if ((SlotType == CompositorSlotType.Texture || SlotType == CompositorSlotType.ValueTexture) && SlotTexture == null)

@@ -1,5 +1,5 @@
 ﻿//
-//  CompositorOutputSlot.cs
+//  CompositorNodeStart.cs
 //
 //  Author:
 //       dboeg <${AuthorEmail}>
@@ -22,31 +22,47 @@
 //
 using System;
 
-using FreezingArcher.Output;
-using FreezingArcher.Renderer;
-
 namespace FreezingArcher.Renderer.Compositor
 {
-    public class CompositorOutputSlot
+    public class CompositorNodeStart : CompositorNode
     {
-        public string Name { get; private set;}
-        public int SlotNumber { get; private set;}
-        public Texture2D SlotTexture { get; private set;}
-        public CompositorSlotType SlotType { get; private set;}
-
-        bool IsConnected {get; set;}
-
-        public CompositorOutputSlot(string name, int number, Texture2D output, CompositorSlotType type)
+        public CompositorNodeStart() : base("NodeStart")
         {
-            Name = name;
-            SlotNumber = number;
-            SlotTexture = output;
-            SlotType = type;
+        }
 
-            if ((SlotType == CompositorSlotType.Texture || SlotType == CompositorSlotType.ValueTexture) && SlotTexture == null)
-                Logger.Log.AddLogEntry(LogLevel.Error, "CompositorInputSlot: " + Name, FreezingArcher.Core.Status.BadArgument);
+        public override bool Init(RendererContext rc)
+        {
+            return base.Init(rc);
+        }
 
-            IsConnected = false;
+        public override void Begin(RendererContext rc)
+        {
+            
+        }
+
+        public override void Draw(RendererContext rc)
+        {
+            
+        }
+
+        public override void End(RendererContext rc)
+        {
+            
+        }
+
+        public override void ConfigureSlots()
+        {
+            Active = true;
+
+            InputSlots = null;
+            OutputSlots = new CompositorOutputSlot[1];
+            OutputSlots[0] = new CompositorOutputSlot("Begin", 0, null, CompositorSlotType.NoTextureOrValueOutput);
+        }
+
+        public override void LoadEffect()
+        {
+            NodeEffect = null;
         }
     }
 }
+

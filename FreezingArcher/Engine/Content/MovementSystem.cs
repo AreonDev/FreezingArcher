@@ -46,7 +46,7 @@ namespace FreezingArcher.Content
             NeededComponents = new[] { typeof(TransformComponent) };
 
             internalValidMessages = new[] { (int) MessageId.MovementMessage, (int) MessageId.MoveStraightMessage,
-                (int) MessageId.MoveSidewardsMessage };
+                (int) MessageId.MoveSidewardsMessage, (int)MessageId.MoveVerticalMessage };
             messageProvider += this;
         }
 
@@ -56,7 +56,7 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            if (msg.MessageId == (int) MessageId.MovementMessage)
+            if (msg.MessageId == (int)MessageId.MovementMessage)
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 TransformMessage mm = msg as TransformMessage;
@@ -67,7 +67,7 @@ namespace FreezingArcher.Content
                 tc.Position += mm.Movement;
                 tc.Rotation = mm.Rotation * tc.Rotation;
             }
-            else if (msg.MessageId == (int) MessageId.MoveStraightMessage)
+            else if (msg.MessageId == (int)MessageId.MoveStraightMessage)
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 MoveStraightMessage msm = msg as MoveStraightMessage;
@@ -80,7 +80,7 @@ namespace FreezingArcher.Content
                 rotation.Normalize();
                 tc.Position += rotation * msm.Movement;
             }
-            else if (msg.MessageId == (int) MessageId.MoveSidewardsMessage)
+            else if (msg.MessageId == (int)MessageId.MoveSidewardsMessage)
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 MoveSidewardsMessage msm = msg as MoveSidewardsMessage;
@@ -92,6 +92,17 @@ namespace FreezingArcher.Content
                 rotation = new Vector3(rotation.X, 0, rotation.Z);
                 rotation.Normalize();
                 tc.Position += rotation * -msm.Movement;
+            }
+            else if (msg.MessageId == (int)MessageId.MoveVerticalMessage)
+            {
+                TransformComponent tc = Entity.GetComponent<TransformComponent>();
+
+                MoveVerticalMessage mvm = msg as MoveVerticalMessage;
+
+                if (mvm.Entity.Name != Entity.Name)
+                    return;
+
+                tc.Position += new Vector3(0.0f, mvm.Movement, 0.0f);
             }
         }
     }

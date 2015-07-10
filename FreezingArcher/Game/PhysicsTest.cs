@@ -32,6 +32,7 @@ using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Output;
 using FreezingArcher.Content;
 using FreezingArcher.Core;
+using System.Collections.Generic;
 
 namespace FreezingArcher.Game
 {
@@ -40,76 +41,168 @@ namespace FreezingArcher.Game
     /// </summary>
     public class PhysicsTest : IMessageConsumer
     {
+        List<Entity> grounds;
+        List<Entity> walls;
+
+        GameState state;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.PhysicsTest"/> class.
         /// </summary>
         /// <param name="app">App.</param>
-        public PhysicsTest(Application app, MessageProvider messageProvider)
+        public PhysicsTest(Application application, MessageProvider messageProvider)
         {
-            Entity wall = EntityFactory.Instance.CreateWith("wall", messageProvider, null,
-                new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
+            application.Game.AddGameState ("PhysicsScene", Content.Environment.Default);
+            state = application.Game.GetGameState ("PhysicsScene");
 
-            var wallModel = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
-            wall.GetComponent<ModelComponent>().Model = wallModel;
-            app.RendererContext.Scene.AddObject(wallModel);
+            state.Scene = new CoreScene (application.RendererContext, state.MessageProxy);
+            state.Scene.BackgroundColor = Color4.Aqua;
 
-            Vector3 centerofmass;
+            state.PhysicsManager.Gravity = new Vector3 (0.0f, -1.0f, 0.0f);
 
-            var wallRigidBody = new RigidBody();
-            wall.GetComponent<PhysicsComponent>().RigidBody = wallRigidBody;
-            Vector3 p1 = new Vector3(0f, 0f, 1), p2 = new Vector3(0f, 0f, -1);
-            wallRigidBody.MassProperties = MassProperties.FromTriMesh (50.0f, wallModel.Model.Meshes [0].Vertices,
-                wallModel.Model.Meshes [0].Indices, out centerofmass);
-            wallRigidBody.Freeze ();
+            Entity player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, systems: new [] {
+                typeof(MovementSystem),
+                typeof(KeyboardControllerSystem),
+                typeof(MouseControllerSystem),
+                typeof(SkyboxSystem)});
 
-            Henge3D.Pipeline.CompiledMesh bla = new Henge3D.Pipeline.CompiledMesh (wallModel.Model.Meshes [0].Vertices, 
-                wallModel.Model.Meshes [0].Indices);
+            state.Scene.CameraManager.AddCamera (new BaseCamera (player, state.MessageProxy), "playerCamera");
 
-            wallRigidBody.Skin.Add(new MeshPart(bla), new Henge3D.Physics.Material(0.0f, 0.000000001f));
-            wallRigidBody.SetWorld(new Vector3(0, 0, 0));
+            SkyboxSystem.CreateSkybox (state.Scene, player);
 
-            Entity ground = EntityFactory.Instance.CreateWith("ground", messageProvider, null,
-                new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
+            grounds = new List<Entity> ();
+            walls = new List<Entity> ();
 
-            var groundModel = new ModelSceneObject("lib/Renderer/TestGraphics/Ground/ground.xml");
-            ground.GetComponent<ModelComponent>().Model = groundModel;
-            app.RendererContext.Scene.AddObject(groundModel);
+            application.Game.SwitchToGameState ("PhysicsScene");
 
-            groundModel.WaitTillInitialized ();
+            ValidMessages = new[] { (int)MessageId.Input, (int)MessageId.Update };
+            messageProvider += this;
 
-            groundRigidBody = new RigidBody();
-            ground.GetComponent<PhysicsComponent>().RigidBody = groundRigidBody;
-            groundRigidBody.MassProperties = new MassProperties (0.001f, Matrix.Identity);
-            //groundRigidBody.Freeze ();
-            groundRigidBody.Skin.DefaultMaterial = new Henge3D.Physics.Material(1f, 0.1f);
-            groundRigidBody.Skin.Add(new MeshPart(groundModel.Model.Meshes [0].Vertices, groundModel.Model.Meshes [0].Indices));
-            groundRigidBody.SetWorld (new Vector3 (0, 10, 0));
-
-            //app.RendererContext.Scene.CameraManager.ActiveCamera.MoveTo(new Vector3(-1, 1, 0));
-
-            app.Game.CurrentGameState.PhysicsManager.Add(groundRigidBody);
-            app.Game.CurrentGameState.PhysicsManager.Add(wallRigidBody);
+//            Entity wall = EntityFactory.Instance.CreateWith("wall", messageProvider, null,
+//                new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
+//
+//            var wallModel = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
+//            wall.GetComponent<ModelComponent>().Model = wallModel;
+//            app.RendererContext.Scene.AddObject(wallModel);
+//
+//            Vector3 centerofmass;
+//
+//            var wallRigidBody = new RigidBody();
+//            wall.GetComponent<PhysicsComponent>().RigidBody = wallRigidBody;
+//            Vector3 p1 = new Vector3(0f, 0f, 1), p2 = new Vector3(0f, 0f, -1);
+//            wallRigidBody.MassProperties = MassProperties.FromTriMesh (50.0f, wallModel.Model.Meshes [0].Vertices,
+//                wallModel.Model.Meshes [0].Indices, out centerofmass);
+//            wallRigidBody.Freeze ();
+//
+//            Henge3D.Pipeline.CompiledMesh bla = new Henge3D.Pipeline.CompiledMesh (wallModel.Model.Meshes [0].Vertices, 
+//                wallModel.Model.Meshes [0].Indices);
+//
+//            wallRigidBody.Skin.Add(new MeshPart(bla), new Henge3D.Physics.Material(0.0f, 0.000000001f));
+//            wallRigidBody.SetWorld(new Vector3(0, 0, 0));
+//
+//            Entity ground = EntityFactory.Instance.CreateWith("ground", messageProvider, null,
+//                new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
+//
+//            var groundModel = new ModelSceneObject("lib/Renderer/TestGraphics/Ground/ground.xml");
+//            ground.GetComponent<ModelComponent>().Model = groundModel;
+//            app.RendererContext.Scene.AddObject(groundModel);
+//
+//            groundModel.WaitTillInitialized ();
+//
+//            groundRigidBody = new RigidBody();
+//            ground.GetComponent<PhysicsComponent>().RigidBody = groundRigidBody;
+//            groundRigidBody.MassProperties = new MassProperties (0.001f, Matrix.Identity);
+//            //groundRigidBody.Freeze ();
+//            groundRigidBody.Skin.DefaultMaterial = new Henge3D.Physics.Material(1f, 0.1f);
+//            groundRigidBody.Skin.Add(new MeshPart(groundModel.Model.Meshes [0].Vertices, groundModel.Model.Meshes [0].Indices));
+//            groundRigidBody.SetWorld (new Vector3 (0, 10, 0));
+//
+//            //app.RendererContext.Scene.CameraManager.ActiveCamera.MoveTo(new Vector3(-1, 1, 0));
+//
+//            app.Game.CurrentGameState.PhysicsManager.Add(groundRigidBody);
+//            app.Game.CurrentGameState.PhysicsManager.Add(wallRigidBody);
         }
 
-        RigidBody wallRigidBody;
-        RigidBody groundRigidBody;
+//        RigidBody wallRigidBody;
+//        RigidBody groundRigidBody;
+
+        void InitializeTest()
+        {
+            //Init grounds
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    Entity ground = EntityFactory.Instance.CreateWith ("ground." + i + "." + j, state.MessageProxy, null,
+                                        new[] { typeof(ModelSystem), typeof(PhysicsSystem) });
+
+                    var groundModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
+                    state.Scene.AddObject (groundModel);
+
+                    ground.GetComponent<ModelComponent> ().Model = groundModel;
+
+                    var tc = ground.GetComponent<TransformComponent> ();
+                    tc.Position = new Vector3 (i * 2, 0, j * 2);
+
+                    grounds.Add (ground);
+                }
+            }
+
+            //Init walls
+            for (int i = 0; i < 10; i++) {
+                Entity wall = EntityFactory.Instance.CreateWith ("walls." + i, state.MessageProxy, null,
+                                  new[] { typeof(ModelSystem), typeof(PhysicsSystem) });
+
+                var wallModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
+                state.Scene.AddObject (wallModel);
+
+                wall.GetComponent<ModelComponent> ().Model = wallModel;
+
+
+                var tc = wall.GetComponent<TransformComponent> ();
+                tc.Position = new Vector3 (i * 2, 0.0f, 0.0f);
+
+                walls.Add (wall);
+
+                //Physics
+                Vector3 centerofmass;
+
+                var wallRigidBody = new RigidBody ();
+                wall.GetComponent<PhysicsComponent> ().RigidBody = wallRigidBody;
+
+                wallRigidBody.MassProperties = MassProperties.FromTriMesh (50.0f, wallModel.Model.Meshes [0].Vertices,
+                    wallModel.Model.Meshes [0].Indices, out centerofmass);
+                //wallRigidBody.Freeze ();
+                    
+                Henge3D.Pipeline.CompiledMesh bla = new Henge3D.Pipeline.CompiledMesh (wallModel.Model.Meshes [0].Vertices, 
+                                                                        wallModel.Model.Meshes [0].Indices);
+                    
+                wallRigidBody.Skin.Add (new MeshPart (bla), new Henge3D.Physics.Material (0.0f, 0.0001f));
+                wallRigidBody.SetWorld (tc.Position);
+
+                state.PhysicsManager.Add (wallRigidBody);
+            }
+        }
 
         #region IMessageConsumer implementation
 
         public void ConsumeMessage (IMessage msg)
         {
-            UpdateMessage um = msg as UpdateMessage;
-            if (um != null) 
+            if (msg.MessageId == (int)MessageId.Update) 
             {
+                var um = msg as UpdateMessage;
 
+                state.PhysicsManager.Update ((float)um.TimeStamp.TotalMilliseconds);
+            }
+
+            if (msg.MessageId == (int)MessageId.Input)
+            {
+                var im = msg as InputMessage;
+
+                if (im.IsActionPressed ("jump"))
+                    InitializeTest ();
             }
         }
 
-        public int[] ValidMessages {
-            get {
-                return new[] { (int)MessageId.Update };
-            }
-        }
+        public int[] ValidMessages { get; private set; }
 
         #endregion
     }

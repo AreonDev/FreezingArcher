@@ -327,7 +327,7 @@ namespace FreezingArcher.Core
         /// Gets or sets the game.
         /// </summary>
         /// <value>The game.</value>
-        public Game Game { get; private set; }
+        public Content.Game Game { get; private set; }
 
         /// <summary>
         /// Gets or sets the name.

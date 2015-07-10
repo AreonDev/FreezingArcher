@@ -121,6 +121,10 @@ namespace FreezingArcher.Messaging
         /// </summary>
         MoveSidewardsMessage,
         /// <summary>
+        /// Occurs, when an up or down movement is requested of an entity on a MovementSystem.
+        /// </summary>
+        MoveVerticalMessage,
+        /// <summary>
         /// Occurs when an item is used.
         /// </summary>
         ItemUseMessage = 40,

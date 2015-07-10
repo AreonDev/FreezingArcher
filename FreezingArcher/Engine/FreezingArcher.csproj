@@ -407,6 +407,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="UI\Input\FreezingArcherInput.cs" />
     <Compile Include="Messaging\AddItemToInventoryMessage.cs" />
     <Compile Include="Messaging\RemoveItemFromInventoryBarMessage.cs" />
+    <Compile Include="Messaging\MoveVerticalMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

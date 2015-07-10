@@ -51,7 +51,7 @@ namespace FreezingArcher.Content
         {
             const float movement = 0.1f;
 
-            if (msg.MessageId == (int) MessageId.Input)
+            if (msg.MessageId == (int)MessageId.Input)
             {
                 InputMessage im = msg as InputMessage;
 
@@ -70,6 +70,14 @@ namespace FreezingArcher.Content
                 if (im.IsActionDown("right"))
                 {
                     CreateMessage(new MoveSidewardsMessage(Entity, movement));
+                }
+                if (im.IsActionDown("up"))
+                {
+                    CreateMessage(new MoveVerticalMessage(Entity, movement));
+                }
+                if (im.IsActionDown("down"))
+                {
+                    CreateMessage(new MoveVerticalMessage(Entity, -movement));
                 }
             }
         }

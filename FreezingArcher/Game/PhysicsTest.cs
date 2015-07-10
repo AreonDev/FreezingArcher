@@ -129,7 +129,7 @@ namespace FreezingArcher.Game
         void InitializeTest()
         {
             //Init grounds
-            for (int i = 0; i < 10; i++) {
+            /*for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 10; j++) {
                     Entity ground = EntityFactory.Instance.CreateWith ("ground." + i + "." + j, state.MessageProxy, null,
                                         new[] { typeof(ModelSystem), typeof(PhysicsSystem) });
@@ -144,7 +144,7 @@ namespace FreezingArcher.Game
 
                     grounds.Add (ground);
                 }
-            }
+            }*/
 
             //Init walls
             for (int i = 0; i < 10; i++) {

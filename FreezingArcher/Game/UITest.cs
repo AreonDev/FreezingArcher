@@ -48,7 +48,7 @@ namespace FreezingArcher.Game
 
             var state = game.GetGameState ("UITestState");
             state.Scene = new FreezingArcher.Renderer.Scene.CoreScene (Application.Instance.RendererContext, state.MessageProxy);
-            state.Scene.BackgroundColor = FreezingArcher.Math.Color4.AliceBlue;
+            state.Scene.BackgroundColor = Color4.AliceBlue;
 
             game.SwitchToGameState ("UITestState");
 
@@ -102,7 +102,7 @@ namespace FreezingArcher.Game
             scroll.ScrollToLeft ();
             scroll.ScrollToLeft ();
 
-            new InventoryGUI(new Inventory(new Vector2i(4,4), 6), sceneobj.Canvas);
+            new InventoryGUI(new Inventory(new Vector2i(10,5), 6), sceneobj.Canvas);
         }
 
         void onButtonPressed(Base btn, EventArgs args)

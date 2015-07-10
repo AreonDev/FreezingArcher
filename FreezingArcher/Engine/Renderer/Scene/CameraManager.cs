@@ -116,6 +116,9 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         /// <returns>The camera.</returns>
         public void ToggleCamera(){
+            if (CamTree.Children.Count <= 0)
+                return;
+            
             if(TouchedCameras == null) TouchedCameras = new List<string>();
 
             foreach(var node in (IEnumerable<Tree<Pair<string, BaseCamera>>>) CamTree.DepthFirst)

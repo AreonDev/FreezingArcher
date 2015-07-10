@@ -27,29 +27,145 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Math;
 using Gwen.Control;
 using Gwen.Control.Layout;
+using Gwen.DragDrop;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Game
 {
+    public class InventoryButton : Button
+    {
+        public InventoryButton(Base parent) : base (parent)
+        {}
+
+        public override bool DragAndDrop_ShouldStartDrag()
+        {
+            if (!base.DragAndDrop_ShouldStartDrag())
+                return false;
+
+            return true;
+        }
+
+        public override bool DragAndDrop_CanAcceptPackage (Gwen.DragDrop.Package p)
+        {
+            return true;
+        }
+
+        public override bool DragAndDrop_Draggable ()
+        {
+            return base.DragAndDrop_Draggable();
+        }
+
+        public override void DragAndDrop_EndDragging (bool success, int x, int y)
+        {
+            var package = DragAndDrop_GetPackage(x,y);
+            var tuple = package.UserData as Tuple<string, string>;
+            if (tuple != null)
+            {
+                SetImage(tuple.Item2);
+                Text = tuple.Item1;
+            }
+            base.DragAndDrop_EndDragging (success, x, y);
+        }
+
+        public override Gwen.DragDrop.Package DragAndDrop_GetPackage (int x, int y)
+        {
+            return base.DragAndDrop_GetPackage (x, y);
+        }
+
+        public override bool DragAndDrop_HandleDrop (Gwen.DragDrop.Package p, int x, int y)
+        {
+            var tuple = p.UserData as Tuple<string, string>;
+            if (tuple != null)
+            {
+                SetImage(tuple.Item2);
+                Text = tuple.Item1;
+            }
+            return base.DragAndDrop_HandleDrop (p, x, y);
+        }
+
+        public override void DragAndDrop_Hover (Gwen.DragDrop.Package p, int x, int y)
+        {
+            base.DragAndDrop_Hover (p, x, y);
+            Logger.Log.AddLogEntry(LogLevel.Debug, "InventoryGUI", "Hover");
+        }
+
+        public override void DragAndDrop_HoverEnter (Gwen.DragDrop.Package p, int x, int y)
+        {
+            base.DragAndDrop_HoverEnter (p, x, y);
+            Logger.Log.AddLogEntry(LogLevel.Debug, "InventoryGUI", "Enter");
+        }
+
+        public override void DragAndDrop_HoverLeave (Gwen.DragDrop.Package p)
+        {
+            base.DragAndDrop_HoverLeave (p);
+            Logger.Log.AddLogEntry(LogLevel.Debug, "InventoryGUI", "Leave");
+        }
+
+        public override void DragAndDrop_SetPackage (bool draggable, string name = "", object userData = null)
+        {
+            base.DragAndDrop_SetPackage (draggable, name, userData);
+        }
+
+        public override void DragAndDrop_StartDragging(Package package, int x, int y)
+        {
+            var image = m_Image != null ? m_Image.ImageName : "";
+            package.UserData = new Tuple<string, string>(Text, image);
+            base.DragAndDrop_StartDragging(package, x, y);
+        }
+    }
+
     public class InventoryGUI : IMessageConsumer
     {
         public InventoryGUI (Inventory inventory, Base parent)
         {
             this.inventory = inventory;
 
+            string[][] items = new[] {
+                new[] {"", "", "", "", "", "", "", "", "", ""},
+                new[] {"", "", "command.png", "", "", "", "", "", "", ""},
+                new[] {"", "", "", "", "", "", "", "", "", ""},
+                new[] {"", "", "", "", "", "", "", "", "", ""},
+                new[] {"", "", "", "", "command.png", "", "", "", "", ""},
+                new[] {"", "", "", "", "", "", "", "", "", ""},
+                new[] {"", "", "", "", "", "", "", "", "", ""},
+                new[] {"", "", "", "", "", "", "", "", "", ""},
+                new[] {"", "", "", "", "", "", "", "", "", ""},
+                new[] {"", "", "", "command.png", "", "", "", "", "", ""},
+                new[] {"", "", "", "", "", "", "", "", "", ""},
+                new[] {"", "", "", "", "", "", "command.png", "", "", ""},
+                new[] {"", "command.png", "", "", "", "", "", "", "", ""},
+                new[] {"", "", "", "", "", "", "", "", "", ""},
+                new[] {"", "", "", "", "", "", "", "", "", ""},
+            };
+
+            InventoryButton[,] buttons = new InventoryButton[inventory.Size.X,inventory.Size.Y];
+
             var window = new WindowControl(parent, "Inventory");
             window.DisableResizing();
-            window.SetSize (400, 400);
+            window.SetSize (760, 402);
             window.SetPosition (100, 100);
             window.Show ();
-            var table = new Table(window);
-            table.ColumnCount = inventory.Size.X;
-            var row = new TableRow(table);
-            var item = new ImagePanel(row);
-            item.ImageName = "lib/command.png";
-            item.SizeToContents();
-            row.ColumnCount = inventory.Size.Y;
-            row.SetCellContents(0, item, true);
-            table.AddRow(row);
+
+            int w = 0, h = 0;
+
+            for (int y = 0; y < inventory.Size.Y; y++)
+            {
+                for (int x = 0; x < inventory.Size.X; x++)
+                {
+                    buttons[x,y] = new InventoryButton(window);
+                    buttons[x,y].SetPosition(w,h);
+                    buttons[x,y].SetSize(64, 64);
+                    buttons[x,y].Text = x + "." + y;
+                    if (items[y][x].Length != 0)
+                        buttons[x,y].SetImage(items[y][x], true);
+
+                    buttons[x,y].DragAndDrop_SetPackage(true, "item_drag");
+
+                    w += 76;
+                }
+                h += 76;
+                w = 0;
+            }
         }
 
         Inventory inventory;

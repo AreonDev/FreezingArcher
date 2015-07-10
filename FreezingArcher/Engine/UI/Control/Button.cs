@@ -12,7 +12,7 @@ namespace Gwen.Control
         private bool m_Toggle;
         private bool m_ToggleStatus;
         private bool m_CenterImage;
-        private ImagePanel m_Image;
+        protected ImagePanel m_Image;
 
         /// <summary>
         /// Invoked when the button is pressed.

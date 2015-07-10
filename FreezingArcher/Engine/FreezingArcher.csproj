@@ -94,7 +94,9 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Package>xbuild12</Package>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -403,6 +405,8 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Compositor\CompositorInputSlot.cs" />
     <Compile Include="Renderer\Compositor\CompositorOutputSlot.cs" />
     <Compile Include="UI\Input\FreezingArcherInput.cs" />
+    <Compile Include="Messaging\AddItemToInventoryMessage.cs" />
+    <Compile Include="Messaging\RemoveItemFromInventoryBarMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -542,6 +546,9 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Renderer\Effects\DeferredShading\pixel_shader.ps" />
     <None Include="UI\Skins\DefaultSkin.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="UI\Skins\FreezingArcherSkin.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

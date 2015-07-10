@@ -28,7 +28,6 @@ using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
-using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Content;
 using FreezingArcher.Renderer;
 

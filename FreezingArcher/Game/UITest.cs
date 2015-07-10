@@ -28,6 +28,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Messaging;
 using FreezingArcher.Content;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Game
 {
@@ -90,7 +91,7 @@ namespace FreezingArcher.Game
 
             for (int i = 0; i < messages.Length; i++)
             {
-                buttons [i] = new Button (scroll);
+                buttons[i] = new Button (scroll);
                 buttons[i].Text = messages[i];
                 buttons[i].SetBounds(recs[i]);
                 buttons[i].Pressed += onButtonPressed;
@@ -100,6 +101,8 @@ namespace FreezingArcher.Game
                 
             scroll.ScrollToLeft ();
             scroll.ScrollToLeft ();
+
+            new InventoryGUI(new Inventory(new Vector2i(4,4), 6), sceneobj.Canvas);
         }
 
         void onButtonPressed(Base btn, EventArgs args)

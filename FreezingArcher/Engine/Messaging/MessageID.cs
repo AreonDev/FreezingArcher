@@ -129,17 +129,25 @@ namespace FreezingArcher.Messaging
         /// </summary>
         ItemCollectedMessage,
         /// <summary>
-        /// Occurs when an item is removed from the inventory.
-        /// </summary>
-        RemoveItemFromInventoryMessage,
-        /// <summary>
         /// Occurs when an entity drops an item from its inventory.
         /// </summary>
         ItemDroppedMessage,
         /// <summary>
+        /// Occurs when an item is removed from the inventory.
+        /// </summary>
+        RemoveItemFromInventoryMessage,
+        /// <summary>
+        /// Occurs when an item is added to the inventory.
+        /// </summary>
+        AddItemToInventoryMessage,
+        /// <summary>
         /// Occurs when an item from the inventory should be added to the inventory bar.
         /// </summary>
-        AddItemToInventoryBar,
+        AddItemToInventoryBarMessage,
+        /// <summary>
+        /// Occurs when an item is removed from the inventory bar.
+        /// </summary>
+        RemoveItemFromInventoryBarMessage,
         /// <summary>
         /// Occurs when the active item in the inventory bar should be changed to a given position.
         /// </summary>

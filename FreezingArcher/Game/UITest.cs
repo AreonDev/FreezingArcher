@@ -29,10 +29,11 @@ using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Messaging;
 using FreezingArcher.Content;
 using FreezingArcher.Math;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Game
 {
-    public class UITest
+    public class UITest : FreezingArcher.Messaging.Interfaces.IMessageConsumer
     {
         readonly Button[] buttons = new Button[6];
         readonly WindowControl window;
@@ -42,17 +43,21 @@ namespace FreezingArcher.Game
 
         MessageProvider MessageProvider;
 
-        public UITest (Content.Game game)
+        public UITest (Content.Game game, MessageProvider messageProvider)
         {
-            game.AddGameState ("UITestState", Content.Environment.Default);
+            ValidMessages = new[] { (int) MessageId.WindowResizeMessage };
+            messageProvider += this;
 
-            var state = game.GetGameState ("UITestState");
-            state.Scene = new FreezingArcher.Renderer.Scene.CoreScene (Application.Instance.RendererContext, state.MessageProxy);
-            state.Scene.BackgroundColor = Color4.AliceBlue;
+            //game.AddGameState ("UITestState", Content.Environment.Default);
 
-            game.SwitchToGameState ("UITestState");
+            var state = game.GetGameState ("maze_overworld");
+            //state.Scene = new FreezingArcher.Renderer.Scene.CoreScene (Application.Instance.RendererContext, state.MessageProxy);
+            //state.Scene.BackgroundColor = FreezingArcher.Math.Color4.AliceBlue;
+
+            //game.SwitchToGameState ("UITestState");
 
             sceneobj = new UISceneObject ();
+            sceneobj.Priority = 999;
             state.Scene.AddObject (sceneobj);
 
             var input = new FreezingArcher.UI.Input.FreezingArcherInput(state.MessageProxy);
@@ -119,5 +124,16 @@ namespace FreezingArcher.Game
         {
             Logger.Log.AddLogEntry(LogLevel.Debug, "UITest", "Button released");
         }
+
+        public void ConsumeMessage (FreezingArcher.Messaging.Interfaces.IMessage msg)
+        {
+            var wrm = msg as WindowResizeMessage;
+            if (wrm != null)
+            {
+                sceneobj.Canvas.SetBounds (0, 0, wrm.Width, wrm.Height);
+            }
+        }
+
+        public int[] ValidMessages { get; private set; }
     }
 }

@@ -188,7 +188,6 @@ namespace FreezingArcher.Renderer.Scene
                 MZNear, MZFar); 
             
             UpdateCamera ();
-            Logger.Log.AddLogEntry (LogLevel.Debug, "BaseCamera", Status.Computing, "Creating new camera {0}");
         }
 
         /// <summary>

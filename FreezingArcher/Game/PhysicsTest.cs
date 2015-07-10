@@ -53,8 +53,6 @@ namespace FreezingArcher.Game
             wall.GetComponent<ModelComponent>().Model = wallModel;
             app.RendererContext.Scene.AddObject(wallModel);
 
-            wallModel.WaitTillInitialized ();
-
             Vector3 centerofmass;
 
             var wallRigidBody = new RigidBody();

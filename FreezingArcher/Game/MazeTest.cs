@@ -106,18 +106,18 @@ namespace FreezingArcher.Game
         {
             if (currentMaze == 0)
             {
-                //maze[0].PlayerPosition = player.GetComponent<TransformComponent>().Position;
+                maze[0].PlayerPosition = player.GetComponent<TransformComponent>().Position;
                 game.MoveEntityToGameState(player, game.GetGameState("maze_overworld"), game.GetGameState("maze_underworld"));
                 game.SwitchToGameState("maze_underworld");
-                //player.GetComponent<TransformComponent>().Position = maze[1].PlayerPosition;
+                player.GetComponent<TransformComponent>().Position = maze[1].PlayerPosition;
                 currentMaze = 1;
             }
             else if (currentMaze == 1)
             {
-                //maze[1].PlayerPosition = player.GetComponent<TransformComponent>().Position;
+                maze[1].PlayerPosition = player.GetComponent<TransformComponent>().Position;
                 game.MoveEntityToGameState(player, game.GetGameState("maze_underworld"), game.GetGameState("maze_overworld"));
                 game.SwitchToGameState("maze_overworld");
-                //player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
+                player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
                 currentMaze = 0;
             }
         }
@@ -135,9 +135,15 @@ namespace FreezingArcher.Game
             {
                 if (im.IsActionPressed("jump"))
                 {
+                    Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Generate Mazes....");
+
                     maze[0].Generate(
-                        () => maze [1].Generate (state: game.GetGameState ("maze_underworld")),
-                        game.GetGameState("maze_overworld"));
+                        () => {
+                            player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
+                            var state = game.GetGameState ("maze_underworld");
+                            maze[1].Generate (state: state);
+                        },
+                        state: game.GetGameState("maze_overworld"));
                 }
                 if (im.IsActionPressed("run"))
                 {

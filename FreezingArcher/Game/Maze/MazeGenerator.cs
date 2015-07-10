@@ -32,6 +32,7 @@ using FreezingArcher.Content;
 using Henge3D.Physics;
 using Henge3D;
 using FreezingArcher.Messaging;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Game.Maze
 {

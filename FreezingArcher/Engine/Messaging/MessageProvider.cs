@@ -48,7 +48,7 @@ namespace FreezingArcher.Messaging
         /// <summary>
         /// A flag indicating whether this instance of a message provider is running or not.
         /// </summary>
-        protected bool Running;
+        public bool Running { get; protected set; }
 
         /// <summary>
         /// The parent message provider.

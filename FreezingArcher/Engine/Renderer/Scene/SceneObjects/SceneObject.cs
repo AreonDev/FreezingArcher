@@ -139,6 +139,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             Scaling = new Vector3(1.0f, 1.0f, 1.0f);
 
             Priority = -1;
+
+
         }
     }
 }

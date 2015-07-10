@@ -120,14 +120,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public List<SceneObject> SceneObjects;
         public string ObjectName { get; private set;}
-        SceneObject InitSceneObject = null;
-        int         InitSceneObjectCount = 0;
         bool        NeedsInit = false;
-
-        public SceneObject GetInitSceneObject()
-        {
-            return InitSceneObject;
-        }
 
         public uint LayoutLocationOffset { get; set;}
 
@@ -142,23 +135,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             ObjectsChanged = new List<int>();
             ObjectsAdded = new List<SceneObject>();
 
-            InitSceneObject = null;
-            InitSceneObjectCount = 0;
-
             ObjectName = object_name;
-        }
-
-        public SceneObjectArray(SceneObject scn, int count = 1)
-        {
-            SceneObjects = new List<SceneObject>(count);
-
-            ObjectsChanged = new List<int>();
-            ObjectsAdded = new List<SceneObject>();
-
-            InitSceneObject = scn;
-            InitSceneObjectCount = count;
-
-            ObjectName = scn.GetName();
         }
             
         public void AddObject(SceneObject obj)
@@ -176,37 +153,27 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                     lock (ListLock)
                     {
                         SceneObjects.Add(obj);
-
+                        ObjectsChanged.Add(SceneObjects.IndexOf(obj));
                         obj.SceneObjectChanged += SceneObjectChangedHandler;
-
-                        PrepareBuffer();
-
-                        if (InstanceDataVertexBuffer != null)
-                        {
-                            SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { obj.GetData() };
-
-                            InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, SceneObjects.IndexOf(obj) * SceneObjectArrayInstanceData.SIZE,
-                                SceneObjectArrayInstanceData.SIZE);
-                        }
                     }
                            
                 }
                 else
                 {
-                    lock (ListLock)
-                    {
+                    if(!obj.IsInitialized)
                         PrivateRendererContext.AddRCActionJob(new CoreScene.RCActionInitSceneObject(obj, PrivateRendererContext));
 
-                        //obj.WaitTillInitialized();
+                    obj.WaitTillInitialized();
 
-                        obj.SceneObjectChanged += SceneObjectChangedHandler;
-
+                    lock (ListLock)
+                    {
                         SceneObjects.Add(obj);
                         ObjectsChanged.Add(SceneObjects.IndexOf(obj));
-
-                        NeedsInit = true;
+                        obj.SceneObjectChanged += SceneObjectChangedHandler;
                     }
                 }
+
+                Logger.Log.AddLogEntry (LogLevel.Debug, "SceneObjectArray", "Object Added");
             }
             else
                 FreezingArcher.Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "SceneObjectArray", 
@@ -234,13 +201,14 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                         InstanceDataVertexBuffer = PrivateRendererContext.CreateVertexBuffer(IntPtr.Zero,
                             SceneObjectArrayInstanceData.SIZE, 
                             RendererBufferUsage.DynamicDraw, "SceneObjectArrayInstanceData_VBO_" + ObjectName + "_" + DateTime.Now.Ticks);
+                    
+
+                        SceneObjectArrayInstanceData[] data = CollectData();
+
+                        InstanceDataVertexBuffer.Clear();
+
+                        InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, 0, data.Length * SceneObjectArrayInstanceData.SIZE);
                     }
-
-                    SceneObjectArrayInstanceData[] data = CollectData();
-
-                    InstanceDataVertexBuffer.Clear();
-
-                    InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, 0, data.Length * SceneObjectArrayInstanceData.SIZE);
                 }
             }
             else
@@ -282,15 +250,6 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             PrivateRendererContext = rc;
 
-            /*
-            if (InitSceneObject != null)
-            {
-                SceneObjects.Add(InitSceneObject);
-
-                for (int i = 1; i < InitSceneObjectCount; i++)
-                    SceneObjects.Add(InitSceneObject.Clone());
-            }*/
-
             IsInitialized = true;
 
             return true;
@@ -298,10 +257,10 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public bool SceneObjectChangedHandler(SceneObject obj)
         {
-            //Different thread.... It is all fucking broken!
             lock (ListLock)
             {
                 int index = SceneObjects.IndexOf(obj);
+
                 ObjectsChanged.Add(index);
             }
 
@@ -312,10 +271,13 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             lock (ListLock)
             {
+                PrepareBuffer();
+
                 foreach (int index in ObjectsChanged)
                 {
                     if (index < 0)
                         continue;
+                    
                     SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { SceneObjects[index].GetData() };
 
                     if (InstanceDataVertexBuffer != null)
@@ -323,6 +285,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                         InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, index * SceneObjectArrayInstanceData.SIZE,
                             SceneObjectArrayInstanceData.SIZE);
                     }
+
+                    Logger.Log.AddLogEntry (LogLevel.Debug, "SceneObjectArray", "Object changed: " + data[0].ToString());
                 }
 
                 ObjectsChanged.Clear();
@@ -370,11 +334,6 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             }
         }
 
-        public override SceneObject Clone()
-        {
-            return this;
-        }
-
         public override void DrawInstanced(RendererContext rc, int count)
         {
             //Whooo, how should I draw myself multiple times? It would be crazy
@@ -383,6 +342,11 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         public override string GetName()
         {
             return "SceneObjectArray";
+        }
+
+        public override SceneObject Clone()
+        {
+            return this;
         }
     }
 }

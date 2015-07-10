@@ -100,6 +100,11 @@ namespace FreezingArcher.Content
                     return false;
                 }
 
+                if (currentNode.Data.Scene.CameraManager.ActiveCamera == null)
+                {
+                    currentNode.Data.Scene.CameraManager.ToggleCamera();
+                }
+
                 RendererContext.Scene = currentNode.Data.Scene;
                 currentNode.Data.MessageProxy.StartProcessing();
                 return true;
@@ -134,6 +139,12 @@ namespace FreezingArcher.Content
             }
             currentNode.Data.MessageProxy.StopProcessing();
             currentNode = newstate;
+
+            if (currentNode.Data.Scene.CameraManager.ActiveCamera == null)
+            {
+                currentNode.Data.Scene.CameraManager.ToggleCamera();
+            }
+
             RendererContext.Scene = currentNode.Data.Scene;
             currentNode.Data.MessageProxy.StartProcessing();
             return true;

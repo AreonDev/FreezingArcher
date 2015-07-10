@@ -218,7 +218,7 @@ namespace FreezingArcher.Output
                     }
                 }
             } catch (Exception e) {
-                AddLogEntry (LogLevel.Crash, moduleName, "Run failed: " + e.Message);
+                Console.WriteLine("Logger: " + e.Message + "\n" + e.StackTrace.ToString());
             }
         }
 

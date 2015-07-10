@@ -57,6 +57,7 @@ namespace FreezingArcher.Content
             string path = "lib/Renderer/TestGraphics/Skybox/skybox.xml")
         {
             ModelSceneObject skyboxModel = new ModelSceneObject (path);
+            skyboxModel.Priority = 0;
             skyboxModel.Scaling = 100.0f * Vector3.One;
             scene.AddObject (skyboxModel);
             skyboxModel.Model.EnableDepthTest = false;

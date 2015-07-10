@@ -86,6 +86,7 @@ namespace FreezingArcher.Game
             scroll = new ScrollControl (window);
             scroll.SetBounds (10, 10, 370, 350);
             scroll.EnableScroll (true, false);
+            scroll.Dock = Gwen.Pos.Fill;
 
             for (int i = 0; i < messages.Length; i++)
             {

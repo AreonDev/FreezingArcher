@@ -247,12 +247,25 @@ namespace FreezingArcher.Game.Maze
 
                 var generationThread = new Thread(() => 
                 {
+                    bool proxy = false;
+                    if (!state.MessageProxy.Running)
+                    {
+                        proxy = true;
+                        state.MessageProxy.StartProcessing();
+                    }
+                    
                     generateMazeDelegate(ref graph, ref rand, MaximumContinuousPathLength, Turbulence);
                     if (state != null)
                         AddToGameState(state);
 
                     if (postGenerateHook != null)
                         postGenerateHook();
+
+                    if (proxy)
+                    {
+                            Thread.Sleep(20); // we don't wanna loose messages here :)
+                        state.MessageProxy.StopProcessing();
+                    }
                 });
                 generationThread.Start();
             }

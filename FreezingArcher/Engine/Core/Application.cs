@@ -454,7 +454,7 @@ namespace FreezingArcher.Core
         /// </summary>
         public void Destroy ()
         {
-            Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Destroying application '{0}' ...", Name);
+            Logger.Log.AddLogEntry(LogLevel.Fine, ClassName, "Destroying application '{0}' ...", Name);
             Loaded = false;
             MessageManager.StopProcessing ();
 

@@ -21,9 +21,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using FreezingArcher.Core;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
+using Jitter.LinearMath;
 
 namespace FreezingArcher.Content
 {
@@ -43,7 +45,7 @@ namespace FreezingArcher.Content
             base.Init(messageProvider, entity);
 
             //Added needed components
-            NeededComponents = new[] { typeof(TransformComponent) };
+            NeededComponents = new[] { typeof(PhysicsComponent) };
 
             internalValidMessages = new[] { (int) MessageId.Movement, (int) MessageId.MoveStraight,
                 (int) MessageId.MoveSidewards, (int)MessageId.MoveVertical };
@@ -58,51 +60,52 @@ namespace FreezingArcher.Content
         {
             if (msg.MessageId == (int)MessageId.Movement)
             {
-                TransformComponent tc = Entity.GetComponent<TransformComponent>();
+                var pc = Entity.GetComponent<PhysicsComponent>();
                 TransformMessage mm = msg as TransformMessage;
 
                 if (mm.Entity.Name != Entity.Name)
                     return;
 
-                tc.Position += mm.Movement;
-                tc.Rotation = mm.Rotation * tc.Rotation;
+                pc.RigidBody.Position += mm.Movement.ToJitterVector();
+                pc.RigidBody.Orientation = JMatrix.CreateFromQuaternion(
+                    mm.Rotation.ToJitterQuaternion() * JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation));
             }
             else if (msg.MessageId == (int)MessageId.MoveStraight)
             {
-                TransformComponent tc = Entity.GetComponent<TransformComponent>();
+                var pc = Entity.GetComponent<PhysicsComponent>();
                 MoveStraightMessage msm = msg as MoveStraightMessage;
 
                 if (msm.Entity.Name != Entity.Name)
                     return;
 
-                Vector3 rotation = Vector3.Transform(Vector3.UnitZ, tc.Rotation);
+                Vector3 rotation = Vector3.Transform(Vector3.UnitZ, pc.RigidBody.Orientation.ToFreezingArcherMatrix());
                 rotation = new Vector3(rotation.X, 0, rotation.Z);
                 rotation.Normalize();
-                tc.Position += rotation * msm.Movement;
+                pc.RigidBody.Position += (rotation * msm.Movement).ToJitterVector();
             }
             else if (msg.MessageId == (int)MessageId.MoveSidewards)
             {
-                TransformComponent tc = Entity.GetComponent<TransformComponent>();
+                var pc = Entity.GetComponent<PhysicsComponent>();
                 MoveSidewardsMessage msm = msg as MoveSidewardsMessage;
 
                 if (msm.Entity.Name != Entity.Name)
                     return;
                 
-                Vector3 rotation = Vector3.Transform(Vector3.UnitX, tc.Rotation);
+                Vector3 rotation = Vector3.Transform(Vector3.UnitX, pc.RigidBody.Orientation.ToFreezingArcherMatrix());
                 rotation = new Vector3(rotation.X, 0, rotation.Z);
                 rotation.Normalize();
-                tc.Position += rotation * -msm.Movement;
+                pc.RigidBody.Position += (rotation * -msm.Movement).ToJitterVector();
             }
             else if (msg.MessageId == (int)MessageId.MoveVertical)
             {
-                TransformComponent tc = Entity.GetComponent<TransformComponent>();
+                var pc = Entity.GetComponent<PhysicsComponent>();
 
                 MoveVerticalMessage mvm = msg as MoveVerticalMessage;
 
                 if (mvm.Entity.Name != Entity.Name)
                     return;
 
-                tc.Position += new Vector3(0.0f, mvm.Movement, 0.0f);
+                pc.RigidBody.Position += new JVector(0.0f, mvm.Movement, 0.0f);
             }
         }
     }

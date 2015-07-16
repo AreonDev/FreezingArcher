@@ -69,10 +69,10 @@ namespace FreezingArcher.Content
 
                 if (pc.PhysicsApplying != 0)
                 {
-                    if ((pc.PhysicsApplying & (int)PhysicsComponent.PhysicsApplyingEnum.Position) != 0)
+                    if ((pc.PhysicsApplying & (int)PhysicsComponent.AffectedByPhysics.Position) != 0)
                         tc.Position = pc.RigidBody.Position.ToFreezingArcherVector();
 
-                    if ((pc.PhysicsApplying & (int)PhysicsComponent.PhysicsApplyingEnum.Orientation) != 0)
+                    if ((pc.PhysicsApplying & (int)PhysicsComponent.AffectedByPhysics.Orientation) != 0)
                         tc.Rotation = JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation).ToFreezingArcherQuaternion();
                 }
 	    }

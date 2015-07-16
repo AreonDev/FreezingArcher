@@ -32,7 +32,7 @@ namespace FreezingArcher.Content
         /// <summary>
         /// Physics applying enum.
         /// </summary>
-        public enum PhysicsApplyingEnum : int
+        public enum AffectedByPhysics : int
         {
             /// <summary>
             /// Physics does not affect data.
@@ -56,7 +56,7 @@ namespace FreezingArcher.Content
         /// <summary>
         /// The default physics applying.
         /// </summary>
-        public static readonly int DefaultPhysicsApplying = (int)PhysicsApplyingEnum.Nothing;
+        public static readonly int DefaultPhysicsApplying = (int)AffectedByPhysics.Nothing;
 
         /// <summary>
         /// Gets or sets the rigid body.

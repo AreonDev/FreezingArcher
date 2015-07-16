@@ -193,8 +193,8 @@ namespace FreezingArcher.Game
 
             state.PhysicsManager.World.AddBody(body);
             wall_to_throw.GetComponent<PhysicsComponent>().RigidBody = body;
-            wall_to_throw.GetComponent<PhysicsComponent> ().PhysicsApplying = (int)PhysicsComponent.PhysicsApplyingEnum.Orientation | 
-                (int)PhysicsComponent.PhysicsApplyingEnum.Position;
+            wall_to_throw.GetComponent<PhysicsComponent> ().PhysicsApplying = (int)PhysicsComponent.AffectedByPhysics.Orientation | 
+                (int)PhysicsComponent.AffectedByPhysics.Position;
         }
 
         #region IMessageConsumer implementation

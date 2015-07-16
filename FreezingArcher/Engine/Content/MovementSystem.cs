@@ -48,9 +48,11 @@ namespace FreezingArcher.Content
             NeededComponents = new[] { typeof(PhysicsComponent), typeof(TransformComponent) };
 
             internalValidMessages = new[] { (int) MessageId.Movement, (int) MessageId.MoveStraight,
-                (int) MessageId.MoveSidewards, (int)MessageId.MoveVertical };
+                (int) MessageId.MoveSidewards, (int)MessageId.MoveVertical, (int) MessageId.Update };
             messageProvider += this;
         }
+
+        private bool was_something_pressed = false;
 
         /// <summary>
         /// Processes the incoming message
@@ -58,26 +60,27 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
+            var pc = Entity.GetComponent<PhysicsComponent>();
+
+            was_something_pressed = false;
+
             if (msg.MessageId == (int)MessageId.Movement)
             {
-                var pc = Entity.GetComponent<PhysicsComponent>();
-
                 TransformMessage mm = msg as TransformMessage;
 
                 if (mm.Entity.Name != Entity.Name)
                     return;
 
-                //pc.RigidBody.IsActive = false;
+                pc.RigidBody.IsActive = false;
                 pc.RigidBody.LinearVelocity = JVector.Zero;
 
-                pc.RigidBody.LinearVelocity = (mm.Movement.ToJitterVector());
+                pc.RigidBody.Position = mm.Movement.ToJitterVector();
                 pc.RigidBody.Orientation = JMatrix.CreateFromQuaternion(
                     mm.Rotation.ToJitterQuaternion() * JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation));
-                //pc.RigidBody.IsActive = true;
+                pc.RigidBody.IsActive = true;
             }
             else if (msg.MessageId == (int)MessageId.MoveStraight)
             {
-                var pc = Entity.GetComponent<PhysicsComponent>();
                 var tc = Entity.GetComponent<TransformComponent>();
 
                 MoveStraightMessage msm = msg as MoveStraightMessage;
@@ -89,12 +92,13 @@ namespace FreezingArcher.Content
                 Vector3 rotation = Vector3.Transform(Vector3.UnitZ, tc.Rotation);
                 rotation = new Vector3(rotation.X, 0, rotation.Z);
                 rotation.Normalize();
-                pc.RigidBody.LinearVelocity = ((rotation * msm.Movement).ToJitterVector());
+                pc.RigidBody.LinearVelocity += ((rotation * msm.Movement).ToJitterVector());
                 //pc.RigidBody.IsActive = true;
+
+                was_something_pressed = true;
             }
             else if (msg.MessageId == (int)MessageId.MoveSidewards)
             {
-                var pc = Entity.GetComponent<PhysicsComponent>();
                 var tc = Entity.GetComponent<TransformComponent>();
 
                 MoveSidewardsMessage msm = msg as MoveSidewardsMessage;
@@ -106,12 +110,13 @@ namespace FreezingArcher.Content
                 Vector3 rotation = Vector3.Transform(Vector3.UnitX, tc.Rotation);
                 rotation = new Vector3(rotation.X, 0, rotation.Z);
                 rotation.Normalize();
-                pc.RigidBody.LinearVelocity = ((rotation * -msm.Movement).ToJitterVector());
+                pc.RigidBody.LinearVelocity += ((rotation * -msm.Movement).ToJitterVector());
                 //pc.RigidBody.IsActive = true;
+
+                was_something_pressed = true;
             }
             else if (msg.MessageId == (int)MessageId.MoveVertical)
             {
-                var pc = Entity.GetComponent<PhysicsComponent>();
                 var tc = Entity.GetComponent<TransformComponent>();
 
                 MoveVerticalMessage mvm = msg as MoveVerticalMessage;
@@ -120,8 +125,25 @@ namespace FreezingArcher.Content
                     return;
 
                 //pc.RigidBody.IsActive = false;
-                pc.RigidBody.LinearVelocity = new JVector(0.0f, mvm.Movement, 0.0f);
+                JVector vec2 = pc.RigidBody.LinearVelocity;
+                pc.RigidBody.LinearVelocity = new JVector(vec2.X, mvm.Movement, vec2.Z);
                 //pc.RigidBody.IsActive = true;
+
+                was_something_pressed = true;
+            }
+                
+            JVector vec = pc.RigidBody.LinearVelocity;
+            vec.Y = 0.0f;
+
+            if (vec.Length() > 2.829f)
+                vec *= (1.0f / vec.Length()) * 2.829f;
+
+            pc.RigidBody.LinearVelocity = new JVector(vec.X, pc.RigidBody.LinearVelocity.Y, vec.Z);
+
+            if (msg.MessageId == (int)MessageId.Update)
+            {
+                if (!was_something_pressed && vec.Length() < 2.8f)
+                    pc.RigidBody.LinearVelocity = new JVector(0.0f, pc.RigidBody.LinearVelocity.Y, 0.0f);
             }
         }
     }

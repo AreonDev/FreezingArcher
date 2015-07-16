@@ -79,8 +79,8 @@ namespace FreezingArcher.Game
             RigidBody playerBody = new RigidBody(new BoxShape(JVector.One));
             playerBody.Position = new JVector (3.0f, 1.0f, 2.0f);
             playerBody.AllowDeactivation = false;
-            playerBody.Material.StaticFriction = 0.20f;
-            playerBody.Material.KineticFriction = 0.20f;
+            playerBody.Material.StaticFriction = 0f;
+            playerBody.Material.KineticFriction = 0f;
             playerBody.Material.Restitution = 0.1f;
             //playerBody.Mass = 1000000.0f;
             playerBody.Update ();
@@ -158,8 +158,8 @@ namespace FreezingArcher.Game
 
                 //var body = new RigidBody(new TriangleMeshShape(new Octree(vertices, indices)));
                 var body = new RigidBody(new BoxShape(2, 4, 2));
-                body.Material.KineticFriction = 0.01f;
-                body.Material.StaticFriction = 0.01f;
+                body.Material.KineticFriction = 100.01f;
+                body.Material.StaticFriction = 100.01f;
                 body.Position = tc.Position.ToJitterVector ();
                 state.PhysicsManager.World.AddBody(body);
                 body.IsStatic = true;

@@ -31,6 +31,11 @@ using FreezingArcher.Math;
 using FreezingArcher.Content;
 using FreezingArcher.Messaging;
 using FreezingArcher.Output;
+using Jitter;
+using Jitter.Collision;
+using Jitter.Collision.Shapes;
+using Jitter.Dynamics;
+using Jitter.LinearMath;
 
 namespace FreezingArcher.Game.Maze
 {
@@ -328,18 +333,19 @@ namespace FreezingArcher.Game.Maze
                     entities [x, y].GetComponent<ModelComponent>().Model = model;
                     scnobjarr_ground.AddObject (model);
 
-                    // FIXME creates massive input lag and is glitchy as hell
-                    //var groundRigidBody = new RigidBody();
-                    //var groundPhysics = entities [x, y].GetComponent<PhysicsComponent>();
-                    //groundPhysics.RigidBody = groundRigidBody;
-                    //groundRigidBody.MassProperties = new MassProperties(float.PositiveInfinity, Matrix.Identity);
-                    //groundRigidBody.Skin.DefaultMaterial = new Material(1f, 0.5f);
-                    //groundRigidBody.Skin.Add(new PlanePart(Vector3.UnitZ, Vector3.UnitY));
-                    //physics.Add(groundRigidBody);
-
                     transform = entities [x, y].GetComponent<TransformComponent>();
                     transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.0f, y * scale.Y * 2 + yOffs);
                     transform.Scale = scale;
+
+                    var body = new RigidBody (new BoxShape (2.0f * scale.X * 2, 0.01f, 2.0f * scale.Y * 2));
+                    body.Position = transform.Position.ToJitterVector ();
+                    body.IsStatic = true;
+                       
+                    entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
+                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying = (int)PhysicsComponent.PhysicsApplyingEnum.Orientation |
+                        (int)PhysicsComponent.PhysicsApplyingEnum.Position;
+
+                    physics.World.AddBody (body);
                 }
                 else
                 {
@@ -348,19 +354,20 @@ namespace FreezingArcher.Game.Maze
                     entities [x, y].GetComponent<ModelComponent>().Model = model;
                     scnobjarr_wall.AddObject(model);
 
-                    // FIXME creates massive input lag and is glitchy as hell
-                    //var wallRigidBody = new RigidBody();
-                    //var wallPhysics = entities [x, y].GetComponent<PhysicsComponent>();
-                    //wallPhysics.RigidBody = wallRigidBody;
-                    //wallRigidBody.MassProperties = new MassProperties(float.PositiveInfinity, Matrix.Identity);
-                    //Vector3 p1 = new Vector3(0, 0, 1), p2 = new Vector3(0, 0, -1);
-                    //wallRigidBody.Skin.Add(new CapsulePart(new Capsule(p1, p2, 0.5f)), new Material(1f, 0.5f));
-                    //physics.Add(wallRigidBody);
-
                     transform = entities [x, y].GetComponent<TransformComponent>();
                     transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.5f, y * scale.Y * 2 + yOffs);
                     transform.Rotation = node.Data.Rotation;
                     transform.Scale = scale;
+
+                    var body = new RigidBody (new BoxShape (scale.X * 2, scale.Y * 4, scale.Z * 2));
+                    body.Position = transform.Position.ToJitterVector ();
+                    body.IsStatic = true;
+
+                    entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
+                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying = (int)PhysicsComponent.PhysicsApplyingEnum.Orientation |
+                    (int)PhysicsComponent.PhysicsApplyingEnum.Position;
+
+                    physics.World.AddBody (body);
                 }
 
                 if (++x >= maxX)

@@ -46,13 +46,13 @@ namespace FreezingArcher.Game
                 var messageManager = Application.Instance.MessageManager;
                 var objmnr = Application.Instance.ObjectManager;
 
-                //new MazeTest(messageManager, objmnr, rc, game);
+                new MazeTest(messageManager, objmnr, rc, game);
                 //new ECSTest(msgmnr, rc.Scene);
                 //new PhysicsTest(Application.Instance, messageManager);
                 //new InventoryTest();
 
                 //new UITest(game, messageManager);
-                new JitterTest(Application.Instance);
+                //new JitterTest(Application.Instance);
             }
 
             Application.Instance.Run ();

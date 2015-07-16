@@ -30,14 +30,44 @@ namespace FreezingArcher.Content
     public sealed class PhysicsComponent : EntityComponent
     {
         /// <summary>
+        /// Physics applying enum.
+        /// </summary>
+        public enum PhysicsApplyingEnum : int
+        {
+            /// <summary>
+            /// Physics does not affect data.
+            /// </summary>
+            Nothing = 0,
+            /// <summary>
+            /// Physics affects position data in Transform Component
+            /// </summary>
+            Position = 1,
+            /// <summary>
+            /// Physics affects orientation data in Transform Component
+            /// </summary>
+            Orientation = 2
+        }
+
+        /// <summary>
         /// The default rigid body.
         /// </summary>
         public static readonly RigidBody DefaultRigidBody = null;
+
+        /// <summary>
+        /// The default physics applying.
+        /// </summary>
+        public static readonly int DefaultPhysicsApplying = (int)PhysicsApplyingEnum.Nothing;
 
         /// <summary>
         /// Gets or sets the rigid body.
         /// </summary>
         /// <value>The rigid body.</value>
         public RigidBody RigidBody { get; set; }
+
+        /// <summary>
+        /// Gets or sets the physics applying.
+        /// </summary>
+        /// <value>The physics applying.</value>
+        public int PhysicsApplying {get; set;}
     }
 }

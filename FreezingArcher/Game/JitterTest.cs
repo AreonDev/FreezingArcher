@@ -99,7 +99,7 @@ namespace FreezingArcher.Game
                     grounds.Add (ground);
 
                     // TODO add to physics
-                    var body = new RigidBody(new BoxShape(2,0.1f,2));
+                    var body = new RigidBody(new BoxShape(2,0.01f,2));
                     body.Position = tc.Position.ToJitterVector ();
                     state.PhysicsManager.World.AddBody(body);
                     body.IsStatic = true;
@@ -193,6 +193,8 @@ namespace FreezingArcher.Game
 
             state.PhysicsManager.World.AddBody(body);
             wall_to_throw.GetComponent<PhysicsComponent>().RigidBody = body;
+            wall_to_throw.GetComponent<PhysicsComponent> ().PhysicsApplying = (int)PhysicsComponent.PhysicsApplyingEnum.Orientation | 
+                (int)PhysicsComponent.PhysicsApplyingEnum.Position;
         }
 
         #region IMessageConsumer implementation

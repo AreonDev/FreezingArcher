@@ -22,6 +22,7 @@
 //
 using System;
 using FreezingArcher.Messaging;
+using FreezingArcher.Core;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
 using Jitter.LinearMath;
@@ -65,9 +66,18 @@ namespace FreezingArcher.Content
                 if (tc == null)
                     return;
 
-                tc.Position = new Vector3(pc.RigidBody.Position.X, pc.RigidBody.Position.Y, pc.RigidBody.Position.Z);
-                var quaternion = JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation);
-                tc.Rotation = new Quaternion(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
+                if (pc.PhysicsApplying != 0)
+                {
+                    if ((pc.PhysicsApplying & (int)PhysicsComponent.PhysicsApplyingEnum.Position) != 0)
+                        tc.Position = pc.RigidBody.Position.ToFreezingArcherVector();
+                    /*else
+                        pc.RigidBody.Position = tc.Position.ToJitterVector();*/
+
+                    if ((pc.PhysicsApplying & (int)PhysicsComponent.PhysicsApplyingEnum.Orientation) != 0)
+                        tc.Rotation = JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation).ToFreezingArcherQuaternion();
+                    /*else
+                        pc.RigidBody.Orientation = JMatrix.CreateFromQuaternion(tc.Rotation.ToJitterQuaternion());*/
+                }
             }
 
             if (msg.MessageId == (int) MessageId.PositionChangedMessage)
@@ -78,9 +88,8 @@ namespace FreezingArcher.Content
                 if (tc == null || jc == null)
                     return;
 
-                jc.RigidBody.Position = new JVector(tc.Position.X, tc.Position.Y, tc.Position.Z);
-                jc.RigidBody.Orientation = JMatrix.CreateFromQuaternion(
-                    new JQuaternion(tc.Rotation.X, tc.Rotation.Y, tc.Rotation.Z, tc.Rotation.W));
+                //jc.RigidBody.Position = tc.Position.ToJitterVector();
+                //jc.RigidBody.Orientation = JMatrix.CreateFromQuaternion(tc.Rotation.ToJitterQuaternion());
             }
         }
     }

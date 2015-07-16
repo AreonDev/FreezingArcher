@@ -63,11 +63,11 @@ namespace FreezingArcher.Game.Maze
         /// <param name="turbulence">Turbulence. The higher the more straight the maze will be.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will appear.</param>
-        public Maze CreateMaze(int seed, MessageProvider messageProvider, /*PhysicsManager physics,*/
+        public Maze CreateMaze(int seed, MessageProvider messageProvider, PhysicsManager physics,
             int sizeX = 40, int sizeY = 40, float scale = 10, double turbulence = 2,
             int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
         {
-            Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, /*physics,*/ InitializeMaze, CreateMaze,
+            Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, physics, InitializeMaze, CreateMaze,
                 AddMazeToGameState, CalculatePathToExit, SpawnPortals, turbulence, maximumContinuousPathLength,
                 portalSpawnFactor);
             maze.Offset = Offset;
@@ -290,7 +290,7 @@ namespace FreezingArcher.Game.Maze
         }
 
         static void AddMazeToGameState (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, MessageProvider messageProvider,
-            Entity[,] entities, ref Vector3 playerPosition, CoreScene scene, /*PhysicsManager physics,*/
+            Entity[,] entities, ref Vector3 playerPosition, CoreScene scene, PhysicsManager physics,
             float scaling, uint maxX, int xOffs, int yOffs)
         {
             int x = 0;

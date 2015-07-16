@@ -61,7 +61,6 @@
     <Compile Include="Maze\Extensions.cs" />
     <Compile Include="Maze\Maze.cs" />
     <Compile Include="MazeTest.cs" />
-    <Compile Include="PhysicsTest.cs" />
     <Compile Include="ECSTest.cs" />
     <Compile Include="InventoryTest.cs" />
     <Compile Include="UITest.cs" />

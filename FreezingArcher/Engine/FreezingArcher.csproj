@@ -410,6 +410,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Compositor\CompositorNodeOutput.cs" />
     <Compile Include="Content\PhysicsComponent.cs" />
     <Compile Include="Content\PhysicsSystem.cs" />
+    <Compile Include="Core\PhysicsManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

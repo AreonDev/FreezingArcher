@@ -31,12 +31,9 @@ using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using Jitter;
 using Jitter.Collision;
-using Jitter.Dynamics;
 using Jitter.Collision.Shapes;
+using Jitter.Dynamics;
 using Jitter.LinearMath;
-using Gwen;
-using System.Threading;
-using FreezingArcher.Output;
 
 namespace FreezingArcher.Game
 {
@@ -46,9 +43,6 @@ namespace FreezingArcher.Game
         List<Entity> grounds;
         List<Entity> walls;
         Entity wall_to_throw;
-
-        World world;
-        CollisionSystem collisionSystem;
 
         public JitterTest (Application application)
         {
@@ -79,14 +73,11 @@ namespace FreezingArcher.Game
             ValidMessages = new[] { (int)MessageId.Input, (int)MessageId.Update };
             application.MessageManager += this;
 
-            collisionSystem = new CollisionSystemSAP();
-            world = new World(collisionSystem);
-
             RigidBody playerBody = new RigidBody(new SphereShape(1.0f));
             playerBody.IsStatic = true;
             player.GetComponent<PhysicsComponent>().RigidBody = playerBody;
 
-            world.AddBody(playerBody);
+            state.PhysicsManager.World.AddBody(playerBody);
         }
 
         void InitializeTest()
@@ -110,7 +101,7 @@ namespace FreezingArcher.Game
                     // TODO add to physics
                     var body = new RigidBody(new BoxShape(2,0.1f,2));
                     body.Position = tc.Position.ToJitterVector ();
-                    world.AddBody(body);
+                    state.PhysicsManager.World.AddBody(body);
                     body.IsStatic = true;
                     ground.GetComponent<PhysicsComponent>().RigidBody = body;
                 }
@@ -149,7 +140,7 @@ namespace FreezingArcher.Game
 
                 var body = new RigidBody(new TriangleMeshShape(new Octree(vertices, indices)));
                 body.Position = tc.Position.ToJitterVector ();
-                world.AddBody(body);
+                state.PhysicsManager.World.AddBody(body);
                 body.IsStatic = true;
                 wall.GetComponent<PhysicsComponent>().RigidBody = body;
             }
@@ -200,19 +191,11 @@ namespace FreezingArcher.Game
             body.Orientation = JMatrix.CreateFromAxisAngle(new JVector(1,1,0), MathHelper.PiOver4);
             body.AllowDeactivation = false;
 
-            world.AddBody(body);
+            state.PhysicsManager.World.AddBody(body);
             wall_to_throw.GetComponent<PhysicsComponent>().RigidBody = body;
         }
 
         #region IMessageConsumer implementation
-
-        Thread physicsThread;
-        float physicsStep = 0;
-
-        void updatePhysics(float step)
-        {
-            world.Step(step, true);
-        }
 
         public void ConsumeMessage (IMessage msg)
         {
@@ -220,7 +203,7 @@ namespace FreezingArcher.Game
             {
                 var um = msg as UpdateMessage;
 
-                updatePhysics((float) um.TimeStamp.TotalSeconds);
+                state.PhysicsManager.Update(um.TimeStamp);
             }
 
             if (msg.MessageId == (int)MessageId.Input)

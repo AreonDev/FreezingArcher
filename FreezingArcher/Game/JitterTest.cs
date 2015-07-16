@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using FreezingArcher.Content;
 using FreezingArcher.Core;
@@ -43,6 +44,7 @@ namespace FreezingArcher.Game
         List<Entity> grounds;
         List<Entity> walls;
         Entity wall_to_throw;
+        Entity player;
 
         public JitterTest (Application application)
         {
@@ -52,7 +54,7 @@ namespace FreezingArcher.Game
             state.Scene = new CoreScene (application.RendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.Aqua;
 
-            Entity player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy,
+            player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy,
                 systems: new [] {
                 typeof(MovementSystem),
                 typeof(KeyboardControllerSystem),
@@ -70,12 +72,19 @@ namespace FreezingArcher.Game
 
             application.Game.SwitchToGameState ("PhysicsScene");
 
-            ValidMessages = new[] { (int)MessageId.Running, (int)MessageId.Update };
+            ValidMessages = new[] { (int)MessageId.Running, (int)MessageId.Update, (int)MessageId.Input };
             application.MessageManager += this;
 
-            RigidBody playerBody = new RigidBody(new SphereShape(1.0f));
-            playerBody.IsStatic = true;
+            RigidBody playerBody = new RigidBody(new BoxShape(JVector.One));
+            playerBody.Position = new JVector (3.0f, 1.0f, 2.0f);
+            playerBody.AllowDeactivation = false;
+            playerBody.Material.StaticFriction = 0.20f;
+            playerBody.Material.KineticFriction = 0.20f;
+            playerBody.Material.Restitution = 0.1f;
+            //playerBody.Mass = 1000000.0f;
+            playerBody.Update ();
             player.GetComponent<PhysicsComponent>().RigidBody = playerBody;
+            player.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody(playerBody);
         }
@@ -86,7 +95,7 @@ namespace FreezingArcher.Game
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 10; j++) {
                     Entity ground = EntityFactory.Instance.CreateWith ("ground." + i + "." + j, state.MessageProxy, null,
-                        new[] { typeof(ModelSystem), typeof(PhysicsSystem) });
+                        new[] { typeof(ModelSystem)});
 
                     var groundModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
                     state.Scene.AddObject (groundModel);
@@ -97,15 +106,22 @@ namespace FreezingArcher.Game
                     tc.Position = new Vector3 (i * 2, 0, j * 2);
 
                     grounds.Add (ground);
-
-                    // TODO add to physics
-                    var body = new RigidBody(new BoxShape(2,0.01f,2));
-                    body.Position = tc.Position.ToJitterVector ();
-                    state.PhysicsManager.World.AddBody(body);
-                    body.IsStatic = true;
-                    ground.GetComponent<PhysicsComponent>().RigidBody = body;
                 }
             }
+
+            //Init Ground plane
+
+            Entity groundplane = EntityFactory.Instance.CreateWith ("ground_plane", state.MessageProxy, null,
+                                     new[] { typeof(PhysicsSystem) });
+
+            groundplane.GetComponent<TransformComponent> ().Position = Vector3.Zero;
+
+            // TODO add to physics
+            var bodyplane = new RigidBody(new BoxShape(1000,0.01f,1000));
+            bodyplane.Position = groundplane.GetComponent<TransformComponent> ().Position.ToJitterVector();
+            state.PhysicsManager.World.AddBody(bodyplane);
+            bodyplane.IsStatic = true;
+            groundplane.GetComponent<PhysicsComponent>().RigidBody = bodyplane;
 
             //Init walls
             for (int i = 0; i < 10; i++) {
@@ -138,7 +154,10 @@ namespace FreezingArcher.Game
                     indices.Add(new TriangleVertexIndices(i0, i1, i2));
                 }
 
-                var body = new RigidBody(new TriangleMeshShape(new Octree(vertices, indices)));
+                //var body = new RigidBody(new TriangleMeshShape(new Octree(vertices, indices)));
+                var body = new RigidBody(new BoxShape(2, 4, 2));
+                body.Material.KineticFriction = 0.01f;
+                body.Material.StaticFriction = 0.01f;
                 body.Position = tc.Position.ToJitterVector ();
                 state.PhysicsManager.World.AddBody(body);
                 body.IsStatic = true;
@@ -193,8 +212,7 @@ namespace FreezingArcher.Game
 
             state.PhysicsManager.World.AddBody(body);
             wall_to_throw.GetComponent<PhysicsComponent>().RigidBody = body;
-            wall_to_throw.GetComponent<PhysicsComponent> ().PhysicsApplying = (int)PhysicsComponent.AffectedByPhysics.Orientation | 
-                (int)PhysicsComponent.AffectedByPhysics.Position;
+            wall_to_throw.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
         }
 
         #region IMessageConsumer implementation
@@ -206,6 +224,14 @@ namespace FreezingArcher.Game
                 var um = msg as UpdateMessage;
 
                 state.PhysicsManager.Update(um.TimeStamp);
+            }
+
+            if (msg.MessageId == (int)MessageId.Input) 
+            {
+                var im = msg as InputMessage;
+
+                if (im.Keys.Any(k => k.Action == Pencil.Gaming.KeyAction.Press && k.KeyAction == "jump"))
+                    player.GetComponent<PhysicsComponent> ().RigidBody.AddForce (JVector.Up * 250);
             }
 
             if (msg.MessageId == (int)MessageId.Running)

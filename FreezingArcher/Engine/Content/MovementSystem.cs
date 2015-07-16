@@ -45,7 +45,7 @@ namespace FreezingArcher.Content
             base.Init(messageProvider, entity);
 
             //Added needed components
-            NeededComponents = new[] { typeof(PhysicsComponent) };
+            NeededComponents = new[] { typeof(PhysicsComponent), typeof(TransformComponent) };
 
             internalValidMessages = new[] { (int) MessageId.Movement, (int) MessageId.MoveStraight,
                 (int) MessageId.MoveSidewards, (int)MessageId.MoveVertical };
@@ -61,51 +61,65 @@ namespace FreezingArcher.Content
             if (msg.MessageId == (int)MessageId.Movement)
             {
                 var pc = Entity.GetComponent<PhysicsComponent>();
+
                 TransformMessage mm = msg as TransformMessage;
 
                 if (mm.Entity.Name != Entity.Name)
                     return;
 
-                pc.RigidBody.Position += mm.Movement.ToJitterVector();
+                //pc.RigidBody.IsActive = false;
+                pc.RigidBody.AddForce(mm.Movement.ToJitterVector());
                 pc.RigidBody.Orientation = JMatrix.CreateFromQuaternion(
                     mm.Rotation.ToJitterQuaternion() * JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation));
+                //pc.RigidBody.IsActive = true;
             }
             else if (msg.MessageId == (int)MessageId.MoveStraight)
             {
                 var pc = Entity.GetComponent<PhysicsComponent>();
+                var tc = Entity.GetComponent<TransformComponent>();
+
                 MoveStraightMessage msm = msg as MoveStraightMessage;
 
                 if (msm.Entity.Name != Entity.Name)
                     return;
 
-                Vector3 rotation = Vector3.Transform(Vector3.UnitZ, pc.RigidBody.Orientation.ToFreezingArcherMatrix());
+                //pc.RigidBody.IsActive = false;
+                Vector3 rotation = Vector3.Transform(Vector3.UnitZ, tc.Rotation);
                 rotation = new Vector3(rotation.X, 0, rotation.Z);
                 rotation.Normalize();
-                pc.RigidBody.Position += (rotation * msm.Movement).ToJitterVector();
+                pc.RigidBody.AddForce((rotation * msm.Movement).ToJitterVector());
+                //pc.RigidBody.IsActive = true;
             }
             else if (msg.MessageId == (int)MessageId.MoveSidewards)
             {
                 var pc = Entity.GetComponent<PhysicsComponent>();
+                var tc = Entity.GetComponent<TransformComponent>();
+
                 MoveSidewardsMessage msm = msg as MoveSidewardsMessage;
 
                 if (msm.Entity.Name != Entity.Name)
                     return;
-                
-                Vector3 rotation = Vector3.Transform(Vector3.UnitX, pc.RigidBody.Orientation.ToFreezingArcherMatrix());
+
+                //pc.RigidBody.IsActive = false;
+                Vector3 rotation = Vector3.Transform(Vector3.UnitX, tc.Rotation);
                 rotation = new Vector3(rotation.X, 0, rotation.Z);
                 rotation.Normalize();
-                pc.RigidBody.Position += (rotation * -msm.Movement).ToJitterVector();
+                pc.RigidBody.AddForce((rotation * -msm.Movement).ToJitterVector());
+                //pc.RigidBody.IsActive = true;
             }
             else if (msg.MessageId == (int)MessageId.MoveVertical)
             {
                 var pc = Entity.GetComponent<PhysicsComponent>();
+                var tc = Entity.GetComponent<TransformComponent>();
 
                 MoveVerticalMessage mvm = msg as MoveVerticalMessage;
 
                 if (mvm.Entity.Name != Entity.Name)
                     return;
 
-                pc.RigidBody.Position += new JVector(0.0f, mvm.Movement, 0.0f);
+                //pc.RigidBody.IsActive = false;
+                pc.RigidBody.AddForce(new JVector(0.0f, mvm.Movement, 0.0f));
+                //pc.RigidBody.IsActive = true;
             }
         }
     }

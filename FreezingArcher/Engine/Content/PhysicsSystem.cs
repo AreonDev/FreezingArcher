@@ -67,14 +67,16 @@ namespace FreezingArcher.Content
                 if (tc == null)
                     return;
 
-                if (pc.PhysicsApplying != 0)
+                if (Entity.Name == "player")
                 {
-                    if ((pc.PhysicsApplying & (int)PhysicsComponent.AffectedByPhysics.Position) != 0)
-                        tc.Position = pc.RigidBody.Position.ToFreezingArcherVector();
-
-                    if ((pc.PhysicsApplying & (int)PhysicsComponent.AffectedByPhysics.Orientation) != 0)
-                        tc.Rotation = JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation).ToFreezingArcherQuaternion();
+                    Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Debug, "PhysicsSystem", "Found player!");
                 }
+
+                if (pc.PhysicsApplying.HasFlag(AffectedByPhysics.Position))
+                    tc.Position = pc.RigidBody.Position.ToFreezingArcherVector();
+                    
+                if (pc.PhysicsApplying.HasFlag(AffectedByPhysics.Orientation))
+                    tc.Rotation = JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation).ToFreezingArcherQuaternion();
 	    }
         }
     }

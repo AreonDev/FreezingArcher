@@ -49,7 +49,7 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            const float movement = 0.1f;
+            const float movement = 2f;
 
             if (msg.MessageId == (int)MessageId.Input)
             {

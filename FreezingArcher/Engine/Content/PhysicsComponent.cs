@@ -21,33 +21,35 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using Jitter.Dynamics;
+using System;
 
 namespace FreezingArcher.Content
 {
+    /// <summary>
+    /// Physics applying enum.
+    /// </summary>
+    [Flags]
+    public enum AffectedByPhysics : int
+    {
+        /// <summary>
+        /// Physics does not affect data.
+        /// </summary>
+        Nothing = 0,
+        /// <summary>
+        /// Physics affects position data in Transform Component
+        /// </summary>
+        Position = 1,
+        /// <summary>
+        /// Physics affects orientation data in Transform Component
+        /// </summary>
+        Orientation = 2
+    }
+
     /// <summary>
     /// Physics component.
     /// </summary>
     public sealed class PhysicsComponent : EntityComponent
     {
-        /// <summary>
-        /// Physics applying enum.
-        /// </summary>
-        public enum AffectedByPhysics : int
-        {
-            /// <summary>
-            /// Physics does not affect data.
-            /// </summary>
-            Nothing = 0,
-            /// <summary>
-            /// Physics affects position data in Transform Component
-            /// </summary>
-            Position = 1,
-            /// <summary>
-            /// Physics affects orientation data in Transform Component
-            /// </summary>
-            Orientation = 2
-        }
-
         /// <summary>
         /// The default rigid body.
         /// </summary>
@@ -56,7 +58,7 @@ namespace FreezingArcher.Content
         /// <summary>
         /// The default physics applying.
         /// </summary>
-        public static readonly int DefaultPhysicsApplying = (int)AffectedByPhysics.Nothing;
+        public static readonly AffectedByPhysics DefaultPhysicsApplying = AffectedByPhysics.Nothing;
 
         /// <summary>
         /// Gets or sets the rigid body.
@@ -68,6 +70,6 @@ namespace FreezingArcher.Content
         /// Gets or sets the physics applying.
         /// </summary>
         /// <value>The physics applying.</value>
-        public int PhysicsApplying {get; set;}
+        public AffectedByPhysics PhysicsApplying {get; set;}
     }
 }

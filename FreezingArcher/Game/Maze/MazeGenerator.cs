@@ -342,8 +342,7 @@ namespace FreezingArcher.Game.Maze
                     body.IsStatic = true;
                        
                     entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
-                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying = (int)PhysicsComponent.AffectedByPhysics.Orientation |
-                        (int)PhysicsComponent.AffectedByPhysics.Position;
+                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
                     physics.World.AddBody (body);
                 }
@@ -364,8 +363,7 @@ namespace FreezingArcher.Game.Maze
                     body.IsStatic = true;
 
                     entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
-                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying = (int)PhysicsComponent.AffectedByPhysics.Orientation |
-                    (int)PhysicsComponent.AffectedByPhysics.Position;
+                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
                     physics.World.AddBody (body);
                 }

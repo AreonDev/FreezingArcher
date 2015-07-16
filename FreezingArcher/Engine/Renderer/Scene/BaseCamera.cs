@@ -178,7 +178,7 @@ namespace FreezingArcher.Renderer.Scene
             MZNear = near;
             MZFar = far;
             MFov = fov;
-            ValidMessages = new int[] { (int)MessageId.PositionChangedMessage, (int)MessageId.RotationChangedMessage };
+            ValidMessages = new int[] { (int)MessageId.PositionChangedMessage, (int)MessageId.RotationChangedMessage, (int)MessageId.WindowResizeMessage };
             NeededComponents = new[] { typeof(TransformComponent) };
             messageProvider += this;
             Entity = entity;

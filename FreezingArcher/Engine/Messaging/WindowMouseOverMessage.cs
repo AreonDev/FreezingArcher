@@ -75,7 +75,7 @@ namespace FreezingArcher.Messaging
         {
             get
             {
-                return (int) Messaging.MessageId.WindowMouseOverMessage;
+                return (int) Messaging.MessageId.WindowMouseOver;
             }
         }
 

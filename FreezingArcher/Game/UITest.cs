@@ -45,7 +45,7 @@ namespace FreezingArcher.Game
 
         public UITest (Content.Game game, MessageProvider messageProvider)
         {
-            ValidMessages = new[] { (int) MessageId.WindowResizeMessage };
+            ValidMessages = new[] { (int) MessageId.WindowResize };
             messageProvider += this;
 
             //game.AddGameState ("UITestState", Content.Environment.Default);

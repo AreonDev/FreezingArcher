@@ -29,7 +29,7 @@ namespace FreezingArcher.Messaging
     {
         public RemoveItemFromInventoryBarMessage()
         {
-            MessageId = (int) Messaging.MessageId.RemoveItemFromInventoryBarMessage;
+            MessageId = (int) Messaging.MessageId.RemoveItemFromInventoryBar;
         }
 
         #region IMessage implementation

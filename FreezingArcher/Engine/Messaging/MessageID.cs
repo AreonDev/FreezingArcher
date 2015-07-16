@@ -47,6 +47,10 @@ namespace FreezingArcher.Messaging
         /// </summary>
         Update,
         /// <summary>
+        /// Occurs when Application.Run is called.
+        /// </summary>
+        Running,
+        /// <summary>
         /// Occurs when a config file value is set.
         /// </summary>
         ConfigFileValueSet = 10,
@@ -65,96 +69,96 @@ namespace FreezingArcher.Messaging
         /// <summary>
         /// Occurs when a window is closed.
         /// </summary>
-        WindowCloseMessage = 20,
+        WindowClose = 20,
         /// <summary>
         /// Occurs when a window gets an error.
         /// </summary>
-        WindowErrorMessage,
+        WindowError,
         /// <summary>
         /// Occurs when a window gets focus.
         /// </summary>
-        WindowFocusMessage,
+        WindowFocus,
         /// <summary>
         /// Occurs when a window is minimized.
         /// </summary>
-        WindowMinimizeMessage,
+        WindowMinimize,
         /// <summary>
         /// Occurs when the mouse enters or leaves the window.
         /// </summary>
-        WindowMouseOverMessage,
+        WindowMouseOver,
         /// <summary>
         /// Occurs when the window is moved.
         /// </summary>
-        WindowMoveMessage,
+        WindowMove,
         /// <summary>
         /// Occurs when the window is resized.
         /// </summary>
-        WindowResizeMessage,
+        WindowResize,
         /// <summary>
         /// Occurs when the mouse is captured or released from a window.
         /// </summary>
-        MouseCaptureMessage,
+        MouseCapture,
         /// <summary>
         /// Occurs when the position of an entity changes.
         /// </summary>
-        PositionChangedMessage = 30,
+        PositionChanged = 30,
         /// <summary>
         /// Occurs when the rotation of an entity changes.
         /// </summary>
-        RotationChangedMessage,
+        RotationChanged,
         /// <summary>
         /// Occurs when the scaling of an entity changes.
         /// </summary>
-        ScaleChangedMessage,
+        ScaleChanged,
         /// <summary>
         /// Occurs when a movement of an entity is requested on a MovementSystem.
         /// </summary>
-        MovementMessage,
+        Movement,
         /// <summary>
         /// Occurs when a forward or backward movement along the view direction of an entity is requested on a
         /// MovementSystem.
         /// </summary>
-        MoveStraightMessage,
+        MoveStraight,
         /// <summary>
         /// Occurs when a left or right movement orthogonally to the view direction of an entity is requested on a
         /// MovementSystem.
         /// </summary>
-        MoveSidewardsMessage,
+        MoveSidewards,
         /// <summary>
         /// Occurs, when an up or down movement is requested of an entity on a MovementSystem.
         /// </summary>
-        MoveVerticalMessage,
+        MoveVertical,
         /// <summary>
         /// Occurs when an item is used.
         /// </summary>
-        ItemUseMessage = 40,
+        ItemUse = 40,
         /// <summary>
         /// Occurs when an entity collects an item.
         /// </summary>
-        ItemCollectedMessage,
+        ItemCollected,
         /// <summary>
         /// Occurs when an entity drops an item from its inventory.
         /// </summary>
-        ItemDroppedMessage,
+        ItemDropped,
         /// <summary>
         /// Occurs when an item is removed from the inventory.
         /// </summary>
-        RemoveItemFromInventoryMessage,
+        RemoveItemFromInventory,
         /// <summary>
         /// Occurs when an item is added to the inventory.
         /// </summary>
-        AddItemToInventoryMessage,
+        AddItemToInventory,
         /// <summary>
         /// Occurs when an item from the inventory should be added to the inventory bar.
         /// </summary>
-        AddItemToInventoryBarMessage,
+        AddItemToInventoryBar,
         /// <summary>
         /// Occurs when an item is removed from the inventory bar.
         /// </summary>
-        RemoveItemFromInventoryBarMessage,
+        RemoveItemFromInventoryBar,
         /// <summary>
         /// Occurs when the active item in the inventory bar should be changed to a given position.
         /// </summary>
-        SetActiveInventoryBarItemMessage,
+        SetActiveInventoryBarItem,
     }
 }

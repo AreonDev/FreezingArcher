@@ -83,7 +83,7 @@ namespace FreezingArcher.Messaging
         {
             get
             {
-                return (int) Messaging.MessageId.WindowErrorMessage;
+                return (int) Messaging.MessageId.WindowError;
             }
         }
 

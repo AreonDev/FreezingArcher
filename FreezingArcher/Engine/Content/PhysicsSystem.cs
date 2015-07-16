@@ -45,7 +45,7 @@ namespace FreezingArcher.Content
 
             NeededComponents = new[] { typeof(TransformComponent), typeof(ModelComponent), typeof(PhysicsComponent) };
 
-            internalValidMessages = new[] { (int)MessageId.Update, (int) MessageId.PositionChangedMessage };
+            internalValidMessages = new[] { (int)MessageId.Update, (int) MessageId.PositionChanged };
             messageProvider += this;
         }
 
@@ -80,7 +80,7 @@ namespace FreezingArcher.Content
                 }
             }
 
-            if (msg.MessageId == (int) MessageId.PositionChangedMessage)
+            if (msg.MessageId == (int) MessageId.PositionChanged)
             {
                 var tc = Entity.GetComponent<TransformComponent>();
                 var jc = Entity.GetComponent<PhysicsComponent>();

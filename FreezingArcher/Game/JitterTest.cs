@@ -70,7 +70,7 @@ namespace FreezingArcher.Game
 
             application.Game.SwitchToGameState ("PhysicsScene");
 
-            ValidMessages = new[] { (int)MessageId.Input, (int)MessageId.Update };
+            ValidMessages = new[] { (int)MessageId.Running, (int)MessageId.Update };
             application.MessageManager += this;
 
             RigidBody playerBody = new RigidBody(new SphereShape(1.0f));
@@ -208,12 +208,9 @@ namespace FreezingArcher.Game
                 state.PhysicsManager.Update(um.TimeStamp);
             }
 
-            if (msg.MessageId == (int)MessageId.Input)
+            if (msg.MessageId == (int)MessageId.Running)
             {
-                var im = msg as InputMessage;
-
-                if (im.IsActionPressed ("jump"))
-                    InitializeTest ();
+                InitializeTest ();
             }
         }
 

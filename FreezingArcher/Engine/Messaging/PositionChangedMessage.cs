@@ -68,7 +68,7 @@ namespace FreezingArcher.Messaging
         {
             get
             {
-                return (int) Messaging.MessageId.PositionChangedMessage;
+                return (int) Messaging.MessageId.PositionChanged;
             }
         }
 

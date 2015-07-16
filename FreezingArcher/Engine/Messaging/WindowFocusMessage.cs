@@ -75,7 +75,7 @@ namespace FreezingArcher.Messaging
         {
             get
             {
-                return (int) Messaging.MessageId.WindowFocusMessage;
+                return (int) Messaging.MessageId.WindowFocus;
             }
         }
 

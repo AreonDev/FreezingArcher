@@ -37,7 +37,7 @@ namespace FreezingArcher.Messaging
         public SetActiveInventoryBarItemMessage(byte position)
         {
             Position = position;
-            MessageId = (int) Messaging.MessageId.SetActiveInventoryBarItemMessage;
+            MessageId = (int) Messaging.MessageId.SetActiveInventoryBarItem;
         }
 
         /// <summary>

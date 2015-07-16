@@ -67,7 +67,7 @@ namespace FreezingArcher.Messaging
         {
             get
             {
-                return (int) Messaging.MessageId.WindowCloseMessage;
+                return (int) Messaging.MessageId.WindowClose;
             }
         }
 

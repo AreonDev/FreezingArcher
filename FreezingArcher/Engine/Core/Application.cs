@@ -285,6 +285,9 @@ namespace FreezingArcher.Core
             Logger.Log.AddLogEntry (LogLevel.Fine, ClassName, "Running application '{0}' ...", Name);
             MessageManager.StartProcessing ();
 
+            if (MessageCreated != null)
+                MessageCreated(new RunningMessage(this));
+
             updateStopwatch.Start ();
             PeriodicUpdateTask.Start ();
             PeriodicInputTask.Start ();

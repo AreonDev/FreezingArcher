@@ -75,7 +75,7 @@ namespace FreezingArcher.Messaging
         {
             get
             {
-                return (int) Messaging.MessageId.WindowMinimizeMessage;
+                return (int) Messaging.MessageId.WindowMinimize;
             }
         }
 

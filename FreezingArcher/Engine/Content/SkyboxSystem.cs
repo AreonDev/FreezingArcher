@@ -44,7 +44,7 @@ namespace FreezingArcher.Content
 
             //Needs more Initializing?
             //Scene does this for me, so no!
-            internalValidMessages = new[] { (int)MessageId.PositionChangedMessage };
+            internalValidMessages = new[] { (int)MessageId.PositionChanged };
             messageProvider += this;
         }
 
@@ -77,7 +77,7 @@ namespace FreezingArcher.Content
             if (sc == null || sc.Skybox == null)
                 return;
 
-            if (msg.MessageId == (int)MessageId.PositionChangedMessage)
+            if (msg.MessageId == (int)MessageId.PositionChanged)
             {
                 PositionChangedMessage pcm = msg as PositionChangedMessage;
                 if (pcm.Entity.Name == Entity.Name)

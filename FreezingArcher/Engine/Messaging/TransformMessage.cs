@@ -48,7 +48,7 @@ namespace FreezingArcher.Messaging
             Movement = movement;
             Rotation = rotation;
             Entity = entity;
-            MessageId = (int) Messaging.MessageId.MovementMessage;
+            MessageId = (int) Messaging.MessageId.Movement;
         }
 
         /// <summary>

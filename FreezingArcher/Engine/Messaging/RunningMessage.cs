@@ -1,5 +1,5 @@
 ﻿//
-//  ItemUseMessage.cs
+//  FirstRunMessage.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -21,38 +21,29 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Messaging.Interfaces;
-using FreezingArcher.Content;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Messaging
 {
     /// <summary>
-    /// Item use message. Occurs when an item is used.
+    /// Occurs when Application.Run is called.
     /// </summary>
-    public sealed class ItemUseMessage : IMessage
+    public sealed class RunningMessage : IMessage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.ItemUseMessage"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.RunningMessage"/> class.
         /// </summary>
-        /// <param name="entity">Entity on which the usage should be applied.</param>
-        /// <param name="usage">Usage which should be applied when sending this message.</param>
-        public ItemUseMessage(Entity entity, ItemUsage usage)
+        /// <param name="application">Application.</param>
+        public RunningMessage(Application application)
         {
-            Usage = usage;
-            Entity = entity;
-            MessageId = (int) Messaging.MessageId.ItemUse;
+            Application = application;
         }
 
         /// <summary>
-        /// Gets the usage which should be applied when sending this message.
+        /// Gets the application.
         /// </summary>
-        /// <value>The usage.</value>
-        public ItemUsage Usage { get; private set; }
-
-        /// <summary>
-        /// Gets the entity on which the usage should be applied.
-        /// </summary>
-        /// <value>The entity.</value>
-        public Entity Entity { get; private set; }
+        /// <value>The application.</value>
+        public Application Application { get; private set; }
 
         #region IMessage implementation
 
@@ -72,7 +63,13 @@ namespace FreezingArcher.Messaging
         /// Gets the message identifier.
         /// </summary>
         /// <value>The message identifier.</value>
-        public int MessageId { get; private set; }
+        public int MessageId
+        {
+            get
+            {
+                return (int) Messaging.MessageId.Running;
+            }
+        }
 
         #endregion
     }

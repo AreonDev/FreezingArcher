@@ -443,7 +443,7 @@ namespace FreezingArcher.Renderer
 
         public RendererCore(Messaging.MessageProvider messageProvider)
         {
-            ValidMessages = new int[] { (int)Messaging.MessageId.WindowResizeMessage };
+            ValidMessages = new int[] { (int)Messaging.MessageId.WindowResize };
             messageProvider += this;
 
             _RendererCoreActionsList = new ConcurrentQueue<RCAction>();

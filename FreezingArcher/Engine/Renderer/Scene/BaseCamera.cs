@@ -178,7 +178,7 @@ namespace FreezingArcher.Renderer.Scene
             MZNear = near;
             MZFar = far;
             MFov = fov;
-            ValidMessages = new int[] { (int)MessageId.PositionChangedMessage, (int)MessageId.RotationChangedMessage, (int)MessageId.WindowResizeMessage };
+            ValidMessages = new int[] { (int)MessageId.PositionChanged, (int)MessageId.RotationChanged, (int)MessageId.WindowResize };
             NeededComponents = new[] { typeof(TransformComponent) };
             messageProvider += this;
             Entity = entity;
@@ -228,21 +228,21 @@ namespace FreezingArcher.Renderer.Scene
         {
             TransformComponent tc = Entity.GetComponent<TransformComponent>();
 
-            if (msg.MessageId == (int)MessageId.PositionChangedMessage)
+            if (msg.MessageId == (int)MessageId.PositionChanged)
             {
                 PositionChangedMessage pcm = msg as PositionChangedMessage;
                 if (pcm.Entity.Name == Entity.Name)
                     Position = tc.Position;
             }
 
-            if (msg.MessageId == (int)MessageId.RotationChangedMessage)
+            if (msg.MessageId == (int)MessageId.RotationChanged)
             {
                 RotationChangedMessage rcm = msg as RotationChangedMessage;
                 if (rcm.Entity.Name == Entity.Name)
                     Rotation = tc.Rotation;
             }
 
-            if (msg.MessageId == (int) MessageId.WindowResizeMessage)
+            if (msg.MessageId == (int) MessageId.WindowResize)
             {
                 WindowResizeMessage wrm = msg as WindowResizeMessage;
                 WindowX = wrm.Width;

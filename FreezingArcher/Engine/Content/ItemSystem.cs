@@ -49,7 +49,7 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            if (msg.MessageId == (int) MessageId.ItemUseMessage)
+            if (msg.MessageId == (int) MessageId.ItemUse)
             {
                 var ium = msg as ItemUseMessage;
 

@@ -43,7 +43,7 @@ namespace FreezingArcher.Messaging
         {
             Movement = movement;
             Entity = entity;
-            MessageId = (int) Messaging.MessageId.MoveStraightMessage;
+            MessageId = (int) Messaging.MessageId.MoveStraight;
         }
 
         /// <summary>

@@ -68,7 +68,7 @@ namespace FreezingArcher.Messaging
         {
             get
             {
-                return (int) Messaging.MessageId.ScaleChangedMessage;
+                return (int) Messaging.MessageId.ScaleChanged;
             }
         }
 

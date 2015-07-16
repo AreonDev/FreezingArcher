@@ -45,8 +45,8 @@ namespace FreezingArcher.Content
             //Added needed components
             NeededComponents = new[] { typeof(TransformComponent) };
 
-            internalValidMessages = new[] { (int) MessageId.MovementMessage, (int) MessageId.MoveStraightMessage,
-                (int) MessageId.MoveSidewardsMessage, (int)MessageId.MoveVerticalMessage };
+            internalValidMessages = new[] { (int) MessageId.Movement, (int) MessageId.MoveStraight,
+                (int) MessageId.MoveSidewards, (int)MessageId.MoveVertical };
             messageProvider += this;
         }
 
@@ -56,7 +56,7 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            if (msg.MessageId == (int)MessageId.MovementMessage)
+            if (msg.MessageId == (int)MessageId.Movement)
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 TransformMessage mm = msg as TransformMessage;
@@ -67,7 +67,7 @@ namespace FreezingArcher.Content
                 tc.Position += mm.Movement;
                 tc.Rotation = mm.Rotation * tc.Rotation;
             }
-            else if (msg.MessageId == (int)MessageId.MoveStraightMessage)
+            else if (msg.MessageId == (int)MessageId.MoveStraight)
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 MoveStraightMessage msm = msg as MoveStraightMessage;
@@ -80,7 +80,7 @@ namespace FreezingArcher.Content
                 rotation.Normalize();
                 tc.Position += rotation * msm.Movement;
             }
-            else if (msg.MessageId == (int)MessageId.MoveSidewardsMessage)
+            else if (msg.MessageId == (int)MessageId.MoveSidewards)
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
                 MoveSidewardsMessage msm = msg as MoveSidewardsMessage;
@@ -93,7 +93,7 @@ namespace FreezingArcher.Content
                 rotation.Normalize();
                 tc.Position += rotation * -msm.Movement;
             }
-            else if (msg.MessageId == (int)MessageId.MoveVerticalMessage)
+            else if (msg.MessageId == (int)MessageId.MoveVertical)
             {
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
 

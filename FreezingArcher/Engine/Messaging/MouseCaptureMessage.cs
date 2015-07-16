@@ -67,7 +67,7 @@ namespace FreezingArcher.Messaging
         {
             get
             {
-                return (int) Messaging.MessageId.MouseCaptureMessage;
+                return (int) Messaging.MessageId.MouseCapture;
             }
         }
 

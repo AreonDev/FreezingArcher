@@ -39,7 +39,7 @@ namespace FreezingArcher.Messaging
         {
             ItemPositionInInventory = itemPositionInInventory;
             InventoryBarPosition = inventoryBarPosition;
-            MessageId = (int) Messaging.MessageId.AddItemToInventoryBarMessage;
+            MessageId = (int) Messaging.MessageId.AddItemToInventoryBar;
         }
 
         public AddItemToInventoryBarMessage(int itemPositionInInventoryX, int itemPositionInInventoryY,

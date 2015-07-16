@@ -45,8 +45,8 @@ namespace FreezingArcher.Content
 
             //Needs more Initializing?
             //Scene does this for me, so no!
-            internalValidMessages = new[] { (int) MessageId.PositionChangedMessage,
-                (int) MessageId.RotationChangedMessage, (int) MessageId.ScaleChangedMessage };
+            internalValidMessages = new[] { (int) MessageId.PositionChanged,
+                (int) MessageId.RotationChanged, (int) MessageId.ScaleChanged };
             messageProvider += this;
         }
 
@@ -62,21 +62,21 @@ namespace FreezingArcher.Content
             if (mc == null || mc.Model == null)
                 return;
             
-            if (msg.MessageId == (int) MessageId.PositionChangedMessage)
+            if (msg.MessageId == (int) MessageId.PositionChanged)
             {
                 PositionChangedMessage pcm = msg as PositionChangedMessage;
                 if (pcm.Entity.Name == Entity.Name)
                     mc.Model.Position = tc.Position;
             }
 
-            if (msg.MessageId == (int) MessageId.RotationChangedMessage)
+            if (msg.MessageId == (int) MessageId.RotationChanged)
             {
                 RotationChangedMessage rcm = msg as RotationChangedMessage;
                 if (rcm.Entity.Name == Entity.Name)
                     mc.Model.Rotation = tc.Rotation;
             }
 
-            if (msg.MessageId == (int) MessageId.ScaleChangedMessage)
+            if (msg.MessageId == (int) MessageId.ScaleChanged)
             {
                 ScaleChangedMessage scm = msg as ScaleChangedMessage;
                 if (scm.Entity.Name == Entity.Name)

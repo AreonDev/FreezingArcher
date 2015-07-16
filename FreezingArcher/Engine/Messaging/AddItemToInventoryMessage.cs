@@ -32,7 +32,7 @@ namespace FreezingArcher.Messaging
         /// </summary>
         public AddItemToInventoryMessage()
         {
-            MessageId = (int) Messaging.MessageId.AddItemToInventoryMessage;
+            MessageId = (int) Messaging.MessageId.AddItemToInventory;
         }
 
         #region IMessage implementation

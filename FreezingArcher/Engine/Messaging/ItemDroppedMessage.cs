@@ -37,7 +37,7 @@ namespace FreezingArcher.Messaging
         public ItemDroppedMessage(ItemComponent item)
         {
             Item = item;
-            MessageId = (int) Messaging.MessageId.ItemDroppedMessage;
+            MessageId = (int) Messaging.MessageId.ItemDropped;
         }
 
         /// <summary>

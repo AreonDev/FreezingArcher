@@ -42,7 +42,7 @@ namespace FreezingArcher.Messaging
             Entity = entity;
             Item = item;
             InventoryPosition = inventoryPosition;
-            MessageId = (int) Messaging.MessageId.ItemCollectedMessage;
+            MessageId = (int) Messaging.MessageId.ItemCollected;
         }
 
         /// <summary>

@@ -20,7 +20,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-#define LINUX_INTEL_COMPATIBLE
+//#define LINUX_INTEL_COMPATIBLE
 
 using System;
 using System.Collections.Generic;
@@ -512,7 +512,7 @@ namespace FreezingArcher.Core
             Glfw.SetErrorCallback         (WindowError);
 
             CursorMode = 0;
-            //CaptureMouse ();
+            CaptureMouse ();
         }
     }
 }

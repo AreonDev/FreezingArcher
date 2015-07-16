@@ -41,7 +41,7 @@ namespace FreezingArcher.Messaging
         {
             Entity = entity;
             InventoryPosition = inventoryPosition;
-            MessageId = (int) Messaging.MessageId.RemoveItemFromInventoryMessage;
+            MessageId = (int) Messaging.MessageId.RemoveItemFromInventory;
         }
 
         /// <summary>

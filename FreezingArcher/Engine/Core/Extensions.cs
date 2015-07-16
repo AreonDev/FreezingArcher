@@ -29,6 +29,8 @@ using FreezingArcher.Renderer;
 using FreezingArcher.Audio;
 using Pencil.Gaming.Graphics;
 using System.Windows.Threading;
+using Jitter.LinearMath;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Core
 {
@@ -495,6 +497,91 @@ namespace FreezingArcher.Core
                     action();
                 };
             dispatcherTimer.Start();
+        }
+
+        /// <summary>
+        /// Converts FreezingArcher.Math.Vector3 to Jitter.JVector
+        /// </summary>
+        public static JVector ToJitterVector(this Vector3 vector)
+        {
+            return new JVector(vector.X, vector.Y, vector.Z);
+        }
+
+        /// <summary>
+        /// Converts Jitter.JVector to FreezingArcher.Math.Vector3
+        /// </summary>
+        public static Vector3 ToFreezingArcherVector(this JVector vector)
+        {
+            return new Vector3(vector.X, vector.Y, vector.Z);
+        }
+
+        /// <summary>
+        /// Converts FreezingArcher.Math.Matrix to Jitter.Matrix
+        /// </summary>
+        /// <returns>The jitter matrix.</returns>
+        /// <param name="matrix">Matrix.</param>
+        public static JMatrix ToJitterMatrix(this Matrix matrix)
+        {
+            return new JMatrix(matrix.M11, matrix.M12, matrix.M13, 
+                matrix.M21, matrix.M22, matrix.M23,
+                matrix.M31, matrix.M32, matrix.M33);
+        }
+
+        /// <summary>
+        /// Converts FreezingArcher.Math.Matrix3 to Jitter.Matrix
+        /// </summary>
+        /// <returns>The jitter matrix.</returns>
+        /// <param name="matrix">Matrix.</param>
+        public static JMatrix ToJitterMatrix(this Matrix3 matrix)
+        {
+            return new JMatrix(matrix.M11, matrix.M12, matrix.M13, 
+                matrix.M21, matrix.M22, matrix.M23,
+                matrix.M31, matrix.M32, matrix.M33);
+        }
+
+        /// <summary>
+        /// Converts Jitter.JMatrix to FreezingArcher.Math.Matrix3
+        /// </summary>
+        /// <returns>The freezing archer matrix.</returns>
+        /// <param name="matrix">Matrix.</param>
+        public static Matrix3 ToFreezingArcherMatrix3(this JMatrix matrix)
+        {
+            return new Matrix3(matrix.M11, matrix.M12, matrix.M13, 
+                matrix.M21, matrix.M22, matrix.M23,
+                matrix.M31, matrix.M32, matrix.M33);
+        }
+
+        /// <summary>
+        /// Converts Jitter.JMatrix to FreezingArcher.Math.Matrix
+        /// </summary>
+        /// <returns>The freezing archer matrix.</returns>
+        /// <param name="matrix">Matrix.</param>
+        public static Matrix ToFreezingArcherMatrix(this JMatrix matrix)
+        {
+            return new Matrix(matrix.M11, matrix.M12, matrix.M13, 0.0f,
+                matrix.M21, matrix.M22, matrix.M23, 0.0f,
+                matrix.M31, matrix.M32, matrix.M33, 0.0f,
+                0.0f, 0.0f, 0.0f, 0.0f);
+        }
+
+        /// <summary>
+        /// Converts FreezingArcher.Math.Quaternion to Jitter.JQuaternion
+        /// </summary>
+        /// <returns>The jitter quaternion.</returns>
+        /// <param name="quat">Quat.</param>
+        public static JQuaternion ToJitterQuaternion(this Quaternion quat)
+        {
+            return new JQuaternion(quat.X, quat.Y, quat.Z, quat.W);
+        }
+
+        /// <summary>
+        /// Converts Jitter.JQuaternion to FreezingArcher.Math.Quaternion
+        /// </summary>
+        /// <returns>The freezing archer quaternion.</returns>
+        /// <param name="quat">Quat.</param>
+        public static Quaternion ToFreezingArcherQuaternion(this JQuaternion quat)
+        {
+            return new Quaternion(quat.X, quat.Y, quat.Z, quat.W);
         }
     }
 }

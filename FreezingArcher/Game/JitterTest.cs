@@ -109,7 +109,7 @@ namespace FreezingArcher.Game
 
                     // TODO add to physics
                     var body = new RigidBody(new BoxShape(2,0.1f,2));
-                    body.Position = new JVector(tc.Position.X, tc.Position.Y, tc.Position.Z);
+                    body.Position = tc.Position.ToJitterVector ();
                     world.AddBody(body);
                     body.IsStatic = true;
                     ground.GetComponent<PhysicsComponent>().RigidBody = body;
@@ -134,7 +134,7 @@ namespace FreezingArcher.Game
                 // TODO add to physics
 
                 List<JVector> vertices = new List<JVector>();
-                wallModel.Model.Meshes[0].Vertices.ForEach(x => (vertices.Add(new JVector(x.X, x.Y, x.Z))));
+                wallModel.Model.Meshes[0].Vertices.ForEach(x => (vertices.Add(x.ToJitterVector())));
 
                 List<TriangleVertexIndices> indices = new List<TriangleVertexIndices>();
 
@@ -148,7 +148,7 @@ namespace FreezingArcher.Game
                 }
 
                 var body = new RigidBody(new TriangleMeshShape(new Octree(vertices, indices)));
-                body.Position = new JVector(tc.Position.X, tc.Position.Y, tc.Position.Z);
+                body.Position = tc.Position.ToJitterVector ();
                 world.AddBody(body);
                 body.IsStatic = true;
                 wall.GetComponent<PhysicsComponent>().RigidBody = body;
@@ -180,7 +180,7 @@ namespace FreezingArcher.Game
             wall_to_throw.GetComponent<JitterComponent>().RigidBody = body;*/
 
             List<JVector> vertices = new List<JVector>();
-            wallModel2.Model.Meshes[0].Vertices.ForEach(x => (vertices.Add(new JVector(x.X, x.Y, x.Z))));
+            wallModel2.Model.Meshes[0].Vertices.ForEach(x => (vertices.Add(x.ToJitterVector())));
        
             List<TriangleVertexIndices> indices = new List<TriangleVertexIndices>();
 
@@ -196,7 +196,7 @@ namespace FreezingArcher.Game
             var triangleMeshShape = new TriangleMeshShape(new Octree(vertices, indices));
           
             var body = new RigidBody(triangleMeshShape);
-            body.Position = new JVector(tc2.Position.X, tc2.Position.Y, tc2.Position.Z);
+            body.Position = tc2.Position.ToJitterVector ();
             body.Orientation = JMatrix.CreateFromAxisAngle(new JVector(1,1,0), MathHelper.PiOver4);
             body.AllowDeactivation = false;
 

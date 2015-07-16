@@ -68,7 +68,9 @@ namespace FreezingArcher.Content
                     return;
 
                 //pc.RigidBody.IsActive = false;
-                pc.RigidBody.AddForce(mm.Movement.ToJitterVector());
+                pc.RigidBody.LinearVelocity = JVector.Zero;
+
+                pc.RigidBody.LinearVelocity = (mm.Movement.ToJitterVector());
                 pc.RigidBody.Orientation = JMatrix.CreateFromQuaternion(
                     mm.Rotation.ToJitterQuaternion() * JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation));
                 //pc.RigidBody.IsActive = true;
@@ -87,7 +89,7 @@ namespace FreezingArcher.Content
                 Vector3 rotation = Vector3.Transform(Vector3.UnitZ, tc.Rotation);
                 rotation = new Vector3(rotation.X, 0, rotation.Z);
                 rotation.Normalize();
-                pc.RigidBody.AddForce((rotation * msm.Movement).ToJitterVector());
+                pc.RigidBody.LinearVelocity = ((rotation * msm.Movement).ToJitterVector());
                 //pc.RigidBody.IsActive = true;
             }
             else if (msg.MessageId == (int)MessageId.MoveSidewards)
@@ -104,7 +106,7 @@ namespace FreezingArcher.Content
                 Vector3 rotation = Vector3.Transform(Vector3.UnitX, tc.Rotation);
                 rotation = new Vector3(rotation.X, 0, rotation.Z);
                 rotation.Normalize();
-                pc.RigidBody.AddForce((rotation * -msm.Movement).ToJitterVector());
+                pc.RigidBody.LinearVelocity = ((rotation * -msm.Movement).ToJitterVector());
                 //pc.RigidBody.IsActive = true;
             }
             else if (msg.MessageId == (int)MessageId.MoveVertical)
@@ -118,7 +120,7 @@ namespace FreezingArcher.Content
                     return;
 
                 //pc.RigidBody.IsActive = false;
-                pc.RigidBody.AddForce(new JVector(0.0f, mvm.Movement, 0.0f));
+                pc.RigidBody.LinearVelocity = new JVector(0.0f, mvm.Movement, 0.0f);
                 //pc.RigidBody.IsActive = true;
             }
         }

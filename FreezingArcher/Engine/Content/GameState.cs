@@ -22,7 +22,6 @@
 //
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Core.Interfaces;
-using Henge3D.Physics;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
 using FreezingArcher.Math;
@@ -44,9 +43,9 @@ namespace FreezingArcher.Content
         {
             Name = name;
             Environment = env;
-            PhysicsManager = new PhysicsManager();
-            PhysicsManager.Initialize();
-            PhysicsManager.Gravity = new Vector3(0, -1.81f, 0);
+            //PhysicsManager = new PhysicsManager();
+            //PhysicsManager.Initialize();
+            //PhysicsManager.Gravity = new Vector3(0, -1.81f, 0);
             ValidMessages = new[] { (int) MessageId.Update };
             MessageProxy = new MessageProxy(messageProvider);
         }
@@ -73,7 +72,7 @@ namespace FreezingArcher.Content
         /// Gets the physics manager.
         /// </summary>
         /// <value>The physics manager.</value>
-        public PhysicsManager PhysicsManager { get; private set; }
+        //public PhysicsManager PhysicsManager { get; private set; }
 
         // TODO add transition effects
 
@@ -99,7 +98,7 @@ namespace FreezingArcher.Content
 
             if (um != null)
             {
-                PhysicsManager.Update((float) um.TimeStamp.TotalMilliseconds);
+                //PhysicsManager.Update((float) um.TimeStamp.TotalMilliseconds);
             }
         }
 
@@ -116,7 +115,7 @@ namespace FreezingArcher.Content
         /// </summary>
         public void Destroy()
         {
-            PhysicsManager.Dispose();
+            //PhysicsManager.Dispose();
         }
     }
 }

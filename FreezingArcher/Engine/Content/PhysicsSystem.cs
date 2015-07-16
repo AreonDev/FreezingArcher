@@ -24,6 +24,7 @@ using System;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
+using Jitter.LinearMath;
 
 namespace FreezingArcher.Content
 {
@@ -43,7 +44,7 @@ namespace FreezingArcher.Content
 
             NeededComponents = new[] { typeof(TransformComponent), typeof(ModelComponent), typeof(PhysicsComponent) };
 
-            internalValidMessages = new[] { (int)MessageId.Update };
+            internalValidMessages = new[] { (int)MessageId.Update, (int) MessageId.PositionChangedMessage };
             messageProvider += this;
         }
 
@@ -55,8 +56,8 @@ namespace FreezingArcher.Content
         {
             if (msg.MessageId == (int) MessageId.Update)
             {
-                PhysicsComponent pc = Entity.GetComponent<PhysicsComponent>();
-                if (pc == null || pc.RigidBody == null || !pc.RigidBody.IsMovable)
+                var pc = Entity.GetComponent<PhysicsComponent>();
+                if (pc == null || pc.RigidBody == null || pc.RigidBody.IsStaticOrInactive)
                     return;
 
                 TransformComponent tc = Entity.GetComponent<TransformComponent>();
@@ -64,10 +65,22 @@ namespace FreezingArcher.Content
                 if (tc == null)
                     return;
 
-                tc.Position = pc.RigidBody.Transform.Position;
-                tc.Rotation = pc.RigidBody.Transform.Orientation;
-                tc.Scale = new Vector3(pc.RigidBody.Transform.Scale, pc.RigidBody.Transform.Scale,
-                    pc.RigidBody.Transform.Scale);
+                tc.Position = new Vector3(pc.RigidBody.Position.X, pc.RigidBody.Position.Y, pc.RigidBody.Position.Z);
+                var quaternion = JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation);
+                tc.Rotation = new Quaternion(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
+            }
+
+            if (msg.MessageId == (int) MessageId.PositionChangedMessage)
+            {
+                var tc = Entity.GetComponent<TransformComponent>();
+                var jc = Entity.GetComponent<PhysicsComponent>();
+
+                if (tc == null || jc == null)
+                    return;
+
+                jc.RigidBody.Position = new JVector(tc.Position.X, tc.Position.Y, tc.Position.Z);
+                jc.RigidBody.Orientation = JMatrix.CreateFromQuaternion(
+                    new JQuaternion(tc.Rotation.X, tc.Rotation.Y, tc.Rotation.Z, tc.Rotation.W));
             }
         }
     }

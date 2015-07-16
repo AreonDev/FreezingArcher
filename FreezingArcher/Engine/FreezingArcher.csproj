@@ -94,7 +94,9 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Package>xbuild12</Package>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -249,8 +251,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\ModelComponent.cs" />
     <Compile Include="Content\ModelSystem.cs" />
     <Compile Include="Content\EntityFactory.cs" />
-    <Compile Include="Content\PhysicsComponent.cs" />
-    <Compile Include="Content\PhysicsSystem.cs" />
     <Compile Include="Renderer\Scene\BaseCamera.cs" />
     <Compile Include="Content\MovementSystem.cs" />
     <Compile Include="Messaging\MoveStraightMessage.cs" />
@@ -408,6 +408,8 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\MoveVerticalMessage.cs" />
     <Compile Include="Renderer\Compositor\CompositorNodeStart.cs" />
     <Compile Include="Renderer\Compositor\CompositorNodeOutput.cs" />
+    <Compile Include="Content\PhysicsComponent.cs" />
+    <Compile Include="Content\PhysicsSystem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -551,6 +553,15 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="UI\Skins\FreezingArcherSkin.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Renderer\TestGraphics\Monkey\monkey.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\Monkey\monkey.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\Monkey\monkey.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />
@@ -560,6 +571,7 @@ echo Successfully finished!</PostBuildEvent>
     <Folder Include="Renderer\Scene\SceneObjects\" />
     <Folder Include="UI\" />
     <Folder Include="UI\Skins\" />
+    <Folder Include="Renderer\TestGraphics\Monkey\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
@@ -580,9 +592,9 @@ echo Successfully finished!</PostBuildEvent>
       <Project>{F2D91778-AD1F-4433-A451-2016B873064B}</Project>
       <Name>PostProcessor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Physics\Physics.csproj">
-      <Project>{2FE998BB-BA71-4264-8C6F-C118E953DF1D}</Project>
-      <Name>Physics</Name>
+    <ProjectReference Include="..\Jitter\Jitter.csproj">
+      <Project>{AA03EF1A-94F7-4D30-AB14-2092863FF923}</Project>
+      <Name>Jitter</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

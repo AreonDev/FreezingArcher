@@ -75,7 +75,7 @@ namespace FreezingArcher.Game
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager);
+            maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy/*, state.PhysicsManager*/);
             maze[0].PlayerPosition += player.GetComponent<TransformComponent>().Position;
 
             game.AddGameState("maze_underworld", Content.Environment.Default,
@@ -85,7 +85,7 @@ namespace FreezingArcher.Game
             state.Scene = new CoreScene(rendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.AliceBlue;
             state.Scene.CameraManager.AddCamera (new BaseCamera (player, state.MessageProxy), "player");
-            maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager);
+            maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy/*, state.PhysicsManager*/);
             maze[1].PlayerPosition += player.GetComponent<TransformComponent>().Position;
 
             game.SwitchToGameState("maze_overworld");

@@ -21,8 +21,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
-using Henge3D;
-using Henge3D.Physics;
 using FreezingArcher.Renderer;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene.SceneObjects;
@@ -60,7 +58,7 @@ namespace FreezingArcher.Game
             state.Scene = new CoreScene (application.RendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.Aqua;
 
-            state.PhysicsManager.Gravity = new Vector3 (0.0f, -1.0f, 0.0f);
+            //state.PhysicsManager.Gravity = new Vector3 (0.0f, -1.0f, 0.0f);
 
             Entity player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, systems: new [] {
                 typeof(MovementSystem),
@@ -79,54 +77,7 @@ namespace FreezingArcher.Game
 
             ValidMessages = new[] { (int)MessageId.Input, (int)MessageId.Update };
             messageProvider += this;
-
-//            Entity wall = EntityFactory.Instance.CreateWith("wall", messageProvider, null,
-//                new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
-//
-//            var wallModel = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
-//            wall.GetComponent<ModelComponent>().Model = wallModel;
-//            app.RendererContext.Scene.AddObject(wallModel);
-//
-//            Vector3 centerofmass;
-//
-//            var wallRigidBody = new RigidBody();
-//            wall.GetComponent<PhysicsComponent>().RigidBody = wallRigidBody;
-//            Vector3 p1 = new Vector3(0f, 0f, 1), p2 = new Vector3(0f, 0f, -1);
-//            wallRigidBody.MassProperties = MassProperties.FromTriMesh (50.0f, wallModel.Model.Meshes [0].Vertices,
-//                wallModel.Model.Meshes [0].Indices, out centerofmass);
-//            wallRigidBody.Freeze ();
-//
-//            Henge3D.Pipeline.CompiledMesh bla = new Henge3D.Pipeline.CompiledMesh (wallModel.Model.Meshes [0].Vertices, 
-//                wallModel.Model.Meshes [0].Indices);
-//
-//            wallRigidBody.Skin.Add(new MeshPart(bla), new Henge3D.Physics.Material(0.0f, 0.000000001f));
-//            wallRigidBody.SetWorld(new Vector3(0, 0, 0));
-//
-//            Entity ground = EntityFactory.Instance.CreateWith("ground", messageProvider, null,
-//                new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
-//
-//            var groundModel = new ModelSceneObject("lib/Renderer/TestGraphics/Ground/ground.xml");
-//            ground.GetComponent<ModelComponent>().Model = groundModel;
-//            app.RendererContext.Scene.AddObject(groundModel);
-//
-//            groundModel.WaitTillInitialized ();
-//
-//            groundRigidBody = new RigidBody();
-//            ground.GetComponent<PhysicsComponent>().RigidBody = groundRigidBody;
-//            groundRigidBody.MassProperties = new MassProperties (0.001f, Matrix.Identity);
-//            //groundRigidBody.Freeze ();
-//            groundRigidBody.Skin.DefaultMaterial = new Henge3D.Physics.Material(1f, 0.1f);
-//            groundRigidBody.Skin.Add(new MeshPart(groundModel.Model.Meshes [0].Vertices, groundModel.Model.Meshes [0].Indices));
-//            groundRigidBody.SetWorld (new Vector3 (0, 10, 0));
-//
-//            //app.RendererContext.Scene.CameraManager.ActiveCamera.MoveTo(new Vector3(-1, 1, 0));
-//
-//            app.Game.CurrentGameState.PhysicsManager.Add(groundRigidBody);
-//            app.Game.CurrentGameState.PhysicsManager.Add(wallRigidBody);
         }
-
-//        RigidBody wallRigidBody;
-//        RigidBody groundRigidBody;
 
         void InitializeTest()
         {
@@ -145,24 +96,6 @@ namespace FreezingArcher.Game
                     tc.Position = new Vector3 (i * 2, 0, j * 2);
 
                     grounds.Add (ground);
-
-                    //Physics
-                    Vector3 centerofmass;
-
-                    var groundRigidBody = new RigidBody ();
-                    ground.GetComponent<PhysicsComponent> ().RigidBody = groundRigidBody;
-
-                    groundRigidBody.MassProperties = MassProperties.Immovable/*MassProperties.FromTriMesh (100.0f, groundModel.Model.Meshes [0].Vertices,
-                        groundModel.Model.Meshes [0].Indices, out centerofmass)*/;
-
-                    Henge3D.Pipeline.CompiledMesh bla = new Henge3D.Pipeline.CompiledMesh (groundModel.Model.Meshes [0].Vertices,
-                                                            groundModel.Model.Meshes [0].Indices);
-
-                    groundRigidBody.Skin.Add (new MeshPart (groundModel.Model.Meshes [0].Vertices,
-                        groundModel.Model.Meshes [0].Indices), new Henge3D.Physics.Material (0.0f, 0.001f));
-                    groundRigidBody.SetWorld (tc.Position);
-                   
-                    state.PhysicsManager.Add (groundRigidBody);
                 }
             }
 
@@ -180,25 +113,6 @@ namespace FreezingArcher.Game
                 tc.Position = new Vector3 (i * 2, 0.0f, 20.0f);
 
                 walls.Add (wall);
-
-                //Physics
-                Vector3 centerofmass;
-
-                var wallRigidBody = new RigidBody ();
-                wall.GetComponent<PhysicsComponent> ().RigidBody = wallRigidBody;
-
-                wallRigidBody.MassProperties = MassProperties.Immovable/*MassProperties.FromTriMesh (50.0f, wallModel.Model.Meshes [0].Vertices,
-                    wallModel.Model.Meshes [0].Indices, out centerofmass)*/;
-                //wallRigidBody.Freeze ();
-                    
-                Henge3D.Pipeline.CompiledMesh bla = new Henge3D.Pipeline.CompiledMesh (wallModel.Model.Meshes [0].Vertices, 
-                                                                        wallModel.Model.Meshes [0].Indices);
-                    
-                wallRigidBody.Skin.Add (new MeshPart (wallModel.Model.Meshes [0].Vertices,
-                    wallModel.Model.Meshes [0].Indices), new Henge3D.Physics.Material (0.0f, 0.0001f));
-                wallRigidBody.SetWorld (tc.Position);
-    
-                state.PhysicsManager.Add (wallRigidBody);
             }
 
             InitStupidWall ();
@@ -216,30 +130,6 @@ namespace FreezingArcher.Game
 
             var tc2 = wall_to_throw.GetComponent<TransformComponent>();
             tc2.Position = new Vector3 (10.0f, 20.0f, 10.0f);
-
-
-            //Physics
-            Vector3 centerofmass;
-
-            var wallRigidBody = new RigidBody ();
-            wall_to_throw.GetComponent<PhysicsComponent> ().RigidBody = wallRigidBody;
-
-            wallRigidBody.MassProperties = MassProperties.FromTriMesh (50.0f, wallModel2.Model.Meshes [0].Vertices,
-                wallModel2.Model.Meshes [0].Indices, out centerofmass);
-            //wallRigidBody.Freeze ();
-
-            /*
-            Henge3D.Pipeline.CompiledMesh bla = new Henge3D.Pipeline.CompiledMesh (wallModel2.Model.Meshes [0].Vertices, 
-                wallModel2.Model.Meshes [0].Indices);*/
-
-            var hull = new ConvexHull3D (wallModel2.Model.Meshes [0].Vertices);
-            CompiledPolyhedron meshPart = hull.ToPolyhedron ();
-
-            wallRigidBody.Skin.Add (new PolyhedronPart(meshPart), new Henge3D.Physics.Material (0.0f, 0.0001f));
-            wallRigidBody.SetWorld (tc2.Position);
-            //wallRigidBody.Freeze ();
-
-            state.PhysicsManager.Add (wallRigidBody);
         }
 
         #region IMessageConsumer implementation
@@ -250,7 +140,7 @@ namespace FreezingArcher.Game
             {
                 var um = msg as UpdateMessage;
 
-                state.PhysicsManager.Update ((float)um.TimeStamp.TotalMilliseconds);
+                //state.PhysicsManager.Update ((float)um.TimeStamp.TotalMilliseconds);
             }
 
             if (msg.MessageId == (int)MessageId.Input)

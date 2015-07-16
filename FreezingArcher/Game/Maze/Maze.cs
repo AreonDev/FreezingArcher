@@ -27,7 +27,6 @@ using FreezingArcher.Math;
 using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Content;
-using Henge3D.Physics;
 using FreezingArcher.Messaging;
 using System.Threading;
 
@@ -50,7 +49,7 @@ namespace FreezingArcher.Game.Maze
     /// </summary>
     delegate void AddMazeToGameStateDelegate(WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
         MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, CoreScene scene,
-        PhysicsManager physics, float scaling, uint maxX, int xOffs, int yOffs);
+        /*PhysicsManager physics,*/ float scaling, uint maxX, int xOffs, int yOffs);
 
     /// <summary>
     /// Calculate path to exit delegate.
@@ -86,7 +85,7 @@ namespace FreezingArcher.Game.Maze
         /// <param name="turbulence">Turbulence.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor.</param>
-        internal Maze (ObjectManager objmnr, int seed, int sizeX, int sizeY, float scale, PhysicsManager physics,
+        internal Maze (ObjectManager objmnr, int seed, int sizeX, int sizeY, float scale, /*PhysicsManager physics,*/
             InitializeMazeDelegate initFunc, GenerateMazeDelegate generateFunc,
             AddMazeToGameStateDelegate addToSceneDelegate, CalculatePathToExitDelegate exitFunc,
             PlaceFeaturesDelegate placeFeaturesFunc, double turbulence, int maximumContinuousPathLength,
@@ -105,7 +104,7 @@ namespace FreezingArcher.Game.Maze
             addMazeToGameStateDelegate = addToSceneDelegate;
             calcExitPathDelegate = exitFunc;
             placeFeaturesDelegate = placeFeaturesFunc;
-            this.physics = physics;
+            //this.physics = physics;
         }
 
         internal WeightedGraph<MazeCell, MazeCellEdgeWeight> graph;
@@ -128,7 +127,7 @@ namespace FreezingArcher.Game.Maze
 
         readonly float scale;
 
-        readonly PhysicsManager physics;
+        //readonly PhysicsManager physics;
 
         Vector3 playerPosition;
 
@@ -327,7 +326,7 @@ namespace FreezingArcher.Game.Maze
             if (addMazeToGameStateDelegate != null)
             {
                 addMazeToGameStateDelegate(graph, state.MessageProxy, entities, ref playerPosition, state.Scene,
-                    physics, scale, (uint) Size.X, Offset.X, Offset.Y);
+                    /*physics,*/ scale, (uint) Size.X, Offset.X, Offset.Y);
             }
             else
             {

@@ -35,6 +35,7 @@ using Jitter.Collision;
 using Jitter.Collision.Shapes;
 using Jitter.Dynamics;
 using Jitter.LinearMath;
+using System.Threading;
 
 namespace FreezingArcher.Game
 {
@@ -83,6 +84,7 @@ namespace FreezingArcher.Game
             playerBody.Material.Restitution = 0.1f;
             //playerBody.Mass = 1000000.0f;
             playerBody.Update ();
+            playerBody.IsActive = false;
             player.GetComponent<PhysicsComponent>().RigidBody = playerBody;
             player.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
@@ -165,6 +167,8 @@ namespace FreezingArcher.Game
             }
 
             InitStupidWall ();
+
+            player.GetComponent<PhysicsComponent>().RigidBody.IsActive = true;
         }
 
         void InitStupidWall()
@@ -236,7 +240,7 @@ namespace FreezingArcher.Game
 
             if (msg.MessageId == (int)MessageId.Running)
             {
-                InitializeTest ();
+                new Thread(InitializeTest).Start();
             }
         }
 

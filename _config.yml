@@ -28,19 +28,13 @@ people:
     - title: github
       url: https://github.com/fin-ger
 
-- name: Willi Failla
+- name: Willy Failla
   pic: 3
   position: Developer
   social:
     - title: github
       url: https://github.com/wfailla
 
-- name: Martin Koppehel
-  pic: 4
-  position: Core Developer
-  social:
-    - title: github
-      url: https://github.com/martin31821
 
 # Social networks usernames (many more available: google-plus, flickr, dribbble, pinterest, instagram, tumblr, linkedin, etc.)
 social:

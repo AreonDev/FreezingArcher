@@ -68,7 +68,7 @@ namespace FreezingArcher.Content
         {
             get
             {
-                return currentNode.Data;
+                 return currentNode.Data;
             }
         }
 

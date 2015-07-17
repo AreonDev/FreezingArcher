@@ -53,12 +53,13 @@ namespace FreezingArcher.Game
         /// <param name="rendererContext">The renderer context for the maze scenes.</param>
         /// <param name="game">The game the maze should be generated in.</param>
         public MazeTest (MessageProvider messageProvider, ObjectManager objmnr, RendererContext rendererContext,
-            Content.Game game)
+            Content.Game game, Application app)
         {
-            ValidMessages = new[] { (int) MessageId.Input, (int)MessageId.Update };
+            ValidMessages = new[] { (int) MessageId.Input, (int)MessageId.Update, (int)MessageId.Running };
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
             this.game = game;
+            application = app;
 
             game.AddGameState("maze_overworld", Content.Environment.Default, null);
             var state = game.GetGameState("maze_overworld");
@@ -119,6 +120,8 @@ namespace FreezingArcher.Game
 
         readonly Content.Game game;
 
+        readonly Application application;
+
         int currentMaze;
 
         void SwitchMaze()
@@ -168,16 +171,7 @@ namespace FreezingArcher.Game
             {
                 if (im.IsActionPressed("jump"))
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Generate Mazes....");
 
-                    maze[0].Generate(
-                        () => {
-                            if (MessageCreated != null)
-                                MessageCreated (new TransformMessage (player, maze [0].PlayerPosition, Quaternion.Identity));
-                            var state = game.GetGameState ("maze_underworld");
-                            maze[1].Generate (state: state);
-                        },
-                        state: game.GetGameState("maze_overworld"));
                 }
                 if (im.IsActionPressed("run"))
                 {
@@ -197,6 +191,20 @@ namespace FreezingArcher.Game
                 {
                     SwitchMaze();
                 }
+            }
+
+            if (msg.MessageId == (int)MessageId.Running)
+            {
+                Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Generate Mazes....");
+
+                maze[0].Generate(
+                    () => {
+                        if (MessageCreated != null)
+                            MessageCreated (new TransformMessage (player, maze [0].PlayerPosition, Quaternion.Identity));
+                        var state = game.GetGameState ("maze_underworld");
+                        maze[1].Generate (state: state);
+                    },
+                    state: game.GetGameState("maze_overworld"));
             }
         }
 

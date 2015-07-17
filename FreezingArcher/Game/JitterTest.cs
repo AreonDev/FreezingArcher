@@ -46,14 +46,22 @@ namespace FreezingArcher.Game
         List<Entity> walls;
         Entity wall_to_throw;
         Entity player;
+        LoadingScreen loadingScreen;
+        Application application;
 
         public JitterTest (Application application)
         {
+            this.application = application;
             application.Game.AddGameState ("PhysicsScene", Content.Environment.Default);
             state = application.Game.GetGameState ("PhysicsScene");
+            state.MessageProxy.StartProcessing();
 
             state.Scene = new CoreScene (application.RendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.Aqua;
+
+            loadingScreen = new LoadingScreen(application, application.MessageManager, "loading.png",
+                "JitterTestLoadingScreen",
+                to: new[] {new Tuple<string, GameStateTransition>(state.Name, new GameStateTransition(0))});
 
             player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy,
                 systems: new [] {
@@ -70,8 +78,6 @@ namespace FreezingArcher.Game
 
             grounds = new List<Entity> ();
             walls = new List<Entity> ();
-
-            application.Game.SwitchToGameState ("PhysicsScene");
 
             ValidMessages = new[] { (int)MessageId.Running, (int)MessageId.Update, (int)MessageId.Input };
             application.MessageManager += this;
@@ -169,6 +175,7 @@ namespace FreezingArcher.Game
             InitStupidWall ();
 
             player.GetComponent<PhysicsComponent>().RigidBody.IsActive = true;
+            application.Game.SwitchToGameState ("PhysicsScene");
         }
 
         void InitStupidWall()
@@ -240,6 +247,7 @@ namespace FreezingArcher.Game
 
             if (msg.MessageId == (int)MessageId.Running)
             {
+                application.Game.SwitchToGameState("JitterTestLoadingScreen");
                 new Thread(InitializeTest).Start();
             }
         }

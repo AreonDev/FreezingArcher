@@ -105,6 +105,7 @@ namespace FreezingArcher.Game.Maze
             calcExitPathDelegate = exitFunc;
             placeFeaturesDelegate = placeFeaturesFunc;
             this.physics = physics;
+            HasFinished = false;
         }
 
         internal WeightedGraph<MazeCell, MazeCellEdgeWeight> graph;
@@ -206,6 +207,8 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <value>The portal spawn factor.</value>
         public uint PortalSpawnFactor { get; private set; }
+
+        public bool HasFinished{ get; private set;}
 
         /// <summary>
         /// Init this instance.
@@ -327,6 +330,7 @@ namespace FreezingArcher.Game.Maze
             {
                 addMazeToGameStateDelegate(graph, state.MessageProxy, entities, ref playerPosition, state.Scene,
                     physics, scale, (uint) Size.X, Offset.X, Offset.Y);
+                HasFinished = true;
             }
             else
             {

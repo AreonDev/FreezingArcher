@@ -82,7 +82,7 @@ namespace FreezingArcher.Game
             ValidMessages = new[] { (int)MessageId.Running, (int)MessageId.Update, (int)MessageId.Input };
             application.MessageManager += this;
 
-            RigidBody playerBody = new RigidBody(new BoxShape(JVector.One));
+            RigidBody playerBody = new RigidBody(new CylinderShape(1.0f, 0.5f));
             playerBody.Position = new JVector (3.0f, 1.0f, 2.0f);
             playerBody.AllowDeactivation = false;
             playerBody.Material.StaticFriction = 0f;
@@ -164,9 +164,9 @@ namespace FreezingArcher.Game
 
                 //var body = new RigidBody(new TriangleMeshShape(new Octree(vertices, indices)));
                 var body = new RigidBody(new BoxShape(2, 4, 2));
-                body.Material.KineticFriction = 100.01f;
-                body.Material.StaticFriction = 100.01f;
-                body.Position = tc.Position.ToJitterVector ();
+                body.Material.KineticFriction = 10.01f;
+                body.Material.StaticFriction = 10.01f;
+                body.Position = tc.Position.ToJitterVector () + JVector.Up*2;
                 state.PhysicsManager.World.AddBody(body);
                 body.IsStatic = true;
                 wall.GetComponent<PhysicsComponent>().RigidBody = body;

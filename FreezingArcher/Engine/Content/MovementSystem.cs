@@ -144,6 +144,11 @@ namespace FreezingArcher.Content
             {
                 if (!was_something_pressed && vec.Length() < 2.8f)
                     pc.RigidBody.LinearVelocity = new JVector(0.0f, pc.RigidBody.LinearVelocity.Y, 0.0f);
+                else if (was_something_pressed && vec.Length() < 2.8f)
+                    pc.RigidBody.AddForce(pc.RigidBody.LinearVelocity);
+                    
+                //Do not allow the body to fall
+                pc.RigidBody.Orientation = JMatrix.CreateFromYawPitchRoll(0, 90, 0);
             }
         }
     }

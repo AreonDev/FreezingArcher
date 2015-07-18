@@ -260,14 +260,14 @@ namespace FreezingArcher.Game.Maze
                     if (state != null)
                         AddToGameState(state);
 
-                    if (postGenerateHook != null)
-                        postGenerateHook();
-
                     if (proxy)
                     {
-                            Thread.Sleep(10000); // we don't wanna loose messages here :)
+                        Thread.Sleep(1000); // we don't wanna loose messages here :)
                         state.MessageProxy.StopProcessing();
                     }
+
+                    if (postGenerateHook != null)
+                        postGenerateHook();
                 });
                 generationThread.Start();
             }

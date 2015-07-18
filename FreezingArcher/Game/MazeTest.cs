@@ -45,6 +45,8 @@ namespace FreezingArcher.Game
     {
         double f = 0;
 
+        LoadingScreen loadingScreen;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
         /// </summary>
@@ -65,6 +67,13 @@ namespace FreezingArcher.Game
             var state = game.GetGameState("maze_overworld");
             state.Scene = new CoreScene(rendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.Crimson;
+            state.MessageProxy.StartProcessing();
+
+            loadingScreen = new LoadingScreen(application, application.MessageManager, "loading.png",
+                "MazeLoadingScreen",
+                to: new[] {new Tuple<string, GameStateTransition>(state.Name, new GameStateTransition(0))});
+
+            game.SwitchToGameState("MazeLoadingScreen");
 
             player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, systems: new[] {
                 typeof (MovementSystem),
@@ -109,7 +118,8 @@ namespace FreezingArcher.Game
             maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 10, 10);
             maze[1].PlayerPosition += player.GetComponent<TransformComponent>().Position;
 
-            game.SwitchToGameState("maze_overworld");
+            state.MessageProxy.StopProcessing();
+            //game.SwitchToGameState("maze_overworld");
         }
 
         readonly MazeGenerator mazeGenerator;
@@ -152,6 +162,8 @@ namespace FreezingArcher.Game
 
         #region IMessageConsumer implementation
 
+        bool finishedLoading = false;
+
         /// <summary>
         /// Processes the incoming message
         /// </summary>
@@ -162,8 +174,18 @@ namespace FreezingArcher.Game
             {
                 var um = msg as UpdateMessage;
 
-                if(game.CurrentGameState == game.GetGameState("maze_overworld")) if(maze[0].HasFinished) game.CurrentGameState.PhysicsManager.Update(um.TimeStamp);
-                if(game.CurrentGameState == game.GetGameState("maze_underworld")) if(maze[1].HasFinished) game.CurrentGameState.PhysicsManager.Update(um.TimeStamp);
+                if (maze[0].HasFinished && maze[1].HasFinished && !finishedLoading)
+                {
+                    finishedLoading = true;
+                    if (game.CurrentGameState.Name != "maze_overworld")
+                        game.SwitchToGameState("maze_overworld");
+                }
+
+                if(game.CurrentGameState == game.GetGameState("maze_overworld") && maze[0].HasFinished)
+                    game.CurrentGameState.PhysicsManager.Update(um.TimeStamp);
+                
+                if(game.CurrentGameState == game.GetGameState("maze_underworld") && maze[1].HasFinished)
+                    game.CurrentGameState.PhysicsManager.Update(um.TimeStamp);
             }
 
             var im = msg as InputMessage;

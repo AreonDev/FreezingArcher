@@ -67,11 +67,6 @@ namespace FreezingArcher.Content
                 if (tc == null)
                     return;
 
-                if (Entity.Name == "player")
-                {
-                    Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Debug, "PhysicsSystem", "Found player!");
-                }
-
                 if (pc.PhysicsApplying.HasFlag(AffectedByPhysics.Position))
                     tc.Position = pc.RigidBody.Position.ToFreezingArcherVector();
                     

@@ -91,6 +91,13 @@ namespace FreezingArcher.Renderer.Scene
 
         public void AddObject(SceneObject obj)
         {
+            if(obj == null)
+            {
+                Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.BadArgument,
+                    "SceneObject = null");
+                return;
+            }
+
             if (IsInitialized)
             {
                 if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)

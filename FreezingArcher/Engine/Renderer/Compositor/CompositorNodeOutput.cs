@@ -49,7 +49,7 @@ namespace FreezingArcher.Renderer.Compositor
             spr.AbsolutePosition = new FreezingArcher.Math.Vector2(0, 0);
             spr.CustomEffect = false;
 
-            if (InputSlots[0].SlotTexture != null)
+            if (InputSlots[0].SlotTexture != null && InputSlots[0].SlotTexture.Created)
             {
                 spr.Init(InputSlots[0].SlotTexture);
 

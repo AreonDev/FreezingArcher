@@ -57,6 +57,8 @@ namespace FreezingArcher.Renderer.Compositor
                   
                     Node.InitFramebuffer(RendererContext);
 
+                    Node.InitOtherStuff();
+
                     WasCalled = true;
                 };
             }
@@ -226,6 +228,7 @@ namespace FreezingArcher.Renderer.Compositor
 
         public abstract void ConfigureSlots();
         public abstract void LoadEffect();
+        public virtual void InitOtherStuff(){}
     }
 }
 

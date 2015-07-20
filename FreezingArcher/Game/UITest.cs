@@ -75,42 +75,7 @@ namespace FreezingArcher.Game
                 "__click__"
             };
 
-            /*
-            var recs = new[] {
-                new Rectangle(10, 50, 200, 20),
-                new Rectangle(220, 50, 200, 20),
-                new Rectangle(430, 50, 200, 20),
-                new Rectangle(10, 80, 200, 20),
-                new Rectangle(220, 80, 100, 20),
-                new Rectangle(330, 80, 150, 20)
-            };*/
-
-            /*
-            window = new WindowControl (sceneobj.Canvas);
-            window.SetSize (400, 400);
-            window.SetPosition (30, 30);
-            window.Show ();
-
-            scroll = new ScrollControl (window);
-            scroll.SetBounds (10, 10, 370, 350);
-            scroll.EnableScroll (true, false);
-            scroll.Dock = Gwen.Pos.Fill;
-
-            for (int i = 0; i < messages.Length; i++)
-            {
-                buttons[i] = new Button (scroll);
-                buttons[i].Text = messages[i];
-                buttons[i].SetBounds(recs[i]);
-                buttons[i].Pressed += onButtonPressed;
-                buttons[i].Clicked += onButtonClicked;
-                buttons[i].Released += onButtonReleased;
-            }
-                
-            scroll.ScrollToLeft ();
-            scroll.ScrollToLeft ();
-            */
-
-            new InventoryGUI(new Inventory(new Vector2i(10,5), 6), sceneobj.Canvas);
+            new InventoryGUI(new Inventory(new Vector2i(5, 7), 6), messageProvider, sceneobj.Canvas);
         }
 
         void onButtonPressed(Base btn, EventArgs args)

@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Math;
+using FreezingArcher.DataStructures;
 
 namespace FreezingArcher.Content
 {
@@ -50,6 +51,11 @@ namespace FreezingArcher.Content
         /// The default protection.
         /// </summary>
         public static readonly Protection DefaultProtection = new Protection();
+
+        /// <summary>
+        /// The default orientation.
+        /// </summary>
+        public static readonly Orientation DefaultOrientation = Orientation.Vertical;
 
         /// <summary>
         /// The default size.
@@ -101,6 +107,12 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <value>The applied protection.</value>
         public Protection Protection { get; set; }
+
+        /// <summary>
+        /// Gets or sets the orientation.
+        /// </summary>
+        /// <value>The orientation.</value>
+        public Orientation Orientation { get; set; }
 
         /// <summary>
         /// Gets the size of this item for use in an inventory.

@@ -165,10 +165,29 @@ namespace FreezingArcher.Content
             return res;
         }
 
+        public Vector2i GetPositionOfItem(ItemComponent item)
+        {
+            var hc = item.GetHashCode();
+
+            int x, y = 0;
+            for (; y < storage.GetLength(0); y++)
+            {
+                x = 0;
+                for (; x < storage.GetLength(1); x++)
+                {
+                    if (storage[y, x] == hc)
+                        return new Vector2i(y, x);
+                }
+            }
+
+            Logger.Log.AddLogEntry(LogLevel.Error, "Inventory", "Item does not exist in inventory!");
+
+            return new Vector2i(-1, -1);
+        }
+
         public bool Insert(ItemComponent item)
         {
             bool result = false;
-            Orientation orientation = Orientation.Horizontal;
             int x = 0, y = 0;
             for (; y < storage.GetLength(0); y++)
             {
@@ -178,25 +197,25 @@ namespace FreezingArcher.Content
                     if (fits(new Vector2i(x, y), item.Size))
                     {
                         result = true;
-                        orientation = Orientation.Horizontal;
+                        item.Orientation = Orientation.Horizontal;
                         break;
                     }
                     if (fits(new Vector2i(x, y), item.Size.Yx))
                     {
                         result = true;
-                        orientation = Orientation.Vertical;
+                        item.Orientation = Orientation.Vertical;
                         break;
                     }
                 }
                 if (result)
                     break;
             }
-            return result && Insert(item, new Vector2i(x, y), orientation);
+            return result && Insert(item, new Vector2i(x, y));
         }
 
-        public bool Insert(ItemComponent item, Vector2i position, Orientation orientation)
+        public bool Insert(ItemComponent item, Vector2i position)
         {
-            var size = orientation == Orientation.Vertical ? item.Size.Yx : item.Size;
+            var size = item.Orientation == Orientation.Vertical ? item.Size.Yx : item.Size;
             if (fits(position, size))
             {
                 for (int i = 0; i < size.X; i++)
@@ -223,6 +242,11 @@ namespace FreezingArcher.Content
         public ItemComponent TakeOut(Vector2i position)
         {
             return TakeOut(position.X, position.Y);
+        }
+
+        public ItemComponent TakeOut(ItemComponent item)
+        {
+            return TakeOut(GetPositionOfItem(item));
         }
 
         public ItemComponent TakeOut(int positionX, int positionY)

@@ -1206,12 +1206,12 @@ namespace FreezingArcher.Renderer
         {
             Vertex2D[] v2d = new Vertex2D[9];
 
-            v2d[0] = new Vertex2D(new Vector3(0.0f, 0.0f, -5.0f), Vector4.Zero, new Vector2(0.0f, 0.0f));
-            v2d[1] = new Vertex2D(new Vector3(1.0f, 0.0f, -5.0f), Vector4.Zero, new Vector2(1.0f, 0.0f));
-            v2d[2] = new Vertex2D(new Vector3(0.0f, 1.0f, -5.0f), Vector4.Zero, new Vector2(0.0f, 1.0f));
-            v2d[3] = new Vertex2D(new Vector3(0.0f, 1.0f, -5f), Vector4.Zero, new Vector2(0.0f, 1.0f));
-            v2d[4] = new Vertex2D(new Vector3(1.0f, 0.0f, -5f), Vector4.Zero, new Vector2(1.0f, 0.0f));
-            v2d[5] = new Vertex2D(new Vector3(1.0f, 1.0f, -5f), Vector4.Zero, new Vector2(1.0f, 1.0f));
+            v2d[0] = new Vertex2D(new Vector3(0.0f, 0.0f, -5.0f), Vector4.Zero, new Vector2(0.0f, 1.0f));
+            v2d[1] = new Vertex2D(new Vector3(1.0f, 0.0f, -5.0f), Vector4.Zero, new Vector2(1.0f, 1.0f));
+            v2d[2] = new Vertex2D(new Vector3(0.0f, 1.0f, -5.0f), Vector4.Zero, new Vector2(0.0f, 0.0f));
+            v2d[3] = new Vertex2D(new Vector3(0.0f, 1.0f, -5f), Vector4.Zero, new Vector2(0.0f, 0.0f));
+            v2d[4] = new Vertex2D(new Vector3(1.0f, 0.0f, -5f), Vector4.Zero, new Vector2(1.0f, 1.0f));
+            v2d[5] = new Vertex2D(new Vector3(1.0f, 1.0f, -5f), Vector4.Zero, new Vector2(1.0f, 0.0f));
 
             v2d[6] = new Vertex2D(new Vector3(0.0f, 0.0f, -5f), Vector4.Zero, new Vector2(0.0f, 0.0f));
             v2d[7] = new Vertex2D(new Vector3(-1.0f, -1.0f, -5f), Vector4.Zero, new Vector2(0.0f, 0.0f));
@@ -1238,8 +1238,6 @@ namespace FreezingArcher.Renderer
             vblk[2].Normalized = false;
             vblk[2].Offset = sizeof(Vector3) + sizeof(Vector4);
             vblk[2].Stride = Vertex2D.SIZE;
-
-            Random rnd = new Random();
 
             Vector2[] tex_override = new Vector2[6];
             for (int i = 0; i < 6; i++)
@@ -1549,6 +1547,8 @@ namespace FreezingArcher.Renderer
             _2DVertexBufferArray.UnbindVertexBufferArray();
 
             _2DUniformBuffer.UnbindBuffer();
+
+            _2DEffect.VertexProgram.SetUniform(_2DEffect.VertexProgram.GetUniformLocation("OverrideTextureCoords"), 0);
 
             GL.Enable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Blend);

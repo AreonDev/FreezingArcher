@@ -286,6 +286,8 @@ namespace FreezingArcher.Renderer.Scene
 
             FrameBuffer.EndPrepare();
 
+            IsInitialized = true;
+
             return true;
         }
 
@@ -300,11 +302,9 @@ namespace FreezingArcher.Renderer.Scene
             else
             {
                 rc.AddRCActionJob(new RCActionInitCoreScene(this, rc));
-
-                while (!IsInitialized);
             }
 
-            IsInitialized = true;
+            while (!IsInitialized) System.Threading.Thread.Sleep(1);
 
             return true;
         }

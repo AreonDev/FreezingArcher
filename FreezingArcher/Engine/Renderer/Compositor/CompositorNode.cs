@@ -32,6 +32,7 @@ namespace FreezingArcher.Renderer.Compositor
     class RCActionCompositorNodeInit : RendererCore.RCAction
     {
         public RendererContext RendererContext;
+
         public CompositorNode Node;
 
         public bool WasCalled { get; private set;}
@@ -52,12 +53,12 @@ namespace FreezingArcher.Renderer.Compositor
             {
                 return delegate ()
                 {
+                    Node.InitOtherStuff();
                     Node.ConfigureSlots();
                     Node.LoadEffect();
                   
-                    Node.InitFramebuffer(RendererContext);
-
-                    Node.InitOtherStuff();
+                    Node.ConfigureSlots();
+                    Node.InitFramebuffer();
 
                     WasCalled = true;
                 };
@@ -79,26 +80,35 @@ namespace FreezingArcher.Renderer.Compositor
     {
         public CompositorInputSlot[] InputSlots { get; protected set;}
         public CompositorOutputSlot[] OutputSlots { get; protected set;}
+
         public Effect NodeEffect { get; protected set;}
         public string Name {get; private set;}
+        public string ExtendedName {get; protected set;}
 
-        public int ID { get; private set;}
+        public long ID { get; private set;}
 
-        private FrameBuffer OutputFramebuffer;
+        protected FrameBuffer OutputFramebuffer;
         private List<FrameBuffer.AttachmentUsage> Attachments;
 
         protected RendererContext PrivateRendererContext;
+        protected Messaging.MessageProvider PrivateMessageProvider;
 
+        public bool Rendered{ get; private set;}
         public bool Active {get; set;}
 
         public bool IsInitialized { get; private set;}
 
         Dictionary<string, Value> Settings;
 
-        public CompositorNode(string name)
+        public CompositorNode(string name, RendererContext rc, Messaging.MessageProvider prov)
         {
             Name = name;
-            ID = (int)DateTime.Now.Ticks;
+            ID = DateTime.Now.Ticks;
+
+            PrivateRendererContext = rc;
+            PrivateMessageProvider = prov;
+
+            Init(rc);
         }
          
         private FrameBuffer.AttachmentUsage SlotNumberToAUsage(int number)
@@ -142,11 +152,26 @@ namespace FreezingArcher.Renderer.Compositor
             return FrameBuffer.AttachmentUsage.Nothing;
         }
 
-        internal void InitFramebuffer(RendererContext rc)
+        internal void InitFramebuffer()
         {
+            if (OutputFramebuffer != null)
+            {
+                OutputFramebuffer.BeginPrepare();
+                foreach (CompositorOutputSlot slot in OutputSlots)
+                {
+                    OutputFramebuffer.DeleteTexture(SlotNumberToAUsage(slot.SlotNumber));
+
+                    //Why should i delete all resources? Framebuffer is enough
+                    //PrivateRendererContext.DeleteGraphicsResourceAsync(slot.SlotTexture);
+                }
+                OutputFramebuffer.EndPrepare();
+
+                PrivateRendererContext.DeleteGraphicsResourceAsync(OutputFramebuffer);
+            }
+
             if (OutputSlots != null && OutputSlots.Length > 0)
             {
-                OutputFramebuffer = rc.CreateFrameBuffer("CompositorNode_" + Name + "_FrameBuffer_" + DateTime.Now.Ticks);
+                OutputFramebuffer = PrivateRendererContext.CreateFrameBuffer("CompositorNode_" + Name + "_FrameBuffer_" + DateTime.Now.Ticks);
 
                 Attachments = new List<FrameBuffer.AttachmentUsage>();
 
@@ -161,18 +186,18 @@ namespace FreezingArcher.Renderer.Compositor
                     }
                 }
 
+
+
                 OutputFramebuffer.EndPrepare();
             }
         }
 
         public virtual bool Init(RendererContext rc)
         {
-            PrivateRendererContext = rc;
-
             RCActionCompositorNodeInit init = new RCActionCompositorNodeInit(rc, this);
 
             //Inits all necessary things
-            if (System.Threading.Thread.CurrentThread.ManagedThreadId == rc.Application.ManagedThreadId)
+            if (System.Threading.Thread.CurrentThread.ManagedThreadId == PrivateRendererContext.Application.ManagedThreadId)
                 init.Action();
             else
                 rc.AddRCActionJob(init);
@@ -180,10 +205,12 @@ namespace FreezingArcher.Renderer.Compositor
             while (!init.WasCalled)
                 System.Threading.Thread.Sleep(1);
 
+            IsInitialized = true;
+
             return true;
         }
 
-        public virtual void Begin(RendererContext rc)
+        public virtual void Begin()
         {
             if (IsInitialized)
             {
@@ -209,12 +236,12 @@ namespace FreezingArcher.Renderer.Compositor
             }
         }
 
-        public virtual void Draw(RendererContext rc)
+        public virtual void Draw()
         {
             
         }
 
-        public virtual void End(RendererContext rc)
+        public virtual void End()
         {
             if (IsInitialized)
             {
@@ -224,6 +251,13 @@ namespace FreezingArcher.Renderer.Compositor
                 if(OutputFramebuffer != null)
                     OutputFramebuffer.Unbind();
             }
+
+            Rendered = true;
+        }
+
+        public void Reset()
+        {
+            Rendered = false;
         }
 
         public abstract void ConfigureSlots();

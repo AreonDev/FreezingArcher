@@ -28,6 +28,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Content;
 using FreezingArcher.Renderer;
 using Jitter;
@@ -47,6 +48,9 @@ namespace FreezingArcher.Game
 
         LoadingScreen loadingScreen;
 
+        BasicCompositor compositor;
+        CompositorNodeScene scenenode;
+        CompositorNodeOutput outputnode;
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
         /// </summary>
@@ -74,6 +78,20 @@ namespace FreezingArcher.Game
                 to: new[] {new Tuple<string, GameStateTransition>(state.Name, new GameStateTransition(0))});
 
             game.SwitchToGameState("MazeLoadingScreen");
+
+            compositor = new BasicCompositor (objmnr, rendererContext);
+
+            scenenode = new CompositorNodeScene (rendererContext, messageProvider);
+            outputnode = new CompositorNodeOutput (rendererContext, messageProvider);
+
+            compositor.AddNode (scenenode);
+            compositor.AddNode (outputnode);
+
+            compositor.AddConnection (scenenode, outputnode, 0, 0);
+
+            scenenode.Scene = state.Scene;
+
+            rendererContext.Compositor = compositor;
 
             player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, systems: new[] {
                 typeof (MovementSystem),

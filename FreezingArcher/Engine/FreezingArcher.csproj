@@ -412,6 +412,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\ItemAddedToInventoryBarMessage.cs" />
     <Compile Include="Messaging\ItemAddedToInventoryMessage.cs" />
     <Compile Include="Messaging\ActiveInventoryBarItemChangedMessage.cs" />
+    <Compile Include="Renderer\Compositor\CompositorNodeScene.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

@@ -29,22 +29,14 @@ using FreezingArcher.Output;
 
 namespace FreezingArcher.Renderer.Compositor
 {
-    public class CompositorEdgeDescription : IComparable
+    public class CompositorEdgeDescriptionListWrapper : IComparable
     {
-        public CompositorEdgeDescription()
+        public CompositorEdgeDescriptionListWrapper()
         {
-            ID = (int)DateTime.Now.Ticks;
+            Descriptions = new List<CompositorEdgeDescription>();
         }
 
-        public int ID {get; private set;}
-
-        public int InputSlotIndex;
-        public int OutputSlotIndex;
-
-        public CompositorNode Input;
-        public CompositorNode Output;
-
-        public bool Active;
+        public List<CompositorEdgeDescription> Descriptions;
 
         #region IComparable implementation
         public int CompareTo(object obj)
@@ -54,11 +46,29 @@ namespace FreezingArcher.Renderer.Compositor
         #endregion
     }
 
+    public class CompositorEdgeDescription
+    {
+        public CompositorEdgeDescription()
+        {
+            ID = DateTime.Now.Ticks;
+        }
+
+        public long ID {get; private set;}
+
+        public int InputSlotIndex;
+        public int OutputSlotIndex;
+
+        public CompositorNode Input;
+        public CompositorNode Output;
+
+        public bool Active;
+    }
+
     public class BasicCompositor
     {
-        DirectedWeightedGraph<CompositorNode, List<CompositorEdgeDescription>> _CompositorGraph;
-        List<DirectedWeightedNode<CompositorNode, List<CompositorEdgeDescription>>> _Nodes;
-        List<DirectedWeightedEdge<CompositorNode, List<CompositorEdgeDescription>>> _Edges;
+        DirectedWeightedGraph<CompositorNode, CompositorEdgeDescriptionListWrapper> _CompositorGraph;
+        List<DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper>> _Nodes;
+        List<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper>> _Edges;
 
         object graphLock;
 
@@ -66,11 +76,13 @@ namespace FreezingArcher.Renderer.Compositor
 
         public BasicCompositor(ObjectManager objm, RendererContext rc)
         {
-            _CompositorGraph = new DirectedWeightedGraph<CompositorNode, List<CompositorEdgeDescription>>();
+            graphLock = new object();
+
+            _CompositorGraph = objm.CreateOrRecycle<DirectedWeightedGraph<CompositorNode, CompositorEdgeDescriptionListWrapper>>();
             _CompositorGraph.Init();
 
-            _Nodes = new List<DirectedWeightedNode<CompositorNode, List<CompositorEdgeDescription>>>();
-            _Edges = new List<DirectedWeightedEdge<CompositorNode, List<CompositorEdgeDescription>>>();
+            _Nodes = new List<DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper>>();
+            _Edges = new List<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper>>();
 
             RendererContext = rc;
         }
@@ -88,7 +100,7 @@ namespace FreezingArcher.Renderer.Compositor
         {
             lock (graphLock)
             {
-                DirectedWeightedNode<CompositorNode, List<CompositorEdgeDescription>> gnode = null;
+                DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper> gnode = null;
 
                 _Nodes.ForEach(x =>
                     {
@@ -96,31 +108,32 @@ namespace FreezingArcher.Renderer.Compositor
                             gnode = x;
                     });
 
-                _CompositorGraph.RemoveNode(x);
+                _CompositorGraph.RemoveNode(gnode);
             }
         }
 
         public void AddConnection(CompositorNode begin, CompositorNode end, int begin_slot = 0, int end_slot = 0)
         {
             lock (graphLock)
-            {
+            {                
+                //This fuck is fucking crazy.... 
                 CompositorEdgeDescription desc = new CompositorEdgeDescription();
                 desc.InputSlotIndex = end_slot;
                 desc.OutputSlotIndex = begin_slot;
                 desc.Active = true;
                 desc.Input = begin;
                 desc.Output = end;
-
+               
                 if (begin == null || end == null)
                 {
                     Logger.Log.AddLogEntry(LogLevel.Error, "BasicCompositor", Status.Meh);
                     return;
                 }
                     
-                DirectedWeightedEdge<CompositorNode, List<CompositorEdgeDescription>> gedge = null;
+                DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper> gedge = null;
 
-                DirectedWeightedNode<CompositorNode, List<CompositorEdgeDescription>> gnode_begin = null;
-                DirectedWeightedNode<CompositorNode, List<CompositorEdgeDescription>> gnode_end = null;
+                DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper> gnode_begin = null;
+                DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper> gnode_end = null;
 
                 //Find begin and end node
                 _Nodes.ForEach(x => {if(x.Data.ID == begin.ID) gnode_begin = x;});
@@ -136,7 +149,10 @@ namespace FreezingArcher.Renderer.Compositor
                     return;
                 }
 
-                if (gnode_begin.Data.OutputSlots.Length <= begin_slot || gnode_end.Data.InputSlots.Length <= end_slot)
+
+
+                if ((gnode_begin.Data.OutputSlots != null && gnode_begin.Data.OutputSlots.Length <= begin_slot) || 
+                    (gnode_end.Data.InputSlots != null && gnode_end.Data.InputSlots.Length <= end_slot))
                 {
                     Logger.Log.AddLogEntry(LogLevel.Error, "BasicCompositor", Status.BadArgument);
                     return;
@@ -150,18 +166,22 @@ namespace FreezingArcher.Renderer.Compositor
                     });
 
                 if (gedge == null)
-                    _Edges.Add(_CompositorGraph.AddEdge(gnode_begin, gnode_end, new List<CompositorEdgeDescription>().Add(desc)));
+                {
+                    CompositorEdgeDescriptionListWrapper wrap = new CompositorEdgeDescriptionListWrapper();
+                    wrap.Descriptions.Add(desc);
+                    _Edges.Add(_CompositorGraph.AddEdge(gnode_begin, gnode_end, wrap));
+                }
                 else
-                    gedge.Weight.Add(desc);
+                    gedge.Weight.Descriptions.Add(desc);
             }
         }
 
-        public DirectedWeightedNode<CompositorNode, List<CompositorEdgeDescription>>[] GetNodes()
+        public DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper>[] GetNodes()
         {
             return _Nodes.ToArray();
         }
 
-        public DirectedWeightedEdge<CompositorNode, List<CompositorEdgeDescription>>[] GetEdges()
+        public DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper>[] GetEdges()
         {
             return _Edges.ToArray();
         }
@@ -170,7 +190,7 @@ namespace FreezingArcher.Renderer.Compositor
         {
             lock (graphLock)
             {
-                DirectedWeightedEdge<CompositorNode, List<CompositorEdgeDescription>> gedge = null;
+                DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper> gedge = null;
 
                 throw new NotImplementedException();
             }
@@ -180,41 +200,47 @@ namespace FreezingArcher.Renderer.Compositor
         {
             lock (graphLock)
             {
-                //Find begin node
-                /*
-                DirectedWeightedGraph<CompositorNode, List<CompositorEdgeDescription>> gbegin = null;
-                _Nodes.ForEach(x =>
-                    {
-                        if (x.Data.Name == "NodeStart")
-                            gbegin = x;
-                    });
+                bool started = false;
+                bool first_edge_where_start_node_was_start = false;
 
-                if (gbegin == null)
-                    return;
-
-                _CompositorGraph.BreadthFirstSearch(*/
-
-                //Simply just go through the list.. and do stuff in order
-                Logger.Log.AddLogEntry(LogLevel.Warning, "BasicCompositor", "Graph Iteration is not implemented yet!");
-                SimpleGothrough();
-            }
-        }
-
-        private void SimpleGothrough()
-        {
-            //Go through edges, hopefully, everything is in the right order
-            foreach (DirectedWeightedEdge<CompositorNode, List<CompositorEdgeDescription>> edge in _Edges)
-            {
-                //Call start node
-                edge.SourceNode.Data.Begin(RendererContext);
-                edge.SourceNode.Data.Draw(RendererContext);
-                edge.SourceNode.Data.End(RendererContext);
-
-                //Change textures
-                foreach (CompositorEdgeDescription desc in edge.Weight)
+                foreach(var edge in (IEnumerable<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper>>) _CompositorGraph.AsBreadthFirstEnumerable)
                 {
-                    edge.DestinationNode.Data.InputSlots[desc.InputSlotIndex].SlotTexture = edge.SourceNode.Data.OutputSlots[desc.OutputSlotIndex];
+                    if (edge.SourceNode.Data.Name == "NodeStart" && !started)
+                    {
+                        first_edge_where_start_node_was_start = true;
+                    }
+
+                    started = true;
+
+                    if (first_edge_where_start_node_was_start)
+                    {
+                        if (!edge.SourceNode.Data.Rendered)
+                        {
+                            edge.SourceNode.Data.Begin();
+                            edge.SourceNode.Data.Draw();
+                            edge.SourceNode.Data.End();
+                        }
+
+                        foreach (CompositorEdgeDescription desc in edge.Weight.Descriptions)
+                        {
+                            desc.Output.InputSlots[desc.InputSlotIndex].SlotTexture = desc.Input.OutputSlots[desc.OutputSlotIndex].SlotTexture;
+                        }
+                    }
                 }
+
+                //Are there some nodes, which are not rendered?
+                foreach (DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper> node in _Nodes)
+                {
+                    if (!node.Data.Rendered)
+                    {
+                        node.Data.Begin();
+                        node.Data.Draw();
+                        node.Data.End();
+                    }
+                }
+                    
+                //Reset all nodes
+                _Nodes.ForEach(x => x.Data.Reset());
             }
         }
     }

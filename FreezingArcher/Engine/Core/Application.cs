@@ -306,7 +306,10 @@ namespace FreezingArcher.Core
 
                 //Draw
                 RendererContext.Begin();
-                RendererContext.DrawScene();
+                if (RendererContext.Compositor == null)
+                    RendererContext.DrawScene();
+                else
+                    RendererContext.Compose();
                 RendererContext.End();
 
                 Window.SwapBuffers ();

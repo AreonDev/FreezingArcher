@@ -72,6 +72,8 @@ namespace Gwen.Renderer
             m_WasBlendEnabled = PrivateRendererContext.IsEnabled(RendererEnableCap.Blend);
             m_WasTexture2DEnabled = PrivateRendererContext.IsEnabled(RendererEnableCap.Texture2D);
             m_WasDepthTestEnabled = PrivateRendererContext.IsEnabled(RendererEnableCap.DepthTest);
+
+            PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.SrcAlpha, RendererBlendingFactorDest.OneMinusSrcAlpha);
         }
 
         /// <summary>

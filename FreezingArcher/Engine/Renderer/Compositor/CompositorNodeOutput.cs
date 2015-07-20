@@ -26,7 +26,7 @@ namespace FreezingArcher.Renderer.Compositor
 {
     public class CompositorNodeOutput : CompositorNode
     {
-        public CompositorNodeOutput() : base("NodeOutput")
+        public CompositorNodeOutput(RendererContext rc, Messaging.MessageProvider mp) : base("NodeOutput", rc, mp)
         {
         }
 
@@ -43,17 +43,17 @@ namespace FreezingArcher.Renderer.Compositor
             //No need to load any effect...
         }
 
-        public virtual void Draw(RendererContext rc)
+        public override void Draw()
         {
-            Sprite spr = new Sprite();
-            spr.AbsolutePosition = new FreezingArcher.Math.Vector2(0, 0);
-            spr.CustomEffect = false;
-
             if (InputSlots[0].SlotTexture != null && InputSlots[0].SlotTexture.Created)
             {
+                Sprite spr = new Sprite();
+                spr.AbsolutePosition = new FreezingArcher.Math.Vector2(0, 0);
+                spr.CustomEffect = false;
+
                 spr.Init(InputSlots[0].SlotTexture);
 
-                rc.DrawSpriteAbsolute(spr);
+                PrivateRendererContext.DrawSpriteAbsolute(spr);
             }
         }
 

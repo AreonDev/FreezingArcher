@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Xml;
 
 using Pencil.Gaming.Graphics;
+using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
@@ -65,6 +66,7 @@ namespace FreezingArcher.Renderer
 
 
         private CoreScene PrivateScene;
+        private BasicCompositor PrivateCompositor;
         /// <summary>
         /// Gets or sets the scene.
         /// </summary>
@@ -82,11 +84,27 @@ namespace FreezingArcher.Renderer
             }
         }
 
+        public BasicCompositor Compositor
+        {
+            get
+            {
+                return PrivateCompositor;
+            }
+
+            set
+            {
+                PrivateCompositor = value;
+            }
+        }
+
         public SimpleMaterial SimpleMaterial { get; private set;}
 
         public RendererContext(MessageProvider messageProvider) : base(messageProvider)
         {
             m_AssimpContext = new AssimpContext();
+
+            PrivateScene = null;
+            PrivateCompositor = null;
         }
 
         ~RendererContext()
@@ -486,6 +504,14 @@ namespace FreezingArcher.Renderer
             //spr.Scaling = new Vector2(1, 1);
 
             //DrawSpriteAbsolute(spr);
+        }
+
+        public void Compose()
+        {
+            if (PrivateCompositor != null)
+            {
+                PrivateCompositor.StartCompositing();
+            }
         }
     }
 }

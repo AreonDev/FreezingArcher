@@ -26,7 +26,7 @@ namespace FreezingArcher.Renderer.Compositor
 {
     public class CompositorNodeStart : CompositorNode
     {
-        public CompositorNodeStart() : base("NodeStart")
+        public CompositorNodeStart(RendererContext rc, Messaging.MessageProvider mp) : base("NodeStart", rc, mp)
         {
         }
 
@@ -35,19 +35,19 @@ namespace FreezingArcher.Renderer.Compositor
             return base.Init(rc);
         }
 
-        public override void Begin(RendererContext rc)
+        public override void Begin()
+        {
+            base.Begin();
+        }
+
+        public override void Draw()
         {
             
         }
 
-        public override void Draw(RendererContext rc)
+        public override void End()
         {
-            
-        }
-
-        public override void End(RendererContext rc)
-        {
-            
+            base.End();
         }
 
         public override void ConfigureSlots()

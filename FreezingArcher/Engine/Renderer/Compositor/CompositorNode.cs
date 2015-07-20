@@ -238,7 +238,20 @@ namespace FreezingArcher.Renderer.Compositor
 
         public virtual void Draw()
         {
-            
+            Sprite spr = new Sprite();
+            spr.AbsolutePosition = new FreezingArcher.Math.Vector2(0, 0);
+            spr.CustomEffect = false;
+
+            //Just stub texture.... all others need to be binded too
+            spr.Init(InputSlots[0].SlotTexture);
+
+            foreach(CompositorInputSlot cis in InputSlots)
+            {
+                if (cis.SlotTexture != null)
+                    cis.SlotTexture.Bind(cis.SlotNumber);
+            }
+
+            PrivateRendererContext.DrawSpriteAbsolute(spr);
         }
 
         public virtual void End()

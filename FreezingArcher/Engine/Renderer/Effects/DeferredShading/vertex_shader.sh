@@ -1,7 +1,7 @@
 ﻿//Input format
 //####################################################
 layout(location = 0) in vec3 InPosition;
-layout(location = 4) in vec3 InTexCoord1;
+layout(location = 2) in vec3 InTexCoord1;
 //####################################################
 
 //Output per Pixel

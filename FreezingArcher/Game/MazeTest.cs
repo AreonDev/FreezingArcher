@@ -49,8 +49,12 @@ namespace FreezingArcher.Game
         LoadingScreen loadingScreen;
 
         BasicCompositor compositor;
+
         CompositorNodeScene scenenode;
         CompositorNodeOutput outputnode;
+        CompositorNodeDeferredShading deferredshadingnode;
+        CompositorBlurNode blur;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
         /// </summary>
@@ -83,11 +87,23 @@ namespace FreezingArcher.Game
 
             scenenode = new CompositorNodeScene (rendererContext, messageProvider);
             outputnode = new CompositorNodeOutput (rendererContext, messageProvider);
+            deferredshadingnode = new CompositorNodeDeferredShading (rendererContext, messageProvider);
+            blur = new CompositorBlurNode (rendererContext, messageProvider);
 
             compositor.AddNode (scenenode);
             compositor.AddNode (outputnode);
+            compositor.AddNode (deferredshadingnode);
+            compositor.AddNode (blur);
 
-            compositor.AddConnection (scenenode, outputnode, 0, 0);
+
+            compositor.AddConnection (scenenode, deferredshadingnode, 0, 0);
+            compositor.AddConnection (scenenode, deferredshadingnode, 1, 1);
+            compositor.AddConnection (scenenode, deferredshadingnode, 2, 2);
+            compositor.AddConnection (scenenode, deferredshadingnode, 3, 3);
+
+            compositor.AddConnection (deferredshadingnode, blur, 0, 0);
+
+            compositor.AddConnection (blur, outputnode, 0, 0);
 
             scenenode.Scene = state.Scene;
 

@@ -45,6 +45,10 @@ namespace FreezingArcher.Renderer.Compositor
 
         public override void Draw()
         {
+            PrivateRendererContext.EnableDepthTest(false);
+
+            PrivateRendererContext.Clear(Math.Color4.Black);
+
             if (InputSlots[0].SlotTexture != null && InputSlots[0].SlotTexture.Created)
             {
                 Sprite spr = new Sprite();
@@ -55,6 +59,8 @@ namespace FreezingArcher.Renderer.Compositor
 
                 PrivateRendererContext.DrawSpriteAbsolute(spr);
             }
+
+            PrivateRendererContext.EnableDepthTest(true);
         }
 
         #endregion

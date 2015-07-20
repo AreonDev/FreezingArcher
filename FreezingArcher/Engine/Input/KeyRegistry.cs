@@ -113,7 +113,7 @@ namespace FreezingArcher.Input
                     if (CachedConfig.TryGetValue (i.Key, out s))
                     {
                         if (s != null)
-                            i.KeyAction = s;
+                           i.KeyAction = s;
                     }
                 }
             }

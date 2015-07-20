@@ -11,10 +11,10 @@ layout(location = 5) in vec3 binormal; // binormal vector (view space)
 layout(location = 6) in vec3 view_position;
 //####################################################
 
-//layout(location = 2) out vec4 normal_color;
+layout(location = 2) out vec4 normal_color;
 layout(location = 0) out vec4 diffuse_color;
-//layout(location = 3) out vec4 specular_color;
-//layout(location = 1) out vec4 position_color;
+layout(location = 3) out vec4 specular_color;
+layout(location = 1) out vec4 position_color;
 
 uniform sampler2D NormalTexture;
 uniform sampler2D ColorTexture;
@@ -55,9 +55,9 @@ void main()
         normalcol = normalcol*0.5 +0.5;
 
         //fill G-Buffer
-        //normal_color = vec4(normalcol, 1);
+        normal_color = vec4(normalcol, 1);
         diffuse_color = vec4(color*DiffuseColor.xyz, 1);
-        //specular_color = SpecularColor;
+        specular_color = SpecularColor;
 
-        //position_color = vec4(vpos.xyz, 1.0);
+        position_color = vec4(vpos.xyz, 1.0);
 }

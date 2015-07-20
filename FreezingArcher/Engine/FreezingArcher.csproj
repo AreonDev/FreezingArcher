@@ -226,7 +226,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\RendererContext.cs" />
     <Compile Include="Renderer\VertexBufferArray.cs" />
     <Compile Include="Renderer\Scene\CameraManager.cs" />
-    <Compile Include="Renderer\DefferedShading.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\RectangleSceneObject.cs" />
     <Compile Include="Renderer\Scene\CoreScene.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\CubeSceneObject.cs" />
@@ -413,6 +412,9 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\ItemAddedToInventoryMessage.cs" />
     <Compile Include="Messaging\ActiveInventoryBarItemChangedMessage.cs" />
     <Compile Include="Renderer\Compositor\CompositorNodeScene.cs" />
+    <Compile Include="Renderer\Compositor\CompositorNodeDeferredShading.cs" />
+    <Compile Include="Renderer\DeferredShading.cs" />
+    <Compile Include="Renderer\Compositor\CompositorBlurNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -478,7 +480,9 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Renderer\TestGraphics\Rabbit\Rabbit_S.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Renderer\Effects\DeferredShading\vertex_shader.sh" />
+    <None Include="Renderer\Effects\DeferredShading\vertex_shader.sh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Renderer\Effects\SimpleMaterial\vertex_shader.vs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -549,7 +553,9 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Renderer\TestGraphics\Skybox\skybox.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Renderer\Effects\DeferredShading\pixel_shader.ps" />
+    <None Include="Renderer\Effects\DeferredShading\pixel_shader.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="UI\Skins\DefaultSkin.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -568,6 +574,9 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="UI\Skins\NoWayOutSkin.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Renderer\Effects\Blur\blur.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />
@@ -578,6 +587,7 @@ echo Successfully finished!</PostBuildEvent>
     <Folder Include="UI\" />
     <Folder Include="UI\Skins\" />
     <Folder Include="Renderer\TestGraphics\Monkey\" />
+    <Folder Include="Renderer\Effects\Blur\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

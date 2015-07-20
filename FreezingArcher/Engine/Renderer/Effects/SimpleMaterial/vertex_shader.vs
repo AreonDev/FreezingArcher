@@ -67,10 +67,13 @@ void main()
                 normalmat = transpose(inverse(ViewMatrix * WorldMatrix));
 
         //Vertex position in view space (with model transformations)
-        vpos = (ViewMatrix * WorldMatrix * vec4(InPosition, 1.0)).xyz;
+        if(InstancedDrawing == 1)
+                vpos = (ViewMatrix * WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0)).xyz;
+        else
+                vpos = (ViewMatrix * WorldMatrix * vec4(InPosition, 1.0)).xyz;
 
         //Tangent space vectors in view space (with model transformations)
-        normal = (normalmat * vec4(InNormal, 1.0)).xyz;
-        tangent = (normalmat * vec4(InTangent, 1.0)).xyz;
-        binormal = (normalmat * vec4(InBiNormal, 1.0)).xyz;
+        normal = normalize((normalmat * vec4(InNormal, 1.0)).xyz);
+        tangent = normalize((normalmat * vec4(InTangent, 1.0)).xyz);
+        binormal = normalize((normalmat * vec4(InBiNormal, 1.0)).xyz);
 }

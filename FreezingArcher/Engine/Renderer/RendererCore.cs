@@ -377,6 +377,14 @@ namespace FreezingArcher.Renderer
         private Effect _2DEffect;
         private UniformBuffer _2DUniformBuffer;
 
+        public Effect RC2DEffect
+        {
+            get
+            {
+                return _2DEffect;
+            }
+        }
+
         public FreezingArcher.Core.Application Application{ get; private set;}
 
         #region Actions
@@ -428,7 +436,29 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        private class RCActionCreateTexture2D : RCAction
+	public class RCActionResizeTexture : RCAction
+        {
+            public RCActionResizeTexture(Texture2D tex, RendererCore core, int width, int height){Texture = tex; Renderer = core; Width = width; Height = height;}
+
+            public Texture2D Texture;
+            public RendererCore Renderer;
+
+            public int Width;
+            public int Height;	    
+
+            public RCActionDelegate Action
+            {
+ 		get
+                {
+                    return delegate()
+                    {
+                        Texture.Resize(Width, Height);
+                    };
+		}
+            }
+        }
+
+	private class RCActionCreateTexture2D : RCAction
         {
             private enum CreationParam
             {
@@ -523,7 +553,6 @@ namespace FreezingArcher.Renderer
                 } 
             }
         }
-
         #endregion
 
         private ConcurrentQueue<RCAction> _RendererCoreActionsList;
@@ -1324,6 +1353,9 @@ namespace FreezingArcher.Renderer
 
             GL.CullFace(CullFaceMode.FrontAndBack);
             GL.Disable(EnableCap.DepthTest);
+
+            if (spr.Texture == null)
+                return;
 
             MatricesBlock2D md = new MatricesBlock2D();
 

@@ -24,9 +24,9 @@ using System;
 
 namespace FreezingArcher.Renderer
 {
-    public class DefferedShading : Effect
+    public class DeferredShading : Effect
     {
-        public DefferedShading(string name, int id) : base (name, id)
+        public DeferredShading() : base ("DeferredShading_Effect", (int)Convert.ToInt32(DateTime.Now.Ticks))
         {
             
         }

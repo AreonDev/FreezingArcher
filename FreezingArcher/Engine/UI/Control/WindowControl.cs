@@ -45,9 +45,22 @@ namespace Gwen.Control
             }
         }
 
-		public void ToggleHidden() {
-			IsHidden = !IsHidden;
-		}
+        public void ToggleHidden()
+        {
+            IsHidden = !IsHidden;
+        }
+
+        public bool IsMoveable
+        {
+            get
+            {
+                return m_TitleBar.IsDraggable;
+            }
+            set
+            {
+                m_TitleBar.IsDraggable = value;
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowControl"/> class.
@@ -66,11 +79,11 @@ namespace Gwen.Control
             m_TitleBar.Dock = Pos.Top;
 
             m_Title = new Label(m_TitleBar);
-			m_Title.Alignment = Pos.Left | Pos.CenterV;
-			m_Title.Text = title;
-			m_Title.Dock = Pos.Fill;
-			m_Title.Padding = new Padding(8, 4, 0, 0);
-			m_Title.TextColor = Skin.Colors.Window.TitleInactive;
+            m_Title.Alignment = Pos.Left | Pos.CenterV;
+            m_Title.Text = title;
+            m_Title.Dock = Pos.Fill;
+            m_Title.Padding = new Padding(8, 4, 0, 0);
+            m_Title.TextColor = Skin.Colors.Window.TitleInactive;
 
             m_CloseButton = new CloseButton(m_TitleBar, this);
             m_CloseButton.SetSize(24, 24);
@@ -94,16 +107,18 @@ namespace Gwen.Control
                 MakeModal();
         }
 
-		public override void DisableResizing() {
-			base.DisableResizing();
-			Padding = new Padding(6, 0, 6, 0);
-		}
+        public override void DisableResizing()
+        {
+            base.DisableResizing();
+            Padding = new Padding(6, 0, 6, 0);
+        }
 
-		public void Close() {
-			CloseButtonPressed(this, EventArgs.Empty);
-		}
+        public void Close()
+        {
+            CloseButtonPressed(this, EventArgs.Empty);
+        }
 
-		protected virtual void CloseButtonPressed(Base control, EventArgs args)
+        protected virtual void CloseButtonPressed(Base control, EventArgs args)
         {
             IsHidden = true;
 
@@ -154,9 +169,9 @@ namespace Gwen.Control
             bool hasFocus = IsOnTop;
 
             if (hasFocus)
-				m_Title.TextColor = Skin.Colors.Window.TitleActive;
+                m_Title.TextColor = Skin.Colors.Window.TitleActive;
             else
-				m_Title.TextColor = Skin.Colors.Window.TitleInactive;
+                m_Title.TextColor = Skin.Colors.Window.TitleInactive;
 
             skin.DrawWindow(this, m_TitleBar.Bottom, hasFocus);
         }

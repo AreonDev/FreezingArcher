@@ -25,12 +25,18 @@ using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Content;
 using FreezingArcher.Messaging;
 using FreezingArcher.Math;
+using FreezingArcher.Core;
 using Gwen.Control;
 using Gwen.Control.Layout;
 using Gwen.DragDrop;
 using FreezingArcher.Output;
 using System.Drawing;
 using FreezingArcher.DataStructures;
+using FreezingArcher.Localization;
+using Gwen;
+using System.Collections.Generic;
+using System.Linq;
+using Pencil.Gaming;
 
 namespace FreezingArcher.Game
 {
@@ -128,6 +134,14 @@ namespace FreezingArcher.Game
         readonly ItemComponent item;
         readonly int boxSize;
 
+        public ItemComponent Item
+        {
+            get
+            {
+                return item;
+            }
+        }
+
         public override void DragAndDrop_EndDragging (bool success, int x, int y)
         {
             base.DragAndDrop_EndDragging (success, x, y);
@@ -158,26 +172,63 @@ namespace FreezingArcher.Game
 
     public class InventoryGUI : IMessageConsumer
     {
-        public InventoryGUI (Inventory inventory, MessageProvider messageProvider, Base parent)
+        public InventoryGUI (Application application, Inventory inventory, MessageProvider messageProvider, Base parent)
         {
             this.inventory = inventory;
+            this.application = application;
+            ValidMessages = new[] { (int) MessageId.WindowResize, (int) MessageId.UpdateLocale, (int) MessageId.Input };
+            messageProvider += this;
+            Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
 
-            var spaces = new InventorySpace[inventory.Size.X, inventory.Size.Y];
+            spaces = new InventorySpace[inventory.Size.X, inventory.Size.Y];
 
-            var window = new WindowControl (parent, "Inventory");
+            canvasFrame = new Base(parent);
+            canvasFrame.Width = parent.Width;
+            canvasFrame.Height = parent.Height;
+
+            window = new WindowControl (canvasFrame, Localizer.Instance.GetValueForName("inventory"));
             window.DisableResizing ();
+            window.IsMoveable = false;
 
-            var itemGridFrame = new Base (window);
+            itemGridFrame = new Base (window);
             itemGridFrame.SetSize ((BoxSize + 1) * inventory.Size.X, (BoxSize + 1) * inventory.Size.Y);
 
-            var itemInfoFrame = new Base (window);
-            var infoFrameSize = 300;
+            itemInfoFrame = new Base (window);
+            const int infoFrameSize = 300;
             itemInfoFrame.SetSize (infoFrameSize, itemGridFrame.Height);
             itemGridFrame.X += itemInfoFrame.Width + 4;
 
-            window.SetSize (itemGridFrame.Width + itemInfoFrame.Width + 4 + 8, itemGridFrame.Height + 28);
-            window.SetPosition (100, 100);
-            window.Show ();
+            const int toolbarFrameSize = 30;
+            toolbarFrame = new Base(window);
+            toolbarFrame.Width = itemGridFrame.Width + itemInfoFrame.Width;
+            toolbarFrame.Height = toolbarFrameSize;
+            toolbarFrame.Y = itemGridFrame.Height - 4;
+
+            dropBtn = new Button(toolbarFrame);
+            dropBtn.AutoSizeToContents = true;
+            dropBtn.Padding = btnPadding;
+            dropBtn.Text = Localizer.Instance.GetValueForName("drop");
+            dropBtn.X = toolbarFrame.Width - dropBtn.Width;
+            dropBtn.Y = (toolbarFrameSize - dropBtn.Height) / 2;
+
+            useBtn = new Button(toolbarFrame);
+            useBtn.AutoSizeToContents = true;
+            useBtn.Padding = btnPadding;
+            useBtn.Text = Localizer.Instance.GetValueForName("use_equip");
+            useBtn.X = dropBtn.X - useBtn.Width - 8;
+            useBtn.Y = (toolbarFrameSize - useBtn.Height) / 2;
+
+            rotateBtn = new Button(toolbarFrame);
+            rotateBtn.AutoSizeToContents = true;
+            rotateBtn.Padding = btnPadding;
+            rotateBtn.Text = Localizer.Instance.GetValueForName("rotate");
+            rotateBtn.X = useBtn.X - rotateBtn.Width - 8;
+            rotateBtn.Y = (toolbarFrameSize - rotateBtn.Height) / 2;
+
+            window.SetSize (itemGridFrame.Width + itemInfoFrame.Width + 16,
+                itemGridFrame.Height + toolbarFrameSize + 28);
+            window.SetPosition ((canvasFrame.Width - window.Width) / 2, (canvasFrame.Height - window.Height) / 2);
+            window.Hide();
 
             int w = 0, h = 0;
 
@@ -205,52 +256,98 @@ namespace FreezingArcher.Game
             descriptionLabel.Height = (itemInfoFrame.Height / 3) * 2;
             descriptionLabel.SetPosition(0, itemInfoFrame.Height / 3);
 
-            Entity entity1 = EntityFactory.Instance.CreateWith ("A", messageProvider,
-                                 new[] { typeof(ItemComponent) });
-            var item1 = entity1.GetComponent<ItemComponent> ();
-            item1.Size = new Vector2i (2, 1);
-            item1.ImageLocation = "Content/flashlight.png";
-            inventory.Insert (item1);
-            var btn1 = new InventoryButton (itemGridFrame, inventory, item1,
-                           inventory.GetPositionOfItem (item1), BoxSize);
+            items = new List<InventoryButton>();
+            inventory.Items.ForEach((item, position) => {
+                var btn = new InventoryButton(itemGridFrame, inventory, item, position, BoxSize);
 
-            btn1.ToggledOn += (sender, arguments) => {
-                imagePanel.ImageName = item1.ImageLocation;
-                descriptionLabel.Text = item1.Description;
-            };
+                btn.ToggledOn += (sender, arguments) => {
+                    if (toggledBtn != null)
+                        toggledBtn.ToggleState = false;
 
-            btn1.ToggledOff += (sender, arguments) => {
-                imagePanel.ImageName = string.Empty;
-                descriptionLabel.Text = string.Empty;
-            };
+                    toggledBtn = btn;
+                    imagePanel.ImageName = btn.Item.ImageLocation;
+                    descriptionLabel.Text = btn.Item.Description;
+                };
 
-            Entity entity2 = EntityFactory.Instance.CreateWith ("B", messageProvider,
-                                 new[] { typeof(ItemComponent) });
-            var item2 = entity2.GetComponent<ItemComponent> ();
-            item2.Size = new Vector2i (1, 2);
-            inventory.Insert (item2);
-            var btn2 = new InventoryButton (itemGridFrame, inventory, item2,
-                           inventory.GetPositionOfItem (item2), BoxSize);
+                btn.ToggledOff += (sender, arguments) => {
+                    imagePanel.ImageName = string.Empty;
+                    descriptionLabel.Text = string.Empty;
+                    toggledBtn = null;
+                };
 
-            Entity entity3 = EntityFactory.Instance.CreateWith ("C", messageProvider,
-                                 new[] { typeof(ItemComponent) });
-            var item3 = entity3.GetComponent<ItemComponent> ();
-            item3.Size = new Vector2i (2, 2);
-            inventory.Insert (item3);
-            var btn3 = new InventoryButton (itemGridFrame, inventory, item3,
-                           inventory.GetPositionOfItem (item3), BoxSize);
+                items.Add(btn);
+            });
         }
 
         public static readonly int BoxSize = 64;
 
-        Inventory inventory;
-        ImagePanel imagePanel;
-        Label descriptionLabel;
+        static readonly Padding btnPadding = new Padding(10, 0, 10, 0);
+
+        Button toggledBtn;
+
+        readonly Inventory inventory;
+        readonly ImagePanel imagePanel;
+        readonly Label descriptionLabel;
+        readonly Button dropBtn;
+        readonly Button useBtn;
+        readonly Button rotateBtn;
+        readonly InventorySpace[,] spaces;
+        readonly WindowControl window;
+        readonly Base itemGridFrame;
+        readonly Base itemInfoFrame;
+        readonly Base toolbarFrame;
+        readonly Base canvasFrame;
+        readonly List<InventoryButton> items;
+        readonly Application application;
 
         #region IMessageConsumer implementation
 
         public void ConsumeMessage (IMessage msg)
         {
+            if (msg.MessageId == (int) MessageId.WindowResize)
+            {
+                var wrm = msg as WindowResizeMessage;
+
+                canvasFrame.Width = wrm.Width;
+                canvasFrame.Height = wrm.Height;
+                window.SetPosition ((canvasFrame.Width - window.Width) / 2, (canvasFrame.Height - window.Height) / 2);
+            }
+
+            if (msg.MessageId == (int) MessageId.UpdateLocale)
+            {
+                window.Title = Localizer.Instance.GetValueForName("inventory");
+                dropBtn.Text = Localizer.Instance.GetValueForName("drop");
+                dropBtn.X = toolbarFrame.Width - dropBtn.Width;
+                useBtn.Text = Localizer.Instance.GetValueForName("use_equip");
+                useBtn.X = dropBtn.X - useBtn.Width - 8;
+                rotateBtn.Text = Localizer.Instance.GetValueForName("rotate");
+                rotateBtn.X = useBtn.X - rotateBtn.Width - 8;
+            }
+
+            if (msg.MessageId == (int) MessageId.Input)
+            {
+                var im = msg as InputMessage;
+
+                if (im.Keys.Any(k => k.Action == KeyAction.Press && k.KeyAction == "drop"))
+                {
+                    Localizer.Instance.CurrentLocale =
+                        Localizer.Instance.CurrentLocale == LocaleEnum.en_US ? LocaleEnum.de_DE : LocaleEnum.en_US;
+                }
+
+                if (im.Keys.Any(k => k.Action == KeyAction.Press && k.KeyAction == "inventory"))
+                {
+                    if (window.IsVisible)
+                    {
+                        window.Hide();
+                        application.Window.CaptureMouse();
+                    }
+                    else
+                    {
+                        window.Show();
+                        application.Window.ReleaseMouse();
+                    }
+                }
+            }
         }
 
         public int[] ValidMessages { get; private set; }

@@ -75,7 +75,7 @@ namespace FreezingArcher.Game
                 "__click__"
             };
 
-            new InventoryGUI(new Inventory(new Vector2i(5, 7), 6), messageProvider, sceneobj.Canvas);
+            new InventoryGUI(app, new Inventory(new Vector2i(5, 7), 6), messageProvider, sceneobj.Canvas);
         }
 
         void onButtonPressed(Base btn, EventArgs args)

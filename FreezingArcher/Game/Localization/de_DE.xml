@@ -2,4 +2,8 @@
 
 <locale parent="en_US">
     <string name="app_name">Freezing Archer</string>
+    <string name="inventory">Inventar</string>
+    <string name="drop">Wegwerfen</string>
+    <string name="use_equip">Benutzen/Ausrüsten</string>
+    <string name="rotate">Drehen</string>
 </locale>

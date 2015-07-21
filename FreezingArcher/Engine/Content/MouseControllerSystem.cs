@@ -90,11 +90,6 @@ namespace FreezingArcher.Content
 
                 rotationY += y;
 
-                if (im.IsActionDown("drop"))
-                    rotationZ += 0.01f;
-                if (im.IsActionDown("inventory"))
-                    rotationZ -= 0.01f;
-
                 var quaternionHelper = Quaternion.FromAxisAngle(Vector3.UnitY, rotationY);
                 
                 Quaternion rotation =

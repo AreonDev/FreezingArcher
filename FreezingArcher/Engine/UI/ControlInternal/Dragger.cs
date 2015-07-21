@@ -22,6 +22,12 @@ namespace Gwen.ControlInternal
         public bool IsHeld { get { return m_Held; } }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this instance is draggable.
+        /// </summary>
+        /// <value><c>true</c> if this instance is draggable; otherwise, <c>false</c>.</value>
+        public bool IsDraggable { get; set; }
+
+        /// <summary>
         /// Event invoked when the control position has been changed.
         /// </summary>
 		public event GwenEventHandler<EventArgs> Dragged;
@@ -34,6 +40,7 @@ namespace Gwen.ControlInternal
         {
             MouseInputEnabled = true;
             m_Held = false;
+            IsDraggable = true;
         }
 
         /// <summary>
@@ -44,7 +51,7 @@ namespace Gwen.ControlInternal
         /// <param name="down">If set to <c>true</c> mouse button is down.</param>
         protected override void OnMouseClickedLeft(int x, int y, bool down)
         {
-            if (null == m_Target) return;
+            if (!IsDraggable || null == m_Target) return;
 
             if (down)
             {

@@ -2,4 +2,8 @@
 
 <locale>
     <string name="app_name">Freezing Archer</string>
+    <string name="inventory">Inventory</string>
+    <string name="drop">Drop</string>
+    <string name="use_equip">Use/Equip</string>
+    <string name="rotate">Rotate</string>
 </locale>

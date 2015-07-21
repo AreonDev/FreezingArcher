@@ -71,6 +71,15 @@ namespace FreezingArcher.Content
             return false;
         }
 
+        public IEnumerable<Tuple<ItemComponent, Vector2i>> Items
+        {
+            get
+            {
+                foreach (var item in items.Values)
+                    yield return new Tuple<ItemComponent, Vector2i>(item, GetPositionOfItem(item));
+            }
+        }
+
         public bool PutInBar(Vector2i invPosition, byte barPosition)
         {
             return PutInBar(invPosition.X, invPosition.Y, barPosition);

@@ -48,13 +48,7 @@ namespace FreezingArcher.Game
             ValidMessages = new[] { (int) MessageId.WindowResize };
             messageProvider += this;
 
-            //game.AddGameState ("UITestState", Content.Environment.Default);
-
             var state = app.Game.GetGameState ("maze_overworld");
-            //state.Scene = new FreezingArcher.Renderer.Scene.CoreScene (Application.Instance.RendererContext, state.MessageProxy);
-            //state.Scene.BackgroundColor = FreezingArcher.Math.Color4.AliceBlue;
-
-            //game.SwitchToGameState ("UITestState");
 
             sceneobj = new UISceneObject ();
             sceneobj.Priority = 999;
@@ -62,20 +56,14 @@ namespace FreezingArcher.Game
 
             var input = new FreezingArcher.UI.Input.FreezingArcherInput(app, state.MessageProxy);
             input.Initialize (sceneobj.Canvas);
-
-            sceneobj.Canvas.SetSize(1024, 576);
+            sceneobj.Canvas.SetSize(app.Window.Size.X, app.Window.Size.Y);
             sceneobj.Canvas.ShouldDrawBackground = false;
 
-            var messages = new[] {
-                "I'm a truely buttonshit!",
-                "Don't click me, I'm scared!",
-                "Press me hard, modafuzka!",
-                "Jumpscare ahead...",
-                "-.-",
-                "__click__"
-            };
+            var inventory = new Inventory(messageProvider, new Vector2i(5, 7), 6);
 
-            new InventoryGUI(app, new Inventory(new Vector2i(5, 7), 6), messageProvider, sceneobj.Canvas);
+            inventory.Insert("flashlight", "Content/flashlight.png", "flashlight_description", new Vector2i(2, 1));
+
+            new InventoryGUI(app, inventory, messageProvider, sceneobj.Canvas);
         }
 
         void onButtonPressed(Base btn, EventArgs args)

@@ -27,6 +27,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
+using System.Text.RegularExpressions;
 
 namespace FreezingArcher.Localization
 {
@@ -122,7 +123,14 @@ namespace FreezingArcher.Localization
                     throw new ArgumentOutOfRangeException (name, "Element not found in localization strings!");
             }
 
-            return s;
+
+            RegexOptions options = RegexOptions.None;
+            var regex = new Regex(@"[ ]{2,}", options);     
+            s = regex.Replace(s, @" ");
+            regex = new Regex("\n ", options);
+            s = regex.Replace(s, "\n");
+
+            return s.Trim();
         }
 
         #region IMessageCreator implementation

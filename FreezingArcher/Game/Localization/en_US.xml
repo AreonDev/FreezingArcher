@@ -6,4 +6,9 @@
     <string name="drop">Drop</string>
     <string name="use_equip">Use/Equip</string>
     <string name="rotate">Rotate</string>
+    <string name="flashlight_description">
+        Use the flashlight to shed some light into the dark.
+        Some creatures may not like the light. Take care
+        of the batteries or you will end up in the dark again.
+    </string>
 </locale>

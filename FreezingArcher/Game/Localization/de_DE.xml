@@ -6,4 +6,11 @@
     <string name="drop">Wegwerfen</string>
     <string name="use_equip">Benutzen/Ausrüsten</string>
     <string name="rotate">Drehen</string>
+    <string name="flashlight_description">
+        Nutze die Taschenlampe um etwas Licht in die
+        Dunkelheit zu bringen. Einige Kreaturen werden
+        Angst vor dem Licht haben. Pass auf, dass die
+        Batterien nicht leer werden, sonst stehst du wieder
+        im Dunkeln.
+    </string>
 </locale>

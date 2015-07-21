@@ -62,7 +62,6 @@
     <Compile Include="Maze\Maze.cs" />
     <Compile Include="MazeTest.cs" />
     <Compile Include="ECSTest.cs" />
-    <Compile Include="InventoryTest.cs" />
     <Compile Include="UITest.cs" />
     <Compile Include="MessagingTest.cs" />
     <Compile Include="InventoryGUI.cs" />

@@ -58,7 +58,7 @@ namespace Gwen
             m_Renderer = renderer;
             FaceName = faceName;
             Size = size;
-            Smooth = false;
+            Smooth = true;
             //Bold = false;
             //DropShadow = false;
         }

@@ -117,22 +117,43 @@ namespace FreezingArcher.Game
             this.item = item;
             X = position.X * boxSize + 1;
             Y = position.Y * boxSize + 1;
-            Width = item.Size.X * boxSize - 1;
-            Height = item.Size.Y * boxSize - 1;
 
             if (!string.IsNullOrEmpty(item.ImageLocation))
-            {
                 SetImage(item.ImageLocation, true);
-                m_Image.Width = Width;
-                m_Image.Height = Height;
-            }
 
+            UpdateSize();
             DragAndDrop_SetPackage (true, "item_drag");
         }
 
         readonly Inventory inventory;
         readonly ItemComponent item;
         readonly int boxSize;
+
+        public void UpdateSize()
+        {
+            if (item.Orientation == Orientation.Horizontal)
+            {
+                Width = item.Size.X * boxSize - 1;
+                Height = item.Size.Y * boxSize - 1;
+                if (m_Image != null)
+                {
+                    m_Image.Width = Width;
+                    m_Image.Height = Height;
+                    m_Image.SetUV(0, 0, 1, 1);
+                }
+            }
+            else
+            {
+                Width = item.Size.Y * boxSize - 1;
+                Height = item.Size.X * boxSize - 1;
+                if (m_Image != null)
+                {
+                    m_Image.Width = Width;
+                    m_Image.Height = Height;
+                    m_Image.SetUV(0, 1, 1, 0);
+                }
+            }
+        }
 
         public ItemComponent Item
         {
@@ -210,6 +231,7 @@ namespace FreezingArcher.Game
             dropBtn.Text = Localizer.Instance.GetValueForName("drop");
             dropBtn.X = toolbarFrame.Width - dropBtn.Width;
             dropBtn.Y = (toolbarFrameSize - dropBtn.Height) / 2;
+            dropBtn.IsDisabled = true;
 
             useBtn = new Button(toolbarFrame);
             useBtn.AutoSizeToContents = true;
@@ -217,6 +239,7 @@ namespace FreezingArcher.Game
             useBtn.Text = Localizer.Instance.GetValueForName("use_equip");
             useBtn.X = dropBtn.X - useBtn.Width - 8;
             useBtn.Y = (toolbarFrameSize - useBtn.Height) / 2;
+            useBtn.IsDisabled = true;
 
             rotateBtn = new Button(toolbarFrame);
             rotateBtn.AutoSizeToContents = true;
@@ -224,6 +247,31 @@ namespace FreezingArcher.Game
             rotateBtn.Text = Localizer.Instance.GetValueForName("rotate");
             rotateBtn.X = useBtn.X - rotateBtn.Width - 8;
             rotateBtn.Y = (toolbarFrameSize - rotateBtn.Height) / 2;
+            rotateBtn.IsDisabled = true;
+
+            rotateBtn.Clicked += (sender, argument) => {
+                if (rotateBtn.IsDisabled)
+                    return;
+                
+                var pos = inventory.GetPositionOfItem(toggledBtn.Item);
+                var item = inventory.TakeOut(pos);
+                var prev_orientation = item.Orientation;
+                item.Orientation =
+                    item.Orientation == Orientation.Horizontal ? Orientation.Vertical : Orientation.Horizontal;
+                if (!inventory.Insert(item, pos))
+                {
+                    item.Orientation = prev_orientation;
+                    if (!inventory.Insert(item, pos))
+                    {
+                        Logger.Log.AddLogEntry(LogLevel.Error, "InventoryGUI",
+                            "Lost an inventory item while rotating!");
+                        toggledBtn.DelayedDelete();
+                        toggledBtn = null;
+                        return;
+                    }
+                }
+                toggledBtn.UpdateSize();
+            };
 
             window.SetSize (itemGridFrame.Width + itemInfoFrame.Width + 16,
                 itemGridFrame.Height + toolbarFrameSize + 28);
@@ -251,10 +299,7 @@ namespace FreezingArcher.Game
             imagePanel = new ImagePanel(itemInfoFrame);
             imagePanel.Width = infoFrameSize;
             imagePanel.Height = itemGridFrame.Height / 3;
-            descriptionLabel = new Label(itemInfoFrame);
-            descriptionLabel.Width = infoFrameSize;
-            descriptionLabel.Height = (itemInfoFrame.Height / 3) * 2;
-            descriptionLabel.SetPosition(0, itemInfoFrame.Height / 3);
+            imagePanel.Hide();
 
             items = new List<InventoryButton>();
             inventory.Items.ForEach((item, position) => {
@@ -266,28 +311,62 @@ namespace FreezingArcher.Game
 
                     toggledBtn = btn;
                     imagePanel.ImageName = btn.Item.ImageLocation;
-                    descriptionLabel.Text = btn.Item.Description;
+                    imagePanel.Show();
+                    setDescriptionLabel(Localizer.Instance.GetValueForName(btn.Item.Description));
+                    dropBtn.IsDisabled = false;
+                    useBtn.IsDisabled = false;
+                    rotateBtn.IsDisabled = false;
                 };
 
                 btn.ToggledOff += (sender, arguments) => {
-                    imagePanel.ImageName = string.Empty;
-                    descriptionLabel.Text = string.Empty;
+                    imagePanel.Hide();
+                    setDescriptionLabel(string.Empty);
                     toggledBtn = null;
+                    dropBtn.IsDisabled = true;
+                    useBtn.IsDisabled = true;
+                    rotateBtn.IsDisabled = true;
                 };
 
                 items.Add(btn);
             });
         }
 
+        Label[] labels;
+
+        void setDescriptionLabel(string text, int height = 4)
+        {
+            var texts = text.Split('\n');
+            var y = imagePanel.Height + height;
+
+            if (labels != null)
+            {
+                foreach (var l in labels)
+                {
+                    l.DelayedDelete();
+                }
+            }
+
+            labels = new Label[texts.Length];
+            int i = 0;
+            foreach (var t in texts)
+            {
+                labels[i] = new Label(itemInfoFrame);
+                labels[i].Width = itemInfoFrame.Width;
+                labels[i].Y = y;
+                labels[i].Text = t;
+                y += labels[i].Height + height;
+                i++;
+            }
+        }
+
         public static readonly int BoxSize = 64;
 
         static readonly Padding btnPadding = new Padding(10, 0, 10, 0);
 
-        Button toggledBtn;
+        InventoryButton toggledBtn;
 
         readonly Inventory inventory;
         readonly ImagePanel imagePanel;
-        readonly Label descriptionLabel;
         readonly Button dropBtn;
         readonly Button useBtn;
         readonly Button rotateBtn;
@@ -322,6 +401,8 @@ namespace FreezingArcher.Game
                 useBtn.X = dropBtn.X - useBtn.Width - 8;
                 rotateBtn.Text = Localizer.Instance.GetValueForName("rotate");
                 rotateBtn.X = useBtn.X - rotateBtn.Width - 8;
+                if (toggledBtn != null)
+                    setDescriptionLabel(Localizer.Instance.GetValueForName(toggledBtn.Item.Description));
             }
 
             if (msg.MessageId == (int) MessageId.Input)
@@ -346,6 +427,11 @@ namespace FreezingArcher.Game
                         window.Show();
                         application.Window.ReleaseMouse();
                     }
+                }
+
+                if (im.Keys.Any(k => k.Action == KeyAction.Press && k.KeyAction == "camera"))
+                {
+                    inventory.PrintStorage("Inventory:");
                 }
             }
         }

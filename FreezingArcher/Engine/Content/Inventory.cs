@@ -25,17 +25,21 @@ using FreezingArcher.Math;
 using FreezingArcher.DataStructures;
 using System.Collections.Generic;
 using FreezingArcher.Output;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Content
 {
     public sealed class Inventory
     {
-        public Inventory(int sizeX, int sizeY, byte barSize) : this(new Vector2i(sizeX, sizeY), barSize)
-        {}
+        public Inventory(MessageProvider messageProvider, int sizeX, int sizeY, byte barSize)
+            : this(messageProvider, new Vector2i(sizeX, sizeY), barSize)
+        {
+        }
 
-        public Inventory(Vector2i size, byte barSize)
+        public Inventory(MessageProvider messageProvider, Vector2i size, byte barSize)
         {
             Size = size;
+            this.messageProvider = messageProvider;
             storage = new int?[Size.X, Size.Y];
 
             if (barSize < 1 || barSize > 10)
@@ -57,6 +61,8 @@ namespace FreezingArcher.Content
         int?[] inventoryBar;
 
         byte activeBarPosition;
+
+        MessageProvider messageProvider;
 
         public bool PutInBar(int invPositionX, int invPositionY, byte barPosition)
         {
@@ -194,6 +200,78 @@ namespace FreezingArcher.Content
             return new Vector2i(-1, -1);
         }
 
+        // so this is truely boolshit -.- (Y dafuq cant I use static readonly vars as default params!?!?!?)
+        public bool Insert(string name)
+        {
+            return Insert(name, ItemComponent.DefaultImageLocation);
+        }
+
+        public bool Insert(string name, string imageLocation)
+        {
+            return Insert(name, imageLocation, string.Empty);
+        }
+
+        public bool Insert(string name, string imageLocation, string description)
+        {
+            return Insert(name, imageLocation, description, ItemComponent.DefaultSize);
+        }
+
+        public bool Insert(string name, string imageLocation, string description, Vector2i size)
+        {
+            return Insert(name, imageLocation, description, size, ItemComponent.DefaultAttackClasses);
+        }
+
+        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+                           AttackClass attackClasses)
+        {
+            return Insert(name, imageLocation, description, size, attackClasses, ItemComponent.DefaultItemUsages);
+        }
+
+        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+                           AttackClass attackClasses, ItemUsage itemUsages)
+        {
+            return Insert(name, imageLocation, description, size, attackClasses, itemUsages, ItemComponent.DefaultProtection);
+        }
+
+        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+                           AttackClass attackClasses, ItemUsage itemUsages, Protection protection)
+        {
+            return Insert(name, imageLocation, description, size, attackClasses, itemUsages, protection,
+                ItemComponent.DefaultHealthDelta);
+        }
+
+        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+                           AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta)
+        {
+            return Insert(name, imageLocation, description, size, attackClasses, itemUsages, protection,
+                healthDelta, ItemComponent.DefaultAttackStrength);
+        }
+
+        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+                           AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
+                           float attackStrength)
+        {
+            return Insert(name, imageLocation, description, size, attackClasses, itemUsages, protection,
+                healthDelta, attackStrength, ItemComponent.DefaultThrowPower);
+        }
+
+        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+                           AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
+                           float attackStrength, float throwPower)
+        {
+            return Insert(name, imageLocation, description, size, attackClasses, itemUsages, protection,
+                healthDelta, attackStrength, throwPower, ItemComponent.DefaultUsage);
+        }
+
+        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+                           AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
+                           float attackStrength, float throwPower, float usage)
+        {
+            return Insert(CreateNewItem(messageProvider, name, imageLocation, description, size,
+                    ItemComponent.DefaultOrientation, ItemLocation.Inventory, attackClasses, itemUsages, protection, 
+                    healthDelta, attackStrength, throwPower, usage));
+        }
+
         public bool Insert(ItemComponent item)
         {
             bool result = false;
@@ -277,7 +355,7 @@ namespace FreezingArcher.Content
             }
 
             byte barpos = 0;
-            while(barpos < inventoryBar.Length && inventoryBar[barpos] != id)
+            while (barpos < inventoryBar.Length && inventoryBar[barpos] != id)
                 barpos++;
 
             if (barpos < inventoryBar.Length)
@@ -318,6 +396,31 @@ namespace FreezingArcher.Content
                 }
             }
             return true;
+        }
+
+        public static ItemComponent CreateNewItem(MessageProvider messageProvider, string name, string imageLocation,
+                                                  string description, Vector2i size, Orientation orientation, ItemLocation location,
+                                                  AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
+                                                  float attackStrength, float throwPower, float usage)
+        {
+            var entity = EntityFactory.Instance.CreateWith(name, messageProvider,
+                             systems: new[] { typeof(ItemSystem) });
+
+            var item = entity.GetComponent<ItemComponent>();
+            item.ImageLocation = imageLocation;
+            item.Description = description;
+            item.Size = size;
+            item.Orientation = orientation;
+            item.Location = location;
+            item.AttackClasses = attackClasses;
+            item.ItemUsages = itemUsages;
+            item.Protection = protection;
+            item.HealthDelta = healthDelta;
+            item.AttackStrength = attackStrength;
+            item.ThrowPower = throwPower;
+            item.Usage = usage;
+
+            return item;
         }
     }
 }

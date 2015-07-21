@@ -43,14 +43,14 @@ namespace FreezingArcher.Game
 
         MessageProvider MessageProvider;
 
-        public UITest (Content.Game game, MessageProvider messageProvider)
+        public UITest (Application app, MessageProvider messageProvider)
         {
             ValidMessages = new[] { (int) MessageId.WindowResize };
             messageProvider += this;
 
             //game.AddGameState ("UITestState", Content.Environment.Default);
 
-            var state = game.GetGameState ("maze_overworld");
+            var state = app.Game.GetGameState ("maze_overworld");
             //state.Scene = new FreezingArcher.Renderer.Scene.CoreScene (Application.Instance.RendererContext, state.MessageProxy);
             //state.Scene.BackgroundColor = FreezingArcher.Math.Color4.AliceBlue;
 
@@ -60,7 +60,7 @@ namespace FreezingArcher.Game
             sceneobj.Priority = 999;
             state.Scene.AddObject (sceneobj);
 
-            var input = new FreezingArcher.UI.Input.FreezingArcherInput(state.MessageProxy);
+            var input = new FreezingArcher.UI.Input.FreezingArcherInput(app, state.MessageProxy);
             input.Initialize (sceneobj.Canvas);
 
             sceneobj.Canvas.SetSize(1024, 576);

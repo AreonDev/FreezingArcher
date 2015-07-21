@@ -29,6 +29,7 @@ using Gwen;
 using Gwen.Control;
 using System.Linq;
 using Pencil.Gaming;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.UI.Input
 {
@@ -36,8 +37,9 @@ namespace FreezingArcher.UI.Input
     {
         Canvas m_Canvas;
 
-        public FreezingArcherInput(MessageProvider messageProvider)
+        public FreezingArcherInput(Application app, MessageProvider messageProvider)
         {
+            application = app;
             ValidMessages = new int[] { (int) MessageId.Input };
             messageProvider += this;
         }
@@ -52,6 +54,9 @@ namespace FreezingArcher.UI.Input
             if (msg.MessageId == (int) MessageId.Input)
             {
                 var input = msg as InputMessage;
+
+                if (application.Window.IsMouseCaptured())
+                    return;
 
                 m_Canvas.Input_MouseMoved(
                     (int) input.MousePosition.X, (int) input.MousePosition.Y,
@@ -73,6 +78,8 @@ namespace FreezingArcher.UI.Input
                     m_Canvas.Input_MouseButton(2, false);
             }
         }
+
+        Application application;
 
         public int[] ValidMessages { get; private set; }
     }

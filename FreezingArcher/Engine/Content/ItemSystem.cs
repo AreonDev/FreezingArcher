@@ -39,6 +39,8 @@ namespace FreezingArcher.Content
         {
             base.Init(messageProvider, entity);
 
+            NeededComponents = new[] { typeof(ItemComponent), typeof(ModelComponent) };
+
             internalValidMessages = new[] { (int) MessageId.Input };
             messageProvider += this;
         }

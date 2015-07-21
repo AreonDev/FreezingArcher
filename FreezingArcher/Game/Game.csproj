@@ -136,6 +136,9 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="loading.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\flashlight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
@@ -161,5 +164,6 @@ echo Successfully finished!</PostBuildEvent>
     <Folder Include="Audio\" />
     <Folder Include="Localization\" />
     <Folder Include="Maze\" />
+    <Folder Include="Content\" />
   </ItemGroup>
 </Project>

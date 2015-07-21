@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using Gwen.Input;
 
 namespace Gwen.Control
 {
@@ -94,6 +95,54 @@ namespace Gwen.Control
             if (down)
                 base.OnMouseClickedLeft(0, 0, true);
             return true;
+        }
+
+        protected override void OnMouseClickedLeft(int x, int y, bool down)
+        {
+            base.OnMouseClickedLeft(x, y, down);
+
+            if (Parent is Button)
+                InputHandler.HoveredControl = Parent;
+        }
+
+        protected override void OnMouseClickedRight(int x, int y, bool down)
+        {
+            base.OnMouseClickedRight(x, y, down);
+
+            if (Parent is Button)
+                InputHandler.HoveredControl = Parent;
+        }
+
+        protected override void OnMouseDoubleClickedLeft(int x, int y)
+        {
+            base.OnMouseDoubleClickedLeft(x, y);
+
+            if (Parent is Button)
+                InputHandler.HoveredControl = Parent;
+        }
+
+        protected override void OnMouseDoubleClickedRight(int x, int y)
+        {
+            base.OnMouseDoubleClickedRight(x, y);
+
+            if (Parent is Button)
+                InputHandler.HoveredControl = Parent;
+        }
+
+        protected override void OnMouseEntered()
+        {
+            base.OnMouseEntered();
+
+            if (Parent is Button)
+                InputHandler.HoveredControl = Parent;
+        }
+
+        protected override bool OnMouseWheeled(int delta)
+        {
+            if (Parent is Button)
+                InputHandler.HoveredControl = Parent;
+
+            return base.OnMouseWheeled(delta);
         }
     }
 }

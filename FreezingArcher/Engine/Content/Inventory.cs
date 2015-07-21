@@ -256,30 +256,14 @@ namespace FreezingArcher.Content
             if (id == null)
                 return null;
 
-            int x = positionX, y = positionY;
-
-            storage[x, y] = null;
-
-            while (x - 1 >= 0 && storage[x - 1, y] == id)
+            int y, x = 0;
+            for (; x < storage.GetLength(0); x++)
             {
-                x--;
-                while (y - 1 >= 0 && storage[x, y - 1] == id)
+                y = 0;
+                for (; y < storage.GetLength(1); y++)
                 {
-                    y--;
-                    storage[x, y] = null;
-                }
-            }
-
-            x = positionX;
-            y = positionY;
-
-            while (x + 1 < Size.X && storage[x + 1, y] == id)
-            {
-                x++;
-                while (y + 1 < Size.Y && storage[x, y + 1] == id)
-                {
-                    y++;
-                    storage[x, y] = null;
+                    if (storage[x, y] == id)
+                        storage[x, y] = null;
                 }
             }
 
@@ -295,6 +279,22 @@ namespace FreezingArcher.Content
             items.Remove(id.Value);
 
             return item;
+        }
+
+        public void PrintStorage(string message)
+        {
+            string s = message;
+            for (int i = 0; i < Size.Y; i++)
+            {
+                s += "\n";
+                for (int k = 0; k < Size.X; k++)
+                {
+                    var item = GetItemAt(k, i);
+                    s += item != null ? item.Entity.Name : "#";
+                }
+            }
+
+            Logger.Log.AddLogEntry(LogLevel.Debug, "Inventory", s);
         }
 
         private bool fits(Vector2i position, Vector2i size)

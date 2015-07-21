@@ -56,7 +56,7 @@ namespace FreezingArcher.Game
             uiSceneObject.Priority = 999;
             LoadingState.Scene.AddObject (uiSceneObject);
 
-            var input = new FreezingArcher.UI.Input.FreezingArcherInput(LoadingState.MessageProxy);
+            var input = new FreezingArcher.UI.Input.FreezingArcherInput(application, LoadingState.MessageProxy);
             input.Initialize (uiSceneObject.Canvas);
 
             uiSceneObject.Canvas.SetSize(application.Window.Size.X, application.Window.Size.Y);

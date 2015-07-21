@@ -82,7 +82,29 @@ namespace FreezingArcher.Content
         /// </summary>
         public static readonly float DefaultUsage = 0;
 
+        /// <summary>
+        /// The default image location.
+        /// </summary>
+        public static readonly string DefaultImageLocation = string.Empty;
+
+        /// <summary>
+        /// The default description.
+        /// </summary>
+        public static readonly string DefaultDescription = string.Empty;
+
         #endregion
+
+        /// <summary>
+        /// Gets or sets the image location.
+        /// </summary>
+        /// <value>The image location.</value>
+        public string ImageLocation { get; set; }
+
+        /// <summary>
+        /// Gets or sets the description describing the usage of this item.
+        /// </summary>
+        /// <value>The description.</value>
+        public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets the abstract locations of this item such as ground, wall or inventory.

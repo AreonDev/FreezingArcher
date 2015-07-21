@@ -428,6 +428,102 @@ namespace FreezingArcher.Renderer
             }
         }
 
+        private class RCActionCreateTexture2D : RCAction
+        {
+            private enum CreationParam
+            {
+                WithString = 0,
+                WithBmpData = 1,
+                WithPointer = 2
+            }
+
+            public RendererCore Renderer;
+            public Texture2D Texture;
+
+            public string Name;
+            public bool GenerateMipMaps;
+            public string Data;
+            public System.Drawing.Bitmap BmpData;
+
+            public int Width;
+            public int Height;
+
+            public IntPtr IntPtrData;
+
+            public bool GenerateSampler;
+
+            CreationParam Param;
+
+            public bool Ready;
+
+            public RCActionCreateTexture2D(RendererCore rc, string name, bool generateMipMaps, string data)
+            {
+                Renderer = rc;
+                Name = name;
+                GenerateMipMaps = generateMipMaps;
+                Data = data;
+
+                Param = CreationParam.WithString;
+
+                Ready = false;
+            }
+
+            public RCActionCreateTexture2D(RendererCore rc, string name, bool generateMipMaps, System.Drawing.Bitmap data)
+            {
+                Renderer = rc;
+                Name = name;
+                BmpData = data;
+
+                GenerateMipMaps = generateMipMaps;
+
+                Param = CreationParam.WithBmpData;
+
+                Ready = false;
+            }
+
+            public RCActionCreateTexture2D(RendererCore rc, string name, int width, int height, bool generateMipMaps, IntPtr data, bool generate_sampler)
+            {
+                Renderer = rc;
+                Name = name;
+                GenerateMipMaps = generateMipMaps;
+
+                Width = width;
+                Height = height;
+                IntPtrData = data;
+                GenerateSampler = generate_sampler;
+
+                Param = CreationParam.WithPointer;
+
+                Ready = false;
+            }
+
+            public RCActionDelegate Action
+            { 
+                get
+                {
+                    return delegate()
+                    {
+                        switch(Param)
+                        {
+                            case CreationParam.WithString:
+                                Texture = Renderer.CreateTexture2D(Name, GenerateMipMaps, Data);
+                                break;
+
+                            case CreationParam.WithBmpData:
+                                Texture = Renderer.CreateTexture2D(Name, GenerateMipMaps, BmpData);
+                                break;
+
+                            case CreationParam.WithPointer:
+                                Texture = Renderer.CreateTexture2D(Name, Width, Height, GenerateMipMaps, IntPtrData, GenerateSampler);
+                                break;
+                        }
+
+                        Ready = true;
+                    };
+                } 
+            }
+        }
+
         #endregion
 
         private ConcurrentQueue<RCAction> _RendererCoreActionsList;
@@ -836,43 +932,12 @@ namespace FreezingArcher.Renderer
 
         public Texture2D CreateTexture2D(string name, int width, int height, bool generateMipMaps, IntPtr data, bool generate_sampler = true)
         {
-            int id = GL.GenTexture();
-
-            GL.BindTexture(TextureTarget.Texture2D, id);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, data);
-
-            if (generateMipMaps)
-                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-
-            Texture2D tex = new Texture2D(width, height, generateMipMaps, name, id);
-            _GraphicsResourceManager.AddResource(tex);
-
-            Sampler s2d = CreateSampler(name + "_Sampler");
-            tex.Sampler = s2d;
-            tex.SamplerAllowed = generate_sampler;
-            tex.Sampler.MagnificationFilter = MagnificationFilter.UseNearest;
-            tex.Sampler.MinificationFilter = MinificationFilter.UseNearest;
-
-            return tex;
-        }
-
-        public Texture2D CreateTexture2D(string name, bool generateMipMaps, System.Drawing.Bitmap data)
-        {
-            if (data != null)
+            if (Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
             {
-                System.Drawing.Imaging.BitmapData bmp_data = data.LockBits(new System.Drawing.Rectangle(0, 0, data.Width, data.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
                 int id = GL.GenTexture();
 
                 GL.BindTexture(TextureTarget.Texture2D, id);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, bmp_data.Scan0);
-
-                data.UnlockBits(bmp_data);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, data);
 
                 if (generateMipMaps)
                     GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
@@ -882,14 +947,72 @@ namespace FreezingArcher.Renderer
 
                 GL.BindTexture(TextureTarget.Texture2D, 0);
 
-                Texture2D tex = new Texture2D(data.Width, data.Height, generateMipMaps, name, id);
+                Texture2D tex = new Texture2D(width, height, generateMipMaps, name, id);
                 _GraphicsResourceManager.AddResource(tex);
 
                 Sampler s2d = CreateSampler(name + "_Sampler");
                 tex.Sampler = s2d;
-                tex.SamplerAllowed = true;
+                tex.SamplerAllowed = generate_sampler;
+                tex.Sampler.MagnificationFilter = MagnificationFilter.UseNearest;
+                tex.Sampler.MinificationFilter = MinificationFilter.UseNearest;
 
                 return tex;
+            }
+            else
+            {
+                RCActionCreateTexture2D ct2d = new RCActionCreateTexture2D(this, name, width, height, generateMipMaps, data, generate_sampler);
+                this.AddRCActionJob(ct2d);
+
+                while (!ct2d.Ready)
+                    System.Threading.Thread.Sleep(1);
+
+                return ct2d.Texture;
+            }
+                
+            return null;
+        }
+
+        public Texture2D CreateTexture2D(string name, bool generateMipMaps, System.Drawing.Bitmap data)
+        {
+            if (Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
+            {
+                if (data != null)
+                {
+                    System.Drawing.Imaging.BitmapData bmp_data = data.LockBits(new System.Drawing.Rectangle(0, 0, data.Width, data.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                    int id = GL.GenTexture();
+
+                    GL.BindTexture(TextureTarget.Texture2D, id);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, bmp_data.Scan0);
+
+                    data.UnlockBits(bmp_data);
+
+                    if (generateMipMaps)
+                        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+
+                    GL.BindTexture(TextureTarget.Texture2D, 0);
+
+                    Texture2D tex = new Texture2D(data.Width, data.Height, generateMipMaps, name, id);
+                    _GraphicsResourceManager.AddResource(tex);
+
+                    Sampler s2d = CreateSampler(name + "_Sampler");
+                    tex.Sampler = s2d;
+                    tex.SamplerAllowed = true;
+
+                    return tex;
+                }
+            }else
+            {
+                RCActionCreateTexture2D ct2d = new RCActionCreateTexture2D(this, name, generateMipMaps, data);
+                this.AddRCActionJob(ct2d);
+
+                while (!ct2d.Ready)
+                    System.Threading.Thread.Sleep(1);
+
+                return ct2d.Texture;
             }
 
             return null;
@@ -897,40 +1020,53 @@ namespace FreezingArcher.Renderer
             
         public Texture2D CreateTexture2D(string name, bool generateMipMaps, string data)
         {
-            if (data != null)
+            if (Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
             {
-                System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromFile(data);
+                if (data != null)
+                {
+                    System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromFile(data);
                
-                //bmp.RotateFlip(System.Drawing.RotateFlipType.RotateNoneFlipY);
+                    //bmp.RotateFlip(System.Drawing.RotateFlipType.RotateNoneFlipY);
 
-                System.Drawing.Imaging.BitmapData bmp_data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    System.Drawing.Imaging.BitmapData bmp_data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-                int id = GL.GenTexture();
+                    int id = GL.GenTexture();
 
-                GL.BindTexture(TextureTarget.Texture2D, id);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmp.Width, bmp.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, bmp_data.Scan0);
+                    GL.BindTexture(TextureTarget.Texture2D, id);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmp.Width, bmp.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, bmp_data.Scan0);
 
-                bmp.UnlockBits(bmp_data);
+                    bmp.UnlockBits(bmp_data);
 
-                if (generateMipMaps)
-                    GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+                    if (generateMipMaps)
+                        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
-                GL.BindTexture(TextureTarget.Texture2D, 0);
+                    GL.BindTexture(TextureTarget.Texture2D, 0);
 
-                Texture2D tex = new Texture2D(bmp.Width, bmp.Height, generateMipMaps, name, id);
+                    Texture2D tex = new Texture2D(bmp.Width, bmp.Height, generateMipMaps, name, id);
 
-                bmp.Dispose();
+                    bmp.Dispose();
 
-                _GraphicsResourceManager.AddResource(tex);
+                    _GraphicsResourceManager.AddResource(tex);
 
-                Sampler s2d = CreateSampler(name + "_Sampler");
-                tex.Sampler = s2d;
-                tex.SamplerAllowed = true;
+                    Sampler s2d = CreateSampler(name + "_Sampler");
+                    tex.Sampler = s2d;
+                    tex.SamplerAllowed = true;
 
-                return tex;
+                    return tex;
+                }
+            }
+            else
+            {
+                RCActionCreateTexture2D ct2d = new RCActionCreateTexture2D(this, name, generateMipMaps, data);
+                this.AddRCActionJob(ct2d);
+
+                while (!ct2d.Ready)
+                    System.Threading.Thread.Sleep(1);
+
+                return ct2d.Texture;
             }
 
             return null;

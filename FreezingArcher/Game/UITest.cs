@@ -59,7 +59,7 @@ namespace FreezingArcher.Game
             sceneobj.Canvas.SetSize(app.Window.Size.X, app.Window.Size.Y);
             sceneobj.Canvas.ShouldDrawBackground = false;
 
-            var inventory = new Inventory(messageProvider, new Vector2i(5, 7), 6);
+            var inventory = new Inventory(messageProvider, new Vector2i(5, 7), 9);
 
             inventory.Insert("flashlight", "Content/flashlight.png", "flashlight_description", new Vector2i(2, 1));
 

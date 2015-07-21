@@ -159,7 +159,8 @@ namespace FreezingArcher.Content
 
                 for (int i = 0; i < inventoryBar.Length; i++)
                 {
-                    items.TryGetValue(inventoryBar[i].Value, out bar[i]);
+                    if (inventoryBar[i] != null)
+                        items.TryGetValue(inventoryBar[i].Value, out bar[i]);
                 }
 
                 return bar;

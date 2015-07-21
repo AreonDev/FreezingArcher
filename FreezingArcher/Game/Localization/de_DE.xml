@@ -4,7 +4,7 @@
     <string name="app_name">Freezing Archer</string>
     <string name="inventory">Inventar</string>
     <string name="drop">Wegwerfen</string>
-    <string name="use_equip">Benutzen/Ausrüsten</string>
+    <string name="use">Benutzen</string>
     <string name="rotate">Drehen</string>
     <string name="flashlight_description">
         Nutze die Taschenlampe um etwas Licht in die

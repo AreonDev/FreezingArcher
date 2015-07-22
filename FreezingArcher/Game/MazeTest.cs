@@ -191,10 +191,6 @@ namespace FreezingArcher.Game
             var im = msg as InputMessage;
             if (im != null)
             {
-                if (im.IsActionPressed("jump"))
-                {
-
-                }
                 if (im.IsActionPressed("run"))
                 {
                     if (maze[0].IsGenerated && !maze[0].IsExitPathCalculated)

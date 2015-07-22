@@ -39,7 +39,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             if (!IsInitialized)
             {
                 Renderer = new Gwen.Renderer.FreezingArcherGwenRenderer(rc);
-                Skin = new Gwen.Skin.TexturedBase(Renderer, "lib/UI/Skins/FreezingArcherSkin.png");
+                Skin = new Gwen.Skin.TexturedBase(Renderer, "lib/UI/Skins/NoWayOutSkin.png");
                 Canvas = new Gwen.Control.Canvas(Skin);
 
                 PrivateRendererContext = rc;

@@ -66,21 +66,6 @@ namespace FreezingArcher.Game
             new InventoryGUI(app, inventory, messageProvider, sceneobj.Canvas);
         }
 
-        void onButtonPressed(Base btn, EventArgs args)
-        {
-            Logger.Log.AddLogEntry(LogLevel.Debug, "UITest", "Button pressed");
-        }
-
-        void onButtonClicked(Base btn, EventArgs args)
-        {
-            Logger.Log.AddLogEntry(LogLevel.Debug, "UITest", "Button clicked");
-        }
-
-        void onButtonReleased(Base btn, EventArgs args)
-        {
-            Logger.Log.AddLogEntry(LogLevel.Debug, "UITest", "Button released");
-        }
-
         public void ConsumeMessage (FreezingArcher.Messaging.Interfaces.IMessage msg)
         {
             var wrm = msg as WindowResizeMessage;

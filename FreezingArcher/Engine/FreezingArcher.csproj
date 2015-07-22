@@ -564,6 +564,9 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Renderer\TestGraphics\Monkey\monkey.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="UI\Skins\NoWayOutSkin.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />

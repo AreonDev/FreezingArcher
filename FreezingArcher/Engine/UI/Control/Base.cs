@@ -620,7 +620,8 @@ namespace Gwen.Control
         /// <param name="recursive">Determines whether the operation should be carried recursively.</param>
         protected virtual void InvalidateChildren(bool recursive = false)
         {
-            foreach (Base child in m_Children)
+            var temp = new List<Base>(m_Children);
+            foreach (Base child in temp)
             {
                 child.Invalidate();
                 if (recursive)
@@ -629,7 +630,8 @@ namespace Gwen.Control
 
             if (m_InnerPanel != null)
             {
-                foreach (Base child in m_InnerPanel.m_Children)
+                var temp2 = new List<Base>(m_InnerPanel.m_Children);
+                foreach (Base child in temp2)
                 {
                     child.Invalidate();
                     if (recursive)
@@ -728,7 +730,8 @@ namespace Gwen.Control
 
             if (recursive)
             {
-                foreach (Base child in m_Children)
+                var temp = new List<Base>(m_Children);
+                foreach (Base child in temp)
                 {
                     b = child.FindChildByName(name, true);
                     if (b != null)
@@ -1001,7 +1004,8 @@ namespace Gwen.Control
         /// </summary>
         protected virtual void OnScaleChanged()
         {
-            foreach (Base child in m_Children)
+            var temp = new List<Base>(m_Children);
+            foreach (Base child in temp)
             {
                 child.OnScaleChanged();
             }
@@ -1069,7 +1073,8 @@ namespace Gwen.Control
                 if (m_Children.Count > 0)
                 {
                     //Now render my kids
-                    foreach (Base child in m_Children)
+                    var temp = new List<Base>(m_Children);
+                    foreach (Base child in temp)
                     {
                         if (child.IsHidden)
                             continue;
@@ -1156,7 +1161,8 @@ namespace Gwen.Control
             if (m_Children.Count > 0)
             {
                 //Now render my kids
-                foreach (Base child in m_Children)
+                var temp = new List<Base>(m_Children);
+                foreach (Base child in temp)
                 {
                     if (child.IsHidden)
                         continue;
@@ -1189,7 +1195,8 @@ namespace Gwen.Control
 
             if (doChildren)
             {
-                foreach (Base child in m_Children)
+                var temp = new List<Base>(m_Children);
+                foreach (Base child in temp)
                 {
                     child.SetSkin(skin, true);
                 }
@@ -1484,7 +1491,8 @@ namespace Gwen.Control
             bounds.Y += m_Padding.Top;
             bounds.Height -= m_Padding.Top + m_Padding.Bottom;
 
-            foreach (Base child in m_Children)
+            var temp = new List<Base>(m_Children);
+            foreach (Base child in temp)
             {
                 if (child.IsHidden)
                     continue;
@@ -1549,7 +1557,8 @@ namespace Gwen.Control
             //
             // Fill uses the left over space, so do that now.
             //
-            foreach (Base child in m_Children)
+            var temp2 = new List<Base>(m_Children);
+            foreach (Base child in temp2)
             {
                 Pos dock = child.Dock;
 
@@ -1780,7 +1789,8 @@ namespace Gwen.Control
         {
             Point size = Point.Empty;
 
-            foreach (Base child in m_Children)
+            var temp = new List<Base>(m_Children);
+            foreach (Base child in temp)
             {
                 if (child.IsHidden)
                     continue;

@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Linq;
 using FreezingArcher.Math;
 using FreezingArcher.DataStructures;
 using System.Collections.Generic;
@@ -66,15 +67,20 @@ namespace FreezingArcher.Content
 
         public bool PutInBar(int invPositionX, int invPositionY, byte barPosition)
         {
-            if (barPosition > 0 && barPosition < inventoryBar.Length &&
-                invPositionX > 0 && invPositionX < storage.GetLength(0) &&
-                invPositionY > 0 && invPositionY < storage.GetLength(1))
+            if (barPosition >= 0 && barPosition < inventoryBar.Length &&
+                invPositionX >= 0 && invPositionX < storage.GetLength(0) &&
+                invPositionY >= 0 && invPositionY < storage.GetLength(1))
             {
                 inventoryBar[barPosition] = storage[invPositionX, invPositionY];
                 return true;
             }
 
             return false;
+        }
+
+        public void RemoveFromBar(byte barPosition)
+        {
+            inventoryBar[barPosition] = null;
         }
 
         public IEnumerable<Tuple<ItemComponent, Vector2i>> Items
@@ -165,6 +171,30 @@ namespace FreezingArcher.Content
 
                 return bar;
             }
+        }
+
+        public byte GetPositionOfBarItem(ItemComponent item)
+        {
+            var hc = item.GetHashCode();
+            byte index = 0;
+
+            while (index < inventoryBar.Length && inventoryBar[index] != hc)
+            {
+                index++;
+            }
+
+            return index;
+        }
+
+        public bool MoveBarItemToPosition(ItemComponent item, byte position)
+        {
+            if (inventoryBar[position] == null)
+            {
+                inventoryBar[GetPositionOfBarItem(item)] = null;
+                inventoryBar[position] = item.GetHashCode();
+                return true;
+            }
+            return false;
         }
 
         public ItemComponent GetItemAt(Vector2i position)

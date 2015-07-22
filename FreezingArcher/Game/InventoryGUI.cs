@@ -108,7 +108,8 @@ namespace FreezingArcher.Game
 
     public class InventoryBarSpace : Button
     {
-        public InventoryBarSpace (Base parent, int boxSize) : base (parent)
+        public InventoryBarSpace (Base parent, Inventory inventory, List<InventoryBarButton> barItems, int boxSize) :
+        base (parent)
         {
             DrawDebugOutlines = true;
             foreach (var child in Children)
@@ -116,13 +117,17 @@ namespace FreezingArcher.Game
             ShouldDrawBackground = false;
             BoundsOutlineColor = parent.GetCanvas ().Skin.Colors.Label.Dark;
             this.boxSize = boxSize;
+            this.inventory = inventory;
+            this.barItems = barItems;
         }
 
         readonly int boxSize;
+        readonly Inventory inventory;
+        readonly List<InventoryBarButton> barItems;
 
         public override bool DragAndDrop_CanAcceptPackage (Package p)
         {
-            return p.Name == "item_drag";
+            return p.Name == "item_drag" || p.Name == "bar_drag";
         }
 
         public override bool DragAndDrop_Draggable ()
@@ -142,9 +147,34 @@ namespace FreezingArcher.Game
 
         public override bool DragAndDrop_HandleDrop (Package p, int x, int y)
         {
-            var item = p.UserData as Tuple<int, int, InventoryButton, ItemComponent>;
+            if (p.Name == "bar_drag")
+            {
+                var invBarBtn = p.UserData as InventoryBarButton;
 
-            // add button
+                if (invBarBtn != null)
+                {
+                    var pos = (byte) (X / boxSize);
+                    invBarBtn.X = X + 1;
+                    inventory.MoveBarItemToPosition(invBarBtn.Item, pos);
+                    return true;
+                }
+            }
+            else if (p.Name == "item_drag")
+            {
+                var invBarTuple = p.UserData as Tuple<int, int, InventoryButton, ItemComponent>;
+
+                if (invBarTuple != null)
+                {
+                    var pos = (byte) (X / boxSize);
+                    if (inventory.PutInBar(inventory.GetPositionOfItem(invBarTuple.Item4), pos))
+                    {
+                        barItems.Add(
+                            new InventoryBarButton(Parent, barItems, inventory, invBarTuple.Item4, pos, boxSize));
+                        return true;
+                    }
+                }
+            }
+
             return false;
         }
     }
@@ -234,6 +264,112 @@ namespace FreezingArcher.Game
         }
     }
 
+    public class InventoryBarButton : Button
+    {
+        public InventoryBarButton (Base parent, List<InventoryBarButton> barItems, Inventory inventory,
+            ItemComponent item, byte position, int boxSize) :
+        base (parent)
+        {
+            this.boxSize = boxSize;
+            this.IsToggle = true;
+            this.item = item;
+            this.inventory = inventory;
+            this.barItems = barItems;
+
+            if (!string.IsNullOrEmpty(item.ImageLocation))
+                SetImage(item.ImageLocation, true);
+
+            Width = boxSize - 1;
+            Height = boxSize - 1;
+            X = boxSize * position + 1;
+            Y = 1;
+
+            var max = item.Size.X > item.Size.Y ? item.Size.X : item.Size.Y;
+            m_Image.Width = (boxSize / max) * item.Size.X;
+            m_Image.Height = (boxSize / max) * item.Size.Y;
+            DragAndDrop_SetPackage (true, "bar_drag");
+        }
+
+        readonly ItemComponent item;
+        readonly int boxSize;
+        readonly Inventory inventory;
+        readonly List<InventoryBarButton> barItems;
+
+        public ItemComponent Item
+        {
+            get
+            {
+                return item;
+            }
+        }
+
+        public override void DragAndDrop_EndDragging (bool success, int x, int y)
+        {
+            base.DragAndDrop_EndDragging (success, x, y);
+
+            if (success)
+                Show();
+            else
+                DelayedDelete();
+
+            IsDepressed = false;
+        }
+
+        public override bool DragAndDrop_CanAcceptPackage (Package p)
+        {
+            return p.Name == "bar_drag" || p.Name == "item_drag";
+        }
+
+        public override bool DragAndDrop_Draggable ()
+        {
+            return true;
+        }
+
+        public override bool DragAndDrop_HandleDrop (Package p, int x, int y)
+        {
+            if (p.Name == "bar_drag")
+            {
+                var invBarBtn = p.UserData as InventoryBarButton;
+
+                if (invBarBtn != null)
+                {
+                    var pos = (byte) (X / boxSize);
+                    invBarBtn.X = X;
+                    inventory.RemoveFromBar(pos);
+                    Parent.RemoveChild(this, true);
+                    inventory.MoveBarItemToPosition(invBarBtn.Item, pos);
+                    return true;
+                }
+            }
+            else if (p.Name == "item_drag")
+            {
+                var invBarTuple = p.UserData as Tuple<int, int, InventoryButton, ItemComponent>;
+
+                if (invBarTuple != null)
+                {
+                    var pos = (byte) (X / boxSize);
+                    inventory.RemoveFromBar(pos);
+                    Parent.RemoveChild(this, true);
+                    if (inventory.PutInBar(inventory.GetPositionOfItem(invBarTuple.Item4), pos))
+                    {
+                        barItems.Add(
+                            new InventoryBarButton(Parent, barItems, inventory, invBarTuple.Item4, pos, boxSize));
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public override void DragAndDrop_StartDragging (Package package, int x, int y)
+        {
+            package.UserData = this;
+            Hide ();
+            base.DragAndDrop_StartDragging (package, x, y);
+        }
+    }
+
     public class InventoryBackground : Base
     {
         public InventoryBackground(Base parent, Inventory inventory, Action<ItemComponent> itemDroppedAction) : 
@@ -277,6 +413,7 @@ namespace FreezingArcher.Game
             Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
 
             spaces = new InventorySpace[inventory.Size.X, inventory.Size.Y];
+            barItems = new List<InventoryBarButton>();
 
             canvasFrame = new InventoryBackground(parent, inventory, ItemDropped);
             canvasFrame.Width = parent.Width;
@@ -371,7 +508,8 @@ namespace FreezingArcher.Game
 
             inventoryBar = new TextBox(canvasFrame);
             const int barBoxSize = 50;
-            inventoryBar.IsDisabled = true;
+            inventoryBar.Disable();
+            inventoryBar.KeyboardInputEnabled = false;
             inventoryBar.Height = barBoxSize + 1;
             inventoryBar.Width = barBoxSize * inventory.InventoryBar.Length + 1;
             inventoryBar.Y = canvasFrame.Height - inventoryBar.Height;
@@ -379,7 +517,7 @@ namespace FreezingArcher.Game
             barSpaces = new InventoryBarSpace[inventory.InventoryBar.Length];
             for (int i = 0; i < inventory.InventoryBar.Length; i++)
             {
-                barSpaces[i] = new InventoryBarSpace(inventoryBar, barBoxSize);
+                barSpaces[i] = new InventoryBarSpace(inventoryBar, inventory, barItems, barBoxSize);
                 barSpaces[i].X = i * barBoxSize;
                 barSpaces[i].Width = barBoxSize + 1;
                 barSpaces[i].Height = barBoxSize + 1;
@@ -490,6 +628,7 @@ namespace FreezingArcher.Game
         readonly Base toolbarFrame;
         readonly Base canvasFrame;
         readonly List<InventoryButton> items;
+        readonly List<InventoryBarButton> barItems;
         readonly TextBox inventoryBar;
         readonly InventoryBarSpace[] barSpaces;
         readonly Application application;

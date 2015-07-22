@@ -386,7 +386,7 @@ namespace Gwen.Renderer
             texcoords[4] = new Vector2(u2, v1);
             texcoords[5] = new Vector2(u2, v2);
 
-            PrivateRendererContext.DrawTexturedRectangleAbsolute((Texture2D)t.RendererData, ref pos, ref size, texcoords);
+             PrivateRendererContext.DrawTexturedRectangleAbsolute((Texture2D)t.RendererData, ref pos, ref size, texcoords, no_blend:true);
         }
 
         /// <summary>
@@ -472,7 +472,7 @@ namespace Gwen.Renderer
             m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
             SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
 
-            return new Point((int)Math.Round(size.Width), (int)Math.Round(size.Height));
+            return new Point((int)Math.Round(size.Width+5), (int)Math.Round(size.Height+5));
         }
 
         /// <summary>
@@ -507,7 +507,12 @@ namespace Gwen.Renderer
             else
             {
                 TextRenderer tr = m_StringCache[key];
+
+                PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.One, RendererBlendingFactorDest.One);
+
                 DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
+
+                PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.SrcAlpha, RendererBlendingFactorDest.OneMinusSrcAlpha);
             }
         }
 

@@ -1539,10 +1539,11 @@ namespace FreezingArcher.Renderer
         }
 
         private void DrawTexturedRectangle(ref Vector2 position, ref Vector2 size, 
-            Vector2[] tex_override, ref Vector2 screen_size, int count = 1, bool relative = false)
+            Vector2[] tex_override, ref Vector2 screen_size, int count = 1, bool relative = false, bool no_blend = false)
         {
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            if(!no_blend)
+                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             GL.Disable(EnableCap.DepthTest);
@@ -1613,24 +1614,24 @@ namespace FreezingArcher.Renderer
             DrawFilledRectangle(ref position, ref size, ref vs, ref color, count);
         }
 
-        public void DrawTexturedRectangleAbsolute(Texture2D tex, ref Vector2 position, ref Vector2 size, Vector2[] texcoords, int count = 1)
+        public void DrawTexturedRectangleAbsolute(Texture2D tex, ref Vector2 position, ref Vector2 size, Vector2[] texcoords, int count = 1, bool no_blend = false)
         {
             Vector2 vs = new Vector2(ViewportSize.X, ViewportSize.Y);
 
             tex.Bind(0);
 
-            DrawTexturedRectangle(ref position, ref size, texcoords, ref vs, count);
+            DrawTexturedRectangle(ref position, ref size, texcoords, ref vs, count, no_blend:no_blend);
 
             tex.Unbind();
         }
 
-        public void DrawTexturedRectangleRelative(Texture2D tex, ref Vector2 position, ref Vector2 size, Vector2[] texcoords, int count = 1)
+        public void DrawTexturedRectangleRelative(Texture2D tex, ref Vector2 position, ref Vector2 size, Vector2[] texcoords, int count = 1, bool no_blend = false)
         {
             Vector2 vs = new Vector2(1.0f, 1.0f);
 
             tex.Bind(0);
 
-            DrawTexturedRectangle(ref position, ref size, texcoords, ref vs, count);
+            DrawTexturedRectangle(ref position, ref size, texcoords, ref vs, count, no_blend);
 
             tex.Unbind();
         }

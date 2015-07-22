@@ -72,6 +72,7 @@ namespace FreezingArcher.Renderer.Compositor
         DirectedWeightedGraph<CompositorNode, CompositorEdgeDescriptionListWrapper> _CompositorGraph;
         List<DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper>> _Nodes;
         List<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper>> _Edges;
+        DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper> DummyNode;
 
         object graphLock;
 
@@ -86,6 +87,8 @@ namespace FreezingArcher.Renderer.Compositor
 
             _Nodes = new List<DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper>>();
             _Edges = new List<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper>>();
+
+            DummyNode = _CompositorGraph.AddNode(null);
 
             RendererContext = rc;
         }
@@ -203,20 +206,20 @@ namespace FreezingArcher.Renderer.Compositor
         {
             lock (graphLock)
             {
-                bool started = false;
-                bool first_edge_where_start_node_was_start = false;
-
-                foreach(var edge in (IEnumerable<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper>>) _CompositorGraph.AsBreadthFirstEnumerable)
+                //Connect all StartNodes with dummy nodes
+                List<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper>> addededges = new List<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper>>();
+                foreach (DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper> node in _Nodes)
                 {
-                    if (edge.SourceNode.Data.Name == "NodeStart" && !started)
-                    {
-                        first_edge_where_start_node_was_start = true;
-                    }
+                    if (node.Data.Name == "NodeStart")
+                        addededges.Add(_CompositorGraph.AddEdge(DummyNode, node, null));
+                }
 
-                    started = true;
-
-                    if (first_edge_where_start_node_was_start)
+                foreach (var edge in (IEnumerable<DirectedWeightedEdge<CompositorNode, CompositorEdgeDescriptionListWrapper>>) _CompositorGraph.AsBreadthFirstEnumerable)
+                {
+                    if (edge.Weight != null)
                     {
+                        Console.WriteLine("StartNode: " + edge.SourceNode.Data.Name + " EndNode: " + edge.DestinationNode.Data.Name);
+
                         if (!edge.SourceNode.Data.Rendered)
                         {
                             edge.SourceNode.Data.Begin();
@@ -230,6 +233,9 @@ namespace FreezingArcher.Renderer.Compositor
                         }
                     }
                 }
+
+                //Disconnect all StartNodes with dummy node
+                addededges.ForEach(x => _CompositorGraph.RemoveEdge(x));
 
                 //Are there some nodes, which are not rendered?
                 foreach (DirectedWeightedNode<CompositorNode, CompositorEdgeDescriptionListWrapper> node in _Nodes)

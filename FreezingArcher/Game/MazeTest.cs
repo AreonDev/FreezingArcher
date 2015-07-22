@@ -50,10 +50,12 @@ namespace FreezingArcher.Game
 
         BasicCompositor compositor;
 
-        CompositorNodeScene scenenode;
+        CompositorNodeScene scenenode1;
+        CompositorNodeScene scenenode2;
         CompositorNodeOutput outputnode;
         CompositorNodeDeferredShading deferredshadingnode;
         CompositorBlurNode blur;
+        CompositorNodeTextureAlphaMerger merger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
@@ -71,12 +73,14 @@ namespace FreezingArcher.Game
             this.game = game;
             application = app;
 
-            scenenode = new CompositorNodeScene (rendererContext, messageProvider);
+            scenenode1 = new CompositorNodeScene (rendererContext, messageProvider);
+            scenenode2 = new CompositorNodeScene (rendererContext, messageProvider);
             outputnode = new CompositorNodeOutput (rendererContext, messageProvider);
             deferredshadingnode = new CompositorNodeDeferredShading (rendererContext, messageProvider);
             blur = new CompositorBlurNode (rendererContext, messageProvider);
+            merger = new CompositorNodeTextureAlphaMerger (rendererContext, messageProvider);
 
-            game.SceneNode = scenenode;
+            game.SceneNode = scenenode1;
 
             game.AddGameState("maze_overworld", Content.Environment.Default, null);
             var state = game.GetGameState("maze_overworld");
@@ -92,20 +96,24 @@ namespace FreezingArcher.Game
 
             compositor = new BasicCompositor (objmnr, rendererContext);
 
-            compositor.AddNode (scenenode);
+            compositor.AddNode (scenenode1);
+            compositor.AddNode (scenenode2);
             compositor.AddNode (outputnode);
             compositor.AddNode (deferredshadingnode);
             compositor.AddNode (blur);
+            compositor.AddNode (merger);
 
+            compositor.AddConnection (scenenode1, deferredshadingnode, 0, 0);
+            compositor.AddConnection (scenenode1, deferredshadingnode, 1, 1);
+            compositor.AddConnection (scenenode1, deferredshadingnode, 2, 2);
+            compositor.AddConnection (scenenode1, deferredshadingnode, 3, 3);
 
-            compositor.AddConnection (scenenode, deferredshadingnode, 0, 0);
-            compositor.AddConnection (scenenode, deferredshadingnode, 1, 1);
-            compositor.AddConnection (scenenode, deferredshadingnode, 2, 2);
-            compositor.AddConnection (scenenode, deferredshadingnode, 3, 3);
+            compositor.AddConnection (deferredshadingnode, merger, 0, 0);
 
-            compositor.AddConnection (deferredshadingnode, blur, 0, 0);
+            compositor.AddConnection (merger, blur, 0, 0);
+            compositor.AddConnection (blur, outputnode, 0, 0);
 
-            compositor.AddConnection (deferredshadingnode, outputnode, 0, 0);
+            compositor.AddConnection (scenenode2, merger, 0, 1);
 
             rendererContext.Compositor = compositor;
 

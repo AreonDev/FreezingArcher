@@ -111,7 +111,7 @@ namespace FreezingArcher.Renderer.Compositor
         {    
             PrivateScene = new CoreScene(PrivateRendererContext, PrivateMessageProvider);
             PrivateScene.Init(PrivateRendererContext);
-            PrivateScene.BackgroundColor = Math.Color4.Red;
+            PrivateScene.BackgroundColor = new Math.Color4(1.0f, 0.0f, 0.0f, 0.3f);
             ExtendedName = "NodeScene";
         }
 

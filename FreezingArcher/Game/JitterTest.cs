@@ -60,7 +60,7 @@ namespace FreezingArcher.Game
             state.Scene.BackgroundColor = Color4.Aqua;
 
             loadingScreen = new LoadingScreen(application, application.MessageManager, "loading.png",
-                "JitterTestLoadingScreen",
+                "JitterTestLoadingScreen", null, 
                 to: new[] {new Tuple<string, GameStateTransition>(state.Name, new GameStateTransition(0))});
 
             player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy,

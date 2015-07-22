@@ -268,6 +268,22 @@ namespace FreezingArcher.Renderer.Compositor
             Rendered = true;
         }
 
+        public virtual void Bypass()
+        {
+            Begin();
+            Sprite spr = new Sprite();
+            spr.AbsolutePosition = new FreezingArcher.Math.Vector2(0, 0);
+            spr.CustomEffect = false;
+
+            spr.Init(InputSlots[0].SlotTexture);
+
+            PrivateRendererContext.DrawSpriteAbsolute(spr);
+
+            End();
+
+            Rendered = true;
+        }
+
         public void Reset()
         {
             Rendered = false;

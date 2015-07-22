@@ -47,6 +47,7 @@ namespace FreezingArcher.Game
         double f = 0;
 
         LoadingScreen loadingScreen;
+        public CoreScene     UIScene{ get; private set;}
 
         BasicCompositor compositor;
 
@@ -88,6 +89,12 @@ namespace FreezingArcher.Game
             state.Scene.BackgroundColor = Color4.Crimson;
             state.MessageProxy.StartProcessing();
 
+            UIScene = new CoreScene (rendererContext, messageProvider);
+            UIScene.BackgroundColor = Color4.Transparent;
+
+            scenenode2.Scene = UIScene;
+            UIScene.Active = false;
+
             loadingScreen = new LoadingScreen(application, application.MessageManager, "loading.png",
                 "MazeLoadingScreen",
                 to: new[] {new Tuple<string, GameStateTransition>(state.Name, new GameStateTransition(0))});
@@ -110,10 +117,12 @@ namespace FreezingArcher.Game
 
             compositor.AddConnection (deferredshadingnode, merger, 0, 0);
 
-            compositor.AddConnection (merger, blur, 0, 0);
-            compositor.AddConnection (blur, outputnode, 0, 0);
+            compositor.AddConnection (merger, outputnode, 0, 0);
+            //compositor.AddConnection (blur, outputnode, 0, 0);
 
             compositor.AddConnection (scenenode2, merger, 0, 1);
+
+            deferredshadingnode.Active = false;
 
             rendererContext.Compositor = compositor;
 
@@ -147,7 +156,7 @@ namespace FreezingArcher.Game
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 10, 10);
+            maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager);
             maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
 
             game.AddGameState("maze_underworld", Content.Environment.Default,
@@ -157,7 +166,7 @@ namespace FreezingArcher.Game
             state.Scene = new CoreScene(rendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.AliceBlue;
             state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
-            maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 10, 10);
+            maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager);
             maze[1].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
 
             state.MessageProxy.StopProcessing();
@@ -219,6 +228,10 @@ namespace FreezingArcher.Game
                 if (maze[0].HasFinished && maze[1].HasFinished && !finishedLoading)
                 {
                     finishedLoading = true;
+
+                    deferredshadingnode.Active = true;
+                    UIScene.Active = true;
+
                     if (game.CurrentGameState.Name != "maze_overworld")
                         game.SwitchToGameState("maze_overworld");
                 }

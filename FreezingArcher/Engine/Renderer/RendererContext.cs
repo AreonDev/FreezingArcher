@@ -228,7 +228,7 @@ namespace FreezingArcher.Renderer
             List<Vector3>[] tex_coord_list_array = new List<Vector3>[] { tex_coords_3d_list };
 
             for (int i = 0; i < texcoords.Length; i++)
-                tex_coords_3d_list.Add(new Vector3(texcoords[i].X, texcoords[i].Y, 1));
+                tex_coords_3d_list.Add(new Vector3(texcoords[i].X, 1-texcoords[i].Y, 1));
 
 
 
@@ -471,33 +471,38 @@ namespace FreezingArcher.Renderer
         {
             if (Scene != null)
             {
-                Scene.Update();
+                if (Scene.Active)
+                {
+                    Scene.Update();
 
-                if (Scene.FrameBufferDepthStencilTexture.Width != ViewportSize.X ||
-                   Scene.FrameBufferDepthStencilTexture.Height != ViewportSize.Y)
-                    Scene.ResizeTextures(ViewportSize.X, ViewportSize.Y);
+                    if (Scene.FrameBufferDepthStencilTexture.Width != ViewportSize.X ||
+                        Scene.FrameBufferDepthStencilTexture.Height != ViewportSize.Y)
+                        Scene.ResizeTextures(ViewportSize.X, ViewportSize.Y);
 
-                /*Scene.FrameBuffer.UseAttachments(new FrameBuffer.AttachmentUsage[]
+                    /*Scene.FrameBuffer.UseAttachments(new FrameBuffer.AttachmentUsage[]
                     {FrameBuffer.AttachmentUsage.Color0,
                         FrameBuffer.AttachmentUsage.Color1, FrameBuffer.AttachmentUsage.Color2,
                         FrameBuffer.AttachmentUsage.Color3
                     });*/
 
-                //Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
+                    //Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
 
-                this.Clear(Scene.BackgroundColor, 1);
+                    this.Clear(Scene.BackgroundColor, 1);
 
-                foreach (SceneObject obj in Scene.GetObjectsSorted())
-                {
-                    if (obj.Enabled)
+                    foreach (SceneObject obj in Scene.GetObjectsSorted())
                     {
-                        obj.Update();
+                        if (obj.Enabled)
+                        {
+                            obj.Update();
                         
-                        obj.Draw(this);
+                            obj.Draw(this);
+                        }
                     }
-                }
 
-                //Scene.FrameBuffer.Unbind();
+                    //Scene.FrameBuffer.Unbind();
+                }
+                else
+                    this.Clear(Math.Color4.Transparent);
             }
 
             //Now.... use Funny stupid Deferred Shading shader

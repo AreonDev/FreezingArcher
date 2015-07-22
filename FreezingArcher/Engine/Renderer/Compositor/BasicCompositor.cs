@@ -218,13 +218,18 @@ namespace FreezingArcher.Renderer.Compositor
                 {
                     if (edge.Weight != null)
                     {
-                        Console.WriteLine("StartNode: " + edge.SourceNode.Data.Name + " EndNode: " + edge.DestinationNode.Data.Name);
-
                         if (!edge.SourceNode.Data.Rendered)
                         {
-                            edge.SourceNode.Data.Begin();
-                            edge.SourceNode.Data.Draw();
-                            edge.SourceNode.Data.End();
+                            if (edge.SourceNode.Data.Active)
+                            {
+                                edge.SourceNode.Data.Begin();
+                                edge.SourceNode.Data.Draw();
+                                edge.SourceNode.Data.End();
+                            }
+                            else
+                            {
+                                edge.SourceNode.Data.Bypass();
+                            }
                         }
 
                         foreach (CompositorEdgeDescription desc in edge.Weight.Descriptions)

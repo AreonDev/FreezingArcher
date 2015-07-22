@@ -89,6 +89,8 @@ namespace FreezingArcher.Renderer.Scene
         private RendererContext PrivateRendererContext;
         public bool IsInitialized { get; private set;}
 
+        public bool Active { get; set;}
+
         public void AddObject(SceneObject obj)
         {
             if(obj == null)
@@ -217,6 +219,8 @@ namespace FreezingArcher.Renderer.Scene
             FrameBuffer = null;
 
             SceneName = "CoreScene";
+
+            Active = true;
 
             Init(rc);
         }

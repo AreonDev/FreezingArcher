@@ -31,6 +31,7 @@ using FreezingArcher.Content;
 using FreezingArcher.Math;
 using FreezingArcher.Messaging;
 using FreezingArcher.DataStructures;
+using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {
@@ -44,7 +45,7 @@ namespace FreezingArcher.Game
 
         MessageProvider MessageProvider;
 
-        public UITest (Application app, MessageProvider messageProvider, Entity player)
+        public UITest (Application app, MessageProvider messageProvider, Entity player, CoreScene scene)
         {
             ValidMessages = new[] { (int) MessageId.WindowResize };
             messageProvider += this;
@@ -53,7 +54,8 @@ namespace FreezingArcher.Game
 
             sceneobj = new UISceneObject ();
             sceneobj.Priority = 999;
-            state.Scene.AddObject (sceneobj);
+            scene.BackgroundColor = Color4.Transparent;
+            scene.AddObject (sceneobj);
 
             var input = new FreezingArcher.UI.Input.FreezingArcherInput(app, state.MessageProxy);
             input.Initialize (sceneobj.Canvas);

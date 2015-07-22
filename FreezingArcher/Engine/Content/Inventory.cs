@@ -28,21 +28,24 @@ using System.Collections.Generic;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Renderer.Scene.SceneObjects;
 
 namespace FreezingArcher.Content
 {
     public sealed class Inventory : IMessageCreator
     {
-        public Inventory(MessageProvider messageProvider, int sizeX, int sizeY, byte barSize)
-            : this(messageProvider, new Vector2i(sizeX, sizeY), barSize)
+        public Inventory(MessageProvider messageProvider, GameState state, Entity player, int sizeX, int sizeY, byte barSize)
+            : this(messageProvider, state, player, new Vector2i(sizeX, sizeY), barSize)
         {
         }
 
-        public Inventory(MessageProvider messageProvider, Vector2i size, byte barSize)
+        public Inventory(MessageProvider messageProvider, GameState state, Entity player, Vector2i size, byte barSize)
         {
             Size = size;
             messageProvider += this;
             this.messageProvider = messageProvider;
+            this.player = player;
+            gameState = state;
             storage = new int?[Size.X, Size.Y];
 
             if (barSize < 1 || barSize > 10)
@@ -58,6 +61,8 @@ namespace FreezingArcher.Content
         public Vector2i Size { get; private set; }
 
         readonly int?[,] storage;
+        readonly Entity player;
+        readonly GameState gameState;
 
         SortedDictionary<int, ItemComponent> items = new SortedDictionary<int, ItemComponent>();
 
@@ -69,6 +74,9 @@ namespace FreezingArcher.Content
 
         public bool PutInBar(int invPositionX, int invPositionY, byte barPosition)
         {
+            if (inventoryBar.Contains(storage[invPositionX, invPositionY]))
+                return false;
+
             if (barPosition >= 0 && barPosition < inventoryBar.Length &&
                 invPositionX >= 0 && invPositionX < storage.GetLength(0) &&
                 invPositionY >= 0 && invPositionY < storage.GetLength(1))
@@ -267,63 +275,69 @@ namespace FreezingArcher.Content
 
         public bool Insert(string name, string imageLocation, string description)
         {
-            return Insert(name, imageLocation, description, ItemComponent.DefaultSize);
+            return Insert(name, imageLocation, description, string.Empty);
         }
 
-        public bool Insert(string name, string imageLocation, string description, Vector2i size)
+        public bool Insert(string name, string imageLocation, string description, string modelPath)
         {
-            return Insert(name, imageLocation, description, size, ItemComponent.DefaultAttackClasses);
+            return Insert(name, imageLocation, description, modelPath, ItemComponent.DefaultSize);
         }
 
-        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size)
+        {
+            return Insert(name, imageLocation, description, modelPath, size, ItemComponent.DefaultAttackClasses);
+        }
+
+        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
                            AttackClass attackClasses)
         {
-            return Insert(name, imageLocation, description, size, attackClasses, ItemComponent.DefaultItemUsages);
+            return Insert(name, imageLocation, description, modelPath, size, attackClasses, ItemComponent.DefaultItemUsages);
         }
 
-        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
                            AttackClass attackClasses, ItemUsage itemUsages)
         {
-            return Insert(name, imageLocation, description, size, attackClasses, itemUsages, ItemComponent.DefaultProtection);
+            return Insert(name, imageLocation, description, modelPath, size, attackClasses, itemUsages,
+                ItemComponent.DefaultProtection);
         }
 
-        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
                            AttackClass attackClasses, ItemUsage itemUsages, Protection protection)
         {
-            return Insert(name, imageLocation, description, size, attackClasses, itemUsages, protection,
+            return Insert(name, imageLocation, description, modelPath, size, attackClasses, itemUsages, protection,
                 ItemComponent.DefaultHealthDelta);
         }
 
-        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
                            AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta)
         {
-            return Insert(name, imageLocation, description, size, attackClasses, itemUsages, protection,
+            return Insert(name, imageLocation, description, modelPath, size, attackClasses, itemUsages, protection,
                 healthDelta, ItemComponent.DefaultAttackStrength);
         }
 
-        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
                            AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
                            float attackStrength)
         {
-            return Insert(name, imageLocation, description, size, attackClasses, itemUsages, protection,
+            return Insert(name, imageLocation, description, modelPath, size, attackClasses, itemUsages, protection,
                 healthDelta, attackStrength, ItemComponent.DefaultThrowPower);
         }
 
-        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
                            AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
                            float attackStrength, float throwPower)
         {
-            return Insert(name, imageLocation, description, size, attackClasses, itemUsages, protection,
+            return Insert(name, imageLocation, description, modelPath, size, attackClasses, itemUsages, protection,
                 healthDelta, attackStrength, throwPower, ItemComponent.DefaultUsage);
         }
 
-        public bool Insert(string name, string imageLocation, string description, Vector2i size,
+        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
                            AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
                            float attackStrength, float throwPower, float usage)
         {
-            return Insert(CreateNewItem(messageProvider, name, imageLocation, description, size,
-                    ItemComponent.DefaultOrientation, ItemLocation.Inventory, attackClasses, itemUsages, protection, 
-                    healthDelta, attackStrength, throwPower, usage));
+            return Insert(CreateNewItem(messageProvider, gameState, player, name, imageLocation, description, modelPath,
+                size, ItemComponent.DefaultOrientation, ItemLocation.Inventory, attackClasses, itemUsages, protection, 
+                healthDelta, attackStrength, throwPower, usage));
         }
 
         public bool Insert(ItemComponent item)
@@ -452,13 +466,13 @@ namespace FreezingArcher.Content
             return true;
         }
 
-        public static ItemComponent CreateNewItem(MessageProvider messageProvider, string name, string imageLocation,
-                                                  string description, Vector2i size, Orientation orientation, ItemLocation location,
-                                                  AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
-                                                  float attackStrength, float throwPower, float usage)
+        public static ItemComponent CreateNewItem(MessageProvider messageProvider, GameState state, Entity player,
+            string name, string imageLocation, string description, string modelPath, Vector2i size,
+            Orientation orientation, ItemLocation location, AttackClass attackClasses, ItemUsage itemUsages,
+            Protection protection, float healthDelta, float attackStrength, float throwPower, float usage)
         {
             var entity = EntityFactory.Instance.CreateWith(name, messageProvider,
-                             systems: new[] { typeof(ItemSystem) });
+                systems: new[] { typeof(ItemSystem), typeof(ModelSystem) });
 
             var item = entity.GetComponent<ItemComponent>();
             item.ImageLocation = imageLocation;
@@ -473,6 +487,21 @@ namespace FreezingArcher.Content
             item.AttackStrength = attackStrength;
             item.ThrowPower = throwPower;
             item.Usage = usage;
+            item.Player = player;
+
+            var model = new ModelSceneObject(modelPath);
+            state.Scene.AddObject(model);
+            entity.GetComponent<ModelComponent>().Model = model;
+
+            var player_transform = player.GetComponent<TransformComponent>();
+            var transform = entity.GetComponent<TransformComponent>();
+            Action handler = () => {
+                transform.Position = 
+                    player_transform.Position + Vector3.Transform(new Vector3(-0.5f, -0.4f, -0.2f), player_transform.Rotation);
+                transform.Rotation = player_transform.Rotation;
+            };
+            player_transform.OnPositionChanged += handler;
+            player_transform.OnRotationChanged += handler;
 
             return item;
         }

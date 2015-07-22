@@ -35,10 +35,11 @@ namespace FreezingArcher.Messaging
         /// </summary>
         /// <param name="entity">Entity on which the usage should be applied.</param>
         /// <param name="usage">Usage which should be applied when sending this message.</param>
-        public ItemUseMessage(Entity entity, ItemUsage usage)
+        public ItemUseMessage(Entity entity, ItemComponent item, ItemUsage usage)
         {
             Usage = usage;
             Entity = entity;
+            Item = item;
             MessageId = (int) Messaging.MessageId.ItemUse;
         }
 
@@ -53,6 +54,12 @@ namespace FreezingArcher.Messaging
         /// </summary>
         /// <value>The entity.</value>
         public Entity Entity { get; private set; }
+
+        /// <summary>
+        /// Gets the item.
+        /// </summary>
+        /// <value>The item.</value>
+        public ItemComponent Item { get; private set; }
 
         #region IMessage implementation
 

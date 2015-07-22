@@ -103,9 +103,13 @@ namespace FreezingArcher.Input
         {
             string s;
 
-            lock(keys)
+            var temp = new List<KeyboardInput>(keys);
+            foreach (KeyboardInput i in temp)
             {
-                foreach (KeyboardInput i in keys)
+                if (i == null)
+                    continue;
+                
+                if (CachedConfig.TryGetValue (i.Key, out s))
                 {
                     if (i == null)
                         continue;

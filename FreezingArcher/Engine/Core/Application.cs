@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Linq;
 using FreezingArcher.Audio;
 using FreezingArcher.Configuration;
 using FreezingArcher.Content;
@@ -551,7 +552,7 @@ namespace FreezingArcher.Core
                     else
                         Window.CaptureMouse ();
                 }
-                if (im.IsActionPressedAndRepeated("close"))
+                if (im.Keys.Any(k => k.Action == KeyAction.Release && k.Key == Key.F4 && k.Modifier == KeyModifiers.Alt))
                 {
                     Window.Close();
                 }

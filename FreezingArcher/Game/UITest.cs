@@ -30,6 +30,7 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Content;
 using FreezingArcher.Math;
 using FreezingArcher.Messaging;
+using FreezingArcher.DataStructures;
 
 namespace FreezingArcher.Game
 {
@@ -43,7 +44,7 @@ namespace FreezingArcher.Game
 
         MessageProvider MessageProvider;
 
-        public UITest (Application app, MessageProvider messageProvider)
+        public UITest (Application app, MessageProvider messageProvider, Entity player)
         {
             ValidMessages = new[] { (int) MessageId.WindowResize };
             messageProvider += this;
@@ -59,12 +60,16 @@ namespace FreezingArcher.Game
             sceneobj.Canvas.SetSize(app.Window.Size.X, app.Window.Size.Y);
             sceneobj.Canvas.ShouldDrawBackground = false;
 
-            var inventory = new Inventory(messageProvider, new Vector2i(5, 7), 9);
+            var inventory = new Inventory(messageProvider, state, player, new Vector2i(5, 7), 9);
 
-            inventory.Insert("flashlight", "Content/flashlight.png", "flashlight_description", new Vector2i(2, 1));
-            inventory.Insert("soda_can", "Content/soda.png", "soda_can_description", new Vector2i(1, 1));
+            inventory.Insert("flashlight", "Content/Flashlight/thumb.png", "flashlight_description",
+                "Content/Flashlight/flashlight.xml", new Vector2i(2, 1));
+            //var soda_can = Inventory.CreateNewItem(messageProvider, state, player, "soda_can", "Content/SodaCan/thumb.png",
+            //    "soda_can_description", "Content/SodaCan/soda_can.xml", new Vector2i(1, 1), Orientation.Horizontal,
+            //    ItemLocation.Inventory, AttackClass.Object, ItemUsage.Eatable, new Protection (), 20, 0, 5, 0);
+            //inventory.Insert(soda_can);
 
-            new InventoryGUI(app, inventory, messageProvider, sceneobj.Canvas);
+            new InventoryGUI(app, player, inventory, messageProvider, sceneobj.Canvas);
         }
 
         public void ConsumeMessage (FreezingArcher.Messaging.Interfaces.IMessage msg)

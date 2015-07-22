@@ -178,7 +178,7 @@ namespace FreezingArcher.Renderer.Scene
             MZNear = near;
             MZFar = far;
             MFov = fov;
-            ValidMessages = new int[] { (int)MessageId.PositionChanged, (int)MessageId.RotationChanged, (int)MessageId.WindowResize };
+            ValidMessages = new int[] { (int)MessageId.WindowResize };
             NeededComponents = new[] { typeof(TransformComponent) };
             messageProvider += this;
             Entity = entity;
@@ -188,6 +188,14 @@ namespace FreezingArcher.Renderer.Scene
                 MZNear, MZFar); 
             
             UpdateCamera ();
+
+            var transform = entity.GetComponent<TransformComponent>();
+            transform.OnPositionChanged += () => {
+                Position = transform.Position;
+            };
+            transform.OnRotationChanged += () => {
+                Rotation = transform.Rotation;
+            };
         }
 
         /// <summary>
@@ -226,22 +234,6 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="msg">Message to process</param>
         public virtual void ConsumeMessage (Messaging.Interfaces.IMessage msg)
         {
-            TransformComponent tc = Entity.GetComponent<TransformComponent>();
-
-            if (msg.MessageId == (int)MessageId.PositionChanged)
-            {
-                PositionChangedMessage pcm = msg as PositionChangedMessage;
-                if (pcm.Entity.Name == Entity.Name)
-                    Position = tc.Position;
-            }
-
-            if (msg.MessageId == (int)MessageId.RotationChanged)
-            {
-                RotationChangedMessage rcm = msg as RotationChangedMessage;
-                if (rcm.Entity.Name == Entity.Name)
-                    Rotation = tc.Rotation;
-            }
-
             if (msg.MessageId == (int) MessageId.WindowResize)
             {
                 WindowResizeMessage wrm = msg as WindowResizeMessage;
@@ -249,7 +241,6 @@ namespace FreezingArcher.Renderer.Scene
                 WindowY = wrm.Height;
                 UpdateProjectionMatrix();
             }
-
         }
     }
 }

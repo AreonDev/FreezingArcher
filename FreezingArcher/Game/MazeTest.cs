@@ -109,7 +109,7 @@ namespace FreezingArcher.Game
 
             rendererContext.Compositor = compositor;
 
-            player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, systems: new[] {
+            Player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, systems: new[] {
                 typeof (MovementSystem),
                 typeof (KeyboardControllerSystem),
                 typeof (MouseControllerSystem),
@@ -118,12 +118,12 @@ namespace FreezingArcher.Game
             });
 
             // embed new maze into game state logic and create a MoveEntityToScene
-            SkyboxSystem.CreateSkybox(state.Scene, player);
-            player.GetComponent<TransformComponent>().Position = new Vector3(0, 1.85f, 0);
-            state.Scene.CameraManager.AddCamera (new BaseCamera (player, state.MessageProxy), "player");
+            SkyboxSystem.CreateSkybox(state.Scene, Player);
+            Player.GetComponent<TransformComponent>().Position = new Vector3(0, 1.85f, 0);
+            state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
 
             RigidBody playerBody = new RigidBody (new SphereShape(1f));
-            playerBody.Position = player.GetComponent<TransformComponent> ().Position.ToJitterVector ();
+            playerBody.Position = Player.GetComponent<TransformComponent> ().Position.ToJitterVector ();
             playerBody.AllowDeactivation = false;
             playerBody.Material.StaticFriction = 0f;
             playerBody.Material.KineticFriction = 0f;
@@ -131,8 +131,8 @@ namespace FreezingArcher.Game
             //playerBody.Mass = 1000000.0f;
             playerBody.Update ();
           // playerBody.IsActive = false;
-            player.GetComponent<PhysicsComponent>().RigidBody = playerBody;
-            player.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
+            Player.GetComponent<PhysicsComponent>().RigidBody = playerBody;
+            Player.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (playerBody);
 
@@ -140,7 +140,7 @@ namespace FreezingArcher.Game
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
             maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 10, 10);
-            maze[0].PlayerPosition += player.GetComponent<TransformComponent>().Position;
+            maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
 
             game.AddGameState("maze_underworld", Content.Environment.Default,
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
@@ -148,9 +148,9 @@ namespace FreezingArcher.Game
             state = game.GetGameState("maze_underworld");
             state.Scene = new CoreScene(rendererContext, state.MessageProxy);
             state.Scene.BackgroundColor = Color4.AliceBlue;
-            state.Scene.CameraManager.AddCamera (new BaseCamera (player, state.MessageProxy), "player");
+            state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
             maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 10, 10);
-            maze[1].PlayerPosition += player.GetComponent<TransformComponent>().Position;
+            maze[1].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
 
             state.MessageProxy.StopProcessing();
             //game.SwitchToGameState("maze_overworld");
@@ -160,7 +160,7 @@ namespace FreezingArcher.Game
 
         readonly Maze.Maze[] maze = new Maze.Maze[2];
 
-        readonly Entity player;
+        public Entity Player { get; private set; }
 
         readonly Content.Game game;
 
@@ -172,22 +172,22 @@ namespace FreezingArcher.Game
         {
             if (currentMaze == 0)
             {
-                maze[0].PlayerPosition = player.GetComponent<TransformComponent>().Position;
-                game.MoveEntityToGameState(player, game.GetGameState("maze_overworld"), game.GetGameState("maze_underworld"));
+                maze[0].PlayerPosition = Player.GetComponent<TransformComponent>().Position;
+                game.MoveEntityToGameState(Player, game.GetGameState("maze_overworld"), game.GetGameState("maze_underworld"));
                 game.SwitchToGameState("maze_underworld");
                 if (MessageCreated != null)
-                    MessageCreated (new TransformMessage (player, maze [1].PlayerPosition, Quaternion.Identity));
+                    MessageCreated (new TransformMessage (Player, maze [1].PlayerPosition, Quaternion.Identity));
                 //player.GetComponent<PhysicsComponent>().RigidBody.Position = maze[1].PlayerPosition;
                 currentMaze = 1;
             }
             else if (currentMaze == 1)
             {
-                maze[1].PlayerPosition = player.GetComponent<TransformComponent>().Position;
-                game.MoveEntityToGameState(player, game.GetGameState("maze_underworld"), game.GetGameState("maze_overworld"));
+                maze[1].PlayerPosition = Player.GetComponent<TransformComponent>().Position;
+                game.MoveEntityToGameState(Player, game.GetGameState("maze_underworld"), game.GetGameState("maze_overworld"));
                 game.SwitchToGameState("maze_overworld");
 
                 if (MessageCreated != null)
-                    MessageCreated (new TransformMessage (player, maze [0].PlayerPosition, Quaternion.Identity));
+                    MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
 
                 //player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
                 currentMaze = 0;
@@ -252,7 +252,7 @@ namespace FreezingArcher.Game
                 maze[0].Generate(
                     () => {
                         if (MessageCreated != null)
-                            MessageCreated (new TransformMessage (player, maze [0].PlayerPosition, Quaternion.Identity));
+                            MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
                         var state = game.GetGameState ("maze_underworld");
                         maze[1].Generate (state: state);
                     },

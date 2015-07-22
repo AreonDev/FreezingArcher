@@ -415,10 +415,12 @@ namespace FreezingArcher.Game
 
     public class InventoryGUI : IMessageConsumer, IMessageCreator
     {
-        public InventoryGUI (Application application, Inventory inventory, MessageProvider messageProvider, Base parent)
+        public InventoryGUI (Application application, Entity player, Inventory inventory,
+            MessageProvider messageProvider, Base parent)
         {
             this.inventory = inventory;
             this.application = application;
+            this.player = player;
             ValidMessages = new[] {
                 (int) MessageId.WindowResize,
                 (int) MessageId.UpdateLocale,
@@ -486,7 +488,7 @@ namespace FreezingArcher.Game
                 if (toggledBtn != null)
                 {
                     if (MessageCreated != null)
-                        MessageCreated(new ItemUseMessage(toggledBtn.Item.Entity, ItemUsage.Eatable));
+                        MessageCreated(new ItemUseMessage(player, toggledBtn.Item, ItemUsage.Eatable));
                 }
             };
 
@@ -667,6 +669,7 @@ namespace FreezingArcher.Game
         readonly TextBox inventoryBar;
         readonly InventoryBarSpace[] barSpaces;
         readonly Application application;
+        readonly Entity player;
 
         #region IMessageConsumer implementation
 
@@ -782,6 +785,26 @@ namespace FreezingArcher.Game
                 if (im.IsActionPressed("inventory_item9"))
                 {
                     inventory.SetActiveBarItem(8);
+                }
+
+                if (im.IsActionPressed("close") && window.IsVisible)
+                {
+                    window.Hide();
+                    application.Window.CaptureMouse();
+                }
+
+                if (im.IsMouseButtonPressed(MouseButton.LeftButton))
+                {
+                    if (!application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
+                        MessageCreated(new ItemUseMessage(player, inventory.ActiveBarItem,
+                            ItemUsage.Hitable));
+                }
+
+                if (im.IsMouseButtonPressed(MouseButton.RightButton))
+                {
+                    if (!application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
+                        MessageCreated(new ItemUseMessage(player, inventory.ActiveBarItem,
+                            ItemUsage.Throwable));
                 }
 
                 var pos = inventory.ActiveBarPosition + (int) im.MouseScroll.Y;

@@ -22,6 +22,7 @@
 //
 using FreezingArcher.Math;
 using FreezingArcher.Messaging;
+using System;
 
 namespace FreezingArcher.Content
 {
@@ -72,9 +73,13 @@ namespace FreezingArcher.Content
             set
             {
                 position = value;
+                if (OnPositionChanged != null)
+                    OnPositionChanged();
                 CreateMessage(new PositionChangedMessage(Entity));
             }
         }
+
+        public event Action OnPositionChanged;
 
         /// <summary>
         /// Gets or sets the rotation.
@@ -89,9 +94,13 @@ namespace FreezingArcher.Content
             set
             {
                 rotation = value;
+                if (OnRotationChanged != null)
+                    OnRotationChanged();
                 CreateMessage(new RotationChangedMessage(Entity));
             }
         }
+
+        public event Action OnRotationChanged;
 
         /// <summary>
         /// Gets or sets the scale of this entity instance.
@@ -106,9 +115,12 @@ namespace FreezingArcher.Content
             set
             {
                 scale = value;
+
                 CreateMessage(new ScaleChangedMessage(Entity));
             }
         }
+
+        public event Action OnScaleChanged;
 
         /// <summary>
         /// Gets the world matrix.

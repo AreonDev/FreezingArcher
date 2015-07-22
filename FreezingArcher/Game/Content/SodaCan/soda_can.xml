@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<model>
+    <object>soda_can.obj</object>
+
+    <material>
+        <graphics diffuse="diffuse.png"/>
+    </material>
+</model>

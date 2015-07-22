@@ -22,6 +22,7 @@
 //
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Content
 {
@@ -39,7 +40,7 @@ namespace FreezingArcher.Content
         {
             base.Init(messageProvider, entity);
 
-            NeededComponents = new[] { typeof(ItemComponent), typeof(ModelComponent) };
+            NeededComponents = new[] { typeof(ItemComponent) };
 
             internalValidMessages = new[] { (int) MessageId.Input };
             messageProvider += this;

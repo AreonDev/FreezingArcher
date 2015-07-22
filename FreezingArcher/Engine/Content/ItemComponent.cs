@@ -92,7 +92,18 @@ namespace FreezingArcher.Content
         /// </summary>
         public static readonly string DefaultDescription = string.Empty;
 
+        /// <summary>
+        /// The default player.
+        /// </summary>
+        public static readonly Entity DefaultPlayer = null;
+
         #endregion
+
+        /// <summary>
+        /// Gets or sets the player.
+        /// </summary>
+        /// <value>The player.</value>
+        public Entity Player { get; set; }
 
         /// <summary>
         /// Gets or sets the image location.

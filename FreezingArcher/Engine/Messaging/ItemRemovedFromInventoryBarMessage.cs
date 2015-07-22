@@ -22,15 +22,19 @@
 //
 using System;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Messaging
 {
-    public class RemoveItemFromInventoryBarMessage : IMessage
+    public class ItemRemovedFromInventoryBarMessage : IMessage
     {
-        public RemoveItemFromInventoryBarMessage()
+        public ItemRemovedFromInventoryBarMessage(ItemComponent item)
         {
-            MessageId = (int) Messaging.MessageId.RemoveItemFromInventoryBar;
+            Item = item;
+            MessageId = (int) Messaging.MessageId.ItemRemovedFromInventoryBar;
         }
+
+        public ItemComponent Item { get; private set; }
 
         #region IMessage implementation
 

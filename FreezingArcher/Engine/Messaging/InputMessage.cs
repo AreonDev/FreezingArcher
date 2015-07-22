@@ -134,17 +134,17 @@ namespace FreezingArcher.Messaging
         public Application ApplicationInstance { get; protected set;}
 
         /// <summary>
-        /// Determines whether a key is pressed.
+        /// Determines whether a key is pressed and repeated.
         /// </summary>
         /// <returns><c>true</c> key is pressed; otherwise, <c>false</c>.</returns>
         /// <param name="action">The action name associated with the key.</param>
-        public bool IsActionPressed (string action)
+        public bool IsActionPressedAndRepeated (string action)
         {
             var key = Keys.Find (k => k.KeyAction == action);
             return key != null && (key.Action == KeyAction.Press || key.Action == KeyAction.Repeat);
         }
 
-        public bool IsMouseButtonPressed(MouseButton btn)
+        public bool IsMouseButtonPressedAndRepeated(MouseButton btn)
         {
             var key = Mouse.Find(k => k.Button == btn);
             return key != null && (key.Action == KeyAction.Press || key.Action == KeyAction.Repeat);
@@ -181,6 +181,16 @@ namespace FreezingArcher.Messaging
             }
 
             return ApplicationInstance.InputManager.CurrentlyDownMouseButtons.Contains(btn);
+        }
+
+        public bool IsActionPressed(string action)
+        {
+            return Keys.Any(k => k.Action == KeyAction.Press && k.KeyAction == action);
+        }
+
+        public bool IsMouseButtonPressed(MouseButton btn)
+        {
+            return Mouse.Any(m => m.Action == KeyAction.Press && m.Button == btn);
         }
 
         /// <summary>

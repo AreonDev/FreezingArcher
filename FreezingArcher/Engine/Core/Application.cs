@@ -537,22 +537,22 @@ namespace FreezingArcher.Core
 
             if (im != null)
             {
-                if (im.IsActionPressed("fullscreen"))
+                if (im.IsActionPressedAndRepeated("fullscreen"))
                 {
                     Window.ToggleFullscreen();
                 }
-                if (im.IsActionPressed("capture_mouse"))
+                if (im.IsActionPressedAndRepeated("capture_mouse"))
                 {
                     if (Window.IsMouseCaptured ())
                         Window.ReleaseMouse ();
                     else
                         Window.CaptureMouse ();
                 }
-                if (im.IsActionPressed("close"))
+                if (im.IsActionPressedAndRepeated("close"))
                 {
                     Window.Close();
                 }
-                if (im.IsActionPressed("save"))
+                if (im.IsActionPressedAndRepeated("save"))
                 {
                     ConfigManager.Instance.SaveAll();
                 }

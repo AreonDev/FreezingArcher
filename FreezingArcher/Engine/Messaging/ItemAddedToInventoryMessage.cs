@@ -25,14 +25,14 @@ using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Messaging
 {
-    public class AddItemToInventoryMessage : IMessage
+    public class ItemAddedToInventoryMessage : IMessage
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.AddItemToInventoryMessage"/> class.
         /// </summary>
-        public AddItemToInventoryMessage()
+        public ItemAddedToInventoryMessage()
         {
-            MessageId = (int) Messaging.MessageId.AddItemToInventory;
+            MessageId = (int) Messaging.MessageId.ItemAddedToInventory;
         }
 
         #region IMessage implementation

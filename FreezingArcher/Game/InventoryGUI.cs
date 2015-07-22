@@ -27,7 +27,6 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Math;
 using FreezingArcher.Core;
 using Gwen.Control;
-using Gwen.Control.Layout;
 using Gwen.DragDrop;
 using FreezingArcher.Output;
 using System.Drawing;
@@ -115,7 +114,7 @@ namespace FreezingArcher.Game
             foreach (var child in Children)
                 child.DrawDebugOutlines = false;
             ShouldDrawBackground = false;
-            BoundsOutlineColor = parent.GetCanvas ().Skin.Colors.Label.Dark;
+            BoundsOutlineColor = Color.Gray;
             this.boxSize = boxSize;
             this.inventory = inventory;
             this.barItems = barItems;
@@ -156,6 +155,7 @@ namespace FreezingArcher.Game
                     var pos = (byte) (X / boxSize);
                     invBarBtn.X = X + 1;
                     inventory.MoveBarItemToPosition(invBarBtn.Item, pos);
+                    invBarBtn.ToggleState = pos == inventory.ActiveBarPosition;
                     return true;
                 }
             }
@@ -168,8 +168,9 @@ namespace FreezingArcher.Game
                     var pos = (byte) (X / boxSize);
                     if (inventory.PutInBar(inventory.GetPositionOfItem(invBarTuple.Item4), pos))
                     {
-                        barItems.Add(
-                            new InventoryBarButton(Parent, barItems, inventory, invBarTuple.Item4, pos, boxSize));
+                        var btn = new InventoryBarButton(Parent, barItems, inventory, invBarTuple.Item4, pos, boxSize);
+                        barItems.Add(btn);
+                        btn.ToggleState = pos == inventory.ActiveBarPosition;
                         return true;
                     }
                 }
@@ -245,12 +246,17 @@ namespace FreezingArcher.Game
 
         public override bool DragAndDrop_CanAcceptPackage (Package p)
         {
-            return false;
+            return p.Name == "item_drag";
         }
 
         public override bool DragAndDrop_Draggable ()
         {
             return true;
+        }
+
+        public override bool DragAndDrop_HandleDrop (Package p, int x, int y)
+        {
+            return false;
         }
 
         public override void DragAndDrop_StartDragging (Package package, int x, int y)
@@ -282,7 +288,7 @@ namespace FreezingArcher.Game
             Width = boxSize - 1;
             Height = boxSize - 1;
             X = boxSize * position + 1;
-            Y = 1;
+            Y = 2;
 
             var max = item.Size.X > item.Size.Y ? item.Size.X : item.Size.Y;
             m_Image.Width = (boxSize / max) * item.Size.X;
@@ -302,6 +308,9 @@ namespace FreezingArcher.Game
                 return item;
             }
         }
+
+        protected override void OnClicked (int x, int y)
+        {}
 
         public override void DragAndDrop_EndDragging (bool success, int x, int y)
         {
@@ -338,6 +347,7 @@ namespace FreezingArcher.Game
                     inventory.RemoveFromBar(pos);
                     Parent.RemoveChild(this, true);
                     inventory.MoveBarItemToPosition(invBarBtn.Item, pos);
+                    invBarBtn.ToggleState = pos == inventory.ActiveBarPosition;
                     return true;
                 }
             }
@@ -352,8 +362,9 @@ namespace FreezingArcher.Game
                     Parent.RemoveChild(this, true);
                     if (inventory.PutInBar(inventory.GetPositionOfItem(invBarTuple.Item4), pos))
                     {
-                        barItems.Add(
-                            new InventoryBarButton(Parent, barItems, inventory, invBarTuple.Item4, pos, boxSize));
+                        var btn = new InventoryBarButton(Parent, barItems, inventory, invBarTuple.Item4, pos, boxSize);
+                        barItems.Add(btn);
+                        btn.ToggleState = pos == inventory.ActiveBarPosition;
                         return true;
                     }
                 }
@@ -408,7 +419,12 @@ namespace FreezingArcher.Game
         {
             this.inventory = inventory;
             this.application = application;
-            ValidMessages = new[] { (int) MessageId.WindowResize, (int) MessageId.UpdateLocale, (int) MessageId.Input };
+            ValidMessages = new[] {
+                (int) MessageId.WindowResize,
+                (int) MessageId.UpdateLocale,
+                (int) MessageId.Input,
+                (int) MessageId.ActiveInventoryBarItemChanged
+            };
             messageProvider += this;
             Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
 
@@ -510,7 +526,7 @@ namespace FreezingArcher.Game
             const int barBoxSize = 50;
             inventoryBar.Disable();
             inventoryBar.KeyboardInputEnabled = false;
-            inventoryBar.Height = barBoxSize + 1;
+            inventoryBar.Height = barBoxSize + 2;
             inventoryBar.Width = barBoxSize * inventory.InventoryBar.Length + 1;
             inventoryBar.Y = canvasFrame.Height - inventoryBar.Height;
             inventoryBar.X = (canvasFrame.Width - inventoryBar.Width) / 2;
@@ -519,8 +535,16 @@ namespace FreezingArcher.Game
             {
                 barSpaces[i] = new InventoryBarSpace(inventoryBar, inventory, barItems, barBoxSize);
                 barSpaces[i].X = i * barBoxSize;
+                barSpaces[i].Y = 1;
                 barSpaces[i].Width = barBoxSize + 1;
                 barSpaces[i].Height = barBoxSize + 1;
+                barSpaces[i].DrawDebugOutlines = false;
+
+                if (i == inventory.ActiveBarPosition)
+                {
+                    barSpaces[i].DrawDebugOutlines = true;
+                    barSpaces[i].Children.ForEach(c => c.DrawDebugOutlines = false);
+                }
             }
 
             window.SetSize (itemGridFrame.Width + itemInfoFrame.Width + 16,
@@ -673,17 +697,38 @@ namespace FreezingArcher.Game
                     setDescriptionLabel(Localizer.Instance.GetValueForName(toggledBtn.Item.Description));
             }
 
+            if (msg.MessageId == (int) MessageId.ActiveInventoryBarItemChanged)
+            {
+                var aic = msg as ActiveInventoryBarItemChangedMessage;
+                foreach (var s in barSpaces)
+                {
+                    s.DrawDebugOutlines = false;
+                }
+
+                barSpaces[aic.Position].DrawDebugOutlines = true;
+                barSpaces[aic.Position].Children.ForEach(c => c.DrawDebugOutlines = false);
+
+                foreach (var i in barItems)
+                {
+                    i.ToggleState = false;
+                }
+
+                var btn = barItems.FirstOrDefault(i => inventory.GetPositionOfBarItem(i.Item) == aic.Position);
+                if (btn != null)
+                    btn.ToggleState = true;
+            }
+
             if (msg.MessageId == (int) MessageId.Input)
             {
                 var im = msg as InputMessage;
 
-                if (im.Keys.Any(k => k.Action == KeyAction.Press && k.KeyAction == "drop"))
+                if (im.IsActionPressed("drop"))
                 {
                     Localizer.Instance.CurrentLocale =
                         Localizer.Instance.CurrentLocale == LocaleEnum.en_US ? LocaleEnum.de_DE : LocaleEnum.en_US;
                 }
 
-                if (im.Keys.Any(k => k.Action == KeyAction.Press && k.KeyAction == "inventory"))
+                if (im.IsActionPressed("inventory"))
                 {
                     if (window.IsVisible)
                     {
@@ -697,10 +742,56 @@ namespace FreezingArcher.Game
                     }
                 }
 
-                if (im.Keys.Any(k => k.Action == KeyAction.Press && k.KeyAction == "camera"))
+                if (im.IsActionPressed("camera"))
                 {
                     inventory.PrintStorage("Inventory:");
                 }
+
+                if (im.IsActionPressed("inventory_item1"))
+                {
+                    inventory.SetActiveBarItem(0);
+                }
+                if (im.IsActionPressed("inventory_item2"))
+                {
+                    inventory.SetActiveBarItem(1);
+                }
+                if (im.IsActionPressed("inventory_item3"))
+                {
+                    inventory.SetActiveBarItem(2);
+                }
+                if (im.IsActionPressed("inventory_item4"))
+                {
+                    inventory.SetActiveBarItem(3);
+                }
+                if (im.IsActionPressed("inventory_item5"))
+                {
+                    inventory.SetActiveBarItem(4);
+                }
+                if (im.IsActionPressed("inventory_item6"))
+                {
+                    inventory.SetActiveBarItem(5);
+                }
+                if (im.IsActionPressed("inventory_item7"))
+                {
+                    inventory.SetActiveBarItem(6);
+                }
+                if (im.IsActionPressed("inventory_item8"))
+                {
+                    inventory.SetActiveBarItem(7);
+                }
+                if (im.IsActionPressed("inventory_item9"))
+                {
+                    inventory.SetActiveBarItem(8);
+                }
+
+                var pos = inventory.ActiveBarPosition + (int) im.MouseScroll.Y;
+                while (pos < 0)
+                    pos += inventory.InventoryBar.Length;
+
+                while (pos >= inventory.InventoryBar.Length)
+                    pos -= inventory.InventoryBar.Length;
+                
+                inventory.SetActiveBarItem((byte) pos);
             }
         }
 

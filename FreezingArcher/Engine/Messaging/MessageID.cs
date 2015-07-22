@@ -147,18 +147,18 @@ namespace FreezingArcher.Messaging
         /// <summary>
         /// Occurs when an item is added to the inventory.
         /// </summary>
-        AddItemToInventory,
+        ItemAddedToInventory,
         /// <summary>
         /// Occurs when an item from the inventory should be added to the inventory bar.
         /// </summary>
-        AddItemToInventoryBar,
+        ItemAddedToInventoryBar,
         /// <summary>
         /// Occurs when an item is removed from the inventory bar.
         /// </summary>
-        RemoveItemFromInventoryBar,
+        ItemRemovedFromInventoryBar,
         /// <summary>
         /// Occurs when the active item in the inventory bar should be changed to a given position.
         /// </summary>
-        SetActiveInventoryBarItem,
+        ActiveInventoryBarItemChanged,
     }
 }

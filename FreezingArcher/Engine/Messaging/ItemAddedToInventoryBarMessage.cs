@@ -22,29 +22,33 @@
 //
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Messaging
 {
     /// <summary>
     /// This message occurs when an item should be added to the inventory bar.
     /// </summary>
-    public sealed class AddItemToInventoryBarMessage : IMessage
+    public sealed class ItemAddedToInventoryBarMessage : IMessage
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.AddItemToInventoryBarMessage"/> class.
         /// </summary>
+        /// <param name="item">The item added to the inventory bar</param>
         /// <param name="itemPositionInInventory">Item position in inventory.</param>
         /// <param name="inventoryBarPosition">Inventory bar position.</param>
-        public AddItemToInventoryBarMessage(Vector2i itemPositionInInventory, byte? inventoryBarPosition = null)
+        public ItemAddedToInventoryBarMessage(ItemComponent item, Vector2i itemPositionInInventory,
+            byte inventoryBarPosition)
         {
             ItemPositionInInventory = itemPositionInInventory;
             InventoryBarPosition = inventoryBarPosition;
-            MessageId = (int) Messaging.MessageId.AddItemToInventoryBar;
+            Item = item;
+            MessageId = (int) Messaging.MessageId.ItemAddedToInventoryBar;
         }
 
-        public AddItemToInventoryBarMessage(int itemPositionInInventoryX, int itemPositionInInventoryY,
-            byte? inventoryBarPosition = null) :
-        this(new Vector2i(itemPositionInInventoryX, itemPositionInInventoryY), inventoryBarPosition)
+        public ItemAddedToInventoryBarMessage(ItemComponent item, int itemPositionInInventoryX, int itemPositionInInventoryY,
+            byte inventoryBarPosition) :
+        this(item, new Vector2i(itemPositionInInventoryX, itemPositionInInventoryY), inventoryBarPosition)
         {}
 
         /// <summary>
@@ -57,7 +61,13 @@ namespace FreezingArcher.Messaging
         /// Gets the position that the item should have in the inventory bar.
         /// </summary>
         /// <value>The inventory bar position.</value>
-        public byte? InventoryBarPosition { get; private set; }
+        public byte InventoryBarPosition { get; private set; }
+
+        /// <summary>
+        /// Gets the item.
+        /// </summary>
+        /// <value>The item.</value>
+        public ItemComponent Item { get; private set; }
 
         #region IMessage implementation
 

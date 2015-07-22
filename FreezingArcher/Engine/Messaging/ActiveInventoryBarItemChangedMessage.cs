@@ -21,23 +21,26 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Messaging
 {
     /// <summary>
     /// This message occurs when the active inventory position should be changed.
     /// </summary>
-    public sealed class SetActiveInventoryBarItemMessage : IMessage
+    public sealed class ActiveInventoryBarItemChangedMessage : IMessage
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.SetActiveInventoryBarItemMessage"/>
         /// class.
         /// </summary>
+        /// <param name="item">The item at the given position in the inventory bar.</param>
         /// <param name="position">Position.</param>
-        public SetActiveInventoryBarItemMessage(byte position)
+        public ActiveInventoryBarItemChangedMessage(ItemComponent item, byte position)
         {
             Position = position;
-            MessageId = (int) Messaging.MessageId.SetActiveInventoryBarItem;
+            Item = item;
+            MessageId = (int) Messaging.MessageId.ActiveInventoryBarItemChanged;
         }
 
         /// <summary>
@@ -45,6 +48,12 @@ namespace FreezingArcher.Messaging
         /// </summary>
         /// <value>The position.</value>
         public byte Position { get; private set; }
+
+        /// <summary>
+        /// Gets the item at active inventory position.
+        /// </summary>
+        /// <value>The item.</value>
+        public ItemComponent Item { get; private set; }
 
         #region IMessage implementation
 

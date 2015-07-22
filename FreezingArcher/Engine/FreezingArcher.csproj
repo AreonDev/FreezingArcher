@@ -270,8 +270,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\ItemCollectedMessage.cs" />
     <Compile Include="Messaging\RemoveItemFromInventoryMessage.cs" />
     <Compile Include="Messaging\ItemDroppedMessage.cs" />
-    <Compile Include="Messaging\AddItemToInventoryBarMessage.cs" />
-    <Compile Include="Messaging\SetActiveInventoryBarItemMessage.cs" />
     <Compile Include="UI\Align.cs" />
     <Compile Include="UI\Font.cs" />
     <Compile Include="UI\HSV.cs" />
@@ -403,8 +401,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Compositor\CompositorInputSlot.cs" />
     <Compile Include="Renderer\Compositor\CompositorOutputSlot.cs" />
     <Compile Include="UI\Input\FreezingArcherInput.cs" />
-    <Compile Include="Messaging\AddItemToInventoryMessage.cs" />
-    <Compile Include="Messaging\RemoveItemFromInventoryBarMessage.cs" />
     <Compile Include="Messaging\MoveVerticalMessage.cs" />
     <Compile Include="Renderer\Compositor\CompositorNodeStart.cs" />
     <Compile Include="Renderer\Compositor\CompositorNodeOutput.cs" />
@@ -412,6 +408,10 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\PhysicsSystem.cs" />
     <Compile Include="Core\PhysicsManager.cs" />
     <Compile Include="Messaging\RunningMessage.cs" />
+    <Compile Include="Messaging\ItemRemovedFromInventoryBarMessage.cs" />
+    <Compile Include="Messaging\ItemAddedToInventoryBarMessage.cs" />
+    <Compile Include="Messaging\ItemAddedToInventoryMessage.cs" />
+    <Compile Include="Messaging\ActiveInventoryBarItemChangedMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

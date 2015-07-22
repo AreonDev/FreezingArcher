@@ -27,10 +27,11 @@ using FreezingArcher.DataStructures;
 using System.Collections.Generic;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Content
 {
-    public sealed class Inventory
+    public sealed class Inventory : IMessageCreator
     {
         public Inventory(MessageProvider messageProvider, int sizeX, int sizeY, byte barSize)
             : this(messageProvider, new Vector2i(sizeX, sizeY), barSize)
@@ -40,6 +41,7 @@ namespace FreezingArcher.Content
         public Inventory(MessageProvider messageProvider, Vector2i size, byte barSize)
         {
             Size = size;
+            messageProvider += this;
             this.messageProvider = messageProvider;
             storage = new int?[Size.X, Size.Y];
 
@@ -61,7 +63,7 @@ namespace FreezingArcher.Content
 
         int?[] inventoryBar;
 
-        byte activeBarPosition;
+        public byte ActiveBarPosition { get; private set; }
 
         MessageProvider messageProvider;
 
@@ -72,6 +74,11 @@ namespace FreezingArcher.Content
                 invPositionY >= 0 && invPositionY < storage.GetLength(1))
             {
                 inventoryBar[barPosition] = storage[invPositionX, invPositionY];
+                if (MessageCreated != null)
+                {
+                    var pos = new Vector2i(invPositionX, invPositionY);
+                    MessageCreated(new ItemAddedToInventoryBarMessage(GetItemAt(pos), pos, barPosition));
+                }
                 return true;
             }
 
@@ -80,7 +87,11 @@ namespace FreezingArcher.Content
 
         public void RemoveFromBar(byte barPosition)
         {
+            var item = GetBarItemAt(barPosition);
             inventoryBar[barPosition] = null;
+
+            if (MessageCreated != null)
+                MessageCreated(new ItemRemovedFromInventoryBarMessage(item));
         }
 
         public IEnumerable<Tuple<ItemComponent, Vector2i>> Items
@@ -129,8 +140,9 @@ namespace FreezingArcher.Content
             }
 
             var id = inventoryBar[position];
-            ItemComponent item;
-            items.TryGetValue(id.Value, out item);
+            ItemComponent item = null;
+            if (id != null)
+                items.TryGetValue(id.Value, out item);
             return item;
         }
 
@@ -143,7 +155,11 @@ namespace FreezingArcher.Content
                 return false;
             }
 
-            activeBarPosition = position;
+            ActiveBarPosition = position;
+
+            if (MessageCreated != null)
+                MessageCreated(new ActiveInventoryBarItemChangedMessage(GetBarItemAt(position), position));
+
             return true;
         }
 
@@ -151,8 +167,10 @@ namespace FreezingArcher.Content
         {
             get
             {
-                ItemComponent item;
-                items.TryGetValue(inventoryBar[activeBarPosition].Value, out item);
+                ItemComponent item = null;
+                if (inventoryBar[ActiveBarPosition] != null)
+                    items.TryGetValue(inventoryBar[ActiveBarPosition].Value, out item);
+                
                 return item;
             }
         }
@@ -192,6 +210,11 @@ namespace FreezingArcher.Content
             {
                 inventoryBar[GetPositionOfBarItem(item)] = null;
                 inventoryBar[position] = item.GetHashCode();
+
+                if (MessageCreated != null)
+                {
+                    //MessageCreated(new ActiveInventoryBarItemChangedMessage(item, position));
+                }
                 return true;
             }
             return false;
@@ -453,5 +476,11 @@ namespace FreezingArcher.Content
 
             return item;
         }
+
+        #region IMessageCreator implementation
+
+        public event MessageEvent MessageCreated;
+
+        #endregion
     }
 }

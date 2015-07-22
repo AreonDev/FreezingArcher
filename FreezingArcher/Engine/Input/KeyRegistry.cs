@@ -65,6 +65,16 @@ namespace FreezingArcher.Input
             Keys.Add ("fullscreen", Key.F11);
             Keys.Add ("capture_mouse", Key.F1);
             Keys.Add ("save", Key.F2);
+            Keys.Add ("inventory_item0", Key.Zero);
+            Keys.Add ("inventory_item1", Key.One);
+            Keys.Add ("inventory_item2", Key.Two);
+            Keys.Add ("inventory_item3", Key.Three);
+            Keys.Add ("inventory_item4", Key.Four);
+            Keys.Add ("inventory_item5", Key.Five);
+            Keys.Add ("inventory_item6", Key.Six);
+            Keys.Add ("inventory_item7", Key.Seven);
+            Keys.Add ("inventory_item8", Key.Eight);
+            Keys.Add ("inventory_item9", Key.Nine);
         }
 
         /// <summary>

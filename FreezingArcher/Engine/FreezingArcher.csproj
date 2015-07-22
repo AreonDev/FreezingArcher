@@ -414,6 +414,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\DeferredShading.cs" />
     <Compile Include="Renderer\Compositor\CompositorBlurNode.cs" />
     <Compile Include="Renderer\Compositor\CompositorNodeTextureAlphaMerger.cs" />
+    <Compile Include="Content\PlayerComponent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

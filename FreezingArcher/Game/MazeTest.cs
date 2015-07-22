@@ -126,7 +126,9 @@ namespace FreezingArcher.Game
 
             rendererContext.Compositor = compositor;
 
-            Player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, systems: new[] {
+            Player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, new[] {
+                typeof (PlayerComponent)
+            }, new[] {
                 typeof (MovementSystem),
                 typeof (KeyboardControllerSystem),
                 typeof (MouseControllerSystem),

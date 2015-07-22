@@ -55,18 +55,22 @@ namespace FreezingArcher.Content
             if (msg.MessageId == (int) MessageId.ItemUse)
             {
                 var ium = msg as ItemUseMessage;
+                var itemcomp = Entity.GetComponent<ItemComponent>();
+                var playercomp = itemcomp.Player.GetComponent<PlayerComponent>();
 
-                switch (ium.Usage)
+                if (ium.Usage.HasFlag(ItemUsage.Eatable))
                 {
-                    case ItemUsage.Eatable:
-                        // TODO
-                        break;
-                    case ItemUsage.Throwable:
-                        // TODO
-                        break;
-                    case ItemUsage.Hitable:
-                        // TODO
-                        break;
+                    playercomp.Health += itemcomp.HealthDelta;
+                    playercomp.Health = playercomp.Health > playercomp.MaximumHealth ?
+                        playercomp.MaximumHealth : playercomp.Health;
+                }
+                if (ium.Usage.HasFlag(ItemUsage.Throwable))
+                {
+                    // TODO
+                }
+                if (ium.Usage.HasFlag(ItemUsage.Hitable))
+                {
+                    // TODO
                 }
             }
         }

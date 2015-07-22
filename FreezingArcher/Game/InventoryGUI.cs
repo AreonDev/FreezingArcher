@@ -155,8 +155,8 @@ namespace FreezingArcher.Game
                     var pos = (byte) (X / boxSize);
                     invBarBtn.X = X + 1;
                     inventory.MoveBarItemToPosition(invBarBtn.Item, pos);
+                    invBarBtn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = pos == inventory.ActiveBarPosition;
                     invBarBtn.ToggleState = pos == inventory.ActiveBarPosition;
-                    invBarBtn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = invBarBtn.ToggleState;
                     return true;
                 }
             }
@@ -171,8 +171,8 @@ namespace FreezingArcher.Game
                     {
                         var btn = new InventoryBarButton(Parent, barItems, inventory, invBarTuple.Item4, pos, boxSize);
                         barItems.Add(btn);
+                        btn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = pos == inventory.ActiveBarPosition;
                         btn.ToggleState = pos == inventory.ActiveBarPosition;
-                        btn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = btn.ToggleState;
                         return true;
                     }
                 }
@@ -349,8 +349,8 @@ namespace FreezingArcher.Game
                     inventory.RemoveFromBar(pos);
                     Parent.RemoveChild(this, true);
                     inventory.MoveBarItemToPosition(invBarBtn.Item, pos);
+                    invBarBtn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = pos == inventory.ActiveBarPosition;
                     invBarBtn.ToggleState = pos == inventory.ActiveBarPosition;
-                    invBarBtn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = invBarBtn.ToggleState;
                     return true;
                 }
             }
@@ -367,8 +367,8 @@ namespace FreezingArcher.Game
                     {
                         var btn = new InventoryBarButton(Parent, barItems, inventory, invBarTuple.Item4, pos, boxSize);
                         barItems.Add(btn);
+                        btn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = pos == inventory.ActiveBarPosition;
                         btn.ToggleState = pos == inventory.ActiveBarPosition;
-                        btn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = btn.ToggleState;
                         return true;
                     }
                 }
@@ -589,8 +589,8 @@ namespace FreezingArcher.Game
                 btn.ToggledOn += (sender, arguments) => {
                     if (toggledBtn != null)
                     {
+                        toggledBtn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = false;
                         toggledBtn.ToggleState = false;
-                        toggledBtn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = toggledBtn.ToggleState;
                     }
 
                     toggledBtn = btn;
@@ -720,15 +720,15 @@ namespace FreezingArcher.Game
 
                 foreach (var i in barItems)
                 {
-                    i.ToggleState = false;
                     i.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = false;
+                    i.ToggleState = false;
                 }
 
                 var btn = barItems.FirstOrDefault(i => inventory.GetPositionOfBarItem(i.Item) == aic.Position);
                 if (btn != null)
                 {
-                    btn.ToggleState = true;
                     btn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = true;
+                    btn.ToggleState = true;
                 }
             }
 

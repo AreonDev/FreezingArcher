@@ -97,6 +97,11 @@ namespace FreezingArcher.Content
         /// </summary>
         public static readonly Entity DefaultPlayer = null;
 
+        /// <summary>
+        /// The default position offset.
+        /// </summary>
+        public static readonly Vector3 DefaultPositionOffset = Vector3.Zero;
+
         #endregion
 
         /// <summary>
@@ -110,6 +115,12 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <value>The image location.</value>
         public string ImageLocation { get; set; }
+
+        /// <summary>
+        /// Gets or sets the position offset.
+        /// </summary>
+        /// <value>The position offset.</value>
+        public Vector3 PositionOffset { get; set; }
 
         /// <summary>
         /// Gets or sets the description describing the usage of this item.

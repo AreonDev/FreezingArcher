@@ -63,11 +63,12 @@ namespace FreezingArcher.Game
             var inventory = new Inventory(messageProvider, state, player, new Vector2i(5, 7), 9);
 
             inventory.Insert("flashlight", "Content/Flashlight/thumb.png", "flashlight_description",
-                "Content/Flashlight/flashlight.xml", new Vector2i(2, 1));
-            //var soda_can = Inventory.CreateNewItem(messageProvider, state, player, "soda_can", "Content/SodaCan/thumb.png",
-            //    "soda_can_description", "Content/SodaCan/soda_can.xml", new Vector2i(1, 1), Orientation.Horizontal,
-            //    ItemLocation.Inventory, AttackClass.Object, ItemUsage.Eatable, new Protection (), 20, 0, 5, 0);
-            //inventory.Insert(soda_can);
+                "Content/Flashlight/flashlight.xml", new Vector2i(2, 1), new Vector3(-0.5f, -0.4f, -0.2f));
+            var soda_can = Inventory.CreateNewItem(messageProvider, state, player, "soda_can", "Content/SodaCan/thumb.png",
+                "soda_can_description", "Content/SodaCan/soda_can.xml", new Vector2i(1, 1), new Vector3(-0.4f, -0.35f, 0.3f),
+                Orientation.Horizontal, ItemLocation.Inventory, AttackClass.Object, ItemUsage.Eatable, new Protection (),
+                20, 0, 5, 0);
+            inventory.Insert(soda_can);
 
             new InventoryGUI(app, player, inventory, messageProvider, sceneobj.Canvas);
         }

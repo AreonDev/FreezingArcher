@@ -164,7 +164,7 @@ echo Successfully finished!</PostBuildEvent>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\SodaCan\soda_can.obj">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\SodaCan\soda_can.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

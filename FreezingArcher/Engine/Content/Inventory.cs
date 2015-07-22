@@ -285,58 +285,66 @@ namespace FreezingArcher.Content
 
         public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size)
         {
-            return Insert(name, imageLocation, description, modelPath, size, ItemComponent.DefaultAttackClasses);
+            return Insert(name, imageLocation, description, modelPath, size, ItemComponent.DefaultPositionOffset);
         }
 
         public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-                           AttackClass attackClasses)
+            Vector3 offset)
         {
-            return Insert(name, imageLocation, description, modelPath, size, attackClasses, ItemComponent.DefaultItemUsages);
+            return Insert(name, imageLocation, description, modelPath, size, offset,
+                ItemComponent.DefaultAttackClasses);
         }
 
         public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-                           AttackClass attackClasses, ItemUsage itemUsages)
+                           Vector3 offset, AttackClass attackClasses)
         {
-            return Insert(name, imageLocation, description, modelPath, size, attackClasses, itemUsages,
+            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses,
+                ItemComponent.DefaultItemUsages);
+        }
+
+        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
+            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages)
+        {
+            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses, itemUsages,
                 ItemComponent.DefaultProtection);
         }
 
         public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-                           AttackClass attackClasses, ItemUsage itemUsages, Protection protection)
+            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection)
         {
-            return Insert(name, imageLocation, description, modelPath, size, attackClasses, itemUsages, protection,
-                ItemComponent.DefaultHealthDelta);
+            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses, itemUsages,
+                protection, ItemComponent.DefaultHealthDelta);
         }
 
         public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-                           AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta)
+            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta)
         {
-            return Insert(name, imageLocation, description, modelPath, size, attackClasses, itemUsages, protection,
-                healthDelta, ItemComponent.DefaultAttackStrength);
+            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses, itemUsages,
+                protection, healthDelta, ItemComponent.DefaultAttackStrength);
         }
 
         public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-                           AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
-                           float attackStrength)
+            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
+            float attackStrength)
         {
-            return Insert(name, imageLocation, description, modelPath, size, attackClasses, itemUsages, protection,
-                healthDelta, attackStrength, ItemComponent.DefaultThrowPower);
+            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses, itemUsages,
+                protection, healthDelta, attackStrength, ItemComponent.DefaultThrowPower);
         }
 
         public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-                           AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
-                           float attackStrength, float throwPower)
+            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
+            float attackStrength, float throwPower)
         {
-            return Insert(name, imageLocation, description, modelPath, size, attackClasses, itemUsages, protection,
-                healthDelta, attackStrength, throwPower, ItemComponent.DefaultUsage);
+            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses, itemUsages,
+                protection, healthDelta, attackStrength, throwPower, ItemComponent.DefaultUsage);
         }
 
         public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-                           AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
-                           float attackStrength, float throwPower, float usage)
+            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
+            float attackStrength, float throwPower, float usage)
         {
             return Insert(CreateNewItem(messageProvider, gameState, player, name, imageLocation, description, modelPath,
-                size, ItemComponent.DefaultOrientation, ItemLocation.Inventory, attackClasses, itemUsages, protection, 
+                size, offset, ItemComponent.DefaultOrientation, ItemLocation.Inventory, attackClasses, itemUsages, protection, 
                 healthDelta, attackStrength, throwPower, usage));
         }
 
@@ -467,7 +475,7 @@ namespace FreezingArcher.Content
         }
 
         public static ItemComponent CreateNewItem(MessageProvider messageProvider, GameState state, Entity player,
-            string name, string imageLocation, string description, string modelPath, Vector2i size,
+            string name, string imageLocation, string description, string modelPath, Vector2i size, Vector3 offset,
             Orientation orientation, ItemLocation location, AttackClass attackClasses, ItemUsage itemUsages,
             Protection protection, float healthDelta, float attackStrength, float throwPower, float usage)
         {
@@ -488,8 +496,10 @@ namespace FreezingArcher.Content
             item.ThrowPower = throwPower;
             item.Usage = usage;
             item.Player = player;
+            item.PositionOffset = offset;
 
             var model = new ModelSceneObject(modelPath);
+            model.Enabled = false;
             state.Scene.AddObject(model);
             entity.GetComponent<ModelComponent>().Model = model;
 
@@ -497,7 +507,7 @@ namespace FreezingArcher.Content
             var transform = entity.GetComponent<TransformComponent>();
             Action handler = () => {
                 transform.Position = 
-                    player_transform.Position + Vector3.Transform(new Vector3(-0.5f, -0.4f, -0.2f), player_transform.Rotation);
+                    player_transform.Position + Vector3.Transform(item.PositionOffset, player_transform.Rotation);
                 transform.Rotation = player_transform.Rotation;
             };
             player_transform.OnPositionChanged += handler;

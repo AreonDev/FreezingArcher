@@ -71,6 +71,13 @@ namespace FreezingArcher.Game
             this.game = game;
             application = app;
 
+            scenenode = new CompositorNodeScene (rendererContext, messageProvider);
+            outputnode = new CompositorNodeOutput (rendererContext, messageProvider);
+            deferredshadingnode = new CompositorNodeDeferredShading (rendererContext, messageProvider);
+            blur = new CompositorBlurNode (rendererContext, messageProvider);
+
+            game.SceneNode = scenenode;
+
             game.AddGameState("maze_overworld", Content.Environment.Default, null);
             var state = game.GetGameState("maze_overworld");
             state.Scene = new CoreScene(rendererContext, state.MessageProxy);
@@ -85,11 +92,6 @@ namespace FreezingArcher.Game
 
             compositor = new BasicCompositor (objmnr, rendererContext);
 
-            scenenode = new CompositorNodeScene (rendererContext, messageProvider);
-            outputnode = new CompositorNodeOutput (rendererContext, messageProvider);
-            deferredshadingnode = new CompositorNodeDeferredShading (rendererContext, messageProvider);
-            blur = new CompositorBlurNode (rendererContext, messageProvider);
-
             compositor.AddNode (scenenode);
             compositor.AddNode (outputnode);
             compositor.AddNode (deferredshadingnode);
@@ -103,9 +105,7 @@ namespace FreezingArcher.Game
 
             compositor.AddConnection (deferredshadingnode, blur, 0, 0);
 
-            compositor.AddConnection (blur, outputnode, 0, 0);
-
-            scenenode.Scene = state.Scene;
+            compositor.AddConnection (deferredshadingnode, outputnode, 0, 0);
 
             rendererContext.Compositor = compositor;
 

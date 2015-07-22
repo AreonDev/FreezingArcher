@@ -86,7 +86,10 @@ namespace FreezingArcher.Renderer.Compositor
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("TextureNormal"), 2);
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("TextureSpecular"), 3);
 
-            NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("CameraPosition"), PrivateRendererContext.Scene.CameraManager.ActiveCamera.Position);
+            try
+            {
+                NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("CameraPosition"), PrivateRendererContext.Scene.CameraManager.ActiveCamera.Position);
+            }catch{}
 
             PrivateRendererContext.DrawSpriteAbsolute(spr);
 

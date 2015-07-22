@@ -33,6 +33,7 @@ using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Renderer
 {
@@ -488,9 +489,12 @@ namespace FreezingArcher.Renderer
 
                 foreach (SceneObject obj in Scene.GetObjectsSorted())
                 {
-                    obj.Update();
-
-                    obj.Draw(this);
+                    if (obj.Enabled)
+                    {
+                        obj.Update();
+                        
+                        obj.Draw(this);
+                    }
                 }
 
                 //Scene.FrameBuffer.Unbind();

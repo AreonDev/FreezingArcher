@@ -31,6 +31,7 @@ using FreezingArcher.Output;
 using FreezingArcher.Renderer.Scene;
 using System.Windows.Forms;
 using FreezingArcher.Renderer;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Content
 {
@@ -50,12 +51,15 @@ namespace FreezingArcher.Content
         /// <param name="name">Name.</param>
         /// <param name="objmnr">Object Manager.</param>
         /// <param name="messageProvider">Message Manager.</param>
-        public Game (string name, ObjectManager objmnr, MessageProvider messageProvider, RendererContext rendererContext)
+        public Game (string name, ObjectManager objmnr, MessageProvider messageProvider, CompositorNodeScene scenenode, RendererContext rendererContext)
         {
             Logger.Log.AddLogEntry (LogLevel.Info, ClassName, "Creating new game '{0}'", name);
             Name = name;
             MessageProvider = messageProvider;
             RendererContext = rendererContext;
+
+            SceneNode = scenenode;
+
             GameStateGraph = objmnr.CreateOrRecycle<DirectedWeightedGraph<GameState, GameStateTransition>>();
             GameStateGraph.Init();
         }
@@ -75,6 +79,7 @@ namespace FreezingArcher.Content
         DirectedWeightedNode<GameState, GameStateTransition> currentNode;
         MessageProvider MessageProvider;
         RendererContext RendererContext;
+        public CompositorNodeScene SceneNode { get; set;}
 
         /// <summary>
         /// Gets the game state graph.
@@ -105,7 +110,11 @@ namespace FreezingArcher.Content
                     currentNode.Data.Scene.CameraManager.ToggleCamera();
                 }
 
-                RendererContext.Scene = currentNode.Data.Scene;
+                if (SceneNode == null)
+                    RendererContext.Scene = currentNode.Data.Scene;
+                else
+                    SceneNode.Scene = currentNode.Data.Scene;
+                
                 currentNode.Data.MessageProxy.StartProcessing();
                 return true;
             }
@@ -145,7 +154,11 @@ namespace FreezingArcher.Content
                 currentNode.Data.Scene.CameraManager.ToggleCamera();
             }
 
-            RendererContext.Scene = currentNode.Data.Scene;
+            if (SceneNode == null)
+                RendererContext.Scene = currentNode.Data.Scene;
+            else
+                SceneNode.Scene = currentNode.Data.Scene;
+            
             currentNode.Data.MessageProxy.StartProcessing();
             return true;
         }

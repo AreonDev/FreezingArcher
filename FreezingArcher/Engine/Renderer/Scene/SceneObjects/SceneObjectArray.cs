@@ -286,7 +286,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                             SceneObjectArrayInstanceData.SIZE);
                     }
 
-                    Logger.Log.AddLogEntry (LogLevel.Debug, "SceneObjectArray", "Object changed: " + data[0].ToString());
+                    //Logger.Log.AddLogEntry (LogLevel.Debug, "SceneObjectArray", "Object changed: " + data[0].ToString());
                 }
 
                 ObjectsChanged.Clear();

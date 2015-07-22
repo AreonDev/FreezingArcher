@@ -1166,6 +1166,11 @@ namespace FreezingArcher.Renderer
             {
                 ac.Action();
             }
+
+            ErrorCode err_code = GL.GetError();
+
+            if (err_code != ErrorCode.NoError)
+                Logger.Log.AddLogEntry(LogLevel.Error, "RendererCore", FreezingArcher.Core.Status.DamnThreading, err_code.ToString()); 
         }
 
         public void End()

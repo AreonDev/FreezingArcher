@@ -28,6 +28,9 @@ using FreezingArcher.Output;
 using FreezingArcher.Math;
 using System.Collections.Generic;
 
+using FreezingArcher.Output;
+using Pencil.Gaming.Graphics;
+
 namespace Gwen.Renderer
 {
     public class FreezingArcherGwenRenderer : Gwen.Renderer.Base
@@ -70,7 +73,6 @@ namespace Gwen.Renderer
             m_PrevBlendDst = PrivateRendererContext.GetBlendDst();
 
             m_WasBlendEnabled = PrivateRendererContext.IsEnabled(RendererEnableCap.Blend);
-            m_WasTexture2DEnabled = PrivateRendererContext.IsEnabled(RendererEnableCap.Texture2D);
             m_WasDepthTestEnabled = PrivateRendererContext.IsEnabled(RendererEnableCap.DepthTest);
 
             PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.SrcAlpha, RendererBlendingFactorDest.OneMinusSrcAlpha);
@@ -88,8 +90,6 @@ namespace Gwen.Renderer
             if (!m_WasDepthTestEnabled)
                 PrivateRendererContext.Disable(RendererEnableCap.DepthTest);
 
-            if (!m_WasTexture2DEnabled)
-                PrivateRendererContext.Disable(RendererEnableCap.Texture2D);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Gwen.Renderer
             Vector2 posa = new Vector2((float)x, (float)y);
             Vector2 posb = new Vector2((float)a, (float)b);
 
-            FreezingArcher.Math.Color4 col = new Color4(DrawColor.R, DrawColor.G, DrawColor.B, DrawColor.A);
+            FreezingArcher.Math.Color4 col = new FreezingArcher.Math.Color4(DrawColor.R, DrawColor.G, DrawColor.B, DrawColor.A);
 
             PrivateRendererContext.DrawLineAbsolute(ref posa, ref posb, 1.0f, ref col);
         }
@@ -530,7 +530,7 @@ namespace Gwen.Renderer
 
             if (tex != null)
             {
-                Color4 col = tex.GetPixelColor((int)x, (int)y);
+                FreezingArcher.Math.Color4 col = tex.GetPixelColor((int)x, (int)y);
 
                 return Color.FromArgb((int)(col.A*255), (int)(col.R*255), (int)(col.G*255), (int)(col.B*255));
             }

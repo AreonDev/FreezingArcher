@@ -28,6 +28,38 @@ namespace FreezingArcher.Renderer.Compositor
 {
     public class CompositorNodeScene : CompositorNode
     {
+        private class RCActionCompositorNodeSceneUpdateScene : RendererCore.RCAction
+        {
+            CompositorNodeScene Node;
+            RendererContext Renderer;
+
+            public bool Ready {get; private set;}
+
+            public RCActionCompositorNodeSceneUpdateScene(CompositorNodeScene node, RendererContext rend)
+            {
+                Node = node;
+                Renderer = rend;
+
+                Ready = false;
+            }
+
+            public RendererCore.RCActionDelegate Action
+            {
+                get
+                {
+                    return delegate()
+                    {
+                        Node.ConfigureSlots();
+                        Node.InitFramebuffer();
+
+                        Node.OutputFramebuffer.AddTexture(Node.Scene.FrameBufferDepthStencilTexture, FrameBuffer.AttachmentUsage.DepthStencil);
+
+                        Ready = true;
+                    };
+                }
+            }
+        }
+
         private CoreScene PrivateScene;
         public CoreScene Scene 
         {   
@@ -40,11 +72,17 @@ namespace FreezingArcher.Renderer.Compositor
             {
                 PrivateScene = value;
 
-                ConfigureSlots();
-                InitFramebuffer();
+                RCActionCompositorNodeSceneUpdateScene rcacnsus = new RCActionCompositorNodeSceneUpdateScene(this, PrivateRendererContext);
 
-                //Do some changes
-                OutputFramebuffer.AddTexture(PrivateScene.FrameBufferDepthStencilTexture, FrameBuffer.AttachmentUsage.DepthStencil);
+                if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
+                    rcacnsus.Action();
+                else
+                {
+                    PrivateRendererContext.AddRCActionJob(rcacnsus);
+
+                    while (!rcacnsus.Ready)
+                        System.Threading.Thread.Sleep(1);
+                }
             }
         }
 
@@ -70,8 +108,7 @@ namespace FreezingArcher.Renderer.Compositor
         }
 
         public override void InitOtherStuff()
-        {
-                        
+        {    
             PrivateScene = new CoreScene(PrivateRendererContext, PrivateMessageProvider);
             PrivateScene.Init(PrivateRendererContext);
             PrivateScene.BackgroundColor = Math.Color4.Red;

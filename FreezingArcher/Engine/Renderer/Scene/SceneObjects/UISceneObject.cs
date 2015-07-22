@@ -24,6 +24,9 @@ using System;
 
 using FreezingArcher.Renderer;
 
+using Pencil.Gaming.Graphics;
+using FreezingArcher.Output;
+
 namespace FreezingArcher.Renderer.Scene.SceneObjects
 {
     public class UISceneObject : SceneObject

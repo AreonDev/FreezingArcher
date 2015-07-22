@@ -36,6 +36,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         private Vector3 m_Scaling;
 
         public int Priority{ get; set;}
+        public bool Enabled { get; set;}
 
         public Vector3 Position 
         {
@@ -140,7 +141,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
             Priority = -1;
 
-
+            Enabled = true;
         }
     }
 }

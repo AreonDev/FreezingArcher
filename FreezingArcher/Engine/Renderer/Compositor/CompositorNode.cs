@@ -87,7 +87,7 @@ namespace FreezingArcher.Renderer.Compositor
 
         public long ID { get; private set;}
 
-        protected FrameBuffer OutputFramebuffer;
+        internal FrameBuffer OutputFramebuffer;
         private List<FrameBuffer.AttachmentUsage> Attachments;
 
         protected RendererContext PrivateRendererContext;

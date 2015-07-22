@@ -30,6 +30,7 @@ using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Core;
 using Gwen.Control;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game
 {

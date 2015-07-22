@@ -27,6 +27,9 @@ using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Core;
 using FreezingArcher.Output;
 
+using FreezingArcher.Output;
+using Pencil.Gaming.Graphics;
+
 namespace FreezingArcher.Renderer.Compositor
 {
     public class CompositorEdgeDescriptionListWrapper : IComparable

@@ -62,6 +62,7 @@ namespace FreezingArcher.Game
             var inventory = new Inventory(messageProvider, new Vector2i(5, 7), 9);
 
             inventory.Insert("flashlight", "Content/flashlight.png", "flashlight_description", new Vector2i(2, 1));
+            inventory.Insert("soda_can", "Content/soda.png", "soda_can_description", new Vector2i(1, 1));
 
             new InventoryGUI(app, inventory, messageProvider, sceneobj.Canvas);
         }

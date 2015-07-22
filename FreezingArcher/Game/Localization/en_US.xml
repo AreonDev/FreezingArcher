@@ -11,4 +11,7 @@
         Some creatures may not like the light. Take care
         of the batteries or you will end up in the dark again.
     </string>
+    <string name="soda_can_description">
+        Drink some of this soft drink to restore your health.
+    </string>
 </locale>

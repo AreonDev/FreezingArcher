@@ -549,7 +549,7 @@ namespace FreezingArcher.Game
 
             imagePanel = new ImagePanel(itemInfoFrame);
             imagePanel.Width = infoFrameSize;
-            imagePanel.Height = itemGridFrame.Height / 3;
+            int imagePanelHeight = itemGridFrame.Height / 3;
             imagePanel.Hide();
 
             items = new List<InventoryButton>();
@@ -562,6 +562,17 @@ namespace FreezingArcher.Game
 
                     toggledBtn = btn;
                     imagePanel.ImageName = btn.Item.ImageLocation;
+
+                    var max = toggledBtn.Item.Size.X > toggledBtn.Item.Size.Y ?
+                        toggledBtn.Item.Size.X : toggledBtn.Item.Size.Y;
+                    
+                    int max_height = infoFrameSize;
+                    if ((infoFrameSize / max) * toggledBtn.Item.Size.Y > imagePanelHeight)
+                        max_height = imagePanelHeight;
+                    
+                    imagePanel.Width = (max_height / max) * item.Size.X;
+                    imagePanel.Height = (max_height / max) * item.Size.Y;
+                    imagePanel.X = (infoFrameSize - imagePanel.Width) / 2;
                     imagePanel.Show();
                     setDescriptionLabel(Localizer.Instance.GetValueForName(btn.Item.Description));
                     dropBtn.IsDisabled = false;

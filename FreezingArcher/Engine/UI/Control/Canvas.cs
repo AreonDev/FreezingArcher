@@ -203,7 +203,8 @@ namespace Gwen.Control
         {
             //if (m_DisposeQueue.Count > 0)
             //    System.Diagnostics.Debug.Print("Canvas.ProcessDelayedDeletes: {0} items", m_DisposeQueue.Count);
-            foreach (IDisposable control in m_DisposeQueue)
+            var temp = new List<IDisposable>(m_DisposeQueue);
+            foreach (IDisposable control in temp)
             {
                 control.Dispose();
             }

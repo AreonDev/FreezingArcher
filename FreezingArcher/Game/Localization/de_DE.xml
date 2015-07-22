@@ -13,4 +13,8 @@
         Batterien nicht leer werden, sonst stehst du wieder
         im Dunkeln.
     </string>
+    <string name="soda_can_description">
+        Trinke etwas von diesem Erfrischungsgetränk, um
+        deine Gesundheit wiederherzustellen.
+    </string>
 </locale>

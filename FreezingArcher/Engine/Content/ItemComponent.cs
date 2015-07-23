@@ -22,6 +22,8 @@
 //
 using FreezingArcher.Math;
 using FreezingArcher.DataStructures;
+using FreezingArcher.Messaging;
+using Jitter.Dynamics;
 
 namespace FreezingArcher.Content
 {
@@ -101,6 +103,21 @@ namespace FreezingArcher.Content
         /// The default position offset.
         /// </summary>
         public static readonly Vector3 DefaultPositionOffset = Vector3.Zero;
+
+        /// <summary>
+        /// The default mass.
+        /// </summary>
+        public static readonly float DefaultMass = 0.2f;
+
+        /// <summary>
+        /// The default physics material.
+        /// </summary>
+        public static readonly Material DefaultPhysicsMaterial = new Material();
+
+        /// <summary>
+        /// The default usage delta per usage.
+        /// </summary>
+        public static readonly float DefaultUsageDeltaPerUsage = 0.2f;
 
         #endregion
 
@@ -183,9 +200,41 @@ namespace FreezingArcher.Content
         public float ThrowPower { get; set; }
 
         /// <summary>
+        /// Gets or sets the mass.
+        /// </summary>
+        /// <value>The mass.</value>
+        public float Mass { get; set; }
+
+        /// <summary>
+        /// Gets or sets the physics material.
+        /// </summary>
+        /// <value>The physics material.</value>
+        public Material PhysicsMaterial { get; set; }
+
+        /// <summary>
+        /// Gets or sets the usage delta per usage. This defines the value applied to the usage each time the item is
+        /// used.
+        /// </summary>
+        /// <value>The usage delta per usage.</value>
+        public float UsageDeltaPerUsage { get; set; }
+
+        float usage;
+
+        /// <summary>
         /// Gets or sets the usage describing how much of this item is already used. The value range is from 0 to 1.
         /// </summary>
         /// <value>The usage value.</value>
-        public float Usage { get; set; }
+        public float Usage
+        {
+            get
+            {
+                return usage;
+            }
+            set
+            {
+                usage = value;
+                CreateMessage(new ItemUsageChangedMessage(value, Entity));
+            }
+        }
     }
 }

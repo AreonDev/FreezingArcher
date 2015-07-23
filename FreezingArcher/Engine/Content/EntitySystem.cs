@@ -45,6 +45,12 @@ namespace FreezingArcher.Content
             NeededComponents = null;
         }
 
+        /// <summary>
+        /// This method is called when the entity is fully intialized.
+        /// </summary>
+        public virtual void PostInit()
+        {}
+
         protected Entity Entity;
 
         protected int[] internalValidMessages;

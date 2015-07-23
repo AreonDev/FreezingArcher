@@ -1721,6 +1721,9 @@ namespace FreezingArcher.Renderer
 
         public void DeleteGraphicsResource(GraphicsResource gr)
         {
+            if (gr == null)
+                return;
+
             if (gr.Created)
             {
                 _GraphicsResourceManager.DeleteResource(gr);

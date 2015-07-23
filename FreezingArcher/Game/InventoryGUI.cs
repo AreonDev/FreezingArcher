@@ -107,8 +107,8 @@ namespace FreezingArcher.Game
 
     public class InventoryBarSpace : Button
     {
-        public InventoryBarSpace (Base parent, Inventory inventory, List<InventoryBarButton> barItems, int boxSize) :
-        base (parent)
+        public InventoryBarSpace (Base parent, MessageProvider messageProvider, Inventory inventory,
+            InventoryGUI inventoryGui, List<InventoryBarButton> barItems, int boxSize) : base (parent)
         {
             DrawDebugOutlines = true;
             foreach (var child in Children)
@@ -118,11 +118,15 @@ namespace FreezingArcher.Game
             this.boxSize = boxSize;
             this.inventory = inventory;
             this.barItems = barItems;
+            this.inventoryGui = inventoryGui;
+            this.messageProvider = messageProvider;
         }
 
         readonly int boxSize;
         readonly Inventory inventory;
         readonly List<InventoryBarButton> barItems;
+        readonly MessageProvider messageProvider;
+        readonly InventoryGUI inventoryGui;
 
         public override bool DragAndDrop_CanAcceptPackage (Package p)
         {
@@ -169,7 +173,8 @@ namespace FreezingArcher.Game
                     var pos = (byte) (X / boxSize);
                     if (inventory.PutInBar(inventory.GetPositionOfItem(invBarTuple.Item4), pos))
                     {
-                        var btn = new InventoryBarButton(Parent, barItems, inventory, invBarTuple.Item4, pos, boxSize);
+                        var btn = new InventoryBarButton(Parent, messageProvider, barItems, inventory, inventoryGui,
+                            invBarTuple.Item4, pos, boxSize);
                         barItems.Add(btn);
                         btn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = pos == inventory.ActiveBarPosition;
                         btn.ToggleState = pos == inventory.ActiveBarPosition;
@@ -182,14 +187,16 @@ namespace FreezingArcher.Game
         }
     }
 
-    public class InventoryButton : Button
+    public class InventoryButton : Button, IMessageConsumer
     {
-        public InventoryButton (Base parent, Inventory inventory, ItemComponent item, Vector2i position, int boxSize) :
-            base (parent)
+        public InventoryButton (Base parent, MessageProvider messageProvider, Inventory inventory, ItemComponent item,
+            InventoryGUI inventoryGui, Vector2i position, int boxSize) : base (parent)
         {
+            ValidMessages = new[] { (int) MessageId.ItemUsageChanged };
             this.boxSize = boxSize;
             this.IsToggle = true;
             this.inventory = inventory;
+            this.inventoryGui = inventoryGui;
             this.item = item;
             X = position.X * boxSize + 1;
             Y = position.Y * boxSize + 1;
@@ -197,13 +204,22 @@ namespace FreezingArcher.Game
             if (!string.IsNullOrEmpty(item.ImageLocation))
                 SetImage(item.ImageLocation, true);
 
+            usageProgress = new ProgressBar(this);
+            usageProgress.AutoLabel = false;
+            usageProgress.Text = string.Empty;
+            usageProgress.Value = 1 - item.Usage;
+            usageProgress.TextPadding = Padding.Zero;
             UpdateSize();
             DragAndDrop_SetPackage (true, "item_drag");
+
+            messageProvider += this;
         }
 
         readonly Inventory inventory;
         readonly ItemComponent item;
         readonly int boxSize;
+        readonly ProgressBar usageProgress;
+        readonly InventoryGUI inventoryGui;
 
         public void UpdateSize()
         {
@@ -211,6 +227,10 @@ namespace FreezingArcher.Game
             {
                 Width = item.Size.X * boxSize - 1;
                 Height = item.Size.Y * boxSize - 1;
+                usageProgress.SetSize(Width, 10);
+                usageProgress.Y = Height - usageProgress.Height;
+                usageProgress.X = 0;
+
                 if (m_Image != null)
                 {
                     m_Image.Width = Width;
@@ -222,6 +242,10 @@ namespace FreezingArcher.Game
             {
                 Width = item.Size.Y * boxSize - 1;
                 Height = item.Size.X * boxSize - 1;
+                usageProgress.SetSize(Width, 10);
+                usageProgress.Y = Height - usageProgress.Height;
+                usageProgress.X = 0;
+
                 if (m_Image != null)
                 {
                     m_Image.Width = Width;
@@ -270,19 +294,44 @@ namespace FreezingArcher.Game
             Hide ();
             base.DragAndDrop_StartDragging (package, x, y);
         }
+
+        #region IMessageConsumer implementation
+
+        public void ConsumeMessage (IMessage msg)
+        {
+            if (msg.MessageId == (int) MessageId.ItemUsageChanged)
+            {
+                var ucm = msg as ItemUsageChangedMessage;
+                if (ucm.Entity.Name == item.Entity.Name)
+                {
+                    if (ucm.Usage > 0.999)
+                    {
+                        inventoryGui.dropItem(this, Item, inventory, true);
+                    }
+                    else
+                        usageProgress.Value = 1 - ucm.Usage;
+                }
+            }
+        }
+
+        public int[] ValidMessages { get; private set; }
+
+        #endregion
     }
 
-    public class InventoryBarButton : Button
+    public class InventoryBarButton : Button, IMessageConsumer
     {
-        public InventoryBarButton (Base parent, List<InventoryBarButton> barItems, Inventory inventory,
-            ItemComponent item, byte position, int boxSize) :
+        public InventoryBarButton (Base parent, MessageProvider messageProvider, List<InventoryBarButton> barItems,
+            Inventory inventory, InventoryGUI inventoryGui, ItemComponent item, byte position, int boxSize) :
         base (parent)
         {
+            ValidMessages = new[] { (int) MessageId.ItemUsageChanged };
             this.boxSize = boxSize;
             this.IsToggle = true;
             this.item = item;
             this.inventory = inventory;
             this.barItems = barItems;
+            this.inventoryGui = inventoryGui;
 
             if (!string.IsNullOrEmpty(item.ImageLocation))
                 SetImage(item.ImageLocation, true);
@@ -292,16 +341,31 @@ namespace FreezingArcher.Game
             X = boxSize * position + 1;
             Y = 2;
 
+            usageProgress = new ProgressBar(this);
+            usageProgress.AutoLabel = false;
+            usageProgress.Text = string.Empty;
+            usageProgress.TextPadding = Padding.Zero;
+            usageProgress.Value = 1 - item.Usage;
+            usageProgress.SetSize(Width, 10);
+            usageProgress.Y = Height - usageProgress.Height;
+            usageProgress.X = 0;
+
             var max = item.Size.X > item.Size.Y ? item.Size.X : item.Size.Y;
             m_Image.Width = (boxSize / max) * item.Size.X;
             m_Image.Height = (boxSize / max) * item.Size.Y;
             DragAndDrop_SetPackage (true, "bar_drag");
+
+            messageProvider += this;
+            this.messageProvider = messageProvider;
         }
 
         readonly ItemComponent item;
         readonly int boxSize;
         readonly Inventory inventory;
         readonly List<InventoryBarButton> barItems;
+        readonly ProgressBar usageProgress;
+        readonly MessageProvider messageProvider;
+        readonly InventoryGUI inventoryGui;
 
         public ItemComponent Item
         {
@@ -321,7 +385,10 @@ namespace FreezingArcher.Game
             if (success)
                 Show();
             else
-                DelayedDelete();
+            {
+                Parent.RemoveChild(this, true);
+                inventory.RemoveFromBar(inventory.GetPositionOfBarItem(item));
+            }
 
             IsDepressed = false;
         }
@@ -365,7 +432,8 @@ namespace FreezingArcher.Game
                     Parent.RemoveChild(this, true);
                     if (inventory.PutInBar(inventory.GetPositionOfItem(invBarTuple.Item4), pos))
                     {
-                        var btn = new InventoryBarButton(Parent, barItems, inventory, invBarTuple.Item4, pos, boxSize);
+                        var btn = new InventoryBarButton(Parent, messageProvider, barItems, inventory, inventoryGui,
+                            invBarTuple.Item4, pos, boxSize);
                         barItems.Add(btn);
                         btn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = pos == inventory.ActiveBarPosition;
                         btn.ToggleState = pos == inventory.ActiveBarPosition;
@@ -383,19 +451,42 @@ namespace FreezingArcher.Game
             Hide ();
             base.DragAndDrop_StartDragging (package, x, y);
         }
+
+        #region IMessageConsumer implementation
+
+        public void ConsumeMessage (IMessage msg)
+        {
+            if (msg.MessageId == (int) MessageId.ItemUsageChanged)
+            {
+                var ucm = msg as ItemUsageChangedMessage;
+                if (ucm.Entity.Name == item.Entity.Name)
+                {
+                    if (ucm.Usage > 0.999)
+                    {
+                        inventoryGui.dropItem(this, Item, inventory, true);
+                    }
+                    else
+                        usageProgress.Value = 1 - ucm.Usage;
+                }
+            }
+        }
+
+        public int[] ValidMessages { get; private set; }
+
+        #endregion
     }
 
     public class InventoryBackground : Base
     {
-        public InventoryBackground(Base parent, Inventory inventory, Action<ItemComponent> itemDroppedAction) : 
+        public InventoryBackground(Base parent, Inventory inventory, InventoryGUI inventoryGui) : 
         base(parent)
         {
             this.inventory = inventory;
-            this.itemDroppedAction = itemDroppedAction;
+            this.inventoryGui = inventoryGui;
         }
 
         readonly Inventory inventory;
-        readonly Action<ItemComponent> itemDroppedAction;
+        readonly InventoryGUI inventoryGui;
 
         public override bool DragAndDrop_CanAcceptPackage (Package p)
         {
@@ -410,21 +501,43 @@ namespace FreezingArcher.Game
         public override bool DragAndDrop_HandleDrop (Package p, int x, int y)
         {
             var item = p.UserData as Tuple<int, int, InventoryButton, ItemComponent>;
-            inventory.TakeOut (item.Item4);
-            item.Item3.Parent.RemoveChild(item.Item3, true);
-            itemDroppedAction(item.Item4);
+            inventoryGui.dropItem(item.Item3, item.Item4, inventory);
             return false;
         }
     }
 
     public class InventoryGUI : IMessageConsumer, IMessageCreator
     {
-        public InventoryGUI (Application application, Entity player, Inventory inventory,
+        internal void dropItem(Base btn, ItemComponent item, Inventory inv, bool destroy = false)
+        {
+            var barbtn = barItems.FirstOrDefault(b => b.Item == item);
+            barItems.Remove(barbtn);
+            if (barbtn != null)
+                barbtn.Parent.RemoveChild(barbtn, true);
+
+            byte pos = inv.GetPositionOfBarItem(item);
+            if (pos < inv.InventoryBar.Length)
+                inv.RemoveFromBar(pos);
+
+            inv.TakeOut (item);
+            btn.Parent.RemoveChild(btn, true);
+            imagePanel.Hide();
+            setDescriptionLabel(string.Empty);
+            item.Player = null;
+            if (!destroy)
+                createMessage(new ItemDroppedMessage(item));
+            else
+                item.Entity.Destroy();
+            
+        }
+
+        public InventoryGUI (Application application, GameState state, Entity player, Inventory inventory,
             MessageProvider messageProvider, Base parent)
         {
             this.inventory = inventory;
             this.application = application;
             this.player = player;
+            this.gameState = state;
             ValidMessages = new[] {
                 (int) MessageId.WindowResize,
                 (int) MessageId.UpdateLocale,
@@ -437,7 +550,7 @@ namespace FreezingArcher.Game
             spaces = new InventorySpace[inventory.Size.X, inventory.Size.Y];
             barItems = new List<InventoryBarButton>();
 
-            canvasFrame = new InventoryBackground(parent, inventory, ItemDropped);
+            canvasFrame = new InventoryBackground(parent, inventory, this);
             canvasFrame.Width = parent.Width;
             canvasFrame.Height = parent.Height;
 
@@ -472,9 +585,7 @@ namespace FreezingArcher.Game
 
                 if (toggledBtn != null)
                 {
-                    inventory.TakeOut (toggledBtn.Item);
-                    toggledBtn.Parent.RemoveChild(toggledBtn, true);
-                    ItemDropped(toggledBtn.Item);
+                    dropItem(toggledBtn, toggledBtn.Item, inventory);
                 }
             };
 
@@ -492,7 +603,7 @@ namespace FreezingArcher.Game
                 if (toggledBtn != null)
                 {
                     if (MessageCreated != null)
-                        MessageCreated(new ItemUseMessage(player, toggledBtn.Item, ItemUsage.Eatable));
+                        MessageCreated(new ItemUseMessage(player, gameState.Scene, toggledBtn.Item, ItemUsage.Eatable));
                 }
             };
 
@@ -539,7 +650,7 @@ namespace FreezingArcher.Game
             barSpaces = new InventoryBarSpace[inventory.InventoryBar.Length];
             for (int i = 0; i < inventory.InventoryBar.Length; i++)
             {
-                barSpaces[i] = new InventoryBarSpace(inventoryBar, inventory, barItems, barBoxSize);
+                barSpaces[i] = new InventoryBarSpace(inventoryBar, messageProvider, inventory, this, barItems, barBoxSize);
                 barSpaces[i].X = i * barBoxSize;
                 barSpaces[i].Y = 1;
                 barSpaces[i].Width = barBoxSize + 1;
@@ -584,7 +695,7 @@ namespace FreezingArcher.Game
 
             items = new List<InventoryButton>();
             inventory.Items.ForEach((item, position) => {
-                var btn = new InventoryButton(itemGridFrame, inventory, item, position, BoxSize);
+                var btn = new InventoryButton(itemGridFrame, messageProvider, inventory, item, this, position, BoxSize);
 
                 btn.ToggledOn += (sender, arguments) => {
                     if (toggledBtn != null)
@@ -628,7 +739,7 @@ namespace FreezingArcher.Game
 
         Label[] labels;
 
-        void setDescriptionLabel(string text, int height = 4)
+        internal void setDescriptionLabel(string text, int height = 4)
         {
             var texts = text.Split('\n');
             var y = imagePanel.Height + height;
@@ -661,7 +772,7 @@ namespace FreezingArcher.Game
         InventoryButton toggledBtn;
 
         readonly Inventory inventory;
-        readonly ImagePanel imagePanel;
+        internal readonly ImagePanel imagePanel;
         readonly Button dropBtn;
         readonly Button useBtn;
         readonly Button rotateBtn;
@@ -677,6 +788,7 @@ namespace FreezingArcher.Game
         readonly InventoryBarSpace[] barSpaces;
         readonly Application application;
         readonly Entity player;
+        readonly GameState gameState;
 
         #region IMessageConsumer implementation
 
@@ -756,11 +868,6 @@ namespace FreezingArcher.Game
                     }
                 }
 
-                if (im.IsActionPressed("camera"))
-                {
-                    inventory.PrintStorage("Inventory:");
-                }
-
                 if (im.IsActionPressed("inventory_item1"))
                 {
                     inventory.SetActiveBarItem(0);
@@ -806,16 +913,26 @@ namespace FreezingArcher.Game
 
                 if (im.IsMouseButtonPressed(MouseButton.LeftButton))
                 {
-                    if (!application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
-                        MessageCreated(new ItemUseMessage(player, inventory.ActiveBarItem,
-                            ItemUsage.Hitable));
+                    if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
+                    {
+                        MessageCreated(new ItemUseMessage(player, gameState.Scene, inventory.ActiveBarItem,
+                            ItemUsage.Hitable | ItemUsage.Eatable));
+                    }
                 }
 
                 if (im.IsMouseButtonPressed(MouseButton.RightButton))
                 {
-                    if (!application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
-                        MessageCreated(new ItemUseMessage(player, inventory.ActiveBarItem,
-                            ItemUsage.Throwable));
+                    if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
+                    {
+                        var btn = barItems.FirstOrDefault(b => b.ToggleState);
+                        var invBtn = items.FirstOrDefault(b => b.Item == btn.Item);
+                        if (btn != null)
+                        {
+                            dropItem(invBtn, btn.Item, inventory);
+                            MessageCreated(new ItemUseMessage(player, gameState.Scene, btn.Item,
+                                ItemUsage.Throwable));
+                        }
+                    }
                 }
 
                 var pos = inventory.ActiveBarPosition - (int) im.MouseScroll.Y;
@@ -829,15 +946,13 @@ namespace FreezingArcher.Game
             }
         }
 
-        public int[] ValidMessages { get; private set; }
-
-        void ItemDropped(ItemComponent item)
+        internal void createMessage(IMessage msg)
         {
-            imagePanel.Hide();
-            setDescriptionLabel(string.Empty);
             if (MessageCreated != null)
-                MessageCreated(new ItemDroppedMessage(item));
+                MessageCreated(msg);
         }
+
+        public int[] ValidMessages { get; private set; }
 
         #endregion
 

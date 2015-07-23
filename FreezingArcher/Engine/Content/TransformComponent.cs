@@ -74,12 +74,11 @@ namespace FreezingArcher.Content
             {
                 position = value;
                 if (OnPositionChanged != null)
-                    OnPositionChanged();
-                CreateMessage(new PositionChangedMessage(Entity));
+                    OnPositionChanged(value);
             }
         }
 
-        public event Action OnPositionChanged;
+        public event Action<Vector3> OnPositionChanged;
 
         /// <summary>
         /// Gets or sets the rotation.
@@ -95,12 +94,11 @@ namespace FreezingArcher.Content
             {
                 rotation = value;
                 if (OnRotationChanged != null)
-                    OnRotationChanged();
-                CreateMessage(new RotationChangedMessage(Entity));
+                    OnRotationChanged(value);
             }
         }
 
-        public event Action OnRotationChanged;
+        public event Action<Quaternion> OnRotationChanged;
 
         /// <summary>
         /// Gets or sets the scale of this entity instance.
@@ -115,12 +113,12 @@ namespace FreezingArcher.Content
             set
             {
                 scale = value;
-
-                CreateMessage(new ScaleChangedMessage(Entity));
+                if (OnScaleChanged != null)
+                    OnScaleChanged(value);
             }
         }
 
-        public event Action OnScaleChanged;
+        public event Action<Vector3> OnScaleChanged;
 
         /// <summary>
         /// Gets the world matrix.

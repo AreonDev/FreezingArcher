@@ -144,7 +144,7 @@ namespace FreezingArcher.Renderer.Scene
             InputMessage im = msg as InputMessage;
             if (im != null)
             {
-                if (im.IsActionPressedAndRepeated("camera"))
+                if (im.IsActionPressed("camera"))
                 {
                     ToggleCamera();
                 }

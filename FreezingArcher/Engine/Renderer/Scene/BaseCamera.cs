@@ -170,7 +170,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="up">Up.</param>
         public BaseCamera (Entity entity, MessageProvider messageProvider, Vector3 position = default(Vector3),
             Quaternion rotation = default(Quaternion), float near = 0.1f, float far = 400.0f,
-            float fov = MathHelper.PiOver2)
+            float fov = MathHelper.PiOver3)
         {
             MPosition = position;
             MRotation = rotation;
@@ -190,11 +190,11 @@ namespace FreezingArcher.Renderer.Scene
             UpdateCamera ();
 
             var transform = entity.GetComponent<TransformComponent>();
-            transform.OnPositionChanged += () => {
-                Position = transform.Position;
+            transform.OnPositionChanged += (pos) => {
+                Position = pos;
             };
-            transform.OnRotationChanged += () => {
-                Rotation = transform.Rotation;
+            transform.OnRotationChanged += (rot) => {
+                Rotation = rot;
             };
         }
 

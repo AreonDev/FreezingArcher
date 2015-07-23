@@ -508,7 +508,7 @@ namespace Gwen.Renderer
             {
                 TextRenderer tr = m_StringCache[key];
 
-                PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.One, RendererBlendingFactorDest.One);
+                PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.DstAlpha, RendererBlendingFactorDest.One);
 
                 DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
 

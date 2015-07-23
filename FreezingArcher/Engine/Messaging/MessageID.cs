@@ -99,18 +99,6 @@ namespace FreezingArcher.Messaging
         /// </summary>
         MouseCapture,
         /// <summary>
-        /// Occurs when the position of an entity changes.
-        /// </summary>
-        PositionChanged = 30,
-        /// <summary>
-        /// Occurs when the rotation of an entity changes.
-        /// </summary>
-        RotationChanged,
-        /// <summary>
-        /// Occurs when the scaling of an entity changes.
-        /// </summary>
-        ScaleChanged,
-        /// <summary>
         /// Occurs when a movement of an entity is requested on a MovementSystem.
         /// </summary>
         Movement,
@@ -140,6 +128,10 @@ namespace FreezingArcher.Messaging
         /// Occurs when an entity drops an item from its inventory.
         /// </summary>
         ItemDropped,
+        /// <summary>
+        /// Occurs when the usage of an item changes.
+        /// </summary>
+        ItemUsageChanged,
         /// <summary>
         /// Occurs when an item is removed from the inventory.
         /// </summary>

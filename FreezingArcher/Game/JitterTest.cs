@@ -92,6 +92,7 @@ namespace FreezingArcher.Game
             playerBody.Update ();
             playerBody.IsActive = false;
             player.GetComponent<PhysicsComponent>().RigidBody = playerBody;
+            player.GetComponent<PhysicsComponent>().World = state.PhysicsManager.World;
             player.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody(playerBody);
@@ -130,6 +131,7 @@ namespace FreezingArcher.Game
             state.PhysicsManager.World.AddBody(bodyplane);
             bodyplane.IsStatic = true;
             groundplane.GetComponent<PhysicsComponent>().RigidBody = bodyplane;
+            groundplane.GetComponent<PhysicsComponent>().World = state.PhysicsManager.World;
 
             //Init walls
             for (int i = 0; i < 10; i++) {
@@ -170,6 +172,7 @@ namespace FreezingArcher.Game
                 state.PhysicsManager.World.AddBody(body);
                 body.IsStatic = true;
                 wall.GetComponent<PhysicsComponent>().RigidBody = body;
+                wall.GetComponent<PhysicsComponent>().World = state.PhysicsManager.World;
             }
 
             InitStupidWall ();
@@ -191,14 +194,6 @@ namespace FreezingArcher.Game
             var tc2 = wall_to_throw.GetComponent<TransformComponent>();
             tc2.Position = new Vector3 (10.0f, 20.0f, 10.0f);
             tc2.Rotation = Quaternion.FromAxisAngle(new Vector3(1,1,0), MathHelper.PiOver4);
-
-            // TODO add to physics
-            /*
-            var body = new RigidBody(new BoxShape(2,4,2));
-            body.Position = new JVector(tc2.Position.X, tc2.Position.Y, tc2.Position.Z);
-            body.Orientation = JMatrix.CreateFromAxisAngle(new JVector(1,1,0), MathHelper.PiOver4);
-            world.AddBody(body);
-            wall_to_throw.GetComponent<JitterComponent>().RigidBody = body;*/
 
             List<JVector> vertices = new List<JVector>();
             wallModel2.Model.Meshes[0].Vertices.ForEach(x => (vertices.Add(x.ToJitterVector())));
@@ -223,6 +218,7 @@ namespace FreezingArcher.Game
 
             state.PhysicsManager.World.AddBody(body);
             wall_to_throw.GetComponent<PhysicsComponent>().RigidBody = body;
+            wall_to_throw.GetComponent<PhysicsComponent>().World = state.PhysicsManager.World;
             wall_to_throw.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
         }
 

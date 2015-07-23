@@ -22,7 +22,10 @@
 //
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Core;
 using FreezingArcher.Math;
+using Jitter.LinearMath;
+using Jitter.Dynamics;
 
 namespace FreezingArcher.Content
 {
@@ -42,7 +45,7 @@ namespace FreezingArcher.Content
 
             NeededComponents = new[] { typeof(ItemComponent) };
 
-            internalValidMessages = new[] { (int) MessageId.Input };
+            internalValidMessages = new[] { (int) MessageId.ItemUse, (int) MessageId.ItemDropped };
             messageProvider += this;
         }
 
@@ -52,25 +55,85 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
+            if (msg.MessageId == (int) MessageId.ItemDropped)
+            {
+                var idm = msg as ItemDroppedMessage;
+
+                if (idm.Item.Entity.Name == Entity.Name)
+                {
+                    var body = Entity.GetComponent<PhysicsComponent>().RigidBody;
+                    var transform = Entity.GetComponent<TransformComponent>();
+                    Entity.GetComponent<ModelComponent>().Model.Enabled = true;
+
+                    if (body != null)
+                    {
+                        body.Position = (transform.Position + Vector3.Transform(new Vector3(0, 0, 2), transform.Rotation)).ToJitterVector();
+                        var p = body.Position;
+                        p.Y = 1;
+                        body.Position = p;
+                        body.Orientation = JMatrix.CreateFromQuaternion(transform.Rotation.ToJitterQuaternion());
+                        Entity.GetComponent<PhysicsComponent>().RigidBody.IsStatic = false;
+                    }
+                }
+            }
+
             if (msg.MessageId == (int) MessageId.ItemUse)
             {
                 var ium = msg as ItemUseMessage;
                 var itemcomp = Entity.GetComponent<ItemComponent>();
-                var playercomp = itemcomp.Player.GetComponent<PlayerComponent>();
+
+                if (ium.Item.Entity.Name != Entity.Name)
+                    return;
 
                 if (ium.Usage.HasFlag(ItemUsage.Eatable))
                 {
-                    playercomp.Health += itemcomp.HealthDelta;
-                    playercomp.Health = playercomp.Health > playercomp.MaximumHealth ?
-                        playercomp.MaximumHealth : playercomp.Health;
+                    if (itemcomp.Player == null || ium.Entity.Name != itemcomp.Player.Name)
+                        return;
+
+                    var playercomp = itemcomp.Player.GetComponent<HealthComponent>();
+
+                    if (itemcomp.Usage <= 1)
+                    {
+                        playercomp.Health += itemcomp.HealthDelta;
+                        playercomp.Health = playercomp.Health > playercomp.MaximumHealth ?
+                            playercomp.MaximumHealth : playercomp.Health;
+                        itemcomp.Usage = itemcomp.Usage <= (1 - itemcomp.UsageDeltaPerUsage) ?
+                            itemcomp.Usage + itemcomp.UsageDeltaPerUsage : 1f;
+                    }
                 }
                 if (ium.Usage.HasFlag(ItemUsage.Throwable))
                 {
-                    // TODO
+                    var physics = Entity.GetComponent<PhysicsComponent>();
+                    physics.RigidBody.ApplyImpulse(JVector.Transform(new JVector(0, 0, 10), physics.RigidBody.Orientation));
                 }
                 if (ium.Usage.HasFlag(ItemUsage.Hitable))
                 {
                     // TODO
+                    var physics = Entity.GetComponent<PhysicsComponent>();
+                    var transform = Entity.GetComponent<TransformComponent>();
+                    RigidBody rb;
+                    JVector n;
+                    float f;
+                    physics.World.CollisionSystem.Raycast(
+                        transform.Position.ToJitterVector(),
+                        Vector3.Transform(Vector3.UnitZ, ium.Scene.CameraManager.ActiveCamera.Rotation).ToJitterVector(),
+                        new Jitter.Collision.RaycastCallback(((body, normal, fraction) => {
+                            var entity = body.Tag as Entity;
+                            if (entity != null && entity.Name.Contains("wall"))
+                            {
+                                var rigidBody = entity.GetComponent<PhysicsComponent>().RigidBody;
+                                var health = entity.GetComponent<HealthComponent>();
+                                health.Health = (health.Health - ium.Item.AttackStrength) < 0 ?
+                                    0 : health.Health - ium.Item.AttackStrength;
+                                var pos = rigidBody.Position;
+                                pos.Y = -16 * (health.MaximumHealth - health.Health) / health.MaximumHealth;
+                                rigidBody.Position = pos;
+                                entity.GetComponent<ModelComponent>().Model.Position = rigidBody.Position.ToFreezingArcherVector();
+                                return true;
+                            }
+                            return false;
+                        })), out rb, out n, out f
+                    );
                 }
             }
         }

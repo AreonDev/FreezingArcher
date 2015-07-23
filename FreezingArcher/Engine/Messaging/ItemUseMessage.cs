@@ -22,6 +22,7 @@
 //
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Content;
+using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Messaging
 {
@@ -35,13 +36,20 @@ namespace FreezingArcher.Messaging
         /// </summary>
         /// <param name="entity">Entity on which the usage should be applied.</param>
         /// <param name="usage">Usage which should be applied when sending this message.</param>
-        public ItemUseMessage(Entity entity, ItemComponent item, ItemUsage usage)
+        public ItemUseMessage(Entity entity, CoreScene scene, ItemComponent item, ItemUsage usage)
         {
             Usage = usage;
             Entity = entity;
             Item = item;
+            Scene = scene;
             MessageId = (int) Messaging.MessageId.ItemUse;
         }
+
+        /// <summary>
+        /// Gets the scene.
+        /// </summary>
+        /// <value>The scene.</value>
+        public CoreScene Scene { get; private set; }
 
         /// <summary>
         /// Gets the usage which should be applied when sending this message.

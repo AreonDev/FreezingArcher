@@ -17,4 +17,13 @@
         Trinke etwas von diesem Erfrischungsgetränk, um
         deine Gesundheit wiederherzustellen.
     </string>
+    <string name="pickaxe_description">
+        Die Spitzhacke ist recht schwer. Sie sieht ziemlich
+        stabil aus, als könnte man mit ihr Wände
+        durchbrechen.
+    </string>
+    <string name="choco_milk_description">
+        Diese Schokomilch riecht bereits etwas sauer. Das
+        ist definitiv nicht die erste Wahl!
+    </string>
 </locale>

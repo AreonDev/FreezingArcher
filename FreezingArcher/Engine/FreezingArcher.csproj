@@ -94,7 +94,9 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Package>xbuild12</Package>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -230,9 +232,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Scene\SceneObjects\SceneObjectArray.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\SceneObject.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\ModelSceneObject.cs" />
-    <Compile Include="Messaging\PositionChangedMessage.cs" />
-    <Compile Include="Messaging\RotationChangedMessage.cs" />
-    <Compile Include="Messaging\ScaleChangedMessage.cs" />
     <Compile Include="Content\Environment.cs" />
     <Compile Include="Content\Weather.cs" />
     <Compile Include="Content\Temperature.cs" />
@@ -414,7 +413,8 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\DeferredShading.cs" />
     <Compile Include="Renderer\Compositor\CompositorBlurNode.cs" />
     <Compile Include="Renderer\Compositor\CompositorNodeTextureAlphaMerger.cs" />
-    <Compile Include="Content\PlayerComponent.cs" />
+    <Compile Include="Messaging\ItemUsageChangedMessage.cs" />
+    <Compile Include="Content\HealthComponent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

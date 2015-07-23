@@ -50,7 +50,7 @@ namespace Gwen.Control
         public ProgressBar(Base parent)
             : base(parent)
         {
-			AutoSizeToContents = false;
+            AutoSizeToContents = false;
 
             SetSize(128, 32);
             TextPadding = Padding.Three;

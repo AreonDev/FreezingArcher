@@ -333,8 +333,9 @@ namespace FreezingArcher.Renderer
                     DeleteGraphicsResourceAsync(msh.m_Indices);
                     DeleteGraphicsResourceAsync(msh.m_VertexBiTangent);
 
-                    foreach (VertexBuffer vb in msh.m_VertexColors)
-                        DeleteGraphicsResourceAsync(vb);
+                    if (msh.m_VertexColors != null)
+                        foreach (VertexBuffer vb in msh.m_VertexColors)
+                            DeleteGraphicsResourceAsync(vb);
 
                     DeleteGraphicsResourceAsync(msh.m_VertexNormal);
                     DeleteGraphicsResourceAsync(msh.m_VertexPosition);

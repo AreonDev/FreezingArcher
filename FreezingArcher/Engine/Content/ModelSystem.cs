@@ -43,11 +43,33 @@ namespace FreezingArcher.Content
             //Added needed components
             NeededComponents = new[] { typeof(TransformComponent), typeof(ModelComponent) };
 
-            //Needs more Initializing?
-            //Scene does this for me, so no!
-            internalValidMessages = new[] { (int) MessageId.PositionChanged,
-                (int) MessageId.RotationChanged, (int) MessageId.ScaleChanged };
+            //internalValidMessages = new[] { (int) MessageId.PositionChanged,
+            //    (int) MessageId.RotationChanged, (int) MessageId.ScaleChanged };
+            internalValidMessages = new int[0];
             messageProvider += this;
+        }
+
+        /// <summary>
+        /// This method is called when the entity is fully intialized.
+        /// </summary>
+        public override void PostInit()
+        {
+            var transform = Entity.GetComponent<TransformComponent>();
+            transform.OnPositionChanged += (pos) => {
+                var model = Entity.GetComponent<ModelComponent>().Model;
+                if (model != null)
+                    model.Position = pos;
+            };
+            transform.OnRotationChanged += (rot) => {
+                var model = Entity.GetComponent<ModelComponent>().Model;
+                if (model != null)
+                    model.Rotation = rot;
+            };
+            transform.OnScaleChanged += (scale) => {
+                var model = Entity.GetComponent<ModelComponent>().Model;
+                if (model != null)
+                    model.Scaling = scale;
+            };
         }
 
         /// <summary>
@@ -56,32 +78,6 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            ModelComponent mc = Entity.GetComponent<ModelComponent>();
-            TransformComponent tc = Entity.GetComponent<TransformComponent>();
-
-            if (mc == null || mc.Model == null)
-                return;
-            
-            if (msg.MessageId == (int) MessageId.PositionChanged)
-            {
-                PositionChangedMessage pcm = msg as PositionChangedMessage;
-                if (pcm.Entity.Name == Entity.Name)
-                    mc.Model.Position = tc.Position;
-            }
-
-            if (msg.MessageId == (int) MessageId.RotationChanged)
-            {
-                RotationChangedMessage rcm = msg as RotationChangedMessage;
-                if (rcm.Entity.Name == Entity.Name)
-                    mc.Model.Rotation = tc.Rotation;
-            }
-
-            if (msg.MessageId == (int) MessageId.ScaleChanged)
-            {
-                ScaleChangedMessage scm = msg as ScaleChangedMessage;
-                if (scm.Entity.Name == Entity.Name)
-                    mc.Model.Scaling = tc.Scale;
-            }
         }
     }
 }

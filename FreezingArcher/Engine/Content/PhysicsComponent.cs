@@ -22,6 +22,7 @@
 //
 using Jitter.Dynamics;
 using System;
+using Jitter;
 
 namespace FreezingArcher.Content
 {
@@ -56,6 +57,11 @@ namespace FreezingArcher.Content
         public static readonly RigidBody DefaultRigidBody = null;
 
         /// <summary>
+        /// The default world.
+        /// </summary>
+        public static readonly World DefaultWorld = null;
+
+        /// <summary>
         /// The default physics applying.
         /// </summary>
         public static readonly AffectedByPhysics DefaultPhysicsApplying = AffectedByPhysics.Nothing;
@@ -67,9 +73,21 @@ namespace FreezingArcher.Content
         public RigidBody RigidBody { get; set; }
 
         /// <summary>
+        /// Gets or sets the world.
+        /// </summary>
+        /// <value>The world.</value>
+        public World World { get; set; }
+
+        /// <summary>
         /// Gets or sets the physics applying.
         /// </summary>
         /// <value>The physics applying.</value>
         public AffectedByPhysics PhysicsApplying {get; set;}
+
+        public override void Destroy()
+        {
+            World.RemoveBody(RigidBody);
+            base.Destroy();
+        }
     }
 }

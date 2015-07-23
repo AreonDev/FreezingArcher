@@ -44,8 +44,22 @@ namespace FreezingArcher.Content
 
             //Needs more Initializing?
             //Scene does this for me, so no!
-            internalValidMessages = new[] { (int)MessageId.PositionChanged };
+            internalValidMessages = new int[0];
             messageProvider += this;
+        }
+
+        /// <summary>
+        /// This method is called when the entity is fully intialized.
+        /// </summary>
+        public override void PostInit()
+        {
+            var transform = Entity.GetComponent<TransformComponent>();
+
+            transform.OnPositionChanged += (pos) => {
+                var skybox = Entity.GetComponent<SkyboxComponent>().Skybox;
+                if (skybox != null)
+                    skybox.Position = pos;
+            };
         }
 
         /// <summary>
@@ -71,18 +85,6 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            SkyboxComponent sc = Entity.GetComponent<SkyboxComponent>();
-            TransformComponent tc = Entity.GetComponent<TransformComponent>();
-
-            if (sc == null || sc.Skybox == null)
-                return;
-
-            if (msg.MessageId == (int)MessageId.PositionChanged)
-            {
-                PositionChangedMessage pcm = msg as PositionChangedMessage;
-                if (pcm.Entity.Name == Entity.Name)
-                    sc.Skybox.Position = tc.Position;
-            }
         }
     }
 }

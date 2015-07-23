@@ -25,10 +25,15 @@ using System.Linq;
 using FreezingArcher.Math;
 using FreezingArcher.DataStructures;
 using System.Collections.Generic;
+using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Renderer.Scene.SceneObjects;
+using Jitter.LinearMath;
+using Jitter.Collision;
+using Jitter.Collision.Shapes;
+using Jitter.Dynamics;
 
 namespace FreezingArcher.Content
 {
@@ -219,10 +224,6 @@ namespace FreezingArcher.Content
                 inventoryBar[GetPositionOfBarItem(item)] = null;
                 inventoryBar[position] = item.GetHashCode();
 
-                if (MessageCreated != null)
-                {
-                    //MessageCreated(new ActiveInventoryBarItemChangedMessage(item, position));
-                }
                 return true;
             }
             return false;
@@ -262,90 +263,14 @@ namespace FreezingArcher.Content
             return new Vector2i(-1, -1);
         }
 
-        // so this is truely boolshit -.- (Y dafuq cant I use static readonly vars as default params!?!?!?)
-        public bool Insert(string name)
-        {
-            return Insert(name, ItemComponent.DefaultImageLocation);
-        }
-
-        public bool Insert(string name, string imageLocation)
-        {
-            return Insert(name, imageLocation, string.Empty);
-        }
-
-        public bool Insert(string name, string imageLocation, string description)
-        {
-            return Insert(name, imageLocation, description, string.Empty);
-        }
-
-        public bool Insert(string name, string imageLocation, string description, string modelPath)
-        {
-            return Insert(name, imageLocation, description, modelPath, ItemComponent.DefaultSize);
-        }
-
-        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size)
-        {
-            return Insert(name, imageLocation, description, modelPath, size, ItemComponent.DefaultPositionOffset);
-        }
-
         public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-            Vector3 offset)
-        {
-            return Insert(name, imageLocation, description, modelPath, size, offset,
-                ItemComponent.DefaultAttackClasses);
-        }
-
-        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-                           Vector3 offset, AttackClass attackClasses)
-        {
-            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses,
-                ItemComponent.DefaultItemUsages);
-        }
-
-        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages)
-        {
-            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses, itemUsages,
-                ItemComponent.DefaultProtection);
-        }
-
-        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection)
-        {
-            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses, itemUsages,
-                protection, ItemComponent.DefaultHealthDelta);
-        }
-
-        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta)
-        {
-            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses, itemUsages,
-                protection, healthDelta, ItemComponent.DefaultAttackStrength);
-        }
-
-        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
-            float attackStrength)
-        {
-            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses, itemUsages,
-                protection, healthDelta, attackStrength, ItemComponent.DefaultThrowPower);
-        }
-
-        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
-            float attackStrength, float throwPower)
-        {
-            return Insert(name, imageLocation, description, modelPath, size, offset, attackClasses, itemUsages,
-                protection, healthDelta, attackStrength, throwPower, ItemComponent.DefaultUsage);
-        }
-
-        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection, float healthDelta,
-            float attackStrength, float throwPower, float usage)
+            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection,
+            Material physicsMaterial, float mass, float healthDelta, float usageDeltaPerUsage, float attackStrength,
+            float throwPower, float usage)
         {
             return Insert(CreateNewItem(messageProvider, gameState, player, name, imageLocation, description, modelPath,
-                size, offset, ItemComponent.DefaultOrientation, ItemLocation.Inventory, attackClasses, itemUsages, protection, 
-                healthDelta, attackStrength, throwPower, usage));
+                size, offset, ItemComponent.DefaultOrientation, ItemLocation.Inventory, attackClasses, itemUsages,
+                protection, physicsMaterial, mass, healthDelta, usageDeltaPerUsage, attackStrength, throwPower, usage));
         }
 
         public bool Insert(ItemComponent item)
@@ -409,7 +334,10 @@ namespace FreezingArcher.Content
 
         public ItemComponent TakeOut(ItemComponent item)
         {
-            return TakeOut(GetPositionOfItem(item));
+            var pos = GetPositionOfItem(item);
+            if (pos.X >= 0 && pos.Y >= 0)
+                return TakeOut(pos);
+            return null;
         }
 
         public ItemComponent TakeOut(int positionX, int positionY)
@@ -477,10 +405,11 @@ namespace FreezingArcher.Content
         public static ItemComponent CreateNewItem(MessageProvider messageProvider, GameState state, Entity player,
             string name, string imageLocation, string description, string modelPath, Vector2i size, Vector3 offset,
             Orientation orientation, ItemLocation location, AttackClass attackClasses, ItemUsage itemUsages,
-            Protection protection, float healthDelta, float attackStrength, float throwPower, float usage)
+            Protection protection, Material physicsMaterial, float mass, float healthDelta,
+            float usageDeltaPerUsage, float attackStrength, float throwPower, float usage)
         {
             var entity = EntityFactory.Instance.CreateWith(name, messageProvider,
-                systems: new[] { typeof(ItemSystem), typeof(ModelSystem) });
+                systems: new[] { typeof(ItemSystem), typeof(ModelSystem), typeof(PhysicsSystem) });
 
             var item = entity.GetComponent<ItemComponent>();
             item.ImageLocation = imageLocation;
@@ -495,6 +424,9 @@ namespace FreezingArcher.Content
             item.AttackStrength = attackStrength;
             item.ThrowPower = throwPower;
             item.Usage = usage;
+            item.UsageDeltaPerUsage = usageDeltaPerUsage;
+            item.Mass = mass;
+            item.PhysicsMaterial = physicsMaterial;
             item.Player = player;
             item.PositionOffset = offset;
 
@@ -503,15 +435,54 @@ namespace FreezingArcher.Content
             state.Scene.AddObject(model);
             entity.GetComponent<ModelComponent>().Model = model;
 
-            var player_transform = player.GetComponent<TransformComponent>();
+            var player_transform = item.Player.GetComponent<TransformComponent>();
             var transform = entity.GetComponent<TransformComponent>();
-            Action handler = () => {
-                transform.Position = 
-                    player_transform.Position + Vector3.Transform(item.PositionOffset, player_transform.Rotation);
-                transform.Rotation = player_transform.Rotation;
+            var physics = entity.GetComponent<PhysicsComponent> ();
+
+            List<JVector> vertices = new List<JVector>();
+            model.Model.Meshes[0].Vertices.ForEach(x => (vertices.Add(x.ToJitterVector())));
+
+            List<TriangleVertexIndices> indices = new List<TriangleVertexIndices>();
+
+            for(int i = 0; i < model.Model.Meshes[0].Indices.Length; i+= 3)
+            {
+                int i0 = model.Model.Meshes[0].Indices[i+0];
+                int i1 = model.Model.Meshes[0].Indices[i+1];
+                int i2 = model.Model.Meshes[0].Indices[i+2];
+
+                indices.Add(new TriangleVertexIndices(i0, i1, i2));
+            }
+
+            var triangleMeshShape = new TriangleMeshShape(new Octree(vertices, indices));
+
+            var body = new RigidBody(triangleMeshShape);
+            body.Position = transform.Position.ToJitterVector ();
+            body.Orientation = JMatrix.CreateFromAxisAngle(new JVector(1,1,0), MathHelper.PiOver4);
+            if (mass >= 0)
+                body.Mass = mass;
+            body.Material = physicsMaterial;
+            body.AllowDeactivation = true;
+
+            state.PhysicsManager.World.AddBody(body);
+            physics.RigidBody = body;
+            physics.World = state.PhysicsManager.World;
+            physics.PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
+            physics.RigidBody.IsStatic = true;
+
+            player_transform.OnPositionChanged += (pos) => {
+                if (item.Player != null)
+                {
+                    transform.Position = pos + Vector3.Transform(item.PositionOffset, player_transform.Rotation);
+                    transform.Rotation = player_transform.Rotation;
+                }
             };
-            player_transform.OnPositionChanged += handler;
-            player_transform.OnRotationChanged += handler;
+            player_transform.OnRotationChanged += (rot) => {
+                if (item.Player != null)
+                {
+                    transform.Position = player_transform.Position + Vector3.Transform(item.PositionOffset, rot);
+                    transform.Rotation = rot;
+                }
+            };
 
             return item;
         }

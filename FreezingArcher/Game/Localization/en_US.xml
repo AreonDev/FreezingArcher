@@ -14,4 +14,12 @@
     <string name="soda_can_description">
         Drink some of this soft drink to restore your health.
     </string>
+    <string name="pickaxe_description">
+        This pickaxe is quite heavy. It seems quite strong
+        as if it could break walls.
+    </string>
+    <string name="choco_milk_description">
+        This choco milk smells slightly sour. This is
+        definitely not the first choice!
+    </string>
 </locale>

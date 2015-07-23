@@ -480,11 +480,7 @@ namespace Gwen.Control
             //Debug.Print("Control.Base: Disposing {0} {1:X}", this, GetHashCode());
             if (m_Disposed)
             {
-#if DEBUG
-                throw new ObjectDisposedException(String.Format("Control.Base [{1:X}] disposed twice: {0}", this, GetHashCode()));
-#else
                 return;
-#endif
             }
 
             if (InputHandler.HoveredControl == this)

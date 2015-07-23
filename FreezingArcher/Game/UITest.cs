@@ -32,6 +32,8 @@ using FreezingArcher.Math;
 using FreezingArcher.Messaging;
 using FreezingArcher.DataStructures;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer;
+using System.Security.Cryptography;
 
 namespace FreezingArcher.Game
 {
@@ -56,6 +58,7 @@ namespace FreezingArcher.Game
             sceneobj.Priority = 999;
             scene.BackgroundColor = Color4.Transparent;
             scene.AddObject (sceneobj);
+            this.player = player;
 
             var input = new FreezingArcher.UI.Input.FreezingArcherInput(app, state.MessageProxy);
             input.Initialize (sceneobj.Canvas);
@@ -64,16 +67,102 @@ namespace FreezingArcher.Game
 
             var inventory = new Inventory(messageProvider, state, player, new Vector2i(5, 7), 9);
 
-            inventory.Insert("flashlight", "Content/Flashlight/thumb.png", "flashlight_description",
-                "Content/Flashlight/flashlight.xml", new Vector2i(2, 1), new Vector3(-0.5f, -0.4f, -0.2f));
-            var soda_can = Inventory.CreateNewItem(messageProvider, state, player, "soda_can", "Content/SodaCan/thumb.png",
-                "soda_can_description", "Content/SodaCan/soda_can.xml", new Vector2i(1, 1), new Vector3(-0.4f, -0.35f, 0.3f),
-                Orientation.Horizontal, ItemLocation.Inventory, AttackClass.Object, ItemUsage.Eatable, new Protection (),
-                20, 0, 5, 0);
+            flashlight = Inventory.CreateNewItem(messageProvider, state, player,
+                "flashlight",
+                "Content/Flashlight/thumb.png",
+                "flashlight_description",
+                "Content/Flashlight/flashlight.xml",
+                new Vector2i(2, 1),
+                new Vector3(-0.55f, -0.33f, 0.4f),
+                Orientation.Horizontal,
+                ItemLocation.Inventory,
+                AttackClass.Object,
+                ItemUsage.Throwable,
+                ItemComponent.DefaultProtection,
+                new Jitter.Dynamics.Material { KineticFriction = 10, StaticFriction = 10, Restitution = -100 },
+                1,
+                0,
+                0.01f,
+                0f,
+                5f,
+                0f
+            );
+            inventory.Insert(flashlight);
+
+            soda_can = Inventory.CreateNewItem(messageProvider, state, player,
+                "soda_can",
+                "Content/SodaCan/thumb.png",
+                "soda_can_description",
+                "Content/SodaCan/soda_can.xml",
+                new Vector2i(1, 1),
+                new Vector3(-0.4f, -0.25f, 0.5f),
+                Orientation.Horizontal,
+                ItemLocation.Inventory,
+                AttackClass.Object,
+                ItemUsage.Eatable,
+                ItemComponent.DefaultProtection,
+                new Jitter.Dynamics.Material { KineticFriction = 10, StaticFriction = 10, Restitution = -100 },
+                0.5f,
+                20,
+                0.2f,
+                0,
+                5f,
+                0
+            );
             inventory.Insert(soda_can);
 
-            new InventoryGUI(app, player, inventory, messageProvider, sceneobj.Canvas);
+            choco_milk = Inventory.CreateNewItem(messageProvider, state, player,
+                "choco_milk",
+                "Content/ChocoMilk/thumb.png",
+                "choco_milk_description",
+                "Content/ChocoMilk/choco_milk.xml",
+                new Vector2i(1, 1),
+                new Vector3(-0.4f, -0.25f, 0.5f),
+                Orientation.Horizontal,
+                ItemLocation.Inventory,
+                AttackClass.Object,
+                ItemUsage.Eatable,
+                ItemComponent.DefaultProtection,
+                new Jitter.Dynamics.Material { KineticFriction = 10, StaticFriction = 10, Restitution = -100 },
+                0.5f,
+                20,
+                0.2f,
+                0,
+                5f,
+                0
+            );
+            inventory.Insert(choco_milk);
+
+            pickaxe = Inventory.CreateNewItem(messageProvider, state, player,
+                "pickaxe",
+                "Content/Pickaxe/thumb.png",
+                "pickaxe_description",
+                "Content/Pickaxe/pickaxe.xml",
+                new Vector2i(2, 4),
+                new Vector3(-0.4f, -0.3f, 0.5f),
+                Orientation.Horizontal,
+                ItemLocation.Inventory,
+                AttackClass.Object,
+                ItemUsage.Hitable,
+                ItemComponent.DefaultProtection,
+                new Jitter.Dynamics.Material { KineticFriction = 10, StaticFriction = 10, Restitution = -100 },
+                2f,
+                0,
+                0.2f,
+                25,
+                5f,
+                0
+            );
+            inventory.Insert(pickaxe);
+
+            new InventoryGUI(app, state, player, inventory, messageProvider, sceneobj.Canvas);
         }
+
+        ItemComponent soda_can;
+        ItemComponent flashlight;
+        ItemComponent pickaxe;
+        ItemComponent choco_milk;
+        Entity player;
 
         public void ConsumeMessage (FreezingArcher.Messaging.Interfaces.IMessage msg)
         {

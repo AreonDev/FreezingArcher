@@ -339,16 +339,19 @@ namespace FreezingArcher.Game.Maze
 
                     var body = new RigidBody (new BoxShape (2.0f * scale.X, 0.01f, 2.0f * scale.Y));
                     body.Position = transform.Position.ToJitterVector ();
+                    body.Material.Restitution = -10;
                     body.IsStatic = true;
                        
                     entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
+                    entities [x, y].GetComponent<PhysicsComponent> ().World = physics.World;
                     entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
                     physics.World.AddBody (body);
                 }
                 else
                 {
-                    entities [x, y] = EntityFactory.Instance.CreateWith("wall" + x + "." + y, messageProvider, systems: systems);
+                    entities [x, y] = EntityFactory.Instance.CreateWith("wall" + x + "." + y, messageProvider,
+                        new[] { typeof (HealthComponent) }, systems);
                     model = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
                     entities [x, y].GetComponent<ModelComponent>().Model = model;
                     scnobjarr_wall.AddObject(model);
@@ -360,9 +363,12 @@ namespace FreezingArcher.Game.Maze
 
                     var body = new RigidBody (new BoxShape (scale.X * 2, scale.Y * 4, scale.Z * 2));
                     body.Position = transform.Position.ToJitterVector () + JVector.Up * (scale.Y * 4 * 0.5f);
+                    body.Material.Restitution = -10;
                     body.IsStatic = true;
+                    body.Tag = entities [x, y];
 
                     entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
+                    entities [x, y].GetComponent<PhysicsComponent> ().World = physics.World;
                     entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
                     physics.World.AddBody (body);

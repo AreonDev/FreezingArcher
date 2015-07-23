@@ -45,8 +45,7 @@ namespace FreezingArcher.Content
 
             NeededComponents = new[] { typeof(TransformComponent), typeof(ModelComponent), typeof(PhysicsComponent) };
 
-            internalValidMessages = new[] { (int)MessageId.Update};
-
+            internalValidMessages = new[] { (int) MessageId.Update };
             messageProvider += this;
         }
 
@@ -58,21 +57,19 @@ namespace FreezingArcher.Content
         {
             if (msg.MessageId == (int) MessageId.Update)
             {
-                var pc = Entity.GetComponent<PhysicsComponent>();
-                if (pc == null || pc.RigidBody == null || pc.RigidBody.IsStaticOrInactive)
-                    return;
+                var physics = Entity.GetComponent<PhysicsComponent>();
+                var transform = Entity.GetComponent<TransformComponent>();
 
-                TransformComponent tc = Entity.GetComponent<TransformComponent>();
-
-                if (tc == null)
-                    return;
-
-                if (pc.PhysicsApplying.HasFlag(AffectedByPhysics.Position))
-                    tc.Position = pc.RigidBody.Position.ToFreezingArcherVector();
+                if (physics != null && transform != null &&
+                    physics.RigidBody != null && !physics.RigidBody.IsStaticOrInactive)
+                {
+                    if (physics.PhysicsApplying.HasFlag(AffectedByPhysics.Position))
+                        transform.Position = physics.RigidBody.Position.ToFreezingArcherVector();
                     
-                if (pc.PhysicsApplying.HasFlag(AffectedByPhysics.Orientation))
-                    tc.Rotation = JQuaternion.CreateFromMatrix(pc.RigidBody.Orientation).ToFreezingArcherQuaternion();
-	    }
+                    if (physics.PhysicsApplying.HasFlag(AffectedByPhysics.Orientation))
+                        transform.Rotation = JQuaternion.CreateFromMatrix(physics.RigidBody.Orientation).ToFreezingArcherQuaternion();
+                }
+            }
         }
     }
 }

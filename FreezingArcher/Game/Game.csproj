@@ -119,7 +119,7 @@ echo Successfully finished!</PostBuildEvent>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Localization\de_DE.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Localization\en_US.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -172,6 +172,30 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Content\SodaCan\thumb.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Pickaxe\diffuse.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Pickaxe\pickaxe.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Pickaxe\pickaxe.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Pickaxe\thumb.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\ChocoMilk\choco_milk.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\ChocoMilk\choco_milk.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\ChocoMilk\diffuse.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\ChocoMilk\thumb.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
@@ -200,5 +224,7 @@ echo Successfully finished!</PostBuildEvent>
     <Folder Include="Content\" />
     <Folder Include="Content\Flashlight\" />
     <Folder Include="Content\SodaCan\" />
+    <Folder Include="Content\Pickaxe\" />
+    <Folder Include="Content\ChocoMilk\" />
   </ItemGroup>
 </Project>

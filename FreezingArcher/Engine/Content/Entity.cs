@@ -199,6 +199,9 @@ namespace FreezingArcher.Content
                 }
             }
 
+            if (result)
+                system.PostInit();
+
             return result;
         }
 
@@ -255,7 +258,10 @@ namespace FreezingArcher.Content
         {
             Name = null;
             MessageProvider = null;
+            Components.ForEach(c => c.Value.Destroy());
             Components.Clear();
+            Systems.ForEach(s => s.Value.Destroy());
+            Systems.Clear();
             base.Destroy();
         }
     }

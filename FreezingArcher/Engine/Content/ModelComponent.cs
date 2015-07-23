@@ -40,6 +40,12 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <value>The model.</value>
         public ModelSceneObject Model { get; set; }
+
+        public override void Destroy()
+        {
+            Model.Dispose();
+            base.Destroy();
+        }
     }
 }
 

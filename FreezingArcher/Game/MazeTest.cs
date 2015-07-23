@@ -127,7 +127,7 @@ namespace FreezingArcher.Game
             rendererContext.Compositor = compositor;
 
             Player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, new[] {
-                typeof (PlayerComponent)
+                typeof (HealthComponent)
             }, new[] {
                 typeof (MovementSystem),
                 typeof (KeyboardControllerSystem),
@@ -151,6 +151,7 @@ namespace FreezingArcher.Game
             playerBody.Update ();
           // playerBody.IsActive = false;
             Player.GetComponent<PhysicsComponent>().RigidBody = playerBody;
+            Player.GetComponent<PhysicsComponent>().World = state.PhysicsManager.World;
             Player.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (playerBody);

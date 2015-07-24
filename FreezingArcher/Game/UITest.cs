@@ -33,7 +33,6 @@ using FreezingArcher.Messaging;
 using FreezingArcher.DataStructures;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer;
-using System.Security.Cryptography;
 
 namespace FreezingArcher.Game
 {

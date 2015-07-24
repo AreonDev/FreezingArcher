@@ -63,6 +63,7 @@ namespace FreezingArcher.Game
             uiSceneObject.Canvas.SetSize(application.Window.Size.X, application.Window.Size.Y);
             uiSceneObject.Canvas.ShouldDrawBackground = false;
 
+
             image = new ImagePanel(uiSceneObject.Canvas);
             image.ImageName = backgroundPath;
             image.Width = application.Window.Size.X;
@@ -77,9 +78,9 @@ namespace FreezingArcher.Game
 
         public void ConsumeMessage (IMessage msg)
         {
-            var wrm = msg as WindowResizeMessage;
-            if (wrm != null)
+            if (msg.MessageId == (int) MessageId.WindowResize)
             {
+                var wrm = msg as WindowResizeMessage;
                 uiSceneObject.Canvas.SetBounds (0, 0, wrm.Width, wrm.Height);
                 image.SetBounds (0, 0, wrm.Width, wrm.Height);
             }

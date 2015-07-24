@@ -215,6 +215,14 @@ namespace FreezingArcher.Renderer
         One = ((int)1)          ,
     }
 
+    public enum RendererBlendEquationMode : int {
+        FuncAdd = ((int)0x8006)         ,
+        Min = ((int)0x8007)             ,
+        Max = ((int)0x8008)             ,
+        FuncSubtract = ((int)0x800A)            ,
+        FuncReverseSubtract = ((int)0x800B)             ,
+    }
+
     public enum RendererAlphaFunction : int {
         Never = ((int)0x0200)           ,
         Less = ((int)0x0201)            ,
@@ -1829,9 +1837,28 @@ namespace FreezingArcher.Renderer
                 GL.Disable(EnableCap.DepthTest);
         }
 
+        public void SetBlendEquation(RendererBlendEquationMode mode)
+        {
+            GL.BlendEquation((BlendEquationMode)mode);
+        }
+
+        public int GetBlendEquationMode()
+        {
+            int param = 0;
+
+            GL.GetInteger(GetPName.BlendEquationExt, out param);
+
+            return param;
+        }
+
         public void SetBlendFunc(RendererBlendingFactorSrc src, RendererBlendingFactorDest dst)
         {
             GL.BlendFunc((BlendingFactorSrc)src, (BlendingFactorDest)dst);
+        }
+
+        public void EnableDepthMaskWriting(bool depth)
+        {
+            GL.DepthMask(depth);
         }
             
         public void Enable(RendererEnableCap cap)

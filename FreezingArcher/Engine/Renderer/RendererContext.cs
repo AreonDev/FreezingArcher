@@ -476,9 +476,10 @@ namespace FreezingArcher.Renderer
                 {
                     Scene.Update();
 
+                    /*
                     if (Scene.FrameBufferDepthStencilTexture.Width != ViewportSize.X ||
                         Scene.FrameBufferDepthStencilTexture.Height != ViewportSize.Y)
-                        Scene.ResizeTextures(ViewportSize.X, ViewportSize.Y);
+                        Scene.ResizeTextures(ViewportSize.X, ViewportSize.Y);*/
 
                     /*Scene.FrameBuffer.UseAttachments(new FrameBuffer.AttachmentUsage[]
                     {FrameBuffer.AttachmentUsage.Color0,

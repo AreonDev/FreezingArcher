@@ -415,6 +415,8 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Compositor\CompositorNodeTextureAlphaMerger.cs" />
     <Compile Include="Messaging\ItemUsageChangedMessage.cs" />
     <Compile Include="Content\HealthComponent.cs" />
+    <Compile Include="Content\PlayerComponent.cs" />
+    <Compile Include="Renderer\Scene\SceneObjects\ParticleSceneObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -577,6 +579,36 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Renderer\Effects\Blur\blur.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Renderer\Effects\BasicParticleEffect\vertex_shader.vs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\Effects\BasicParticleEffect\geometry_shader.gs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\Effects\BasicParticleEffect\pixel_shader.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\particle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\particle_01.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\particle_02.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\particle_03.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\particle_04.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\particle_05.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\particle_06.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />
@@ -588,6 +620,7 @@ echo Successfully finished!</PostBuildEvent>
     <Folder Include="UI\Skins\" />
     <Folder Include="Renderer\TestGraphics\Monkey\" />
     <Folder Include="Renderer\Effects\Blur\" />
+    <Folder Include="Renderer\Effects\BasicParticleEffect\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

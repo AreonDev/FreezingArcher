@@ -81,8 +81,7 @@ namespace FreezingArcher.Game
             if (wrm != null)
             {
                 uiSceneObject.Canvas.SetBounds (0, 0, wrm.Width, wrm.Height);
-                image.Width = wrm.Width;
-                image.Height = wrm.Height;
+                image.SetBounds (0, 0, wrm.Width, wrm.Height);
             }
         }
 

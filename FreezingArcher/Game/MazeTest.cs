@@ -28,6 +28,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Content;
 using FreezingArcher.Renderer;
@@ -58,6 +59,13 @@ namespace FreezingArcher.Game
         CompositorBlurNode blur;
         CompositorNodeTextureAlphaMerger merger;
 
+        ParticleSceneObject particle;
+        ParticleSceneObject particle_eye1;
+        ParticleSceneObject particle_eye2;
+        ParticleSceneObject particle_smoke;
+
+        ScobisParticleEmitter paremitter;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
         /// </summary>
@@ -85,9 +93,30 @@ namespace FreezingArcher.Game
 
             game.AddGameState("maze_overworld", Content.Environment.Default, null);
             var state = game.GetGameState("maze_overworld");
-            state.Scene = new CoreScene(rendererContext, state.MessageProxy);
+            state.Scene = new CoreScene(rendererContext, messageProvider);
             state.Scene.BackgroundColor = Color4.Crimson;
             state.MessageProxy.StartProcessing();
+
+            particle_eye1 = new ParticleSceneObject (10);
+            particle_eye2 = new ParticleSceneObject (10);
+            particle_smoke = new ParticleSceneObject (200);
+            particle_eye1.Priority = 999;
+            particle_eye2.Priority = 999;
+            particle_smoke.Priority = 1000;
+
+            state.Scene.AddObject (particle_eye1);
+            state.Scene.AddObject (particle_eye2);
+            state.Scene.AddObject (particle_smoke);
+
+            paremitter = new ScobisParticleEmitter (particle_eye1, particle_eye2, particle_smoke);
+            paremitter.SpawnPosition = new Vector3 (30.0f, 20.0f, 30.0f);
+
+            particle = new ParticleSceneObject (paremitter.ParticleCount);
+            particle.Priority = 998;
+            state.Scene.AddObject (particle);
+
+            paremitter.Init (particle, rendererContext);
+
 
             UIScene = new CoreScene (rendererContext, messageProvider);
             UIScene.BackgroundColor = Color4.Transparent;
@@ -95,7 +124,7 @@ namespace FreezingArcher.Game
             scenenode2.Scene = UIScene;
             UIScene.Active = false;
 
-            loadingScreen = new LoadingScreen(application, application.MessageManager, "loading.png",
+            loadingScreen = new LoadingScreen(application, messageProvider, "loading.png",
                 "MazeLoadingScreen",
                 to: new[] {new Tuple<string, GameStateTransition>(state.Name, new GameStateTransition(0))});
 
@@ -166,7 +195,7 @@ namespace FreezingArcher.Game
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) });
             state = game.GetGameState("maze_underworld");
-            state.Scene = new CoreScene(rendererContext, state.MessageProxy);
+            state.Scene = new CoreScene(rendererContext, messageProvider);
             state.Scene.BackgroundColor = Color4.AliceBlue;
             state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
             maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 10, 10);
@@ -239,6 +268,8 @@ namespace FreezingArcher.Game
                         game.SwitchToGameState("maze_overworld");
                 }
 
+                paremitter.Update ((float)um.TimeStamp.TotalSeconds);
+
                 if(game.CurrentGameState == game.GetGameState("maze_overworld") && maze[0].HasFinished)
                     game.CurrentGameState.PhysicsManager.Update(um.TimeStamp);
                 
@@ -266,6 +297,26 @@ namespace FreezingArcher.Game
                 if (im.IsActionPressedAndRepeated("frame"))
                 {
                     SwitchMaze();
+                }
+
+                if (im.IsActionDown ("bla_unfug_links")) 
+                {
+                    paremitter.SpawnPosition += new Vector3 (-0.02f, 0, 0);
+                }
+
+                if (im.IsActionDown ("bla_unfug_rechts")) 
+                {
+                    paremitter.SpawnPosition += new Vector3 (0.02f, 0, 0);
+                }
+
+                if (im.IsActionDown ("bla_unfug_runter")) 
+                {
+                    paremitter.SpawnPosition += new Vector3 (0, -0.02f, 0);
+                }
+
+                if (im.IsActionDown ("bla_unfug_hoch")) 
+                {
+                    paremitter.SpawnPosition += new Vector3 (0, 0.02f, 0);
                 }
             }
 

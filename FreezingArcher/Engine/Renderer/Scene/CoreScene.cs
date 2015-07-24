@@ -29,11 +29,41 @@ using FreezingArcher.Renderer;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Renderer.Scene
 {
-    public class CoreScene
+    public class CoreScene : IMessageConsumer
     {
+        private class RCActionChangeFramebufferSize : RendererCore.RCAction
+        {
+            public CoreScene Scene;
+            public RendererContext Renderer;
+
+            public int Width;
+            public int Height;
+
+            public RCActionChangeFramebufferSize(RendererContext rc, CoreScene cs, int w, int h)
+            {
+                Scene = cs;
+                Renderer = rc;
+
+                Width = w;
+                Height = h;
+            }
+
+            public RendererCore.RCActionDelegate Action
+            {
+                get
+                {
+                    return delegate()
+                    {
+                        Scene.ResizeTextures(Width, Height);
+                    };
+                }
+            }
+        }
+
         public class RCActionInitSceneObject : RendererCore.RCAction
         {
             public SceneObject Object;
@@ -222,17 +252,29 @@ namespace FreezingArcher.Renderer.Scene
 
             Active = true;
 
+            ValidMessages = new [] { (int)MessageId.WindowResize };
+            messageProvider += this;
+
             Init(rc);
         }
 
         public void ResizeTextures(int width, int height)
         {
-            FrameBufferNormalTexture.Resize(width, height);
-            FrameBufferColorTexture.Resize(width, height);
-            FrameBufferDepthTexture.Resize(width, height);
-            FrameBufferSpecularTexture.Resize(width, height);
+            if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
+            {
+                FrameBufferNormalTexture.Resize(width, height);
+                FrameBufferColorTexture.Resize(width, height);
+                FrameBufferDepthTexture.Resize(width, height);
+                FrameBufferSpecularTexture.Resize(width, height);
+            
 
-            FrameBufferDepthStencilTexture.Resize(width, height);
+                FrameBufferDepthStencilTexture.Resize(width, height);
+            }
+            else
+            {
+                RCActionChangeFramebufferSize rcacfbs = new RCActionChangeFramebufferSize(PrivateRendererContext, this, width, height);
+                PrivateRendererContext.AddRCActionJob(rcacfbs);
+            }
         }
 
         public void Update()
@@ -312,6 +354,26 @@ namespace FreezingArcher.Renderer.Scene
 
             return true;
         }
+
+        #region IMessageConsumer implementation
+
+        public void ConsumeMessage(IMessage msg)
+        {
+            if (msg.MessageId == (int)MessageId.WindowResize)
+            {
+                WindowResizeMessage wrm = msg as WindowResizeMessage;
+
+                ResizeTextures(wrm.Width, wrm.Height);
+            }
+        }
+
+        public int[] ValidMessages
+        {
+            get;
+            private set;
+        }
+
+        #endregion
     }
 }
 

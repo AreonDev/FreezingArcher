@@ -76,7 +76,7 @@ namespace FreezingArcher.Game
         public MazeTest (MessageProvider messageProvider, ObjectManager objmnr, RendererContext rendererContext,
             Content.Game game, Application app)
         {
-            ValidMessages = new[] { (int) MessageId.Input, (int)MessageId.Update, (int)MessageId.Running };
+            ValidMessages = new[] { (int) MessageId.Input, (int)MessageId.Update, (int)MessageId.Running, (int) MessageId.WindowClose };
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
             this.game = game;
@@ -332,6 +332,11 @@ namespace FreezingArcher.Game
                         maze[1].Generate (state: state);
                     },
                     state: game.GetGameState("maze_overworld"));
+            }
+
+            if (msg.MessageId == (int) MessageId.WindowClose)
+            {
+                paremitter.Destroy();
             }
         }
 

@@ -26,6 +26,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Math;
 using Jitter.LinearMath;
 using Jitter.Dynamics;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -82,33 +83,22 @@ namespace FreezingArcher.Content
                 var ium = msg as ItemUseMessage;
                 var itemcomp = Entity.GetComponent<ItemComponent>();
 
-                if (ium.Item.Entity.Name != Entity.Name)
+                if (ium.Item.Entity.Name != Entity.Name || itemcomp.ItemUsageHandler == null)
                     return;
 
-                if (ium.Usage.HasFlag(ItemUsage.Eatable))
+                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Eatable))
                 {
                     if (itemcomp.Player == null || ium.Entity.Name != itemcomp.Player.Name)
                         return;
 
-                    var playercomp = itemcomp.Player.GetComponent<HealthComponent>();
-
-                    if (itemcomp.Usage <= 1)
-                    {
-                        playercomp.Health += itemcomp.HealthDelta;
-                        playercomp.Health = playercomp.Health > playercomp.MaximumHealth ?
-                            playercomp.MaximumHealth : playercomp.Health;
-                        itemcomp.Usage = itemcomp.Usage <= (1 - itemcomp.UsageDeltaPerUsage) ?
-                            itemcomp.Usage + itemcomp.UsageDeltaPerUsage : 1f;
-                    }
+                    itemcomp.ItemUsageHandler.Eat(itemcomp);
                 }
-                if (ium.Usage.HasFlag(ItemUsage.Throwable))
+                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Throwable))
                 {
-                    var physics = Entity.GetComponent<PhysicsComponent>();
-                    physics.RigidBody.ApplyImpulse(JVector.Transform(new JVector(0, 0, 10), physics.RigidBody.Orientation));
+                    itemcomp.ItemUsageHandler.Throw(itemcomp);
                 }
-                if (ium.Usage.HasFlag(ItemUsage.Hitable))
+                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Hitable))
                 {
-                    // TODO
                     var physics = Entity.GetComponent<PhysicsComponent>();
                     var transform = Entity.GetComponent<TransformComponent>();
                     RigidBody rb;
@@ -117,23 +107,11 @@ namespace FreezingArcher.Content
                     physics.World.CollisionSystem.Raycast(
                         transform.Position.ToJitterVector(),
                         Vector3.Transform(Vector3.UnitZ, ium.Scene.CameraManager.ActiveCamera.Rotation).ToJitterVector(),
-                        new Jitter.Collision.RaycastCallback(((body, normal, fraction) => {
-                            var entity = body.Tag as Entity;
-                            if (entity != null && entity.Name.Contains("wall"))
-                            {
-                                var rigidBody = entity.GetComponent<PhysicsComponent>().RigidBody;
-                                var health = entity.GetComponent<HealthComponent>();
-                                health.Health = (health.Health - ium.Item.AttackStrength) < 0 ?
-                                    0 : health.Health - ium.Item.AttackStrength;
-                                var pos = rigidBody.Position;
-                                pos.Y = -16 * (health.MaximumHealth - health.Health) / health.MaximumHealth;
-                                rigidBody.Position = pos;
-                                entity.GetComponent<ModelComponent>().Model.Position = rigidBody.Position.ToFreezingArcherVector();
-                                return true;
-                            }
-                            return false;
-                        })), out rb, out n, out f
-                    );
+                        new Jitter.Collision.RaycastCallback((body, normal, fraction) =>
+                            itemcomp.ItemUsageHandler.IsHit(body, normal.ToFreezingArcherVector(), fraction)),
+                            out rb, out n, out f);
+                    if (rb != null)
+                        itemcomp.ItemUsageHandler.Hit(itemcomp, rb, n.ToFreezingArcherVector(), f);
                 }
             }
         }

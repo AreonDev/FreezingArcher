@@ -147,7 +147,7 @@ namespace FreezingArcher.Game
                 new Jitter.Dynamics.Material { KineticFriction = 20, StaticFriction = 20, Restitution = -100 },
                 2f,
                 0,
-                0.2f,
+                0.25f,
                 25,
                 5f,
                 0

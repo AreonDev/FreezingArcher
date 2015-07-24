@@ -119,6 +119,11 @@ namespace FreezingArcher.Content
         /// </summary>
         public static readonly float DefaultUsageDeltaPerUsage = 0.2f;
 
+        /// <summary>
+        /// The default item usage handler.
+        /// </summary>
+        public static readonly IItemUsageHandler DefaultItemUsageHandler = null;
+
         #endregion
 
         /// <summary>
@@ -217,6 +222,12 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <value>The usage delta per usage.</value>
         public float UsageDeltaPerUsage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the item usage handler.
+        /// </summary>
+        /// <value>The item usage handler.</value>
+        public IItemUsageHandler ItemUsageHandler { get; set; }
 
         float usage;
 

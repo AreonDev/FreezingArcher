@@ -283,13 +283,12 @@ namespace FreezingArcher.Game.Maze
 
             foreach (var node in (IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>>) graph)
             {
-                node.Data.Init ();
-
                 if (node.Edges.Count < 8)
                 {
                     node.Data.MazeCellType = MazeCellType.Wall;
                     node.Data.IsPreview = false;
                     node.Data.IsFinal = true;
+                    node.Data.IsEdge = true;
                 }
             }
         }
@@ -334,24 +333,25 @@ namespace FreezingArcher.Game.Maze
                     scnobjarr_ground.AddObject (model);
 
                     transform = entities [x, y].GetComponent<TransformComponent>();
-                    transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.0f, y * scale.Y * 2 + yOffs);
+                    transform.Position = new Vector3 (x * scale.X * 2 + xOffs, 0, y * scale.Y * 2 + yOffs);
                     transform.Scale = scale;
 
                     var body = new RigidBody (new BoxShape (2.0f * scale.X, 0.2f, 2.0f * scale.Y));
-                    body.Position = transform.Position.ToJitterVector ();
+                    body.Position = new JVector(transform.Position.X, transform.Position.Y - 0.1f, transform.Position.Z);
                     body.Material.Restitution = -10;
                     body.IsStatic = true;
                        
                     entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
                     entities [x, y].GetComponent<PhysicsComponent> ().World = physics.World;
-                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
+                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying =
+                        AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
                     physics.World.AddBody (body);
                 }
                 else
                 {
                     entities [x, y] = EntityFactory.Instance.CreateWith("wall" + x + "." + y, messageProvider,
-                        new[] { typeof (HealthComponent) }, systems);
+                        new[] { typeof (HealthComponent), typeof(WallComponent) }, systems);
                     model = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
                     entities [x, y].GetComponent<ModelComponent>().Model = model;
                     scnobjarr_wall.AddObject(model);
@@ -369,8 +369,11 @@ namespace FreezingArcher.Game.Maze
 
                     entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
                     entities [x, y].GetComponent<PhysicsComponent> ().World = physics.World;
-                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
+                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying =
+                        AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
+                    entities [x, y].GetComponent<WallComponent>().IsEdge = node.Data.IsEdge;
+                    
                     physics.World.AddBody (body);
                 }
 

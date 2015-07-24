@@ -94,7 +94,9 @@ echo Successfully finished!</PostBuildEvent>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Package>xbuild12</Package>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -257,9 +259,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Content\AttackClass.cs" />
     <Compile Include="Content\Protection.cs" />
     <Compile Include="Content\ItemComponent.cs" />
-    <Compile Include="Content\Inventory.cs" />
     <Compile Include="DataStructures\Orientation.cs" />
-    <Compile Include="Content\ItemSystem.cs" />
     <Compile Include="Messaging\ItemUseMessage.cs" />
     <Compile Include="Messaging\ItemCollectedMessage.cs" />
     <Compile Include="Messaging\RemoveItemFromInventoryMessage.cs" />
@@ -414,6 +414,8 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\ItemUsageChangedMessage.cs" />
     <Compile Include="Content\HealthComponent.cs" />
     <Compile Include="Renderer\Scene\SceneObjects\ParticleSceneObject.cs" />
+    <Compile Include="Content\ItemSystem.cs" />
+    <Compile Include="Content\IItemUsageHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

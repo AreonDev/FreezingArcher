@@ -37,39 +37,21 @@ namespace FreezingArcher.Game.Maze
         /// <param name="position">Position.</param>
         /// <param name="weight">Weight.</param>
         /// <param name="preview">If set to <c>true</c> preview.</param>
-        public MazeCell(string name, Vector2i position, Quaternion rotation, int weight, bool preview = false)
+        public MazeCell (string name, Vector2i position, Quaternion rotation, int weight, bool preview = false)
         {
             Weight = weight;
-            this.preview = preview;
+            this.IsPreview = preview;
             Name = name;
             Position = position;
             Rotation = rotation;
-            final = false;
+            IsFinal = false;
         }
 
-        MazeCellType mazeType;
-        bool preview;
-        bool final;
-        bool isPortal;
-        bool isSpawn;
-        bool isExit;
-        bool isPath;
 
         /// <summary>
         /// The type of the labyrinth item.
         /// </summary>
-        public MazeCellType MazeCellType
-        {
-            get
-            {
-                return mazeType;
-            }
-            set
-            {
-                mazeType = value;
-                updateColor();
-            }
-        }
+        public MazeCellType MazeCellType { get; set; }
 
         /// <summary>
         /// The weight.
@@ -81,35 +63,19 @@ namespace FreezingArcher.Game.Maze
         /// node.
         /// </summary>
         /// <value><c>true</c> if preview; otherwise, <c>false</c>.</value>
-        public bool IsPreview
-        {
-            get
-            {
-                return preview;
-            }
-            set
-            {
-                preview = value;
-                updateColor();
-            }
-        }
+        public bool IsPreview { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Game.Maze.MazeCell"/> is a final node.
         /// </summary>
         /// <value><c>true</c> if final; otherwise, <c>false</c>.</value>
-        public bool IsFinal
-        {
-            get
-            {
-                return final;
-            }
-            set
-            {
-                final = value;
-                updateColor();
-            }
-        }
+        public bool IsFinal { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is edge.
+        /// </summary>
+        /// <value><c>true</c> if this instance is edge; otherwise, <c>false</c>.</value>
+        public bool IsEdge { get; set; }
 
         /// <summary>
         /// The name.
@@ -126,69 +92,25 @@ namespace FreezingArcher.Game.Maze
         /// Gets or sets a value indicating whether this instance is a portal.
         /// </summary>
         /// <value><c>true</c> if this instance is a portal; otherwise, <c>false</c>.</value>
-        public bool IsPortal
-        {
-            get
-            {
-                return isPortal;
-            }
-            set
-            {
-                isPortal = value;
-                updateColor();
-            }
-        }
+        public bool IsPortal { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is the player spawn.
         /// </summary>
         /// <value><c>true</c> if this instance is spawn; otherwise, <c>false</c>.</value>
-        public bool IsSpawn
-        {
-            get
-            {
-                return isSpawn;
-            }
-            set
-            {
-                isSpawn = value;
-                updateColor();
-            }
-        }
+        public bool IsSpawn { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this node is an exit node.
         /// </summary>
         /// <value><c>true</c> if this instance is exit; otherwise, <c>false</c>.</value>
-        public bool IsExit
-        {
-            get
-            {
-                return isExit;
-            }
-            set
-            {
-                isExit = value;
-                updateColor();
-            }
-        }
+        public bool IsExit { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is part of the path going out of the maze.
         /// </summary>
         /// <value><c>true</c> if this instance is path; otherwise, <c>false</c>.</value>
-        public bool IsPath
-        {
-            get
-            {
-                return isPath;
-            }
-            set
-            {
-                isPath = value;
-                updateColor();
-            }
-        }
+        public bool IsPath { get; set; }
 
         /// <summary>
         /// Gets the position.
@@ -201,38 +123,5 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <value>The rotation.</value>
         public Quaternion Rotation { get; private set; }
-
-        /// <summary>
-        /// Init this instance.
-        /// </summary>
-        public void Init()
-        {
-            updateColor();
-        }
-
-        void updateColor()
-        {
-            /*if (MazeCellType == MazeCellType.Wall && !IsPreview)
-                models[Position.X, Position.Y].Color = theme.WallColor;
-            else if (MazeCellType == MazeCellType.Wall && IsPreview)
-                models[Position.X, Position.Y].Color = theme.PreviewWallColor;
-            else if (MazeCellType == MazeCellType.Ground && IsPortal)
-                models[Position.X, Position.Y].Color = theme.PortalColor;
-            else if (MazeCellType == MazeCellType.Ground && IsSpawn)
-                models[Position.X, Position.Y].Color = theme.SpawnColor;
-            else if (MazeCellType == MazeCellType.Ground && IsExit)
-                models[Position.X, Position.Y].Color = theme.ExitColor;
-            else if (MazeCellType == MazeCellType.Ground && IsPath)
-                models[Position.X, Position.Y].Color = theme.PathColor;
-            else if (MazeCellType == MazeCellType.Ground && !IsFinal)
-                models[Position.X, Position.Y].Color = theme.GroundColor;
-            else if (MazeCellType == MazeCellType.Ground && IsFinal)
-                models[Position.X, Position.Y].Color = theme.FinalGroundColor;
-            else if (MazeCellType == MazeCellType.Undefined)
-                models[Position.X, Position.Y].Color = theme.UndefinedColor;
-            else
-                models[Position.X, Position.Y].Color = theme.ErrorColor;*/
-            // TODO
-        }
     }
 }

@@ -113,14 +113,15 @@ namespace FreezingArcher.Game
             else
             {
                 this.time = time;
-                updateEvent.Set();
+                if (running)
+                    updateEvent.Set();
             }
         }
 
         /// <summary>
         /// Destroy this instance.
         /// </summary>
-        public void Destroy ()
+        public virtual void Destroy ()
         {
             running = false;
             updateEvent.Close();

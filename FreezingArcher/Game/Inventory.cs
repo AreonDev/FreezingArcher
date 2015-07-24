@@ -34,8 +34,10 @@ using Jitter.LinearMath;
 using Jitter.Collision;
 using Jitter.Collision.Shapes;
 using Jitter.Dynamics;
+using FreezingArcher.Content;
+using FreezingArcher.Game.Maze;
 
-namespace FreezingArcher.Content
+namespace FreezingArcher.Game
 {
     public sealed class Inventory : IMessageCreator
     {
@@ -429,6 +431,7 @@ namespace FreezingArcher.Content
             item.PhysicsMaterial = physicsMaterial;
             item.Player = player;
             item.PositionOffset = offset;
+            item.ItemUsageHandler = new MazeItemUseHandler();
 
             var model = new ModelSceneObject(modelPath);
             model.Enabled = false;

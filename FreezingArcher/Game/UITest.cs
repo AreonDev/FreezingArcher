@@ -64,9 +64,10 @@ namespace FreezingArcher.Game
             sceneobj.Canvas.SetSize(app.Window.Size.X, app.Window.Size.Y);
             sceneobj.Canvas.ShouldDrawBackground = false;
 
+            inventoryGui = new InventoryGUI(app, state, player, messageProvider);
             var inventory = new Inventory(messageProvider, state, player, new Vector2i(5, 7), 9);
 
-            flashlight = Inventory.CreateNewItem(messageProvider, state, player,
+            flashlight = Inventory.CreateNewItem(messageProvider, state, inventoryGui, player,
                 "flashlight",
                 "Content/Flashlight/thumb.png",
                 "flashlight_description",
@@ -88,7 +89,7 @@ namespace FreezingArcher.Game
             );
             inventory.Insert(flashlight);
 
-            soda_can = Inventory.CreateNewItem(messageProvider, state, player,
+            soda_can = Inventory.CreateNewItem(messageProvider, state, inventoryGui, player,
                 "soda_can",
                 "Content/SodaCan/thumb.png",
                 "soda_can_description",
@@ -110,7 +111,7 @@ namespace FreezingArcher.Game
             );
             inventory.Insert(soda_can);
 
-            choco_milk = Inventory.CreateNewItem(messageProvider, state, player,
+            choco_milk = Inventory.CreateNewItem(messageProvider, state, inventoryGui, player,
                 "choco_milk",
                 "Content/ChocoMilk/thumb.png",
                 "choco_milk_description",
@@ -132,7 +133,7 @@ namespace FreezingArcher.Game
             );
             inventory.Insert(choco_milk);
 
-            pickaxe = Inventory.CreateNewItem(messageProvider, state, player,
+            pickaxe = Inventory.CreateNewItem(messageProvider, state, inventoryGui, player,
                 "pickaxe",
                 "Content/Pickaxe/thumb.png",
                 "pickaxe_description",
@@ -154,7 +155,7 @@ namespace FreezingArcher.Game
             );
             inventory.Insert(pickaxe);
 
-            new InventoryGUI(app, state, player, inventory, messageProvider, sceneobj.Canvas);
+            inventoryGui.Init(sceneobj.Canvas, inventory);
         }
 
         ItemComponent soda_can;
@@ -162,6 +163,7 @@ namespace FreezingArcher.Game
         ItemComponent pickaxe;
         ItemComponent choco_milk;
         Entity player;
+        InventoryGUI inventoryGui;
 
         public void ConsumeMessage (FreezingArcher.Messaging.Interfaces.IMessage msg)
         {

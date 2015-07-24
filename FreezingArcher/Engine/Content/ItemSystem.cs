@@ -44,9 +44,11 @@ namespace FreezingArcher.Content
         {
             base.Init(messageProvider, entity);
 
-            NeededComponents = new[] { typeof(ItemComponent) };
+            NeededComponents = new[] { typeof(ItemComponent), typeof(ModelComponent),
+                typeof (TransformComponent), typeof (PhysicsComponent) };
 
-            internalValidMessages = new[] { (int) MessageId.ItemUse, (int) MessageId.ItemDropped };
+            internalValidMessages = new[] { (int) MessageId.ItemUse, (int) MessageId.ItemDropped,
+                (int) MessageId.ItemCollected };
             messageProvider += this;
         }
 
@@ -68,13 +70,27 @@ namespace FreezingArcher.Content
 
                     if (body != null)
                     {
-                        body.Position = (transform.Position + Vector3.Transform(new Vector3(0, 0, 2), transform.Rotation)).ToJitterVector();
+                        var view_direction = Vector3.Transform(new Vector3(0, 0, 2), transform.Rotation).ToJitterVector();
+                        body.Position = transform.Position.ToJitterVector() + view_direction;
                         var p = body.Position;
                         p.Y = 1;
                         body.Position = p;
                         body.Orientation = JMatrix.CreateFromQuaternion(transform.Rotation.ToJitterQuaternion());
-                        Entity.GetComponent<PhysicsComponent>().RigidBody.IsStatic = false;
+                        body.IsStatic = false;
+                        body.ApplyImpulse(view_direction);
                     }
+                }
+            }
+
+            if (msg.MessageId == (int) MessageId.ItemCollected)
+            {
+                var icm = msg as ItemCollectedMessage;
+
+                if (icm.Item.Entity.Name == Entity.Name)
+                {
+                    Entity.GetComponent<PhysicsComponent>().RigidBody.IsStatic = true;
+                    Entity.GetComponent<ModelComponent>().Model.Enabled = false;
+                    Entity.GetComponent<PhysicsComponent>().RigidBody.Position = JVector.One * -1;
                 }
             }
 
@@ -106,7 +122,7 @@ namespace FreezingArcher.Content
                     float f;
                     physics.World.CollisionSystem.Raycast(
                         transform.Position.ToJitterVector(),
-                        Vector3.Transform(Vector3.UnitZ, ium.Scene.CameraManager.ActiveCamera.Rotation).ToJitterVector(),
+                        Vector3.Transform(Vector3.UnitZ, ium.Scene.CameraManager.ActiveCamera.Rotation).ToJitterVector() * 20,
                         new Jitter.Collision.RaycastCallback((body, normal, fraction) =>
                             itemcomp.ItemUsageHandler.IsHit(body, normal.ToFreezingArcherVector(), fraction)),
                             out rb, out n, out f);

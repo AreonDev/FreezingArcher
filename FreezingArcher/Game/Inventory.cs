@@ -265,14 +265,15 @@ namespace FreezingArcher.Game
             return new Vector2i(-1, -1);
         }
 
-        public bool Insert(string name, string imageLocation, string description, string modelPath, Vector2i size,
-            Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages, Protection protection,
-            Material physicsMaterial, float mass, float healthDelta, float usageDeltaPerUsage, float attackStrength,
-            float throwPower, float usage)
+        public bool Insert(InventoryGUI inventoryGui, string name, string imageLocation, string description,
+            string modelPath, Vector2i size, Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages,
+            Protection protection, Material physicsMaterial, float mass, float healthDelta, float usageDeltaPerUsage,
+            float attackStrength, float throwPower, float usage)
         {
-            return Insert(CreateNewItem(messageProvider, gameState, player, name, imageLocation, description, modelPath,
-                size, offset, ItemComponent.DefaultOrientation, ItemLocation.Inventory, attackClasses, itemUsages,
-                protection, physicsMaterial, mass, healthDelta, usageDeltaPerUsage, attackStrength, throwPower, usage));
+            return Insert(CreateNewItem(messageProvider, gameState, inventoryGui, player, name, imageLocation,
+                description, modelPath, size, offset, ItemComponent.DefaultOrientation, ItemLocation.Inventory,
+                attackClasses, itemUsages, protection, physicsMaterial, mass, healthDelta, usageDeltaPerUsage,
+                attackStrength, throwPower, usage));
         }
 
         public bool Insert(ItemComponent item)
@@ -404,11 +405,11 @@ namespace FreezingArcher.Game
             return true;
         }
 
-        public static ItemComponent CreateNewItem(MessageProvider messageProvider, GameState state, Entity player,
-            string name, string imageLocation, string description, string modelPath, Vector2i size, Vector3 offset,
-            Orientation orientation, ItemLocation location, AttackClass attackClasses, ItemUsage itemUsages,
-            Protection protection, Material physicsMaterial, float mass, float healthDelta,
-            float usageDeltaPerUsage, float attackStrength, float throwPower, float usage)
+        public static ItemComponent CreateNewItem(MessageProvider messageProvider, GameState state,
+            InventoryGUI inventoryGui, Entity player, string name, string imageLocation, string description,
+            string modelPath, Vector2i size, Vector3 offset, Orientation orientation, ItemLocation location,
+            AttackClass attackClasses, ItemUsage itemUsages, Protection protection, Material physicsMaterial,
+            float mass, float healthDelta, float usageDeltaPerUsage, float attackStrength, float throwPower, float usage)
         {
             var entity = EntityFactory.Instance.CreateWith(name, messageProvider,
                 systems: new[] { typeof(ItemSystem), typeof(ModelSystem), typeof(PhysicsSystem) });
@@ -431,7 +432,7 @@ namespace FreezingArcher.Game
             item.PhysicsMaterial = physicsMaterial;
             item.Player = player;
             item.PositionOffset = offset;
-            item.ItemUsageHandler = new MazeItemUseHandler();
+            item.ItemUsageHandler = new MazeItemUseHandler(inventoryGui);
 
             var model = new ModelSceneObject(modelPath);
             model.Enabled = false;
@@ -465,12 +466,14 @@ namespace FreezingArcher.Game
                 body.Mass = mass;
             body.Material = physicsMaterial;
             body.AllowDeactivation = true;
+            body.Tag = entity;
 
             state.PhysicsManager.World.AddBody(body);
             physics.RigidBody = body;
             physics.World = state.PhysicsManager.World;
             physics.PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
             physics.RigidBody.IsStatic = true;
+            physics.RigidBody.Position = JVector.One * -1;
 
             player_transform.OnPositionChanged += (pos) => {
                 if (item.Player != null)

@@ -147,7 +147,7 @@ namespace FreezingArcher.Content
                 else if (was_something_pressed && vec.Length() < 2.8f)
                     pc.RigidBody.AddForce(pc.RigidBody.LinearVelocity);
                     
-                //Do not allow the body to fall
+                //Do not allow the body to flip
                 pc.RigidBody.Orientation = JMatrix.CreateFromYawPitchRoll(0, 90, 0);
             }
         }

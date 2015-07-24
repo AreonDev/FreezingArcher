@@ -36,6 +36,10 @@ using Gwen;
 using System.Collections.Generic;
 using System.Linq;
 using Pencil.Gaming;
+using Jitter.Dynamics;
+using Jitter.LinearMath;
+using Jitter.Collision.Shapes;
+using FreezingArcher.Renderer.Scene.SceneObjects;
 
 namespace FreezingArcher.Game
 {
@@ -524,6 +528,7 @@ namespace FreezingArcher.Game
             imagePanel.Hide();
             setDescriptionLabel(string.Empty);
             item.Player = null;
+            item.Location = ItemLocation.Ground;
             if (!destroy)
                 createMessage(new ItemDroppedMessage(item));
             else
@@ -531,21 +536,14 @@ namespace FreezingArcher.Game
             
         }
 
-        public InventoryGUI (Application application, GameState state, Entity player, Inventory inventory,
-            MessageProvider messageProvider, Base parent)
+        const int toolbarFrameSize = 30;
+        const int infoFrameSize = 300;
+        const int barBoxSize = 50;
+        int imagePanelHeight;
+
+        public void Init(Base parent, Inventory inventory)
         {
             this.inventory = inventory;
-            this.application = application;
-            this.player = player;
-            this.gameState = state;
-            ValidMessages = new[] {
-                (int) MessageId.WindowResize,
-                (int) MessageId.UpdateLocale,
-                (int) MessageId.Input,
-                (int) MessageId.ActiveInventoryBarItemChanged
-            };
-            messageProvider += this;
-            Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
 
             spaces = new InventorySpace[inventory.Size.X, inventory.Size.Y];
             barItems = new List<InventoryBarButton>();
@@ -562,11 +560,9 @@ namespace FreezingArcher.Game
             itemGridFrame.SetSize ((BoxSize + 1) * inventory.Size.X, (BoxSize + 1) * inventory.Size.Y);
 
             itemInfoFrame = new Base (window);
-            const int infoFrameSize = 300;
             itemInfoFrame.SetSize (infoFrameSize, itemGridFrame.Height);
             itemGridFrame.X += itemInfoFrame.Width + 4;
 
-            const int toolbarFrameSize = 30;
             toolbarFrame = new Base(window);
             toolbarFrame.Width = itemGridFrame.Width + itemInfoFrame.Width;
             toolbarFrame.Height = toolbarFrameSize;
@@ -618,7 +614,7 @@ namespace FreezingArcher.Game
             rotateBtn.Clicked += (sender, argument) => {
                 if (rotateBtn.IsDisabled)
                     return;
-                
+
                 var pos = inventory.GetPositionOfItem(toggledBtn.Item);
                 var item = inventory.TakeOut(pos);
                 var prev_orientation = item.Orientation;
@@ -640,7 +636,6 @@ namespace FreezingArcher.Game
             };
 
             inventoryBar = new TextBox(canvasFrame);
-            const int barBoxSize = 50;
             inventoryBar.Disable();
             inventoryBar.KeyboardInputEnabled = false;
             inventoryBar.Height = barBoxSize + 2;
@@ -690,51 +685,92 @@ namespace FreezingArcher.Game
 
             imagePanel = new ImagePanel(itemInfoFrame);
             imagePanel.Width = infoFrameSize;
-            int imagePanelHeight = itemGridFrame.Height / 3;
+            imagePanelHeight = itemGridFrame.Height / 3;
             imagePanel.Hide();
 
             items = new List<InventoryButton>();
             inventory.Items.ForEach((item, position) => {
-                var btn = new InventoryButton(itemGridFrame, messageProvider, inventory, item, this, position, BoxSize);
-
-                btn.ToggledOn += (sender, arguments) => {
-                    if (toggledBtn != null)
-                    {
-                        toggledBtn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = false;
-                        toggledBtn.ToggleState = false;
-                    }
-
-                    toggledBtn = btn;
-                    imagePanel.ImageName = btn.Item.ImageLocation;
-
-                    var max = toggledBtn.Item.Size.X > toggledBtn.Item.Size.Y ?
-                        toggledBtn.Item.Size.X : toggledBtn.Item.Size.Y;
-                    
-                    int max_height = infoFrameSize;
-                    if ((infoFrameSize / max) * toggledBtn.Item.Size.Y > imagePanelHeight)
-                        max_height = imagePanelHeight;
-                    
-                    imagePanel.Width = (max_height / max) * item.Size.X;
-                    imagePanel.Height = (max_height / max) * item.Size.Y;
-                    imagePanel.X = (infoFrameSize - imagePanel.Width) / 2;
-                    imagePanel.Show();
-                    setDescriptionLabel(Localizer.Instance.GetValueForName(btn.Item.Description));
-                    dropBtn.IsDisabled = false;
-                    useBtn.IsDisabled &= !toggledBtn.Item.ItemUsages.HasFlag (ItemUsage.Eatable);
-                    rotateBtn.IsDisabled = false;
-                };
-
-                btn.ToggledOff += (sender, arguments) => {
-                    imagePanel.Hide();
-                    setDescriptionLabel(string.Empty);
-                    toggledBtn = null;
-                    dropBtn.IsDisabled = true;
-                    useBtn.IsDisabled = true;
-                    rotateBtn.IsDisabled = true;
-                };
-
-                items.Add(btn);
+                AddItem(item, position);
             });
+        }
+
+        public InventoryGUI (Application application, GameState state, Entity player, MessageProvider messageProvider)
+        {
+            this.application = application;
+            this.player = player;
+            this.messageProvider = messageProvider;
+            this.gameState = state;
+            ValidMessages = new[] {
+                (int) MessageId.WindowResize,
+                (int) MessageId.UpdateLocale,
+                (int) MessageId.Input,
+                (int) MessageId.Update,
+                (int) MessageId.ActiveInventoryBarItemChanged
+            };
+            messageProvider += this;
+            Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
+        }
+
+        public void AddItem (ItemComponent item, Vector2i position, bool insert = false)
+        {
+            if (insert)
+                inventory.Insert(item, position);
+
+            item.Player = player;
+
+            var btn = new InventoryButton(itemGridFrame, messageProvider, inventory, item, this, position, BoxSize);
+
+            btn.ToggledOn += (sender, arguments) => {
+                if (toggledBtn != null)
+                {
+                    toggledBtn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = false;
+                    toggledBtn.ToggleState = false;
+                }
+
+                toggledBtn = btn;
+                imagePanel.ImageName = btn.Item.ImageLocation;
+
+                var max = toggledBtn.Item.Size.X > toggledBtn.Item.Size.Y ?
+                    toggledBtn.Item.Size.X : toggledBtn.Item.Size.Y;
+
+                int max_height = infoFrameSize;
+                if ((infoFrameSize / max) * toggledBtn.Item.Size.Y > imagePanelHeight)
+                    max_height = imagePanelHeight;
+
+                imagePanel.Width = (max_height / max) * item.Size.X;
+                imagePanel.Height = (max_height / max) * item.Size.Y;
+                imagePanel.X = (infoFrameSize - imagePanel.Width) / 2;
+                imagePanel.Show();
+                setDescriptionLabel(Localizer.Instance.GetValueForName(btn.Item.Description));
+                dropBtn.IsDisabled = false;
+                useBtn.IsDisabled &= !toggledBtn.Item.ItemUsages.HasFlag (ItemUsage.Eatable);
+                rotateBtn.IsDisabled = false;
+            };
+
+            btn.ToggledOff += (sender, arguments) => {
+                imagePanel.Hide();
+                setDescriptionLabel(string.Empty);
+                toggledBtn = null;
+                dropBtn.IsDisabled = true;
+                useBtn.IsDisabled = true;
+                rotateBtn.IsDisabled = true;
+            };
+
+            item.Location = ItemLocation.Inventory;
+
+            if (MessageCreated != null)
+                MessageCreated (new ItemCollectedMessage(item.Player, item, position));
+
+            items.Add(btn);
+        }
+
+        public void AddItem (ItemComponent item)
+        {
+            if (inventory.Insert(item))
+            {
+                var pos = inventory.GetPositionOfItem(item);
+                AddItem(item, pos);
+            }
         }
 
         Label[] labels;
@@ -771,24 +807,25 @@ namespace FreezingArcher.Game
 
         InventoryButton toggledBtn;
 
-        readonly Inventory inventory;
-        internal readonly ImagePanel imagePanel;
-        readonly Button dropBtn;
-        readonly Button useBtn;
-        readonly Button rotateBtn;
-        readonly InventorySpace[,] spaces;
-        readonly WindowControl window;
-        readonly Base itemGridFrame;
-        readonly Base itemInfoFrame;
-        readonly Base toolbarFrame;
-        readonly Base canvasFrame;
-        readonly List<InventoryButton> items;
-        readonly List<InventoryBarButton> barItems;
-        readonly TextBox inventoryBar;
-        readonly InventoryBarSpace[] barSpaces;
-        readonly Application application;
-        readonly Entity player;
-        readonly GameState gameState;
+        Inventory inventory;
+        internal ImagePanel imagePanel;
+        Button dropBtn;
+        Button useBtn;
+        Button rotateBtn;
+        InventorySpace[,] spaces;
+        WindowControl window;
+        Base itemGridFrame;
+        Base itemInfoFrame;
+        Base toolbarFrame;
+        Base canvasFrame;
+        List<InventoryButton> items;
+        List<InventoryBarButton> barItems;
+        TextBox inventoryBar;
+        InventoryBarSpace[] barSpaces;
+        Application application;
+        Entity player;
+        GameState gameState;
+        MessageProvider messageProvider;
 
         #region IMessageConsumer implementation
 
@@ -913,7 +950,20 @@ namespace FreezingArcher.Game
 
                 if (im.IsMouseButtonPressed(MouseButton.LeftButton))
                 {
-                    if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
+                    if (mouseCollisionBody != null)
+                    {
+                        var entity = mouseCollisionBody.Tag as Entity;
+                        if (entity == null)
+                            return;
+                        
+                        var mapItem = entity.GetComponent<ItemComponent>();
+                        if (mapItem != null && mapItem.Location != ItemLocation.Inventory)
+                        {
+                            AddItem(mapItem);
+                            return;
+                        }
+                    }
+                    else if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
                     {
                         MessageCreated(new ItemUseMessage(player, gameState.Scene, inventory.ActiveBarItem,
                             ItemUsage.Hitable | ItemUsage.Eatable));
@@ -944,7 +994,35 @@ namespace FreezingArcher.Game
                 
                 inventory.SetActiveBarItem((byte) pos);
             }
+
+            if (msg.MessageId == (int) MessageId.Update)
+            {
+                var physics = gameState.PhysicsManager;
+                var transform = player.GetComponent<TransformComponent>();
+                var camera = gameState.Scene.CameraManager.ActiveCamera;
+
+                if (camera == null)
+                    return;
+
+                physics.World.CollisionSystem.Raycast(
+                    camera.Position.ToJitterVector(),
+                    Vector3.Transform(Vector3.UnitZ, camera.Rotation).ToJitterVector() * 5,
+                    new Jitter.Collision.RaycastCallback((rb, n, f) => {
+                        var entity = rb.Tag as Entity;
+                        if (entity != null && entity.HasComponent<ItemComponent>())
+                        {
+                            Logger.Log.AddLogEntry(LogLevel.Debug, "ItemSystem", "Raytrace: {0}", entity.Name);
+                            return true;
+                        }
+                        return false;
+                    }), out mouseCollisionBody, out mouseCollisionBodyNormal, out mouseCollisionBodyFraction
+                );
+            }
         }
+
+        RigidBody mouseCollisionBody;
+        JVector mouseCollisionBodyNormal;
+        float mouseCollisionBodyFraction;
 
         internal void createMessage(IMessage msg)
         {

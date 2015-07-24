@@ -124,6 +124,11 @@ namespace FreezingArcher.Content
         /// </summary>
         public static readonly IItemUsageHandler DefaultItemUsageHandler = null;
 
+        /// <summary>
+        /// The mouse collision body.
+        /// </summary>
+        public static readonly RigidBody DefaultMouseCollisionBody = null;
+
         #endregion
 
         /// <summary>
@@ -228,6 +233,12 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <value>The item usage handler.</value>
         public IItemUsageHandler ItemUsageHandler { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mouse collision body.
+        /// </summary>
+        /// <value>The mouse collision body.</value>
+        public RigidBody MouseCollisionBody { get; set; }
 
         float usage;
 

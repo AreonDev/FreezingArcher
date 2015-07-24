@@ -22,6 +22,7 @@
 //
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -49,11 +50,17 @@ namespace FreezingArcher.Content
         /// <param name="msg">Message to process</param>
         public override void ConsumeMessage(IMessage msg)
         {
-            const float movement = 2f;
+            float movement = 2f;
 
             if (msg.MessageId == (int)MessageId.Input)
             {
                 InputMessage im = msg as InputMessage;
+
+                if (im.IsActionDown("sneek"))
+                    movement *= 0.5f;
+
+                if (im.IsActionDown("run"))
+                    movement *= 2;
 
                 if (im.IsActionDown("forward"))
                 {
@@ -78,6 +85,12 @@ namespace FreezingArcher.Content
                 if (im.IsActionDown("down"))
                 {
                     CreateMessage(new MoveVerticalMessage(Entity, -movement));
+                }
+                if (im.IsActionDown("jump"))
+                {
+                    var rb = Entity.GetComponent<PhysicsComponent>().RigidBody;
+                    if (rb.Arbiters.Count > 0 && rb.Position.Y < 3)
+                        CreateMessage(new MoveVerticalMessage(Entity, 5));
                 }
             }
         }

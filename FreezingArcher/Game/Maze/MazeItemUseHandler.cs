@@ -25,6 +25,7 @@ using FreezingArcher.Content;
 using Jitter.LinearMath;
 using Jitter.Dynamics;
 using FreezingArcher.Math;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Game.Maze
 {
@@ -33,6 +34,13 @@ namespace FreezingArcher.Game.Maze
     /// </summary>
     public class MazeItemUseHandler : IItemUsageHandler
     {
+        public MazeItemUseHandler(InventoryGUI inventoryGui)
+        {
+            this.inventoryGui = inventoryGui;
+        }
+
+        readonly InventoryGUI inventoryGui;
+
         #region IItemUsageHandler implementation
 
         /// <summary>
@@ -71,20 +79,25 @@ namespace FreezingArcher.Game.Maze
         /// <param name="fraction">Fraction.</param>
         public void Hit (ItemComponent item, RigidBody rigidBody, Vector3 normal, float fraction)
         {
-            var wall = rigidBody.Tag as Entity;
-            var model = wall.GetComponent<ModelComponent>().Model;
-            var health = wall.GetComponent<HealthComponent>();
-            var wallcomp = wall.GetComponent<WallComponent>();
-            health.Health = (health.Health - item.AttackStrength) < 0 ? 0 : health.Health - item.AttackStrength;
-            var tmp = (health.MaximumHealth - health.Health) / health.MaximumHealth;
-            var rbpos = rigidBody.Position;
-            rbpos.Y = -8 * tmp;
-            rigidBody.Position = rbpos;
-            var pos = model.Position;
-            pos.Y = -16 * tmp;
-            model.Position = pos;
-            item.Usage = item.Usage <= (1 - item.UsageDeltaPerUsage) ? item.Usage + item.UsageDeltaPerUsage : 1f;
-            wallcomp.IsMoveable = false;
+            var entity = rigidBody.Tag as Entity;
+
+            if (entity != null)
+            {
+                var model = entity.GetComponent<ModelComponent>().Model;
+                var health = entity.GetComponent<HealthComponent>();
+                var wallcomp = entity.GetComponent<WallComponent>();
+                health.Health = (health.Health - item.AttackStrength) < 0 ? 0 : health.Health - item.AttackStrength;
+                var tmp = (health.MaximumHealth - health.Health) / health.MaximumHealth;
+                var rbpos = rigidBody.Position;
+                rbpos.Y = -8 * tmp;
+                rigidBody.Position = rbpos;
+                var pos = model.Position;
+                pos.Y = -16 * tmp;
+                model.Position = pos;
+                item.Usage = item.Usage <= (1 - item.UsageDeltaPerUsage) ? item.Usage + item.UsageDeltaPerUsage : 1f;
+                wallcomp.IsMoveable = false;
+                return;
+            }
         }
 
         /// <summary>
@@ -98,7 +111,11 @@ namespace FreezingArcher.Game.Maze
         public bool IsHit (RigidBody rigidBody, Vector3 normal, float fraction)
         {
             var entity = rigidBody.Tag as Entity;
-            if (entity != null && entity.Name.Contains("wall") && fraction < 5 && !entity.GetComponent<WallComponent>().IsEdge)
+
+            if (entity != null)
+                Logger.Log.AddLogEntry(LogLevel.Debug, "MazeItemUseHandler", "Raytrace: {0}", entity.Name);
+
+            if (entity != null && entity.Name.Contains("wall") && fraction < 1 && !entity.GetComponent<WallComponent>().IsEdge)
                 return true;
             return false;
         }

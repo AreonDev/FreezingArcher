@@ -260,6 +260,8 @@ namespace FreezingArcher.Game.Maze
                     if (state != null)
                         AddToGameState(state);
 
+                    CalculatePathToExit();
+
                     if (proxy)
                     {
                         Thread.Sleep(1000); // we don't wanna loose messages here :)

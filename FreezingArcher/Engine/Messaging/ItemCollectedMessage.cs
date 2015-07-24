@@ -37,7 +37,7 @@ namespace FreezingArcher.Messaging
         /// <param name="item">Item.</param>
         /// <param name="inventoryPosition">Inventory position.</param>
         /// <param name="entity">Entity.</param>
-        public ItemCollectedMessage(Entity entity, ItemComponent item, Vector2i? inventoryPosition = null)
+        public ItemCollectedMessage(Entity entity, ItemComponent item, Vector2i inventoryPosition)
         {
             Entity = entity;
             Item = item;
@@ -66,7 +66,7 @@ namespace FreezingArcher.Messaging
         /// Gets the inventory position the collected item should have.
         /// </summary>
         /// <value>The inventory position.</value>
-        public Vector2i? InventoryPosition { get; private set; }
+        public Vector2i InventoryPosition { get; private set; }
 
         /// <summary>
         /// Gets the entity that collected the item.

@@ -156,7 +156,7 @@ namespace FreezingArcher.Game
             rendererContext.Compositor = compositor;
 
             Player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, new[] {
-                typeof (HealthComponent)
+                typeof (HealthComponent),
             }, new[] {
                 typeof (MovementSystem),
                 typeof (KeyboardControllerSystem),
@@ -178,7 +178,6 @@ namespace FreezingArcher.Game
             playerBody.Material.Restitution = 0.1f;
             //playerBody.Mass = 1000000.0f;
             playerBody.Update ();
-          // playerBody.IsActive = false;
             Player.GetComponent<PhysicsComponent>().RigidBody = playerBody;
             Player.GetComponent<PhysicsComponent>().World = state.PhysicsManager.World;
             Player.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
@@ -280,20 +279,6 @@ namespace FreezingArcher.Game
             var im = msg as InputMessage;
             if (im != null)
             {
-                if (im.IsActionPressedAndRepeated("run"))
-                {
-                    if (maze[0].IsGenerated && !maze[0].IsExitPathCalculated)
-                        maze[0].CalculatePathToExit();
-                    else if (maze[1].IsGenerated && !maze[1].IsExitPathCalculated)
-                        maze[1].CalculatePathToExit();
-                }
-                if (im.IsActionPressedAndRepeated("sneek"))
-                {
-                    if (maze[0].IsGenerated && !maze[0].AreFeaturesPlaced)
-                        maze[0].SpawnFeatures(null, maze[1].graph);
-                    else if (maze[1].IsGenerated && !maze[1].AreFeaturesPlaced)
-                        maze[1].SpawnFeatures(maze[0].graph);
-                }
                 if (im.IsActionPressedAndRepeated("frame"))
                 {
                     SwitchMaze();
@@ -324,14 +309,17 @@ namespace FreezingArcher.Game
             {
                 Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Generate Mazes....");
 
-                maze[0].Generate(
-                    () => {
-                        if (MessageCreated != null)
-                            MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
-                        var state = game.GetGameState ("maze_underworld");
-                        maze[1].Generate (state: state);
-                    },
-                    state: game.GetGameState("maze_overworld"));
+                maze[0].Generate(() => {
+                    if (MessageCreated != null)
+                        MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
+                    var state = game.GetGameState ("maze_underworld");
+                    maze[1].Generate (() => {
+                        if (maze[0].IsGenerated && !maze[0].AreFeaturesPlaced)
+                            maze[0].SpawnFeatures(null, maze[1].graph);
+                        if (maze[1].IsGenerated && !maze[1].AreFeaturesPlaced)
+                            maze[1].SpawnFeatures(maze[0].graph);
+                    }, state);
+                },game.GetGameState("maze_overworld"));
             }
 
             if (msg.MessageId == (int) MessageId.WindowClose)

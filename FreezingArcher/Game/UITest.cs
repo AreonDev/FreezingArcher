@@ -106,7 +106,7 @@ namespace FreezingArcher.Game
                 20,
                 0.2f,
                 0,
-                5f,
+                0.2f,
                 0
             );
             inventory.Insert(soda_can);
@@ -123,12 +123,12 @@ namespace FreezingArcher.Game
                 AttackClass.Object,
                 ItemUsage.Eatable,
                 ItemComponent.DefaultProtection,
-                new Jitter.Dynamics.Material { KineticFriction = 10, StaticFriction = 10, Restitution = -100 },
+                new Jitter.Dynamics.Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
                 0.5f,
                 20,
                 0.2f,
                 0,
-                5f,
+                0.001f,
                 0
             );
             inventory.Insert(choco_milk);
@@ -145,7 +145,7 @@ namespace FreezingArcher.Game
                 AttackClass.Object,
                 ItemUsage.Hitable,
                 ItemComponent.DefaultProtection,
-                new Jitter.Dynamics.Material { KineticFriction = 10, StaticFriction = 10, Restitution = -100 },
+                new Jitter.Dynamics.Material { KineticFriction = 20, StaticFriction = 20, Restitution = -100 },
                 2f,
                 0,
                 0.2f,

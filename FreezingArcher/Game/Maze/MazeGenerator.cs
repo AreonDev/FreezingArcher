@@ -337,7 +337,7 @@ namespace FreezingArcher.Game.Maze
                     transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.0f, y * scale.Y * 2 + yOffs);
                     transform.Scale = scale;
 
-                    var body = new RigidBody (new BoxShape (2.0f * scale.X, 0.01f, 2.0f * scale.Y));
+                    var body = new RigidBody (new BoxShape (2.0f * scale.X, 0.2f, 2.0f * scale.Y));
                     body.Position = transform.Position.ToJitterVector ();
                     body.Material.Restitution = -10;
                     body.IsStatic = true;

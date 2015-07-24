@@ -201,6 +201,7 @@ echo Successfully finished!</PostBuildEvent>
     </None>
     <None Include="Content\ChocoMilk\thumb.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Particles\particle_01.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

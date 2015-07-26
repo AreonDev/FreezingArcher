@@ -48,8 +48,8 @@ namespace FreezingArcher.Game.Maze
     /// Add maze to scene delegate.
     /// </summary>
     delegate void AddMazeToGameStateDelegate(WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
-        MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, CoreScene scene,
-        PhysicsManager physics, float scaling, uint maxX, int xOffs, int yOffs);
+        MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
+        Random rand, float scaling, uint maxX, int xOffs, int yOffs);
 
     /// <summary>
     /// Calculate path to exit delegate.
@@ -330,8 +330,8 @@ namespace FreezingArcher.Game.Maze
 
             if (addMazeToGameStateDelegate != null)
             {
-                addMazeToGameStateDelegate(graph, state.MessageProxy, entities, ref playerPosition, state.Scene,
-                    physics, scale, (uint) Size.X, Offset.X, Offset.Y);
+                addMazeToGameStateDelegate(graph, state.MessageProxy, entities, ref playerPosition, state, rand, scale,
+                    (uint) Size.X, Offset.X, Offset.Y);
                 HasFinished = true;
             }
             else

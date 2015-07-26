@@ -44,6 +44,86 @@ namespace FreezingArcher.Game.Maze
     /// </summary>
     public sealed class MazeGenerator
     {
+        #region templates
+
+        public static readonly ItemTemplate[] ItemTemplates = new[] {
+            new ItemTemplate {
+                Name = "choco_milk",
+                ImageLocation = "Content/ChocoMilk/thumb.png",
+                Description = "choco_milk_description",
+                ModelPath = "Content/ChocoMilk/choco_milk.xml",
+                Size = new Vector2i(1, 1),
+                PositionOffset = new Vector3(-.4f, -.25f, -.5f),
+                Shape = new BoxShape(0.1f, 0.14f, 0.1f),
+                AttackClasses = AttackClass.Object,
+                ItemUsages =  ItemUsage.Eatable,
+                Protection = ItemComponent.DefaultProtection,
+                PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
+                Mass = .5f,
+                HealthDelta = 20,
+                UsageDeltaPerUsage = .2f,
+                AttackStrength = 0,
+                ThrowPower = 0.2f,
+                Usage = .2f
+            },
+            new ItemTemplate {
+                Name = "flashlight",
+                ImageLocation = "Content/Flashlight/thumb.png",
+                Description = "flashlight_description",
+                ModelPath = "Content/Flashlight/flashlight.xml",
+                Size = new Vector2i(2, 1),
+                PositionOffset = new Vector3(-0.55f, -0.33f, 0.4f),
+                AttackClasses = AttackClass.Object,
+                ItemUsages =  ItemUsage.Throwable,
+                Protection = ItemComponent.DefaultProtection,
+                PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
+                Mass = 1,
+                HealthDelta = 0,
+                UsageDeltaPerUsage = .01f,
+                AttackStrength = 0,
+                ThrowPower = 5,
+                Usage = 0
+            },
+            new ItemTemplate {
+                Name = "pickaxe",
+                ImageLocation = "Content/Pickaxe/thumb.png",
+                Description = "pickaxe_description",
+                ModelPath = "Content/Pickaxe/pickaxe.xml",
+                Size = new Vector2i(2, 4),
+                PositionOffset = new Vector3(-0.4f, -0.3f, 0.5f),
+                AttackClasses = AttackClass.Object,
+                ItemUsages =  ItemUsage.Hitable,
+                Protection = ItemComponent.DefaultProtection,
+                PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
+                Mass = 2,
+                HealthDelta = 0,
+                UsageDeltaPerUsage = .25f,
+                AttackStrength = 25,
+                ThrowPower = 5,
+                Usage = 0
+            },
+            new ItemTemplate {
+                Name = "soda_can",
+                ImageLocation = "Content/SodaCan/thumb.png",
+                Description = "soda_can_description",
+                ModelPath = "Content/SodaCan/soda_can.xml",
+                Size = new Vector2i(1, 1),
+                PositionOffset = new Vector3(-0.4f, -0.25f, 0.5f),
+                AttackClasses = AttackClass.Object,
+                ItemUsages =  ItemUsage.Eatable,
+                Protection = ItemComponent.DefaultProtection,
+                PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
+                Mass = .5f,
+                HealthDelta = 20,
+                UsageDeltaPerUsage = .2f,
+                AttackStrength = 0,
+                ThrowPower = .2f,
+                Usage = 0
+            }
+        };
+
+        #endregion
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.Maze.MazeGenerator"/> class.
         /// </summary>
@@ -294,7 +374,7 @@ namespace FreezingArcher.Game.Maze
         }
 
         static void AddMazeToGameState (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, MessageProvider messageProvider,
-            Entity[,] entities, ref Vector3 playerPosition, CoreScene scene, PhysicsManager physics,
+            Entity[,] entities, ref Vector3 playerPosition, GameState state, Random rand,
             float scaling, uint maxX, int xOffs, int yOffs)
         {
             int x = 0;
@@ -302,11 +382,11 @@ namespace FreezingArcher.Game.Maze
 
             SceneObjectArray scnobjarr_wall = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Wall/wall.xml");
             scnobjarr_wall.LayoutLocationOffset = 10;
-            scene.AddObject (scnobjarr_wall);
+            state.Scene.AddObject (scnobjarr_wall);
 
             SceneObjectArray scnobjarr_ground = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Ground/ground.xml");
             scnobjarr_ground.LayoutLocationOffset = 10;
-            scene.AddObject (scnobjarr_ground);
+            state.Scene.AddObject (scnobjarr_ground);
 
             var systems = new[] { typeof (ModelSystem), typeof (PhysicsSystem) };
 
@@ -322,6 +402,11 @@ namespace FreezingArcher.Game.Maze
 
             ModelSceneObject model;
             TransformComponent transform;
+
+            int choco_milk_idx = 0;
+            int flashlight_idx = 0;
+            int pickaxe_idx = 0;
+            int soda_can_idx = 0;
 
             foreach (var node in (IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>>) graph)
             {
@@ -342,11 +427,80 @@ namespace FreezingArcher.Game.Maze
                     body.IsStatic = true;
                        
                     entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
-                    entities [x, y].GetComponent<PhysicsComponent> ().World = physics.World;
+                    entities [x, y].GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
                     entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying =
                         AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
-                    physics.World.AddBody (body);
+                    state.PhysicsManager.World.AddBody (body);
+
+                    // TODO add items here
+                    var r = rand.Next(0, 100);
+
+                    string name = string.Empty;
+                    int idx;
+                    // pickaxe
+                    if (r == 0)
+                    {
+                        idx = 2;
+                        name = ItemTemplates[idx].Name + pickaxe_idx++;
+                    }
+                    // flashlight
+                    else if (r > 0 && r <= 4)
+                    {
+                        idx = 1;
+                        name = ItemTemplates[idx].Name + flashlight_idx++;
+                    }
+                    // choco_milk
+                    else if (r > 4 && r <= 20)
+                    {
+                        idx = 0;
+                        name = ItemTemplates[idx].Name + choco_milk_idx++;
+                    }
+                    // soda_can
+                    else if (r > 20 && r <= 28)
+                    {
+                        idx = 3;
+                        name = ItemTemplates[idx].Name + soda_can_idx++;
+                    }
+                    else
+                    {
+                        idx = -1;
+                    }
+
+                    if (idx >= 0)
+                    {
+                        var item = Inventory.CreateNewItem(messageProvider, state,
+                            name,
+                            ItemTemplates[idx].ImageLocation,
+                            ItemTemplates[idx].Description,
+                            ItemTemplates[idx].ModelPath,
+                            ItemTemplates[idx].Size,
+                            ItemTemplates[idx].PositionOffset,
+                            ItemTemplates[idx].Shape,
+                            ItemLocation.Ground,
+                            ItemTemplates[idx].AttackClasses,
+                            ItemTemplates[idx].ItemUsages,
+                            ItemTemplates[idx].Protection,
+                            ItemTemplates[idx].PhysicsMaterial,
+                            ItemTemplates[idx].Mass,
+                            ItemTemplates[idx].HealthDelta,
+                            ItemTemplates[idx].UsageDeltaPerUsage,
+                            ItemTemplates[idx].AttackStrength,
+                            ItemTemplates[idx].ThrowPower,
+                            ItemTemplates[idx].Usage
+                        );
+                        var item_body = item.Entity.GetComponent<PhysicsComponent>();
+                        var item_model = item.Entity.GetComponent<ModelComponent>();
+                        var pos = transform.Position;
+                        float y_rot = (float) rand.NextDouble();
+                        pos.X += (float) rand.NextDouble() * 3.8f - 2f;
+                        pos.Y += item_body.RigidBody.BoundingBox.Max.Y;
+                        pos.Z += (float) rand.NextDouble() * 3.8f - 2f;
+                        item_body.RigidBody.Position = pos.ToJitterVector();
+                        item_body.RigidBody.Orientation = JMatrix.CreateFromAxisAngle(JVector.Up, y_rot);
+                        item_model.Model.Position = pos;
+                        item_model.Model.Rotation = Quaternion.FromAxisAngle(Vector3.UnitY, y_rot);
+                    }
                 }
                 else
                 {
@@ -368,13 +522,13 @@ namespace FreezingArcher.Game.Maze
                     body.Tag = entities [x, y];
 
                     entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
-                    entities [x, y].GetComponent<PhysicsComponent> ().World = physics.World;
+                    entities [x, y].GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
                     entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying =
                         AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
                     entities [x, y].GetComponent<WallComponent>().IsEdge = node.Data.IsEdge;
                     
-                    physics.World.AddBody (body);
+                    state.PhysicsManager.World.AddBody (body);
                 }
 
                 if (++x >= maxX)

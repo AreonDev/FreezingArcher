@@ -52,6 +52,30 @@ namespace FreezingArcher.Content
             messageProvider += this;
         }
 
+        void updatePosition(Vector3 position)
+        {
+            var item = Entity.GetComponent<ItemComponent>();
+            var transform = Entity.GetComponent<TransformComponent>();
+            if (item != null && transform != null && item.Player != null)
+            {
+                var player_transform = item.Player.GetComponent<TransformComponent>();
+                transform.Position = position + Vector3.Transform(item.PositionOffset, player_transform.Rotation);
+                transform.Rotation = player_transform.Rotation;
+            }
+        }
+
+        void updateRotation(Quaternion rotation)
+        {
+            var item = Entity.GetComponent<ItemComponent>();
+            var transform = Entity.GetComponent<TransformComponent>();
+            if (item.Player != null)
+            {
+                var player_transform = item.Player.GetComponent<TransformComponent>();
+                transform.Position = player_transform.Position + Vector3.Transform(item.PositionOffset, rotation);
+                transform.Rotation = rotation;
+            }
+        }
+
         /// <summary>
         /// Processes the incoming message
         /// </summary>
@@ -67,6 +91,15 @@ namespace FreezingArcher.Content
                     var body = Entity.GetComponent<PhysicsComponent>().RigidBody;
                     var transform = Entity.GetComponent<TransformComponent>();
                     Entity.GetComponent<ModelComponent>().Model.Enabled = true;
+
+                    if (idm.Item.Player != null)
+                    {
+                        var player_transform = idm.Item.Player.GetComponent<TransformComponent>();
+                        player_transform.OnPositionChanged -= updatePosition;
+                        player_transform.OnRotationChanged -= updateRotation;
+                    }
+
+                    idm.Item.Player = null;
 
                     if (body != null)
                     {
@@ -91,6 +124,11 @@ namespace FreezingArcher.Content
                     Entity.GetComponent<PhysicsComponent>().RigidBody.IsStatic = true;
                     Entity.GetComponent<ModelComponent>().Model.Enabled = false;
                     Entity.GetComponent<PhysicsComponent>().RigidBody.Position = JVector.One * -1;
+
+                    var player_transform = icm.Item.Player.GetComponent<TransformComponent>();
+                    var transform = Entity.GetComponent<TransformComponent>();
+                    player_transform.OnPositionChanged += updatePosition;
+                    player_transform.OnRotationChanged += updateRotation;
                 }
             }
 
@@ -102,18 +140,18 @@ namespace FreezingArcher.Content
                 if (ium.Item.Entity.Name != Entity.Name || itemcomp.ItemUsageHandler == null)
                     return;
 
-                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Eatable))
+                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Eatable) && ium.Usage.HasFlag(ItemUsage.Eatable))
                 {
                     if (itemcomp.Player == null || ium.Entity.Name != itemcomp.Player.Name)
                         return;
 
                     itemcomp.ItemUsageHandler.Eat(itemcomp);
                 }
-                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Throwable))
+                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Throwable) && ium.Usage.HasFlag(ItemUsage.Throwable))
                 {
                     itemcomp.ItemUsageHandler.Throw(itemcomp);
                 }
-                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Hitable))
+                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Hitable) && ium.Usage.HasFlag(ItemUsage.Hitable))
                 {
                     var physics = Entity.GetComponent<PhysicsComponent>();
                     var transform = Entity.GetComponent<TransformComponent>();

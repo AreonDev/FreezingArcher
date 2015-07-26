@@ -265,17 +265,6 @@ namespace FreezingArcher.Game
             return new Vector2i(-1, -1);
         }
 
-        public bool Insert(InventoryGUI inventoryGui, string name, string imageLocation, string description,
-            string modelPath, Vector2i size, Vector3 offset, AttackClass attackClasses, ItemUsage itemUsages,
-            Protection protection, Material physicsMaterial, float mass, float healthDelta, float usageDeltaPerUsage,
-            float attackStrength, float throwPower, float usage)
-        {
-            return Insert(CreateNewItem(messageProvider, gameState, inventoryGui, player, name, imageLocation,
-                description, modelPath, size, offset, ItemComponent.DefaultOrientation, ItemLocation.Inventory,
-                attackClasses, itemUsages, protection, physicsMaterial, mass, healthDelta, usageDeltaPerUsage,
-                attackStrength, throwPower, usage));
-        }
-
         public bool Insert(ItemComponent item)
         {
             bool result = false;
@@ -406,8 +395,8 @@ namespace FreezingArcher.Game
         }
 
         public static ItemComponent CreateNewItem(MessageProvider messageProvider, GameState state,
-            InventoryGUI inventoryGui, Entity player, string name, string imageLocation, string description,
-            string modelPath, Vector2i size, Vector3 offset, Orientation orientation, ItemLocation location,
+            string name, string imageLocation, string description,
+            string modelPath, Vector2i size, Vector3 offset, Shape shape, ItemLocation location,
             AttackClass attackClasses, ItemUsage itemUsages, Protection protection, Material physicsMaterial,
             float mass, float healthDelta, float usageDeltaPerUsage, float attackStrength, float throwPower, float usage)
         {
@@ -418,7 +407,6 @@ namespace FreezingArcher.Game
             item.ImageLocation = imageLocation;
             item.Description = description;
             item.Size = size;
-            item.Orientation = orientation;
             item.Location = location;
             item.AttackClasses = attackClasses;
             item.ItemUsages = itemUsages;
@@ -430,36 +418,37 @@ namespace FreezingArcher.Game
             item.UsageDeltaPerUsage = usageDeltaPerUsage;
             item.Mass = mass;
             item.PhysicsMaterial = physicsMaterial;
-            item.Player = player;
             item.PositionOffset = offset;
-            item.ItemUsageHandler = new MazeItemUseHandler(inventoryGui);
+            item.ItemUsageHandler = new MazeItemUseHandler();
 
             var model = new ModelSceneObject(modelPath);
-            model.Enabled = false;
+            model.Enabled = true;
             state.Scene.AddObject(model);
             entity.GetComponent<ModelComponent>().Model = model;
 
-            var player_transform = item.Player.GetComponent<TransformComponent>();
             var transform = entity.GetComponent<TransformComponent>();
             var physics = entity.GetComponent<PhysicsComponent> ();
 
-            List<JVector> vertices = new List<JVector>();
-            model.Model.Meshes[0].Vertices.ForEach(x => (vertices.Add(x.ToJitterVector())));
-
-            List<TriangleVertexIndices> indices = new List<TriangleVertexIndices>();
-
-            for(int i = 0; i < model.Model.Meshes[0].Indices.Length; i+= 3)
+            if (shape == null)
             {
-                int i0 = model.Model.Meshes[0].Indices[i+0];
-                int i1 = model.Model.Meshes[0].Indices[i+1];
-                int i2 = model.Model.Meshes[0].Indices[i+2];
+                List<JVector> vertices = new List<JVector>();
+                model.Model.Meshes[0].Vertices.ForEach(x => (vertices.Add(x.ToJitterVector())));
 
-                indices.Add(new TriangleVertexIndices(i0, i1, i2));
+                List<TriangleVertexIndices> indices = new List<TriangleVertexIndices>();
+
+                for(int i = 0; i < model.Model.Meshes[0].Indices.Length; i+= 3)
+                {
+                    int i0 = model.Model.Meshes[0].Indices[i+0];
+                    int i1 = model.Model.Meshes[0].Indices[i+1];
+                    int i2 = model.Model.Meshes[0].Indices[i+2];
+
+                    indices.Add(new TriangleVertexIndices(i0, i1, i2));
+                }
+
+                shape = new TriangleMeshShape(new Octree(vertices, indices));
             }
 
-            var triangleMeshShape = new TriangleMeshShape(new Octree(vertices, indices));
-
-            var body = new RigidBody(triangleMeshShape);
+            var body = new RigidBody(shape);
             body.Position = transform.Position.ToJitterVector ();
             body.Orientation = JMatrix.CreateFromAxisAngle(new JVector(1,1,0), MathHelper.PiOver4);
             if (mass >= 0)
@@ -472,23 +461,10 @@ namespace FreezingArcher.Game
             physics.RigidBody = body;
             physics.World = state.PhysicsManager.World;
             physics.PhysicsApplying = AffectedByPhysics.Orientation | AffectedByPhysics.Position;
-            physics.RigidBody.IsStatic = true;
-            physics.RigidBody.Position = JVector.One * -1;
-
-            player_transform.OnPositionChanged += (pos) => {
-                if (item.Player != null)
-                {
-                    transform.Position = pos + Vector3.Transform(item.PositionOffset, player_transform.Rotation);
-                    transform.Rotation = player_transform.Rotation;
-                }
-            };
-            player_transform.OnRotationChanged += (rot) => {
-                if (item.Player != null)
-                {
-                    transform.Position = player_transform.Position + Vector3.Transform(item.PositionOffset, rot);
-                    transform.Rotation = rot;
-                }
-            };
+            physics.RigidBody.IsStatic = false;
+            physics.RigidBody.IsActive = false;
+            physics.RigidBody.Position = transform.Position.ToJitterVector();
+            model.Position = transform.Position;
 
             return item;
         }

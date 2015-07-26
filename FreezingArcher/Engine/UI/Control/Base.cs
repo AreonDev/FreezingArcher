@@ -39,6 +39,14 @@ namespace Gwen.Control
         /// </summary>
         protected Base m_InnerPanel;
 
+        public bool IsDisposed
+        {
+            get
+            {
+                return m_Disposed;
+            }
+        }
+
         private Base m_ToolTip;
 
         private Skin.Base m_Skin;

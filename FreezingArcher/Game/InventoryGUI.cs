@@ -527,13 +527,11 @@ namespace FreezingArcher.Game
             btn.Parent.RemoveChild(btn, true);
             imagePanel.Hide();
             setDescriptionLabel(string.Empty);
-            item.Player = null;
             item.Location = ItemLocation.Ground;
             if (!destroy)
                 createMessage(new ItemDroppedMessage(item));
             else
                 item.Entity.Destroy();
-            
         }
 
         const int toolbarFrameSize = 30;
@@ -721,7 +719,7 @@ namespace FreezingArcher.Game
             var btn = new InventoryButton(itemGridFrame, messageProvider, inventory, item, this, position, BoxSize);
 
             btn.ToggledOn += (sender, arguments) => {
-                if (toggledBtn != null)
+                if (toggledBtn != null && !toggledBtn.IsDisposed)
                 {
                     toggledBtn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = false;
                     toggledBtn.ToggleState = false;
@@ -963,7 +961,7 @@ namespace FreezingArcher.Game
                             return;
                         }
                     }
-                    else if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
+                    else if (/*application.Window.IsMouseCaptured() && */inventory.ActiveBarItem != null)
                     {
                         MessageCreated(new ItemUseMessage(player, gameState.Scene, inventory.ActiveBarItem,
                             ItemUsage.Hitable | ItemUsage.Eatable));
@@ -972,7 +970,7 @@ namespace FreezingArcher.Game
 
                 if (im.IsMouseButtonPressed(MouseButton.RightButton))
                 {
-                    if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
+                    if (/*application.Window.IsMouseCaptured() && */inventory.ActiveBarItem != null)
                     {
                         var btn = barItems.FirstOrDefault(b => b.ToggleState);
                         var invBtn = items.FirstOrDefault(b => b.Item == btn.Item);

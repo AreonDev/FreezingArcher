@@ -34,13 +34,6 @@ namespace FreezingArcher.Game.Maze
     /// </summary>
     public class MazeItemUseHandler : IItemUsageHandler
     {
-        public MazeItemUseHandler(InventoryGUI inventoryGui)
-        {
-            this.inventoryGui = inventoryGui;
-        }
-
-        readonly InventoryGUI inventoryGui;
-
         #region IItemUsageHandler implementation
 
         /// <summary>

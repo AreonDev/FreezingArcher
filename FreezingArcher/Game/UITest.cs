@@ -33,18 +33,13 @@ using FreezingArcher.Messaging;
 using FreezingArcher.DataStructures;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer;
+using Jitter.LinearMath;
 
 namespace FreezingArcher.Game
 {
     public class UITest : FreezingArcher.Messaging.Interfaces.IMessageConsumer
     {
-        readonly Button[] buttons = new Button[6];
-        readonly WindowControl window;
-        readonly ScrollControl scroll;
-
-        UISceneObject sceneobj;
-
-        MessageProvider MessageProvider;
+        readonly UISceneObject sceneobj;
 
         public UITest (Application app, MessageProvider messageProvider, Entity player, CoreScene scene)
         {
@@ -66,102 +61,9 @@ namespace FreezingArcher.Game
 
             inventoryGui = new InventoryGUI(app, state, player, messageProvider);
             var inventory = new Inventory(messageProvider, state, player, new Vector2i(5, 7), 9);
-
-            flashlight = Inventory.CreateNewItem(messageProvider, state, inventoryGui, player,
-                "flashlight",
-                "Content/Flashlight/thumb.png",
-                "flashlight_description",
-                "Content/Flashlight/flashlight.xml",
-                new Vector2i(2, 1),
-                new Vector3(-0.55f, -0.33f, 0.4f),
-                Orientation.Horizontal,
-                ItemLocation.Inventory,
-                AttackClass.Object,
-                ItemUsage.Throwable,
-                ItemComponent.DefaultProtection,
-                new Jitter.Dynamics.Material { KineticFriction = 10, StaticFriction = 10, Restitution = -100 },
-                1,
-                0,
-                0.01f,
-                0f,
-                5f,
-                0f
-            );
-            inventory.Insert(flashlight);
-
-            soda_can = Inventory.CreateNewItem(messageProvider, state, inventoryGui, player,
-                "soda_can",
-                "Content/SodaCan/thumb.png",
-                "soda_can_description",
-                "Content/SodaCan/soda_can.xml",
-                new Vector2i(1, 1),
-                new Vector3(-0.4f, -0.25f, 0.5f),
-                Orientation.Horizontal,
-                ItemLocation.Inventory,
-                AttackClass.Object,
-                ItemUsage.Eatable,
-                ItemComponent.DefaultProtection,
-                new Jitter.Dynamics.Material { KineticFriction = 10, StaticFriction = 10, Restitution = -100 },
-                0.5f,
-                20,
-                0.2f,
-                0,
-                0.2f,
-                0
-            );
-            inventory.Insert(soda_can);
-
-            choco_milk = Inventory.CreateNewItem(messageProvider, state, inventoryGui, player,
-                "choco_milk",
-                "Content/ChocoMilk/thumb.png",
-                "choco_milk_description",
-                "Content/ChocoMilk/choco_milk.xml",
-                new Vector2i(1, 1),
-                new Vector3(-0.4f, -0.25f, 0.5f),
-                Orientation.Horizontal,
-                ItemLocation.Inventory,
-                AttackClass.Object,
-                ItemUsage.Eatable,
-                ItemComponent.DefaultProtection,
-                new Jitter.Dynamics.Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
-                0.5f,
-                20,
-                0.2f,
-                0,
-                0.001f,
-                0
-            );
-            inventory.Insert(choco_milk);
-
-            pickaxe = Inventory.CreateNewItem(messageProvider, state, inventoryGui, player,
-                "pickaxe",
-                "Content/Pickaxe/thumb.png",
-                "pickaxe_description",
-                "Content/Pickaxe/pickaxe.xml",
-                new Vector2i(2, 4),
-                new Vector3(-0.4f, -0.3f, 0.5f),
-                Orientation.Horizontal,
-                ItemLocation.Inventory,
-                AttackClass.Object,
-                ItemUsage.Hitable,
-                ItemComponent.DefaultProtection,
-                new Jitter.Dynamics.Material { KineticFriction = 20, StaticFriction = 20, Restitution = -100 },
-                2f,
-                0,
-                0.25f,
-                25,
-                5f,
-                0
-            );
-            inventory.Insert(pickaxe);
-
             inventoryGui.Init(sceneobj.Canvas, inventory);
         }
 
-        ItemComponent soda_can;
-        ItemComponent flashlight;
-        ItemComponent pickaxe;
-        ItemComponent choco_milk;
         Entity player;
         InventoryGUI inventoryGui;
 

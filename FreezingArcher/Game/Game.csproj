@@ -77,6 +77,7 @@
     <Compile Include="Maze\WallComponent.cs" />
     <Compile Include="Maze\MazeItemUseHandler.cs" />
     <Compile Include="Inventory.cs" />
+    <Compile Include="Maze\ItemTemplate.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>

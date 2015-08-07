@@ -29,7 +29,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 {
     public delegate bool SceneObjectChangedDelegate(SceneObject sender);
 
-    public abstract class SceneObject
+    public abstract class SceneObject : IDisposable
     {
         private Vector3 m_Position;
         private Quaternion m_Rotation;
@@ -37,6 +37,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public int Priority{ get; set;}
         public bool Enabled { get; set;}
+
+        internal int ErrorCount { get; set;}
 
         public Vector3 Position 
         {
@@ -142,6 +144,33 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             Priority = -1;
 
             Enabled = true;
+
+            ErrorCount = 0;
+        }
+
+        public void Dispose()
+        { 
+            Dispose(true);
+            GC.SuppressFinalize(this);           
+        }
+
+        protected bool disposed;
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return; 
+
+            if (disposing)
+            {
+                // Free any other managed objects here.
+                //
+            }
+
+            disposed = true;
+
+            ErrorCount = 200;
         }
     }
 }

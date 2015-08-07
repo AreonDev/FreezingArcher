@@ -68,7 +68,7 @@ namespace FreezingArcher.Content
         {
             var item = Entity.GetComponent<ItemComponent>();
             var transform = Entity.GetComponent<TransformComponent>();
-            if (item.Player != null)
+            if (item != null && item.Player != null)
             {
                 var player_transform = item.Player.GetComponent<TransformComponent>();
                 transform.Position = player_transform.Position + Vector3.Transform(item.PositionOffset, rotation);

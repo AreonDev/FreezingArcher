@@ -52,12 +52,16 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             if (MyModel != null)
                 rc.DrawModel(MyModel, this.WorldMatrix, 1, rc.Scene);
+            else
+                this.ErrorCount++;
         }
 
         public override void DrawInstanced(RendererContext rc, int count)
         {
             if (MyModel != null)
                 rc.DrawModel(MyModel, count == 1 ? WorldMatrix : FreezingArcher.Math.Matrix.Identity, count, rc.Scene);
+            else
+                this.ErrorCount++;
         }
 
         public override void PrepareInstanced(RendererContext rc, VertexBufferLayoutKind[] vblks, VertexBuffer vb)
@@ -82,6 +86,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                     msh.m_VertexBufferArray.UnbindVertexBufferArray();
                 }
             }
+            else
+                this.ErrorCount++;
         }
 
         public override void UnPrepareInstanced(RendererContext rc, VertexBufferLayoutKind[] vblks)
@@ -98,6 +104,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                     msh.m_VertexBufferArray.UnbindVertexBufferArray();
                 }
             }
+            else
+                this.ErrorCount++;
         }
 
         public override bool Init(RendererContext rc)
@@ -163,8 +171,6 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             }
         }
 
-        bool disposed = false;
-
         // Public implementation of Dispose pattern callable by consumers.
         public void Dispose()
         { 
@@ -173,7 +179,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         }
 
         // Protected implementation of Dispose pattern.
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
 
             if (disposed)
@@ -197,15 +203,18 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                     foreach (ModelSceneObject obj in CachingList)
                     {
                         if (obj.ModelPath == this.ModelPath)
+                        {
                             contains = true;
+                            break;
+                        }
                     }
 
                     if (!contains)
                         PrivateRendererContext.DeleteModel(this.MyModel);
                 }
             }
-
-            disposed = true;
+                
+            base.Dispose(true);
         }
     }
 }

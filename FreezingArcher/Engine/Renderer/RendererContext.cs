@@ -498,6 +498,17 @@ namespace FreezingArcher.Renderer
                             obj.Update();
                         
                             obj.Draw(this);
+
+                            ErrorCode err_code = GL.GetError();
+                            if (err_code != ErrorCode.NoError)
+                                obj.ErrorCount++;
+
+                            if (obj.ErrorCount > 5)
+                            {
+                                Logger.Log.AddLogEntry(LogLevel.Error, "RendererContext", FreezingArcher.Core.Status.DeveloperWasDrunk,
+                                    "Too much errors on Object " + obj.GetName() + "\nDelete object!");
+                                Scene.RemoveObject(obj);
+                            }
                         }
                     }
 

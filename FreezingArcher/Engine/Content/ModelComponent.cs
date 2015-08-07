@@ -44,6 +44,7 @@ namespace FreezingArcher.Content
         public override void Destroy()
         {
             Model.Dispose();
+            Model = null;
             base.Destroy();
         }
     }

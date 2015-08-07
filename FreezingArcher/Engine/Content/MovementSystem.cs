@@ -53,6 +53,7 @@ namespace FreezingArcher.Content
         }
 
         private bool was_something_pressed = false;
+        private float speed = 0.0f;
 
         /// <summary>
         /// Processes the incoming message
@@ -88,6 +89,8 @@ namespace FreezingArcher.Content
                 if (msm.Entity.Name != Entity.Name)
                     return;
 
+                speed = System.Math.Abs(msm.Movement);
+
                 //pc.RigidBody.IsActive = false;
                 Vector3 rotation = Vector3.Transform(Vector3.UnitZ, tc.Rotation);
                 rotation = new Vector3(rotation.X, 0, rotation.Z);
@@ -105,6 +108,8 @@ namespace FreezingArcher.Content
 
                 if (msm.Entity.Name != Entity.Name)
                     return;
+
+                speed = System.Math.Abs(msm.Movement);
 
                 //pc.RigidBody.IsActive = false;
                 Vector3 rotation = Vector3.Transform(Vector3.UnitX, tc.Rotation);
@@ -124,6 +129,8 @@ namespace FreezingArcher.Content
                 if (mvm.Entity.Name != Entity.Name)
                     return;
 
+                speed = System.Math.Abs(mvm.Movement);
+
                 //pc.RigidBody.IsActive = false;
                 JVector vec2 = pc.RigidBody.LinearVelocity;
                 pc.RigidBody.LinearVelocity = new JVector(vec2.X, mvm.Movement, vec2.Z);
@@ -135,17 +142,21 @@ namespace FreezingArcher.Content
             JVector vec = pc.RigidBody.LinearVelocity;
             vec.Y = 0.0f;
 
-            if (vec.Length() > 2.829f)
-                vec *= (1.0f / vec.Length()) * 2.829f;
+                if (vec.Length() > speed)
+                    vec *= (1.0f / vec.Length()) * (speed);
 
             pc.RigidBody.LinearVelocity = new JVector(vec.X, pc.RigidBody.LinearVelocity.Y, vec.Z);
 
             if (msg.MessageId == (int)MessageId.Update)
             {
-                if (!was_something_pressed && vec.Length() < 2.8f)
+                if (!was_something_pressed && vec.Length() < (speed))
+                {
                     pc.RigidBody.LinearVelocity = new JVector(0.0f, pc.RigidBody.LinearVelocity.Y, 0.0f);
-                else if (was_something_pressed && vec.Length() < 2.8f)
+                }
+                else if (was_something_pressed && vec.Length() < (speed))
+                {
                     pc.RigidBody.AddForce(pc.RigidBody.LinearVelocity);
+                }
                     
                 //Do not allow the body to flip
                 pc.RigidBody.Orientation = JMatrix.CreateFromYawPitchRoll(0, 90, 0);

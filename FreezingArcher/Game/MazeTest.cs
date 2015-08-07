@@ -258,6 +258,9 @@ namespace FreezingArcher.Game
 
                 if (maze[0].HasFinished && maze[1].HasFinished && !finishedLoading)
                 {
+                    maze[0].ExportAsImage("overworld.png");
+                    maze[1].ExportAsImage("underworld.png");
+
                     finishedLoading = true;
 
                     deferredshadingnode.Active = true;

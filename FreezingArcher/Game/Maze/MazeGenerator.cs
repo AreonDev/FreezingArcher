@@ -494,7 +494,7 @@ namespace FreezingArcher.Game.Maze
                         var pos = transform.Position;
                         float y_rot = (float) rand.NextDouble();
                         pos.X += (float) rand.NextDouble() * 3.8f - 2f;
-                        pos.Y += item_body.RigidBody.BoundingBox.Max.Y;
+                        pos.Y -= item_body.RigidBody.Shape.BoundingBox.Min.Y;
                         pos.Z += (float) rand.NextDouble() * 3.8f - 2f;
                         item_body.RigidBody.Position = pos.ToJitterVector();
                         item_body.RigidBody.Orientation = JMatrix.CreateFromAxisAngle(JVector.Up, y_rot);

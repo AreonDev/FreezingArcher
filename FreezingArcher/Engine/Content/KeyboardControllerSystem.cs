@@ -57,10 +57,10 @@ namespace FreezingArcher.Content
                 InputMessage im = msg as InputMessage;
 
                 if (im.IsActionDown("sneek"))
-                    movement *= 0.5f;
+                    movement *= 0.25f;
 
                 if (im.IsActionDown("run"))
-                    movement *= 2;
+                    movement *= 4;
 
                 if (im.IsActionDown("forward"))
                 {

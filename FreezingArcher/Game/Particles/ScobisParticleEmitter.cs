@@ -158,12 +158,12 @@ namespace FreezingArcher.Game
 
         public override void Destroy ()
         {
-            base.Destroy ();
             RedEye1.Destroy();
             RedEye2.Destroy();
             Smoke.Destroy();
-        }
 
+            base.Destroy ();
+        }
         #endregion
     }
 }

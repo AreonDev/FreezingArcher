@@ -74,27 +74,34 @@ namespace FreezingArcher.Game
 
         private void InnerUpdate()
         {
-            running = true;
-            while (running)
+            try
             {
-                updateEvent.WaitOne();
-
-                particleUpdateRunning = true;
-                for (int i = 0; i < ParticleCount; i++) 
+                running = true;
+                while (running)
                 {
-                    UpdateParticle (Particles [i], (float)time);
-                    if (SceneObject != null) 
+                    updateEvent.WaitOne();
+
+                    particleUpdateRunning = true;
+                    for (int i = 0; i < ParticleCount; i++) 
                     {
-                        SceneObject.Particles [i].Position = Particles [i].Position;
-                        SceneObject.Particles [i].Color = Particles [i].Color;
-                        SceneObject.Particles [i].Life = Particles [i].Life;
-                        SceneObject.Particles [i].Size = Particles [i].Size;
+                        UpdateParticle (Particles [i], (float)time);
+                        if (SceneObject != null) 
+                        {
+                            SceneObject.Particles [i].Position = Particles [i].Position;
+                            SceneObject.Particles [i].Color = Particles [i].Color;
+                            SceneObject.Particles [i].Life = Particles [i].Life;
+                            SceneObject.Particles [i].Size = Particles [i].Size;
+                        }
                     }
+
+                    EndUpdate (time);
+
+                    particleUpdateRunning = false;
                 }
-
-                EndUpdate (time);
-
-                particleUpdateRunning = false;
+            }
+            finally 
+            {
+                
             }
         }
 
@@ -124,9 +131,12 @@ namespace FreezingArcher.Game
         public virtual void Destroy ()
         {
             running = false;
-            updateEvent.Close();
-            updateEvent.Dispose();
-            updatethread.Abort();
+
+            updateEvent.Close ();
+            updateEvent.Dispose ();
+
+            if (updatethread.IsAlive)
+                updatethread.Abort ();
         }
     }
 }

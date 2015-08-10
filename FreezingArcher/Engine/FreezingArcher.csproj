@@ -39,7 +39,7 @@
     <Externalconsole>True</Externalconsole>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="${TargetDir}/../../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="" />
+        <Command type="AfterBuild" command="${TargetDir}/../../Utils/PostProcessor.exe ${TargetDir}/.. ${TargetFile}" workingdir="" />
         <Command type="AfterBuild" command="rm -rf ${TargetDir}/lib32 ${TargetDir}/lib64" />
       </CustomCommands>
     </CustomCommands>

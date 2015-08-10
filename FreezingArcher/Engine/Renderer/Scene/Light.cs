@@ -338,6 +338,7 @@ namespace FreezingArcher.Renderer.Scene
             set
             {
                 _Definition.SpotLightConeAngle = value;
+                _Definition.SpotLightConeCosine = (float)System.Math.Cos(SpotLightConeAngle);
             }
         }
 
@@ -349,7 +350,7 @@ namespace FreezingArcher.Renderer.Scene
             }
 
 
-            set
+            private set
             {
                 _Definition.SpotLightConeCosine = value;
             }

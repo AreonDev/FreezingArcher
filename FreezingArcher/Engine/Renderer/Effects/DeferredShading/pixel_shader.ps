@@ -85,14 +85,14 @@ void main ()
                         vec3 dir = position.xyz - Lights[i].PointLightPosition;
                         dir = normalize(dir);
 
-                        float cosine = dot(Lights[i].DirectionalLightDirection, dir);
+                        float cosine = dot(normalize(Lights[i].DirectionalLightDirection), dir);
                         float dif = 1.0 - Lights[i].SpotLightConeCosine;
                         float factor = clamp((cosine-Lights[i].SpotLightConeCosine)/dif, 0.0, 1.0);
 
                         vec4 light_color = vec4(0, 0, 0, 0);
 
                         if(cosine > Lights[i].SpotLightConeCosine)
-                                light_color = Lights[i].LightColor*factor/(distance*Lights[i].PointLightLinearAtt);
+                                light_color = Lights[i].LightColor*factor/max(distance*Lights[i].PointLightLinearAtt, 0.8);
 
                         result += light_color * image;
                 }

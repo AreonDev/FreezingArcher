@@ -140,6 +140,12 @@ namespace FreezingArcher.Renderer.Scene
             }
         }
 
+        public Vector3 Direction
+        {
+            get;
+            private set;
+        }
+
         /// <summary>
         /// The fak.
         /// </summary>
@@ -217,6 +223,9 @@ namespace FreezingArcher.Renderer.Scene
         {
             ViewMatrix = Matrix.LookAt(MPosition, MPosition + Vector3.Transform(Vector3.UnitZ, MRotation),
                 Vector3.Transform(Vector3.UnitY, MRotation));
+
+            Direction = Vector3.Transform(Vector3.UnitZ, MRotation);
+            Direction.Normalize();
         }
 
         /// <summary>

@@ -99,13 +99,12 @@ namespace FreezingArcher.Game
             state.Scene.BackgroundColor = Color4.Crimson;
 
             light = new Light (LightType.SpotLight);
-            light.Color = new Color4 (0.2f, 0.2f, 0.2f, 1.0f);
+            light.Color = new Color4 (1.0f, 1.0f, 1.0f, 1.0f);
             light.AmbientIntensity = 0.0f;
             light.AmbientColor = new Color4 (0.0f, 0.0f, 0.0f, 1.0f);
             //light.PointLightConstantAttenuation = 0.8f;
-            light.PointLightLinearAttenuation = 0.2f;
+            light.PointLightLinearAttenuation = 0.05f;
             light.SpotLightConeAngle = Math.MathHelper.ToRadians (13.66f);
-            light.SpotLightConeCosine = 0f;
             //light.PointLightExponentialAttenuation = 0.000600f;
 
             state.Scene.Lights.Add (light);
@@ -294,8 +293,24 @@ namespace FreezingArcher.Game
                 if(game.CurrentGameState == game.GetGameState("maze_underworld") && maze[1].HasFinished)
                     game.CurrentGameState.PhysicsManager.Update(um.TimeStamp);
 
-                //Update pointlight position
-                light.PointLightPosition = Player.GetComponent<TransformComponent>().Position;
+                //Update pointlight position and direction
+                CoreScene scene = null;
+                scene = game.CurrentGameState.Scene;
+
+                if (scene != null) 
+                {
+                    BaseCamera cam = scene.CameraManager.ActiveCamera;
+
+                    if (cam != null) 
+                    {
+                        light.PointLightPosition = Player.GetComponent<TransformComponent> ().Position;
+
+                        Vector3 SpotLightDir = (light.PointLightPosition + cam.Direction * 75.0f) - light.PointLightPosition;
+                        SpotLightDir.Normalize ();
+
+                        light.DirectionalLightDirection = SpotLightDir;
+                    }
+                }
             }
 
             var im = msg as InputMessage;

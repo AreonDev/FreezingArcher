@@ -41,6 +41,9 @@ namespace FreezingArcher.Renderer
                         if (!resource.Created)
                             throw new Exception("Resource with name \"" + resource.Name + "\" is not created!");
                     }
+
+                    repeat = false;
+
                 }catch 
                 {
                     repeat = true;

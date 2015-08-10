@@ -111,6 +111,7 @@ namespace FreezingArcher.Renderer.Compositor
             PrivateRendererContext.DrawScene();
 
             OutputSlots[4].Value = Scene.Lights;
+            OutputSlots[5].Value = Scene.CameraManager.ActiveCamera;
         }
 
         public override void End()
@@ -133,13 +134,14 @@ namespace FreezingArcher.Renderer.Compositor
             Active = true;
 
             InputSlots = null;
-            OutputSlots = new CompositorOutputSlot[5];
+            OutputSlots = new CompositorOutputSlot[6];
            
             OutputSlots[0] = new CompositorOutputSlot("DiffuseColor", 0, Scene.FrameBufferColorTexture, CompositorSlotType.Texture);
             OutputSlots[1] = new CompositorOutputSlot("PositionColor", 1, Scene.FrameBufferDepthTexture, CompositorSlotType.Texture);
             OutputSlots[2] = new CompositorOutputSlot("NormalColor", 2, Scene.FrameBufferNormalTexture, CompositorSlotType.Texture);
             OutputSlots[3] = new CompositorOutputSlot("SpecularColor", 3, Scene.FrameBufferSpecularTexture, CompositorSlotType.Texture);
             OutputSlots[4] = new CompositorOutputSlot("LightInformation", 4, null);
+            OutputSlots[5] = new CompositorOutputSlot("CameraInformation", 5, null);
         }
 
         public override void LoadEffect()

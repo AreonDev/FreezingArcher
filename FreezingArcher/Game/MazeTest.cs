@@ -158,6 +158,7 @@ namespace FreezingArcher.Game
             compositor.AddConnection (scenenode1, deferredshadingnode, 2, 2);
             compositor.AddConnection (scenenode1, deferredshadingnode, 3, 3);
             compositor.AddConnection (scenenode1, deferredshadingnode, 4, 4);
+            compositor.AddConnection (scenenode1, deferredshadingnode, 5, 5);
 
             compositor.AddConnection (deferredshadingnode, merger, 0, 0);
 

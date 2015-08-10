@@ -116,7 +116,7 @@ namespace FreezingArcher.Core
             ManagedThreadId = Thread.CurrentThread.ManagedThreadId;
 
             Name = name;
-            Frametime = 16;
+            Frametime = 5;
             Logger.Initialize (name);
             ObjectManager = new ObjectManager();
             ValidMessages = new[] { (int) MessageId.Input };

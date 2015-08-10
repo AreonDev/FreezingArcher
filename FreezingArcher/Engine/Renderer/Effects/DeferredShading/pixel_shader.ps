@@ -1,6 +1,7 @@
 ﻿#version 410
 
 const int LIGHT_SOURCES_COUNT = 1;
+const float LOG2 = 1.442695;
 
 //Input
 layout(location = 1) in vec2 texcoord; // texture coordinate
@@ -38,10 +39,11 @@ struct LightDefinition
 
 uniform LightDefinition Lights[LIGHT_SOURCES_COUNT];
 
+uniform float DistanceFogIntensity;
+uniform vec4  DistanceFogColor;
+
 void main ()
 {
-        bool bypass = false;
-
         vec4 image = texture2D(TextureDiffuse, texcoord);
         vec4 position = texture2D(TexturePosition, texcoord);
         vec4 normal = texture2D(TextureNormal,  texcoord);
@@ -49,7 +51,9 @@ void main ()
         resulting_color = image;
 
         if(length(normal) < 0.001)
+        {
                 return;
+        }
 
         normal = normal - 0.5;
         normal.w = 0.0;
@@ -100,5 +104,9 @@ void main ()
                 result += Lights[0].AmbientColor*Lights[0].AmbientIntensity*image;
         }
 
-        resulting_color = result;
+        float cam_distance = distance(CameraPosition, position.xyz);
+        float fogfactor = exp2(-DistanceFogIntensity * DistanceFogIntensity * cam_distance * cam_distance * LOG2);
+        fogfactor = clamp(fogfactor, 0.0, 1.0);
+
+        resulting_color = mix(DistanceFogColor, result, fogfactor);
 }

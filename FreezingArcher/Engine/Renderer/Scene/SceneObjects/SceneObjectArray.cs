@@ -217,7 +217,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                 {
                     if ((SceneObjects.Count * SceneObjectArrayInstanceData.SIZE) > InstanceDataVertexBuffer.SizeInBytes)
                     {
-                        int actual_size = InstanceDataVertexBuffer.SizeInBytes + ((int)SceneObjects.Count / 3) * SceneObjectArrayInstanceData.SIZE;
+                        int actual_size = InstanceDataVertexBuffer.SizeInBytes + ((int)SceneObjects.Count / 2) * SceneObjectArrayInstanceData.SIZE;
 
                         PrivateRendererContext.DeleteGraphicsResource(InstanceDataVertexBuffer);
 

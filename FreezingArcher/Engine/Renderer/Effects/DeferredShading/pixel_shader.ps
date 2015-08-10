@@ -1,12 +1,6 @@
 ﻿#version 410
 
-//Struct definition
-struct LightDefinition
-{
-        vec4 LightPosition;
-        vec4 LightDirection;
-        vec4 LightColor;
-};
+const int LIGHT_SOURCES_COUNT = 1;
 
 //Input
 layout(location = 1) in vec2 texcoord; // texture coordinate
@@ -23,28 +17,88 @@ uniform sampler2D TexturePosition;
 //Camera Position
 uniform vec3 CameraPosition;
 
-/*
-layout(std430, binding = 15) buffer LightBuffer
+//Lights
+struct LightDefinition
 {
-        LightDefinition Lights[];       
-}*/
+        int Type;
+        vec4 LightColor;
+        vec4 AmbientColor;
+        float AmbientIntensity;
+
+        vec3 DirectionalLightDirection;
+
+        vec3 PointLightPosition;
+        float PointLightConstantAtt;
+        float PointLightLinearAtt;
+        float PointLightExpAtt;
+
+        float SpotLightConeAngle;
+        float SpotLightConeCosine;
+};
+
+uniform LightDefinition Lights[LIGHT_SOURCES_COUNT];
 
 void main ()
 {
+        bool bypass = false;
+
         vec4 image = texture2D(TextureDiffuse, texcoord);
         vec4 position = texture2D(TexturePosition, texcoord);
         vec4 normal = texture2D(TextureNormal,  texcoord);
 
-        //hard coded life
-        vec3 light = vec3(10, 10, 10);
-        vec3 lightDir = light - position.xyz; //?
+        resulting_color = image;
 
+        if(length(normal) < 0.001)
+                return;
+
+        normal = normal - 0.5;
+        normal.w = 0.0;
         normal = normalize(normal);
-        lightDir = normalize(lightDir);
 
-        vec3 eyeDir = normalize(CameraPosition-position.xyz);
-        vec3 vHalfVector = normalize(lightDir.xyz - eyeDir);
+        position = (position - 0.5) * 100000.0;
 
-        resulting_color = max(dot(normal.xyz, lightDir), 0) * image + 
-                pow(max(dot(normal.xyz, vHalfVector), 0.0), 100) * 1.5;
+        vec4 result = vec4(0.0, 0.0, 0.0, 0.0);
+
+        for(int i = 0; i < LIGHT_SOURCES_COUNT; i++)
+        {
+                if(Lights[i].Type == 0)
+                {
+                        float fDiffuseIntensity = max(0.0, dot(normalize(normal.xyz), -Lights[i].DirectionalLightDirection.xyz));
+                        result += image * Lights[i].LightColor * fDiffuseIntensity;
+                }else if(Lights[i].Type == 1)
+                {
+                        vec3 vPosToLight = position.xyz - Lights[i].PointLightPosition;
+                        float distance = length(vPosToLight);
+                        vPosToLight = normalize(vPosToLight);
+
+                        float fDiffuse = max(0.0, dot(normalize(normal.xyz), -vPosToLight));
+                   
+                        float fAttTotal = Lights[i].PointLightConstantAtt + 
+                        Lights[i].PointLightLinearAtt*distance + 
+                        Lights[i].PointLightExpAtt*distance*distance;
+
+                        result += (image * Lights[i].LightColor * fDiffuse) / fAttTotal;
+                }else if(Lights[i].Type == 2)
+                {
+                        float distance = distance(position.xyz, Lights[i].PointLightPosition);
+
+                        vec3 dir = position.xyz - Lights[i].PointLightPosition;
+                        dir = normalize(dir);
+
+                        float cosine = dot(Lights[i].DirectionalLightDirection, dir);
+                        float dif = 1.0 - Lights[i].SpotLightConeCosine;
+                        float factor = clamp((cosine-Lights[i].SpotLightConeCosine)/dif, 0.0, 1.0);
+
+                        vec4 light_color = vec4(0, 0, 0, 0);
+
+                        if(cosine > Lights[i].SpotLightConeCosine)
+                                light_color = Lights[i].LightColor*factor/(distance*Lights[i].PointLightLinearAtt);
+
+                        result += light_color * image;
+                }
+
+                result += Lights[0].AmbientColor*Lights[0].AmbientIntensity*image;
+        }
+
+        resulting_color = result;
 }

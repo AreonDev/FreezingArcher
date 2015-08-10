@@ -21,8 +21,10 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Collections.Generic;
 using FreezingArcher.Messaging;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Renderer.Compositor
 {
@@ -98,8 +100,17 @@ namespace FreezingArcher.Renderer.Compositor
 
         public override void Draw()
         {
+            PrivateRendererContext.Clear(Color4.Black, 0);
+            PrivateRendererContext.Clear(Color4.Black, 1);
+            PrivateRendererContext.Clear(Color4.Black, 2);
+            PrivateRendererContext.Clear(Color4.Black, 3);
+
+            PrivateRendererContext.Clear(Color4.Black);
+
             PrivateRendererContext.Scene = Scene;
             PrivateRendererContext.DrawScene();
+
+            OutputSlots[4].Value = Scene.Lights;
         }
 
         public override void End()
@@ -122,12 +133,13 @@ namespace FreezingArcher.Renderer.Compositor
             Active = true;
 
             InputSlots = null;
-            OutputSlots = new CompositorOutputSlot[4];
+            OutputSlots = new CompositorOutputSlot[5];
            
             OutputSlots[0] = new CompositorOutputSlot("DiffuseColor", 0, Scene.FrameBufferColorTexture, CompositorSlotType.Texture);
             OutputSlots[1] = new CompositorOutputSlot("PositionColor", 1, Scene.FrameBufferDepthTexture, CompositorSlotType.Texture);
             OutputSlots[2] = new CompositorOutputSlot("NormalColor", 2, Scene.FrameBufferNormalTexture, CompositorSlotType.Texture);
             OutputSlots[3] = new CompositorOutputSlot("SpecularColor", 3, Scene.FrameBufferSpecularTexture, CompositorSlotType.Texture);
+            OutputSlots[4] = new CompositorOutputSlot("LightInformation", 4, null);
         }
 
         public override void LoadEffect()

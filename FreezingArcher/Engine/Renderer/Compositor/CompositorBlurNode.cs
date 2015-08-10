@@ -39,7 +39,7 @@ namespace FreezingArcher.Renderer.Compositor
         public override void InitOtherStuff()
         {
             OutputTexture = PrivateRendererContext.CreateTexture2D("Blur_Output_Texture_" + DateTime.Now.Ticks, PrivateRendererContext.ViewportSize.X,
-                PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false);
+                PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
 
             uShift = new FreezingArcher.Math.Vector2(1.0f / OutputTexture.Width, 1.0f / OutputTexture.Height);
         }

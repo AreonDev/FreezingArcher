@@ -967,14 +967,18 @@ namespace FreezingArcher.Renderer
             return tex;
         }
 
-        public Texture2D CreateTexture2D(string name, int width, int height, bool generateMipMaps, IntPtr data, bool generate_sampler = true)
+        public Texture2D CreateTexture2D(string name, int width, int height, bool generateMipMaps, IntPtr data, bool generate_sampler = true, bool bigger = false)
         {
             if (Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
             {
                 int id = GL.GenTexture();
 
                 GL.BindTexture(TextureTarget.Texture2D, id);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, data);
+                if (!bigger)
+                {
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, data);
+                }else
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba32f, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedInt, data);
 
                 if (generateMipMaps)
                     GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
@@ -984,7 +988,7 @@ namespace FreezingArcher.Renderer
 
                 GL.BindTexture(TextureTarget.Texture2D, 0);
 
-                Texture2D tex = new Texture2D(width, height, generateMipMaps, name, id);
+                Texture2D tex = new Texture2D(width, height, generateMipMaps, name, id, bigger);
                 _GraphicsResourceManager.AddResource(tex);
 
                 Sampler s2d = CreateSampler(name + "_Sampler");

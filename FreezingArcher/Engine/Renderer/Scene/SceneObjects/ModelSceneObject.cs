@@ -51,7 +51,10 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         public override void Draw(RendererContext rc)
         {
             if (MyModel != null)
+            {
+                MyModel.EnableLighting = !NoLighting;
                 rc.DrawModel(MyModel, this.WorldMatrix, 1, rc.Scene);
+            }
             else
                 this.ErrorCount++;
         }
@@ -59,7 +62,10 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         public override void DrawInstanced(RendererContext rc, int count)
         {
             if (MyModel != null)
+            {
+                MyModel.EnableLighting = !NoLighting;
                 rc.DrawModel(MyModel, count == 1 ? WorldMatrix : FreezingArcher.Math.Matrix.Identity, count, rc.Scene);
+            }
             else
                 this.ErrorCount++;
         }

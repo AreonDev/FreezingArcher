@@ -30,7 +30,7 @@ out gl_PerVertex
 //####################################################
 layout(location = 0) out vec4 hpos; // Position (Clip space)
 layout(location = 1) out vec2 texcoord; // texture coordinate
-layout(location = 2) out vec3 vpos; // Position (View Space)
+layout(location = 2) out vec4 vpos; // Position (View Space)
 layout(location = 3) out vec3 normal; // surface normal (view space)
 layout(location = 4) out vec3 tangent; // tangent vector (view space)
 layout(location = 5) out vec3 binormal; // binormal vector (view space)
@@ -62,15 +62,15 @@ void main()
         mat4 normalmat;
 
         if(InstancedDrawing == 1)
-                normalmat = transpose(inverse(ViewMatrix * WorldMatrix * InInstanceWorld));
+                normalmat = transpose(inverse(/*ViewMatrix * */WorldMatrix * InInstanceWorld));
         else
-                normalmat = transpose(inverse(ViewMatrix * WorldMatrix));
+                normalmat = transpose(inverse(/*ViewMatrix * */WorldMatrix));
 
         //Vertex position in view space (with model transformations)
         if(InstancedDrawing == 1)
-                vpos = (ViewMatrix * WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0)).xyz;
+                vpos = (/*ViewMatrix * */WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0));
         else
-                vpos = (ViewMatrix * WorldMatrix * vec4(InPosition, 1.0)).xyz;
+                vpos = (/*ViewMatrix * */WorldMatrix * vec4(InPosition, 1.0));
 
         //Tangent space vectors in view space (with model transformations)
         normal = normalize((normalmat * vec4(InNormal, 1.0)).xyz);

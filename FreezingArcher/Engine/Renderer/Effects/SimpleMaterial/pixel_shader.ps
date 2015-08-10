@@ -4,7 +4,7 @@
 //####################################################
 layout(location = 0) in vec4 hpos; // Position 
 layout(location = 1) in vec2 texcoord; // texture coordinate
-layout(location = 2) in vec3 vpos; // Position (View Space)
+layout(location = 2) in vec4 vpos; // Position (View Space)
 layout(location = 3) in vec3 normal; // surface normal (view space)
 layout(location = 4) in vec3 tangent; // tangent vector (view space)
 layout(location = 5) in vec3 binormal; // binormal vector (view space)
@@ -55,9 +55,13 @@ void main()
         normalcol = normalcol*0.5 +0.5;
 
         //fill G-Buffer
-        normal_color = vec4(normalcol, 1);
+        if(EnableLighting != 1)
+                normal_color = vec4(0, 0, 0, 0);
+        else
+                normal_color = vec4(normalcol, 1);
+
         diffuse_color = vec4(color*DiffuseColor.xyz, 1);
         specular_color = SpecularColor;
 
-        position_color = vec4(vpos.xyz, 1.0);
+        position_color = vec4(vpos.xyz * (1.0 / 100000.0) + 0.5, 1.0);
 }

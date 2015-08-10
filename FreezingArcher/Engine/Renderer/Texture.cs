@@ -54,7 +54,7 @@ namespace FreezingArcher.Renderer
         public int Height { get; private set; }
 
 
-        internal Texture2D(int width, int height, bool mipmapsgen, string name, int id) : base(name, id, GraphicsResourceType.Texture2D)
+        internal Texture2D(int width, int height, bool mipmapsgen, string name, int id, bool b32bit = false) : base(name, id, GraphicsResourceType.Texture2D, b32bit)
         {
             Width = width;
             Height = height;
@@ -94,7 +94,9 @@ namespace FreezingArcher.Renderer
         {
             GL.BindTexture(TextureTarget.Texture2D, ID);
 
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, (Is32Bit) ? PixelInternalFormat.Rgba32f : PixelInternalFormat.Rgba, 
+                width, height, 0, PixelFormat.Bgra, 
+                (Is32Bit) ? PixelType.UnsignedInt : PixelType.UnsignedByte, IntPtr.Zero);
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
@@ -108,16 +110,20 @@ namespace FreezingArcher.Renderer
 
             Bind(0);
 
+            int size = Width * Height * 4 * ((Is32Bit) ? 4 : 1);
+
             byte[] data = new byte[Width * Height * 4];
 
-            GL.GetTexImage<byte>(TextureTarget.Texture2D, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+            GL.GetTexImage<byte>(TextureTarget.Texture2D, 0, (Is32Bit) ? PixelFormat.RgbaInteger : PixelFormat.Rgba, 
+                (Is32Bit) ? PixelType.UnsignedInt : PixelType.UnsignedByte, data);
 
             Unbind();
 
-            int index = (y * Width + x) * 4;
+            int index = (y * Width + x) * 4 * ((Is32Bit) ? 4 : 1);
+            int stepsize = (Is32Bit) ? 4 : 1;
 
-            col = new FreezingArcher.Math.Color4(data[index], data[index + 1], data[index + 2],
-                data[index + 3]);
+            col = new FreezingArcher.Math.Color4(data[index] / (float)System.Math.Pow(2, stepsize), data[index + 1*stepsize] / (float)System.Math.Pow(2, stepsize), 
+                data[index + 2*stepsize] / (float)System.Math.Pow(2, stepsize), data[index + 3*stepsize] / (float)System.Math.Pow(2, stepsize));
 
             return col;
         }
@@ -194,6 +200,8 @@ namespace FreezingArcher.Renderer
     public class Texture : GraphicsResource
     {
         public bool MipMapsGenerated { get; protected set; }
+        public bool Is32Bit { get; protected set;}
+
 
         protected Sampler m_Sampler;
         public Sampler Sampler
@@ -222,9 +230,9 @@ namespace FreezingArcher.Renderer
         }
         internal bool SamplerAllowed { get; set; }
 
-        internal Texture(string name, int id, GraphicsResourceType grt) : base (name, id, grt)
+        internal Texture(string name, int id, GraphicsResourceType grt, bool b32bit = false) : base (name, id, grt)
         {
-            
+            Is32Bit = b32bit;
         }
 
         public virtual void Resize(int width, int height) {}

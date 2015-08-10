@@ -234,7 +234,14 @@ namespace FreezingArcher.Renderer.Compositor
 
                         foreach (CompositorEdgeDescription desc in edge.Weight.Descriptions)
                         {
-                            desc.Output.InputSlots[desc.InputSlotIndex].SlotTexture = desc.Input.OutputSlots[desc.OutputSlotIndex].SlotTexture;
+                            if (desc.Output.InputSlots[desc.InputSlotIndex].SlotType == CompositorSlotType.Texture)
+                            {
+                                desc.Output.InputSlots[desc.InputSlotIndex].SlotTexture = desc.Input.OutputSlots[desc.OutputSlotIndex].SlotTexture;
+                            }
+                            else if(desc.Output.InputSlots[desc.InputSlotIndex].SlotType == CompositorSlotType.Value)
+                            {
+                                desc.Output.InputSlots[desc.InputSlotIndex].Value = desc.Input.OutputSlots[desc.OutputSlotIndex].Value;
+                            }
                         }
                     }
                 }

@@ -84,6 +84,11 @@ namespace FreezingArcher.Renderer
             GL.ProgramUniform4(ID, location, value.X, value.Y, value.Z, value.W);
         }
 
+        public void SetUniform(int location, FreezingArcher.Math.Color4 value)
+        {
+            GL.ProgramUniform4(ID, location, value.R, value.G, value.B, value.A);
+        }
+
         public void SetUniform(int location, Vector4i value)
         {
             GL.ProgramUniform4(ID, location, value.X, value.Y, value.Z, value.W);

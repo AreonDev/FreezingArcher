@@ -66,6 +66,8 @@ namespace FreezingArcher.Game
 
         ScobisParticleEmitter paremitter;
 
+        Light light;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
         /// </summary>
@@ -95,6 +97,19 @@ namespace FreezingArcher.Game
             var state = game.GetGameState("maze_overworld");
             state.Scene = new CoreScene(rendererContext, messageProvider);
             state.Scene.BackgroundColor = Color4.Crimson;
+
+            light = new Light (LightType.SpotLight);
+            light.Color = new Color4 (0.2f, 0.2f, 0.2f, 1.0f);
+            light.AmbientIntensity = 0.0f;
+            light.AmbientColor = new Color4 (0.0f, 0.0f, 0.0f, 1.0f);
+            //light.PointLightConstantAttenuation = 0.8f;
+            light.PointLightLinearAttenuation = 0.2f;
+            light.SpotLightConeAngle = Math.MathHelper.ToRadians (13.66f);
+            light.SpotLightConeCosine = 0f;
+            //light.PointLightExponentialAttenuation = 0.000600f;
+
+            state.Scene.Lights.Add (light);
+
             state.MessageProxy.StartProcessing();
 
             particle_eye1 = new ParticleSceneObject (10);
@@ -143,6 +158,7 @@ namespace FreezingArcher.Game
             compositor.AddConnection (scenenode1, deferredshadingnode, 1, 1);
             compositor.AddConnection (scenenode1, deferredshadingnode, 2, 2);
             compositor.AddConnection (scenenode1, deferredshadingnode, 3, 3);
+            compositor.AddConnection (scenenode1, deferredshadingnode, 4, 4);
 
             compositor.AddConnection (deferredshadingnode, merger, 0, 0);
 
@@ -277,6 +293,9 @@ namespace FreezingArcher.Game
                 
                 if(game.CurrentGameState == game.GetGameState("maze_underworld") && maze[1].HasFinished)
                     game.CurrentGameState.PhysicsManager.Update(um.TimeStamp);
+
+                //Update pointlight position
+                light.PointLightPosition = Player.GetComponent<TransformComponent>().Position;
             }
 
             var im = msg as InputMessage;

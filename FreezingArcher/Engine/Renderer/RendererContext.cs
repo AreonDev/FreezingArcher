@@ -434,7 +434,7 @@ namespace FreezingArcher.Renderer
                         }
                     }
 
-                     mat.OptionalEffect.PixelProgram.SetUniform(mat.OptionalEffect.PixelProgram.GetUniformLocation("EnableLighting"), mdl.EnableLighting ? 1 : 0);
+                    mat.OptionalEffect.PixelProgram.SetUniform(mat.OptionalEffect.PixelProgram.GetUniformLocation("EnableLighting"), mdl.EnableLighting ? 1 : 0);
                         
                     mat.OptionalEffect.BindPipeline();
 
@@ -506,7 +506,7 @@ namespace FreezingArcher.Renderer
                             if (obj.ErrorCount > 5)
                             {
                                 Logger.Log.AddLogEntry(LogLevel.Error, "RendererContext", FreezingArcher.Core.Status.DeveloperWasDrunk,
-                                    "Too much errors on Object " + obj.GetName() + "\nDelete object!");
+                                    "Too many errors on Object " + obj.GetName() + "\nDelete object!");
                                 Scene.RemoveObject(obj);
                             }
                         }

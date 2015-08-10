@@ -37,6 +37,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public int Priority{ get; set;}
         public bool Enabled { get; set;}
+        public bool NoLighting { get; set;}
 
         internal int ErrorCount { get; set;}
 
@@ -144,6 +145,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             Priority = -1;
 
             Enabled = true;
+            NoLighting = false;
 
             ErrorCount = 0;
         }

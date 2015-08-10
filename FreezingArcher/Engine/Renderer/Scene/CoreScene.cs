@@ -113,7 +113,6 @@ namespace FreezingArcher.Renderer.Scene
         }
 
         private List<SceneObject> Objects;
-        //private List<SceneObject> ObjectsToInit;
         private List<CoreScene> SubScenes;
 
         private RendererContext PrivateRendererContext;
@@ -227,6 +226,7 @@ namespace FreezingArcher.Renderer.Scene
            return Objects.OrderBy(o => o.Priority);
         }
 
+        public List<Light> Lights { get; set;}
         public Color4 BackgroundColor{ get; set;}
         public string SceneName{ get; set;}
         public CameraManager CameraManager{ get; set;}
@@ -243,8 +243,10 @@ namespace FreezingArcher.Renderer.Scene
         {
             CameraManager = new CameraManager(messageProvider);
             Objects = new List<SceneObject>();
-            //ObjectsToInit = new List<SceneObject>();
+            Lights = new List<Light>();
             SubScenes = new List<CoreScene>();
+
+
 
             FrameBuffer = null;
 
@@ -304,16 +306,16 @@ namespace FreezingArcher.Renderer.Scene
             FrameBuffer = rc.CreateFrameBuffer("CoreSceneFrameBuffer_" + ticks);
 
             FrameBufferNormalTexture = rc.CreateTexture2D("CoreSceneFrameBufferNormalTexture_"+ticks,
-                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false);
+                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false, true);
 
             FrameBufferColorTexture = rc.CreateTexture2D("CoreSceneFrameBufferColorTexture_" + ticks,
-                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false);
+                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false, true);
 
             FrameBufferSpecularTexture = rc.CreateTexture2D("CoreSceneFrameBufferSpecularTexture_" + ticks,
-                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false);
+                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false, true);
 
             FrameBufferDepthTexture = rc.CreateTexture2D("CoreSceneFrameBufferDepthTexture_" + ticks,
-                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false);
+                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false, true);
 
             FrameBufferDepthStencilTexture = rc.CreateTextureDepthStencil("CoreSceneFrameBufferDepthStencil_" + ticks,
                 rc.ViewportSize.X, rc.ViewportSize.Y, IntPtr.Zero, false);

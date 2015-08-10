@@ -39,7 +39,7 @@ namespace FreezingArcher.Renderer.Compositor
         public override void InitOtherStuff()
         {
             OutputTexture = PrivateRendererContext.CreateTexture2D("Merged_Output_Texture_" + DateTime.Now.Ticks, PrivateRendererContext.ViewportSize.X,
-                PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false);
+                PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
         }
 
         public override void Draw()

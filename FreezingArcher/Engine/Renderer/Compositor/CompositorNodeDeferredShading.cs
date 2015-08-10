@@ -22,9 +22,13 @@
 //
 using System;
 
+using System.Collections.Generic;
+
 using FreezingArcher.Renderer;
+using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Renderer.Compositor
 {
@@ -40,11 +44,12 @@ namespace FreezingArcher.Renderer.Compositor
 
         public override void ConfigureSlots()
         {
-            InputSlots = new CompositorInputSlot[4];
+            InputSlots = new CompositorInputSlot[5];
             InputSlots[0] = new CompositorInputSlot("DiffuseColor", CompositorInputSlotImportance.Required, 0, CompositorSlotType.Texture);
             InputSlots[1] = new CompositorInputSlot("PositionColor", CompositorInputSlotImportance.Required, 1, CompositorSlotType.Texture);
             InputSlots[2] = new CompositorInputSlot("NormalColor", CompositorInputSlotImportance.Required, 2, CompositorSlotType.Texture);
             InputSlots[3] = new CompositorInputSlot("SpecularColor", CompositorInputSlotImportance.Required, 3, CompositorSlotType.Texture);
+            InputSlots[4] = new CompositorInputSlot("LightInformation", CompositorInputSlotImportance.Required, 4, CompositorSlotType.Value);
 
             OutputSlots = new CompositorOutputSlot[1];
             OutputSlots[0] = new CompositorOutputSlot("DiffuseColor", 0, OutputTexture, CompositorSlotType.Texture);
@@ -53,11 +58,16 @@ namespace FreezingArcher.Renderer.Compositor
         public override void InitOtherStuff()
         {
             OutputTexture = PrivateRendererContext.CreateTexture2D("DeferredShading_Output_Texture_" + DateTime.Now.Ticks, PrivateRendererContext.ViewportSize.X,
-                PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false);
+                PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
         }
 
         public override void Draw()
         {
+            PrivateRendererContext.Clear(Color4.Black, 0);
+            PrivateRendererContext.Clear(Color4.Black, 1);
+            PrivateRendererContext.Clear(Color4.Black, 2);
+            PrivateRendererContext.Clear(Color4.Black, 3);
+
             PrivateRendererContext.EnableDepthTest(false);
 
             if (InputSlots[0].SlotTexture == null)
@@ -90,6 +100,43 @@ namespace FreezingArcher.Renderer.Compositor
             {
                 NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("CameraPosition"), PrivateRendererContext.Scene.CameraManager.ActiveCamera.Position);
             }catch{}
+
+            //Setup lights
+            List<Light> Lights = (List<Light>)InputSlots[4].Value;
+
+            if (Lights != null)
+            {
+                for (int i = 0; i < Lights.Count; i++)
+                {
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].Type"), 
+                        (int)Lights[i].Type);
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].LightColor"), 
+                        Lights[i].Color);
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].AmbientIntensity"), 
+                        Lights[i].AmbientIntensity);
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].AmbientColor"), 
+                        Lights[i].AmbientColor);
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].DirectionalLightDirection"), 
+                        Lights[i].DirectionalLightDirection);
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightPosition"), 
+                        Lights[i].PointLightPosition);
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightConstantAtt"), 
+                        Lights[i].PointLightConstantAttenuation);
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightLinearAtt"), 
+                        Lights[i].PointLightLinearAttenuation);
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightExpAtt"), 
+                        Lights[i].PointLightExponentialAttenuation);
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].SpotLightConeAngle"), 
+                        Lights[i].SpotLightConeAngle);
+                    NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].SpotLightConeCosine"), 
+                        Lights[i].SpotLightConeCosine);
+                }
+            }
+            else
+            {
+                Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CompositorNodeDeferredShading",
+                    "No Light information passed!");
+            }
 
             PrivateRendererContext.DrawSpriteAbsolute(spr);
 

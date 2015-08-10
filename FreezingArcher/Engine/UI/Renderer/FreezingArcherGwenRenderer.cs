@@ -537,7 +537,7 @@ namespace Gwen.Renderer
             {
                 FreezingArcher.Math.Color4 col = tex.GetPixelColor((int)x, (int)y);
 
-                return Color.FromArgb((int)(col.A*255), (int)(col.R*255), (int)(col.G*255), (int)(col.B*255));
+                return Color.FromArgb((int)(col.A), (int)(col.R), (int)(col.G), (int)(col.B));
             }
 
             return defaultColor;

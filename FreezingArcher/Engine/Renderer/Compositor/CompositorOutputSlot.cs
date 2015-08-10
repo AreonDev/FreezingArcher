@@ -36,6 +36,8 @@ namespace FreezingArcher.Renderer.Compositor
 
         bool IsConnected {get; set;}
 
+        public object Value { get; set;}
+
         public CompositorOutputSlot(string name, int number, Texture2D output, CompositorSlotType type)
         {
             Name = name;
@@ -45,6 +47,16 @@ namespace FreezingArcher.Renderer.Compositor
 
             if ((SlotType == CompositorSlotType.Texture || SlotType == CompositorSlotType.ValueTexture) && SlotTexture == null)
                 Logger.Log.AddLogEntry(LogLevel.Error, "CompositorInputSlot: " + Name, FreezingArcher.Core.Status.BadArgument);
+
+            IsConnected = false;
+        }
+
+        public CompositorOutputSlot(string name, int number, object value)
+        {
+            Name = name;
+            SlotNumber = number;
+            SlotTexture = null;
+            SlotType = CompositorSlotType.Value;
 
             IsConnected = false;
         }

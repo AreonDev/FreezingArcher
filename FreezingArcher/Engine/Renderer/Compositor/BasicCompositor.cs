@@ -228,7 +228,9 @@ namespace FreezingArcher.Renderer.Compositor
                             }
                             else
                             {
+                                edge.SourceNode.Data.Begin();
                                 edge.SourceNode.Data.Bypass();
+                                edge.SourceNode.Data.End();
                             }
                         }
 

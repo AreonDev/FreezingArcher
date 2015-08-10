@@ -24,14 +24,30 @@ namespace FreezingArcher.Renderer
 
         internal void AddResource(GraphicsResource resource)
         {
-            foreach (GraphicsResource r in _GraphicsResources)
-            {
-                if (r.Name == resource.Name)
-                    throw new Exception("Resource with name \"" + r.Name + "\" is already existing!");
+            int counter = 0;
+            bool repeat = false;
 
-                if (!resource.Created)
-                    throw new Exception("Resource with name \"" + resource.Name + "\" is not created!");
-            }
+            string name = resource.Name;
+
+            do
+            {
+                try
+                {
+                    foreach (GraphicsResource r in _GraphicsResources)
+                    {
+                        if (r.Name == resource.Name)
+                            throw new Exception("Resource with name \"" + r.Name + "\" is already existing!");
+
+                        if (!resource.Created)
+                            throw new Exception("Resource with name \"" + resource.Name + "\" is not created!");
+                    }
+                }catch 
+                {
+                    repeat = true;
+                    resource.Name = name + "+" + counter;
+                    counter++;
+                }
+            } while(repeat);
 
             _GraphicsResources.Add(resource);
         }

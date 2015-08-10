@@ -155,6 +155,16 @@ namespace FreezingArcher.Renderer.Compositor
             NodeEffect.VertexProgram = PrivateRendererContext.RC2DEffect.VertexProgram;
         }
 
+        public override void Bypass()
+        {
+            if (InputSlots[0].SlotTexture.Width != OutputTexture.Width || InputSlots[0].SlotTexture.Height != OutputTexture.Height)
+            {
+                OutputTexture.Resize(InputSlots[0].SlotTexture.Width, InputSlots[0].SlotTexture.Height);
+            }
+
+            base.Bypass();
+        }
+
         #endregion
     }
 }

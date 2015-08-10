@@ -27,7 +27,7 @@ namespace FreezingArcher.Renderer
     {
         #region Public Properties
         public bool Created { get; private set; }
-        public String Name { get; private set; }
+        public String Name { get; internal set; }
         public int ID { get; private set; }
         public GraphicsResourceType Type { get; private set; }
         public uint InternalUseCount { get; private set; }

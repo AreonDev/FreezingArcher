@@ -99,12 +99,12 @@ namespace FreezingArcher.Game
             state.Scene.BackgroundColor = Color4.Crimson;
 
             light = new Light (LightType.SpotLight);
-            light.Color = new Color4 (1.0f, 1.0f, 1.0f, 1.0f);
-            light.AmbientIntensity = 0.0f;
-            light.AmbientColor = new Color4 (0.0f, 0.0f, 0.0f, 1.0f);
+            light.Color = new Color4 (0.3f, 0.3f, 0.3f, 1.0f);
+            light.AmbientIntensity = 0.5f;
+            light.AmbientColor = new Color4 (0.2f, 0.2f, 0.2f, 1.0f);
             //light.PointLightConstantAttenuation = 0.8f;
-            light.PointLightLinearAttenuation = 0.05f;
-            light.SpotLightConeAngle = Math.MathHelper.ToRadians (13.66f);
+            light.PointLightLinearAttenuation = 0.2f;
+            light.SpotLightConeAngle = Math.MathHelper.ToRadians (9.66f);
             //light.PointLightExponentialAttenuation = 0.000600f;
 
             state.Scene.Lights.Add (light);

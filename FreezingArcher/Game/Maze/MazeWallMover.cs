@@ -28,20 +28,34 @@ using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
 using System.Threading;
+using FreezingArcher.Content;
+using FreezingArcher.Renderer.Scene.SceneObjects;
+using Jitter.Dynamics;
+using Jitter.Collision.Shapes;
+using FreezingArcher.Core;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Game.Maze
 {
     public sealed class MazeWallMover : IMessageConsumer
     {
-        public MazeWallMover (Maze maze, MessageProvider messageProvider)
+        public MazeWallMover (Maze maze, MessageProvider messageProvider, GameState state)
         {
             Maze = maze;
+            this.state = state;
             rand = new Random(maze.Seed);
+
+            this.messageProvider = messageProvider;
+
             ValidMessages = new[] { (int) MessageId.Update };
             messageProvider += this;
         }
 
         public Maze Maze { get; private set; }
+
+        readonly GameState state;
+
+        readonly MessageProvider messageProvider;
 
         readonly Random rand;
 
@@ -49,13 +63,14 @@ namespace FreezingArcher.Game.Maze
         {
             foreach (var deadEnd in GetDeadEndGrounds ())
             {
-                if (rand.Next() % 100 != 0)
+                if (rand.Next() % 5 != 0)
                     continue;
 
                 WeightedNode<MazeCell, MazeCellEdgeWeight> connection = null;
                 var new_ground_edge = deadEnd.Edges.FirstOrDefault(e => {
                     var n = e.FirstNode != deadEnd ? e.FirstNode : e.SecondNode;
-                    if (n.Data.MazeCellType == MazeCellType.Wall && e.Weight.Direction != Direction.Diagonal)
+                    if (n.Data.MazeCellType == MazeCellType.Wall && e.Weight.Direction != Direction.Diagonal &&
+                        Maze.entities[n.Data.Position.X, n.Data.Position.Y].GetComponent<WallComponent>().IsMoveable)
                     {
                         foreach (var e2 in n.Edges)
                         {
@@ -109,9 +124,118 @@ namespace FreezingArcher.Game.Maze
                                 break;
                             }
                         }
+
+                        AnimateMovement(next_gen_ground, new_ground, connection, state);
                     }
                 }
             }
+        }
+
+        int temp_counter = 0;
+
+        void AnimateMovement(WeightedNode<MazeCell, MazeCellEdgeWeight> ground_node,
+            WeightedNode<MazeCell, MazeCellEdgeWeight> wall_node,
+            WeightedNode<MazeCell, MazeCellEdgeWeight> connection, GameState state)
+        {
+            var ground1 = Maze.entities[ground_node.Data.Position.X, ground_node.Data.Position.Y];
+            var wall = Maze.entities[wall_node.Data.Position.X, wall_node.Data.Position.Y];
+
+            var ground2 = EntityFactory.Instance.CreateWith ("ground_temp" + temp_counter++, messageProvider,
+                systems: new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
+
+            var ground2_model = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
+            ground2.GetComponent<ModelComponent>().Model = ground2_model;
+            var transform = ground2.GetComponent<TransformComponent>();
+            transform.Position = ground1.GetComponent<TransformComponent>().Position;
+            transform.Scale = ground1.GetComponent<TransformComponent>().Scale;
+            var body = new RigidBody(new BoxShape (2.0f * transform.Scale.X, 0.2f, 2.0f * transform.Scale.Y));
+            body.Position = transform.Position.ToJitterVector ();
+            body.Material.Restitution = -10;
+            body.IsStatic = true;
+            ground2.GetComponent<PhysicsComponent>().RigidBody = body;
+            ground2.GetComponent<PhysicsComponent>().World = state.PhysicsManager.World;
+            ground2.GetComponent<PhysicsComponent>().PhysicsApplying =
+                AffectedByPhysics.Orientation | AffectedByPhysics.Position;
+
+            state.PhysicsManager.World.AddBody (body);
+
+            var wall_transform = wall.GetComponent<TransformComponent>();
+            ground1.GetComponent<TransformComponent>().Position = wall_transform.Position;
+            ground1.GetComponent<PhysicsComponent>().RigidBody.Position = wall_transform.Position.ToJitterVector();
+
+            Maze.entities[wall_node.Data.Position.X, wall_node.Data.Position.Y] = ground1;
+            Maze.entities[ground_node.Data.Position.X, ground_node.Data.Position.Y] = wall;
+
+            MoveEntityTo (wall,
+                Maze.entities[connection.Data.Position.X, connection.Data.Position.Y]
+                .GetComponent<TransformComponent>().Position, transform.Position, ground2.Destroy);
+        }
+
+        class EntityMover : IMessageConsumer
+        {
+            public EntityMover(MessageProvider messageProvider, int steps, Vector3 position_1, Vector3 position_2,
+                TransformComponent transform, Action finishedCallback)
+            {
+                this.steps = steps;
+                this.position_1 = position_1;
+                this.position_2 = position_2;
+                this.transform = transform;
+                step = (position_1 - transform.Position) / (float) steps;
+                this.finishedCallback = finishedCallback;
+                this.messageProvider = messageProvider;
+                ValidMessages = new[] { (int) MessageId.Update };
+                messageProvider += this;
+            }
+
+            readonly int steps;
+            int count_1 = 0;
+            int count_2 = 0;
+            readonly Vector3 position_1;
+            readonly Vector3 position_2;
+            Vector3 step;
+            readonly TransformComponent transform;
+            readonly Action finishedCallback;
+            MessageProvider messageProvider;
+
+            #region IMessageConsumer implementation
+            public void ConsumeMessage (IMessage msg)
+            {
+                if (msg.MessageId == (int) MessageId.Update)
+                {
+                    if (count_2 == steps)
+                    {
+                        finishedCallback();
+                        messageProvider -= this;
+                        count_2++;
+                    }
+
+                    if (count_1 == steps && count_2 == 0)
+                    {
+                        step = (position_2 - transform.Position) / (float) steps;
+                    }
+
+                    if (count_1 < steps)
+                    {
+                        transform.Position += step;
+                        count_1++;
+                    }
+                    else if (count_2 < steps)
+                    {
+                        transform.Position += step;
+                        count_2++;
+                    }
+                }
+            }
+
+            public int[] ValidMessages { get; private set; }
+            #endregion
+            
+        }
+
+        void MoveEntityTo (Entity entity, Vector3 position_1, Vector3 position_2, Action finishedCallback, int time_steps = 60)
+        {
+            var transform = entity.GetComponent<TransformComponent>();
+            new EntityMover(messageProvider, time_steps, position_1, position_2, transform, finishedCallback);
         }
 
         IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>> GetDeadEndGrounds ()

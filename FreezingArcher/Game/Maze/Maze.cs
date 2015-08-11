@@ -112,7 +112,7 @@ namespace FreezingArcher.Game.Maze
 
         Random rand;
 
-        Entity[,] entities;
+        internal Entity[,] entities;
 
         ObjectManager objectManager;
 

@@ -186,7 +186,7 @@ namespace FreezingArcher.Game
             maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
             maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
 
-            mazeWallMover = new MazeWallMover(maze[0], state.MessageProxy);
+            mazeWallMover = new MazeWallMover(maze[0], state.MessageProxy, state);
 
             game.AddGameState("maze_underworld", Content.Environment.Default,
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },

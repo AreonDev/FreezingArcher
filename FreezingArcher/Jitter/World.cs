@@ -237,7 +237,8 @@ namespace Jitter
             foreach (SoftBody.MassPoint massPoint in body.VertexBodies)
             {
                 events.RaiseAddedRigidBody(massPoint);
-                rigidBodies.Add(massPoint);
+                lock (rigidBodies)
+                    rigidBodies.Add(massPoint);
             }
         }
 
@@ -284,21 +285,24 @@ namespace Jitter
         public void Clear()
         {
             // remove bodies from collision system
-            foreach (RigidBody body in rigidBodies)
+            lock (rigidBodies)
             {
-                CollisionSystem.RemoveEntity(body);
-
-                if (body.island != null)
+                foreach (RigidBody body in rigidBodies)
                 {
-                    body.island.ClearLists();
-                    body.island = null;
+                    CollisionSystem.RemoveEntity(body);
+
+                    if (body.island != null)
+                    {
+                        body.island.ClearLists();
+                        body.island = null;
+                    }
+
+                    body.connections.Clear();
+                    body.arbiters.Clear();
+                    body.constraints.Clear();
+
+                    events.RaiseRemovedRigidBody(body);
                 }
-
-                body.connections.Clear();
-                body.arbiters.Clear();
-                body.constraints.Clear();
-
-                events.RaiseRemovedRigidBody(body);
             }
 
             foreach (SoftBody body in softbodies)
@@ -307,7 +311,8 @@ namespace Jitter
             }
 
             // remove bodies from the world
-            rigidBodies.Clear();
+            lock (rigidBodies)
+                rigidBodies.Clear();
 
             // remove constraints
             foreach (Constraint constraint in constraints)
@@ -427,7 +432,7 @@ namespace Jitter
             if (!removeMassPoints && body.IsParticle) return false;
 
             // remove the body from the world list
-            if (!rigidBodies.Remove(body)) return false;
+            lock (rigidBodies) if (!rigidBodies.Remove(body)) return false;
 
             // Remove all connected constraints and arbiters
             foreach (Arbiter arbiter in body.arbiters)
@@ -461,13 +466,13 @@ namespace Jitter
         public void AddBody(RigidBody body)
         {
             if (body == null) throw new ArgumentNullException("body", "body can't be null.");
-            if(rigidBodies.Contains(body)) throw new ArgumentException("The body was already added to the world.", "body");
+            lock (rigidBodies) if(rigidBodies.Contains(body)) throw new ArgumentException("The body was already added to the world.", "body");
 
             events.RaiseAddedRigidBody(body);
 
             this.CollisionSystem.AddEntity(body);
 
-            rigidBodies.Add(body);
+            lock (rigidBodies) rigidBodies.Add(body);
         }
 
         /// <summary>
@@ -574,7 +579,7 @@ namespace Jitter
 #else
             sw.Reset(); sw.Start();
             events.RaiseWorldPreStep(timestep);
-            foreach (RigidBody body in rigidBodies) body.PreStep(timestep);
+            lock (rigidBodies) foreach (RigidBody body in rigidBodies) body.PreStep(timestep);
 
             sw.Stop(); debugTimes[(int)DebugType.PreStep] = sw.Elapsed.TotalMilliseconds;
 
@@ -622,7 +627,7 @@ namespace Jitter
             sw.Stop(); debugTimes[(int)DebugType.Integrate] = sw.Elapsed.TotalMilliseconds;
 
             sw.Reset(); sw.Start();
-            foreach (RigidBody body in rigidBodies) body.PostStep(timestep);
+            lock (rigidBodies) foreach (RigidBody body in rigidBodies) body.PostStep(timestep);
             events.RaiseWorldPostStep(timestep);
             sw.Stop(); debugTimes[(int)DebugType.PostStep] = sw.Elapsed.TotalMilliseconds;
 #endif
@@ -784,31 +789,33 @@ namespace Jitter
 
         private void IntegrateForces()
         {
-            foreach (RigidBody body in rigidBodies)
+            lock (rigidBodies)
             {
-                if (!body.isStatic && body.IsActive)
+                foreach (RigidBody body in rigidBodies)
                 {
-                    JVector temp;
-                    JVector.Multiply(ref body.force, body.inverseMass * timestep, out temp);
-                    JVector.Add(ref temp, ref body.linearVelocity, out body.linearVelocity);
-
-                    if (!(body.isParticle))
+                    if (!body.isStatic && body.IsActive)
                     {
-                        JVector.Multiply(ref body.torque, timestep, out temp);
-                        JVector.Transform(ref temp, ref body.invInertiaWorld, out temp);
-                        JVector.Add(ref temp, ref body.angularVelocity, out body.angularVelocity);
+                        JVector temp;
+                        JVector.Multiply(ref body.force, body.inverseMass * timestep, out temp);
+                        JVector.Add(ref temp, ref body.linearVelocity, out body.linearVelocity);
+
+                        if (!(body.isParticle))
+                        {
+                            JVector.Multiply(ref body.torque, timestep, out temp);
+                            JVector.Transform(ref temp, ref body.invInertiaWorld, out temp);
+                            JVector.Add(ref temp, ref body.angularVelocity, out body.angularVelocity);
+                        }
+
+                        if (body.affectedByGravity)
+                        {
+                            JVector.Multiply(ref gravity, timestep, out temp);
+                            JVector.Add(ref body.linearVelocity, ref temp, out body.linearVelocity);
+                        }
                     }
 
-                    if (body.affectedByGravity)
-                    {
-                        JVector.Multiply(ref gravity, timestep, out temp);
-                        JVector.Add(ref body.linearVelocity, ref temp, out body.linearVelocity);
-                    }
+                    body.force.MakeZero();
+                    body.torque.MakeZero();
                 }
-
-                body.force.MakeZero();
-                body.torque.MakeZero();
-
             }
         }
 
@@ -867,20 +874,26 @@ namespace Jitter
         {
             if (multithread)
             {
-                foreach (RigidBody body in rigidBodies)
+                lock (rigidBodies)
                 {
-                    if (body.isStatic || !body.IsActive) continue;
-                    threadManager.AddTask(integrateCallback, body);
+                    foreach (RigidBody body in rigidBodies)
+                    {
+                        if (body.isStatic || !body.IsActive) continue;
+                        threadManager.AddTask(integrateCallback, body);
+                    }
                 }
 
                 threadManager.Execute();
             }
             else
             {
-                foreach (RigidBody body in rigidBodies)
+                lock (rigidBodies)
                 {
-                    if (body.isStatic || !body.IsActive) continue;
-                    integrateCallback(body);
+                    foreach (RigidBody body in rigidBodies)
+                    {
+                        if (body.isStatic || !body.IsActive) continue;
+                        integrateCallback(body);
+                    }
                 }
             }
         }

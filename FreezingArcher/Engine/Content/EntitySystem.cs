@@ -43,6 +43,14 @@ namespace FreezingArcher.Content
         {
             Entity = entity;
             NeededComponents = null;
+            MessageProvider = messageProvider;
+        }
+
+        public override void Destroy()
+        {
+            MessageProvider.UnregisterMessageConsumer(this);
+            MessageProvider.RemoveMessageCreator(this);
+            base.Destroy();
         }
 
         /// <summary>
@@ -52,6 +60,8 @@ namespace FreezingArcher.Content
         {}
 
         protected Entity Entity;
+
+        protected MessageProvider MessageProvider;
 
         protected int[] internalValidMessages;
 

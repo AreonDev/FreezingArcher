@@ -22,6 +22,7 @@
 //
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Game.Maze
 {

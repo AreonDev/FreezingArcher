@@ -55,6 +55,7 @@ namespace FreezingArcher.Content
         public virtual void Init(Entity entity, MessageProvider messageProvider)
         {
             Entity = entity;
+            this.messageProvider = messageProvider;
             messageProvider += this;
             // set type based default parameters for fields and properties
             Type t = GetType();
@@ -80,6 +81,8 @@ namespace FreezingArcher.Content
             // TODO
         }
 
+        MessageProvider messageProvider;
+
         /// <summary>
         /// Switchs the message provider.
         /// </summary>
@@ -99,6 +102,12 @@ namespace FreezingArcher.Content
         {
             if (MessageCreated != null)
                 MessageCreated(msg);
+        }
+
+        public override void Destroy()
+        {
+            messageProvider -= this;
+            base.Destroy();
         }
     }
 }

@@ -95,13 +95,16 @@ namespace FreezingArcher.Messaging
 
             consumer.ValidMessages.ForEach(i => {
                 List<IMessageConsumer> tmp;
-                if (MessageList.TryGetValue(i, out tmp))
-                    lock (tmp)
-                        tmp.Add(consumer);
-                else
+                lock (MessageList)
                 {
-                    tmp = new List<IMessageConsumer>(consumer.ToCollection());
-                    MessageList[i] = tmp;
+                    if (MessageList.TryGetValue(i, out tmp))
+                        lock (tmp)
+                            tmp.Add(consumer);
+                    else
+                    {
+                        tmp = new List<IMessageConsumer>(consumer.ToCollection());
+                        MessageList[i] = tmp;
+                    }
                 }
             });
         }
@@ -115,16 +118,22 @@ namespace FreezingArcher.Messaging
             Logger.Log.AddLogEntry(LogLevel.Fine, ClassName, "Removing message consumer '{0}'",
                 consumer.GetType().ToString());
 
-            consumer.ValidMessages.ForEach (i =>
+            DeferredUnregisters.Enqueue(() => consumer.ValidMessages.ForEach(i =>
                 {
                     List<IMessageConsumer> tmp;
-                    if (MessageList.TryGetValue(i, out tmp))
+                    lock (MessageList)
                     {
-                        lock (tmp)
-                            tmp.Remove(consumer);
+                        if (MessageList.TryGetValue(i, out tmp))
+                        {
+                            lock (tmp)
+                                tmp.Remove(consumer);
+                        }
                     }
-                });
+                })
+            );
         }
+
+        protected Queue<Action> DeferredUnregisters = new Queue<Action>();
 
         /// <summary>
         /// Adds the message creator.

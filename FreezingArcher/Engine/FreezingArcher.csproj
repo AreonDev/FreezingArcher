@@ -417,6 +417,7 @@
     <Compile Include="Content\ItemSystem.cs" />
     <Compile Include="Content\IItemUsageHandler.cs" />
     <Compile Include="Renderer\Compositor\CompositorNodeSceneDepthAlphaMerger.cs" />
+    <Compile Include="Messaging\BarItemMovedMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

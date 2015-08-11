@@ -82,7 +82,10 @@ namespace FreezingArcher.Game
         public bool PutInBar(int invPositionX, int invPositionY, byte barPosition)
         {
             if (inventoryBar.Contains(storage[invPositionX, invPositionY]))
+            {
+                MoveBarItemToPosition(GetItemAt(invPositionX, invPositionY), barPosition);
                 return false;
+            }
 
             if (barPosition >= 0 && barPosition < inventoryBar.Length &&
                 invPositionX >= 0 && invPositionX < storage.GetLength(0) &&
@@ -226,6 +229,9 @@ namespace FreezingArcher.Game
                 inventoryBar[GetPositionOfBarItem(item)] = null;
                 inventoryBar[position] = item.GetHashCode();
 
+                if (MessageCreated != null)
+                    MessageCreated(new BarItemMovedMessage(item, position));
+
                 return true;
             }
             return false;
@@ -269,10 +275,10 @@ namespace FreezingArcher.Game
         {
             bool result = false;
             int x = 0, y = 0;
-            for (; y < storage.GetLength(0); y++)
+            for (; y < storage.GetLength(1); y++)
             {
                 x = 0;
-                for (; x < storage.GetLength(1); x++)
+                for (; x < storage.GetLength(0); x++)
                 {
                     if (fits(new Vector2i(x, y), item.Size))
                     {
@@ -290,6 +296,12 @@ namespace FreezingArcher.Game
                 if (result)
                     break;
             }
+
+            if (!result)
+            {
+                Logger.Log.AddLogEntry(LogLevel.Debug, "Inventory", "Inventory is full - cannot add item!");
+            }
+
             return result && Insert(item, new Vector2i(x, y));
         }
 

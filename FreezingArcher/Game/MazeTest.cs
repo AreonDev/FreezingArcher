@@ -180,17 +180,19 @@ namespace FreezingArcher.Game
 
             state.PhysicsManager.World.AddBody (playerBody);
 
-            int seed = new Random ().Next ();
-            var rand = new Random (seed);
-            Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze [0] = mazeGenerator.CreateMaze (rand.Next (), state.MessageProxy, state.PhysicsManager, 30, 30);
-            maze [0].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
+            int seed = new Random().Next();
+            var rand = new Random(seed);
+            Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
+            maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
+            maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
 
-            game.AddGameState ("maze_underworld", Content.Environment.Default,
-                new[] { new Tuple<string, GameStateTransition> ("maze_overworld", new GameStateTransition (0)) },
-                new[] { new Tuple<string, GameStateTransition> ("maze_overworld", new GameStateTransition (0)) });
-            state = game.GetGameState ("maze_underworld");
-            state.Scene = new CoreScene (rendererContext, messageProvider);
+            mazeWallMover = new MazeWallMover(maze[0], state.MessageProxy);
+
+            game.AddGameState("maze_underworld", Content.Environment.Default,
+                new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
+                new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) });
+            state = game.GetGameState("maze_underworld");
+            state.Scene = new CoreScene(rendererContext, messageProvider);
             state.Scene.SceneName = "MazeUnderworld";
             state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.AliceBlue;
@@ -202,6 +204,8 @@ namespace FreezingArcher.Game
             state.MessageProxy.StopProcessing ();
             //game.SwitchToGameState("maze_overworld");
         }
+
+        readonly MazeWallMover mazeWallMover;
 
         readonly MazeGenerator mazeGenerator;
 
@@ -251,6 +255,7 @@ namespace FreezingArcher.Game
 #region IMessageConsumer implementation
 
         bool finishedLoading = false;
+        int count = 0;
 
         /// <summary>
         /// Processes the incoming message
@@ -313,7 +318,9 @@ namespace FreezingArcher.Game
             {
                 if (im.IsActionPressedAndRepeated ("frame"))
                 {
-                    SwitchMaze ();
+                    //SwitchMaze();
+                    mazeWallMover.Step();
+                    maze[0].ExportAsImage("overworld_" + count++ + ".png");
                 }
 
                 if (im.IsActionDown ("bla_unfug_links"))

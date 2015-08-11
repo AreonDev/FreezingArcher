@@ -152,5 +152,9 @@ namespace FreezingArcher.Messaging
         /// Occurs when the active item in the inventory bar should be changed to a given position.
         /// </summary>
         ActiveInventoryBarItemChanged,
+        /// <summary>
+        /// Occurs when an inventory bar item moved to a different position.
+        /// </summary>
+        BarItemMoved,
     }
 }

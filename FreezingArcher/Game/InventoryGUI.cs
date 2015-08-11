@@ -92,10 +92,19 @@ namespace FreezingArcher.Game
             if (pos_x < 0 || pos_x + pos_w >= inventory.Size.X || pos_y < 0 || pos_y + pos_h >= inventory.Size.Y)
                 return false;
 
+            var bar_pos = inventory.GetPositionOfBarItem(item.Item4);
+
+            if (bar_pos < inventory.InventoryBar.Length)
+                inventory.RemoveFromBar(bar_pos);
+
             var old_pos = inventory.GetPositionOfItem (item.Item4);
             inventory.TakeOut (item.Item4);
+
             if (inventory.Insert (item.Item4, new Vector2i (pos_x, pos_y)))
             {
+                if (bar_pos < inventory.InventoryBar.Length)
+                    inventory.PutInBar(pos_x, pos_y, bar_pos);
+                
                 item.Item3.X = pos_x * boxSize + 1;
                 item.Item3.Y = pos_y * boxSize + 1;
                 return true;
@@ -329,7 +338,7 @@ namespace FreezingArcher.Game
             Inventory inventory, InventoryGUI inventoryGui, ItemComponent item, byte position, int boxSize) :
         base (parent)
         {
-            ValidMessages = new[] { (int) MessageId.ItemUsageChanged };
+            ValidMessages = new[] { (int) MessageId.ItemUsageChanged, (int) MessageId.BarItemMoved };
             this.boxSize = boxSize;
             this.IsToggle = true;
             this.item = item;
@@ -473,6 +482,15 @@ namespace FreezingArcher.Game
                         usageProgress.Value = 1 - ucm.Usage;
                 }
             }
+
+            if (msg.MessageId == (int) MessageId.BarItemMoved)
+            {
+                var bim = msg as BarItemMovedMessage;
+                if (bim.Item == Item)
+                {
+                    X = boxSize * bim.Position + 1;
+                }
+            }
         }
 
         public int[] ValidMessages { get; private set; }
@@ -518,10 +536,6 @@ namespace FreezingArcher.Game
             barItems.Remove(barbtn);
             if (barbtn != null)
                 barbtn.Parent.RemoveChild(barbtn, true);
-
-            byte pos = inv.GetPositionOfBarItem(item);
-            if (pos < inv.InventoryBar.Length)
-                inv.RemoveFromBar(pos);
 
             inv.TakeOut (item);
             btn.Parent.RemoveChild(btn, true);

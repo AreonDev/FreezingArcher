@@ -187,6 +187,8 @@ namespace FreezingArcher.Game.Maze
                 // save last node
                 lastNode = node;
 
+                edge.Weight.IsNextGenerationStep = true;
+
                 if (edge != null)
                 {
                     // get new node from edge

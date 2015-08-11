@@ -60,6 +60,7 @@ namespace FreezingArcher.Game.Maze
         public void Throw (ItemComponent item)
         {
             var physics = item.Entity.GetComponent<PhysicsComponent>();
+            physics.RigidBody.IsActive = true;
             physics.RigidBody.ApplyImpulse(JVector.Transform(new JVector(0, 0, 10), physics.RigidBody.Orientation));
         }
 

@@ -34,10 +34,11 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <param name="even">If set to <c>true</c> even.</param>
         /// <param name="direction">Direction.</param>
-        public MazeCellEdgeWeight(bool even, Direction direction)
+        public MazeCellEdgeWeight(bool even, Direction direction, bool isNextGenerationStep = false)
         {
             Even = even;
             Direction = direction;
+            IsNextGenerationStep = isNextGenerationStep;
         }
 
         /// <summary>
@@ -49,6 +50,12 @@ namespace FreezingArcher.Game.Maze
         /// The direction.
         /// </summary>
         public readonly Direction Direction;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is next generation step.
+        /// </summary>
+        /// <value><c>true</c> if this instance is next generation step; otherwise, <c>false</c>.</value>
+        public bool IsNextGenerationStep { get; set; }
 
         #region IComparable implementation
 

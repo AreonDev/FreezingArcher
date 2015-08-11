@@ -110,6 +110,7 @@ namespace FreezingArcher.Content
                         body.Position = p;
                         body.Orientation = JMatrix.CreateFromQuaternion(transform.Rotation.ToJitterQuaternion());
                         body.IsStatic = false;
+                        body.IsActive = true;
                         body.ApplyImpulse(view_direction);
                     }
                 }
@@ -137,7 +138,7 @@ namespace FreezingArcher.Content
                 var ium = msg as ItemUseMessage;
                 var itemcomp = Entity.GetComponent<ItemComponent>();
 
-                if (ium.Item.Entity.Name != Entity.Name || itemcomp.ItemUsageHandler == null)
+                if (ium.Item.Entity.Name != Entity.Name || itemcomp == null || itemcomp.ItemUsageHandler == null)
                     return;
 
                 if (ium.Item.ItemUsages.HasFlag(ItemUsage.Eatable) && ium.Usage.HasFlag(ItemUsage.Eatable))

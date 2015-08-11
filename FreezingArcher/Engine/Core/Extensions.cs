@@ -24,10 +24,6 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using FreezingArcher.DataStructures.Graphs;
-using FreezingArcher.Renderer;
-using FreezingArcher.Audio;
-using Pencil.Gaming.Graphics;
 using System.Windows.Threading;
 using Jitter.LinearMath;
 using FreezingArcher.Math;
@@ -119,6 +115,25 @@ namespace FreezingArcher.Core
             foreach (var tuple in enumerable)
                 if (!func(tuple.Item1, tuple.Item2))
                     break;
+        }
+
+        /// <summary>
+        /// Gets the index of the given item in the enumerable.
+        /// </summary>
+        /// <returns>The index. (-1 if item not found)</returns>
+        /// <param name="enumerable">Enumerable.</param>
+        /// <param name="item">Item.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static int IndexOf<T>(this IEnumerable<T> enumerable, T item)
+        {
+            int i = 0;
+            foreach (var e in enumerable)
+            {
+                if (e.Equals(item))
+                    return i;
+                i++;
+            }
+            return -1;
         }
 
         /// <summary>

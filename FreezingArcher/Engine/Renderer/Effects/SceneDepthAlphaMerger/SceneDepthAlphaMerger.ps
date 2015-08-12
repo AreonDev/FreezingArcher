@@ -1,0 +1,34 @@
+﻿#version 410
+
+layout(location = 1) in vec2 InTexCoord1;
+
+layout(location = 0) out vec4 frag_color;
+
+uniform sampler2D Texture1;
+uniform sampler2D Texture2;
+
+uniform sampler2D TextureViewPosition1;
+uniform sampler2D TextureViewPosition2;
+
+const int gaussRadius = 4;
+ 
+void main() 
+{
+        //vec4 texture1 = texture2D(Texture1, InTexCoord1);
+        //vec4 texture2 = texture2D(Texture2, InTexCoord1);
+
+        vec4 view1 = texture2D(TextureViewPosition1, InTexCoord1);
+        //vec4 view2 = texture2D(TextureViewPosition2, InTexCoord1);
+
+        //vec4 viewpos1 = (view1 - 0.5) * 100000.0;
+        //vec4 viewpos2 = (view2 - 0.5) * 100000.0;
+
+        //frag_color = texture1;
+
+       // if(view2.z > view1.z)
+       // {
+       //         frag_color = vec4(texture1.rgb*(1-texture2.a), 0.5) + vec4(texture2.rgb * texture2.a, 0.5);
+       //}
+
+        frag_color = vec4(view1.rgb, 1.0);
+}

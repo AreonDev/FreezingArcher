@@ -248,6 +248,20 @@ namespace FreezingArcher.Renderer
         ReadWrite = 35002,
     }
 
+    public enum RendererErrorCode : int {
+        NoError = ((int)0)              ,
+        InvalidEnum = ((int)0x0500)             ,
+        InvalidValue = ((int)0x0501)            ,
+        InvalidOperation = ((int)0x0502)                ,
+        StackOverflow = ((int)0x0503)           ,
+        StackUnderflow = ((int)0x0504)          ,
+        OutOfMemory = ((int)0x0505)             ,
+        InvalidFramebufferOperation = ((int)0x0506)             ,
+        InvalidFramebufferOperationExt = ((int)0x0506)          ,
+        TableTooLargeExt = ((int)0x8031)                ,
+        TextureTooLargeExt = ((int)0x8065)              ,
+    }
+
     public enum RendererBufferUsage
     {
         StreamDraw = 35040,
@@ -1363,7 +1377,7 @@ namespace FreezingArcher.Renderer
             GL.Disable(EnableCap.Blend);
         }
 
-        private void DrawSprite(ref Vector2 screen_size, Sprite spr, bool relative = false)
+        private void DrawSprite(ref Vector2 screen_size, Sprite spr, bool relative = false, int bindpoint = 0)
         {
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
@@ -1389,7 +1403,7 @@ namespace FreezingArcher.Renderer
             _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("UseTexture"), 1.0f);
             _2DEffect.PixelProgram.SetUniform(_2DEffect.PixelProgram.GetUniformLocation("Texture1"), 0);
 
-            spr.Texture.Bind(0);
+            spr.Texture.Bind(bindpoint);
 
             if(!spr.CustomEffect)
                 _2DEffect.BindPipeline();
@@ -1648,11 +1662,11 @@ namespace FreezingArcher.Renderer
             tex.Unbind();
         }
 
-        public void DrawSpriteAbsolute(Sprite spr)
+        public void DrawSpriteAbsolute(Sprite spr, int bindpoint = 0)
         {
             Vector2 vs = new FreezingArcher.Math.Vector2(ViewportSize.X, ViewportSize.Y);
 
-            DrawSprite(ref vs, spr);
+            DrawSprite(ref vs, spr, bindpoint:bindpoint);
         }
 
         public void DrawFilledRectangleRelative(ref Vector2 position, ref Vector2 size, ref FreezingArcher.Math.Color4 color, int count)
@@ -1662,11 +1676,11 @@ namespace FreezingArcher.Renderer
             DrawFilledRectangle(ref position, ref size, ref vs, ref color, count, true);
         }
 
-        public void DrawSpriteRelative(Sprite spr)
+        public void DrawSpriteRelative(Sprite spr, int bindpoint = 0)
         {
             Vector2 vs = new FreezingArcher.Math.Vector2(1.0f, 1.0f);
 
-            DrawSprite(ref vs, spr, true);
+            DrawSprite(ref vs, spr, true, bindpoint);
         }
 
         public void DrawLineAbsolute(ref Vector2 Position1, ref Vector2 Position2, float LineWidth, ref FreezingArcher.Math.Color4 color)
@@ -1881,6 +1895,11 @@ namespace FreezingArcher.Renderer
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         }
 
+        public RendererErrorCode GetError()
+        {
+            return (RendererErrorCode)GL.GetError();
+        }
+
         public void Clear(FreezingArcher.Math.Color4 color, int attachment)
         {
             GL.ColorMask((uint)attachment, true, true, true, true);
@@ -1898,7 +1917,7 @@ namespace FreezingArcher.Renderer
         }
         #endregion
 
-        public void ConsumeMessage(Messaging.Interfaces.IMessage msg)
+        public virtual void ConsumeMessage(Messaging.Interfaces.IMessage msg)
         {
             Messaging.WindowResizeMessage wrm = msg as Messaging.WindowResizeMessage;
             if (wrm != null)

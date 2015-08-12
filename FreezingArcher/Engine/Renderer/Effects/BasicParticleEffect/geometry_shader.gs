@@ -30,6 +30,7 @@ out gl_PerVertex
 
 layout(location = 1) out vec2 TexCoords;
 layout(location = 2) out vec4 Color;
+layout(location = 6) out vec4 View_Position;
 
 void main()
 {
@@ -43,24 +44,28 @@ void main()
 
                 vec3 va = Pos - (right + up);
                 gl_Position = ProjectionMatrix * ViewMatrix * vec4(va, 1.0);
+                View_Position = ViewMatrix * vec4(va, 1.0);
                 TexCoords = vec2(0.0, 0.0);
                 Color = InColor[0] * InLife[0];
                 EmitVertex();
 
                 vec3 vb = Pos - (right - up);
                 gl_Position = ProjectionMatrix * ViewMatrix * vec4(vb, 1.0);
+                View_Position = ViewMatrix * vec4(vb, 1.0);
                 TexCoords = vec2(0.0, 1.0);
                 Color = InColor[0]  * InLife[0];
                 EmitVertex();
 
                 vec3 vd = Pos + (right - up);
                 gl_Position = ProjectionMatrix * ViewMatrix * vec4(vd, 1.0);
+                View_Position = ViewMatrix * vec4(vd, 1.0);
                 TexCoords = vec2(1.0, 0.0);
                 Color = InColor[0]  * InLife[0];
                 EmitVertex();
 
                 vec3 vc = Pos + (right + up);
                 gl_Position = ProjectionMatrix * ViewMatrix * vec4(vc, 1.0);
+                View_Position = ViewMatrix * vec4(vc, 1.0);
                 TexCoords = vec2(1.0, 1.0);
                 Color = InColor[0]  * InLife[0];
                 EmitVertex();

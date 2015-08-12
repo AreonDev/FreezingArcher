@@ -52,37 +52,41 @@ namespace FreezingArcher.Game
             ValidMessages = new[] { (int) MessageId.WindowResize };
             messageProvider += this;
 
-            LoadingState.Scene = new CoreScene(application.RendererContext, messageProvider);
-            uiSceneObject = new UISceneObject ();
-            uiSceneObject.Priority = 999;
-            LoadingState.Scene.AddObject (uiSceneObject);
-
             var input = new FreezingArcher.UI.Input.FreezingArcherInput(application, LoadingState.MessageProxy);
-            input.Initialize (uiSceneObject.Canvas);
+            input.Initialize (application.RendererContext.Canvas);
 
-            uiSceneObject.Canvas.SetSize(application.Window.Size.X, application.Window.Size.Y);
-            uiSceneObject.Canvas.ShouldDrawBackground = false;
+            application.RendererContext.Canvas.SetSize(application.Window.Size.X, application.Window.Size.Y);
+            application.RendererContext.Canvas.ShouldDrawBackground = false;
 
 
-            image = new ImagePanel(uiSceneObject.Canvas);
+            image = new ImagePanel(application.RendererContext.Canvas);
             image.ImageName = backgroundPath;
             image.Width = application.Window.Size.X;
             image.Height = application.Window.Size.Y;
+            image.BringToFront ();
+        }
+
+        public void Ready()
+        {
+            image.Parent.RemoveChild (image, true);
+        }
+
+        public void BringToFront()
+        {
+            image.BringToFront ();
         }
 
         public GameState LoadingState { get; private set; }
-
-        readonly UISceneObject uiSceneObject;
 
         readonly ImagePanel image;
 
         public void ConsumeMessage (IMessage msg)
         {
-            if (msg.MessageId == (int) MessageId.WindowResize)
+            if (msg.MessageId == (int)MessageId.WindowResize) 
             {
-                var wrm = msg as WindowResizeMessage;
-                uiSceneObject.Canvas.SetBounds (0, 0, wrm.Width, wrm.Height);
-                image.SetBounds (0, 0, wrm.Width, wrm.Height);
+                WindowResizeMessage wrm = msg as WindowResizeMessage;
+
+                image.SetBounds(new System.Drawing.Rectangle(0, 0, wrm.Width, wrm.Height));
             }
         }
 

@@ -39,6 +39,9 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         public bool Enabled { get; set;}
         public bool NoLighting { get; set;}
 
+        public CoreScene Scene { get; internal set;}
+        public bool IsAddedToScene { get; internal set;}
+
         internal int ErrorCount { get; set;}
 
         public Vector3 Position 
@@ -119,7 +122,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         public void WaitTillInitialized()
         {
             while (!IsInitialized)
-                System.Threading.Thread.Sleep(2);
+                System.Threading.Thread.Sleep(1);
         }
 
         public virtual void Update(){}

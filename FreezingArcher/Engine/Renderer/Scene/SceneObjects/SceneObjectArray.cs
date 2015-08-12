@@ -173,6 +173,9 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                     }
                 }
 
+                obj.IsAddedToScene = true;
+                obj.Scene = this.Scene;
+
                 Logger.Log.AddLogEntry (LogLevel.Debug, "SceneObjectArray", "Object Added");
             }
             else

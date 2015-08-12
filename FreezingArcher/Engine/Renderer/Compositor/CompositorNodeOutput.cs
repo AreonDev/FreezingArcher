@@ -28,7 +28,10 @@ namespace FreezingArcher.Renderer.Compositor
     {
         public CompositorNodeOutput(RendererContext rc, Messaging.MessageProvider mp) : base("NodeOutput", rc, mp)
         {
+            EnableUI = true;
         }
+
+        bool EnableUI{ get; set;}
 
         #region implemented abstract members of CompositorNode
 
@@ -52,15 +55,18 @@ namespace FreezingArcher.Renderer.Compositor
             if (InputSlots[0].SlotTexture != null && InputSlots[0].SlotTexture.Created)
             {
                 Sprite spr = new Sprite();
+                spr.Init(InputSlots[0].SlotTexture);
+
                 spr.AbsolutePosition = new FreezingArcher.Math.Vector2(0, 0);
                 spr.CustomEffect = false;
-
-                spr.Init(InputSlots[0].SlotTexture);
 
                 PrivateRendererContext.DrawSpriteAbsolute(spr);
             }
 
             PrivateRendererContext.EnableDepthTest(true);
+
+            if (EnableUI)
+                PrivateRendererContext.Canvas.RenderCanvas();
         }
 
         #endregion

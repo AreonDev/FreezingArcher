@@ -24,25 +24,45 @@ using System;
 using System.Collections.Generic;
 using FreezingArcher.Messaging;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Math;
+using FreezingArcher.Output;
+
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Renderer.Compositor
 {
-    public class CompositorNodeScene : CompositorNode
+    public class CompositorNodeScene : CompositorNode, IMessageConsumer
     {
-        private class RCActionCompositorNodeSceneUpdateScene : RendererCore.RCAction
+        private class RCActionTextureResize : RendererCore.RCAction
         {
-            CompositorNodeScene Node;
-            RendererContext Renderer;
+            Texture2D _FrameBufferOutputTexture;
+            Texture2D _FrameBufferColorTexture;
+            Texture2D _FrameBufferDepthTexture;
+            Texture2D _FrameBufferNormalTexture;
+            Texture2D _FrameBufferSpecularTexture;
+            TextureDepthStencil _FrameBufferDepthStencilTexture;
 
-            public bool Ready {get; private set;}
+            int Width;
+            int Height;
 
-            public RCActionCompositorNodeSceneUpdateScene(CompositorNodeScene node, RendererContext rend)
+            public RCActionTextureResize(Texture2D frameBufferOutputTexture,
+                Texture2D frameBufferColorTexture,
+                Texture2D frameBufferDepthTexture,
+                Texture2D frameBufferNormalTexture,
+                Texture2D frameBufferSpecularTexture,
+                TextureDepthStencil frameBufferDepthStencilTexture, int width, int height)
             {
-                Node = node;
-                Renderer = rend;
+                _FrameBufferColorTexture = frameBufferColorTexture;
+                _FrameBufferDepthStencilTexture = frameBufferDepthStencilTexture;
+                _FrameBufferDepthTexture = frameBufferDepthTexture;
+                _FrameBufferNormalTexture = frameBufferNormalTexture;
+                _FrameBufferOutputTexture = frameBufferOutputTexture;
+                _FrameBufferSpecularTexture = frameBufferSpecularTexture;
 
-                Ready = false;
+                Width = width;
+                Height = height;
             }
 
             public RendererCore.RCActionDelegate Action
@@ -51,46 +71,34 @@ namespace FreezingArcher.Renderer.Compositor
                 {
                     return delegate()
                     {
-                        Node.ConfigureSlots();
-                        Node.InitFramebuffer();
-
-                        Node.OutputFramebuffer.AddTexture(Node.Scene.FrameBufferDepthStencilTexture, FrameBuffer.AttachmentUsage.DepthStencil);
-
-                        Ready = true;
+                        _FrameBufferColorTexture.Resize(Width, Height);
+                        _FrameBufferDepthStencilTexture.Resize(Width, Height);
+                        _FrameBufferDepthTexture.Resize(Width, Height);
+                        _FrameBufferNormalTexture.Resize(Width, Height);
+                        _FrameBufferOutputTexture.Resize(Width, Height);
+                        _FrameBufferSpecularTexture.Resize(Width, Height);
                     };
                 }
             }
         }
 
-        private CoreScene PrivateScene;
-        public CoreScene Scene 
-        {   
-            get 
-            {
-                return PrivateScene;
-            }
+        Texture2D FrameBufferOutputTexture;
+        Texture2D FrameBufferColorTexture;
+        Texture2D FrameBufferDepthTexture;
+        Texture2D FrameBufferNormalTexture;
+        Texture2D FrameBufferSpecularTexture;
+        TextureDepthStencil FrameBufferDepthStencilTexture;
 
-            set
-            {
-                PrivateScene = value;
+        Effect NoNodeEffect;
 
-                RCActionCompositorNodeSceneUpdateScene rcacnsus = new RCActionCompositorNodeSceneUpdateScene(this, PrivateRendererContext);
-
-                if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
-                    rcacnsus.Action();
-                else
-                {
-                    PrivateRendererContext.AddRCActionJob(rcacnsus);
-
-                    while (!rcacnsus.Ready)
-                        System.Threading.Thread.Sleep(1);
-                }
-            }
-        }
+        public CoreScene Scene { get; set;}
 
         public CompositorNodeScene(RendererContext rc, MessageProvider prov) : base("NodeStart", rc, prov)
         {
-            
+            PostRenderingObjects = new List<SceneObject>();
+
+            ValidMessages = new[] { (int)MessageId.WindowResize };
+            prov += this;
         }
 
         public override void Begin()
@@ -100,18 +108,198 @@ namespace FreezingArcher.Renderer.Compositor
 
         public override void Draw()
         {
-            PrivateRendererContext.Clear(Color4.Black, 0);
-            PrivateRendererContext.Clear(Color4.Black, 1);
-            PrivateRendererContext.Clear(Color4.Black, 2);
-            PrivateRendererContext.Clear(Color4.Black, 3);
+            PrivateRendererContext.Clear(Color4.Transparent);
 
-            PrivateRendererContext.Clear(Color4.Black);
+            if (Scene != null)
+            {
+                if (Scene.Active)
+                {
+                    PrivateRendererContext.EnableDepthTest(true);
+                    PrivateRendererContext.EnableDepthMaskWriting(true);
 
-            PrivateRendererContext.Scene = Scene;
-            PrivateRendererContext.DrawScene();
+                    DrawScene();
 
-            OutputSlots[4].Value = Scene.Lights;
-            OutputSlots[5].Value = Scene.CameraManager.ActiveCamera;
+                    //Setup deferred Shading!
+                    PrivateRendererContext.EnableDepthMaskWriting(false);
+                    PrivateRendererContext.EnableDepthTest(false);
+
+                    ShadeScene();
+
+                    //Now render all PostRendering objects!
+                    PrivateRendererContext.EnableDepthTest(true);
+                    DrawPostSceneObjects();
+
+                    PrivateRendererContext.EnableDepthMaskWriting(true);
+                }
+            }
+        }
+
+        private List<SceneObject> PostRenderingObjects;
+
+        private void ShadeScene()
+        {
+            Sprite spr = new Sprite();
+            spr.Init(FrameBufferColorTexture);
+
+            spr.CustomEffect = true;
+
+
+            FrameBufferDepthTexture.Bind(2);
+            FrameBufferNormalTexture.Bind(3);
+            FrameBufferSpecularTexture.Bind(4);
+
+            NoNodeEffect.BindPipeline();
+
+            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("TextureDiffuse"), 1);
+            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("TexturePosition"), 2);
+            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("TextureNormal"), 3);
+            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("TextureSpecular"), 4);
+
+            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("DistanceFogIntensity"), 
+                Scene.DistanceFogIntensity);
+            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("DistanceFogColor"), 
+                Scene.DistanceFogColor);
+
+            if (Scene != null && Scene.CameraManager.ActiveCamera != null)
+                NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("CameraPosition"), 
+                    Scene.CameraManager.ActiveCamera.Position);
+
+            //Setup lights
+            List<Light> Lights = Scene != null ? Scene.Lights : null;
+
+            if (Lights != null)
+            {
+                for (int i = 0; i < Lights.Count; i++)
+                {
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].Type"), 
+                        (int)Lights[i].Type);
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].LightColor"), 
+                        Lights[i].Color);
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].AmbientIntensity"), 
+                        Lights[i].AmbientIntensity);
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].AmbientColor"), 
+                        Lights[i].AmbientColor);
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].DirectionalLightDirection"), 
+                        Lights[i].DirectionalLightDirection);
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightPosition"), 
+                        Lights[i].PointLightPosition);
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightConstantAtt"), 
+                        Lights[i].PointLightConstantAttenuation);
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightLinearAtt"), 
+                        Lights[i].PointLightLinearAttenuation);
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightExpAtt"), 
+                        Lights[i].PointLightExponentialAttenuation);
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].SpotLightConeAngle"), 
+                        Lights[i].SpotLightConeAngle);
+                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].SpotLightConeCosine"), 
+                        Lights[i].SpotLightConeCosine);
+                }
+            }
+
+            PrivateRendererContext.DrawSpriteAbsolute(spr, 1);
+
+            NoNodeEffect.UnbindPipeline();
+        }
+
+        private void DrawPostSceneObjects()
+        {
+            foreach (SceneObject obj in PostRenderingObjects)
+            {
+                if (obj.Enabled)
+                {
+                    obj.Update();
+
+                    obj.Draw(PrivateRendererContext);
+
+                    RendererErrorCode err_code = PrivateRendererContext.GetError();
+                    if (err_code != RendererErrorCode.NoError)
+                        obj.ErrorCount++;
+
+                    if (obj.ErrorCount > 5)
+                    {
+                        Logger.Log.AddLogEntry(LogLevel.Error, "RendererContext", FreezingArcher.Core.Status.DeveloperWasDrunk,
+                            "Too many errors on Object " + obj.GetName() + "\nDelete object!");
+                        Scene.RemoveObject(obj);
+                    }
+                }
+            }
+
+            PostRenderingObjects.Clear();
+        }
+
+        private void DrawScene()
+        {
+            Scene.Update();
+
+            /*
+                    if (Scene.FrameBufferDepthStencilTexture.Width != ViewportSize.X ||
+                        Scene.FrameBufferDepthStencilTexture.Height != ViewportSize.Y)
+                        Scene.ResizeTextures(ViewportSize.X, ViewportSize.Y);*/
+
+            /*Scene.FrameBuffer.UseAttachments(new FrameBuffer.AttachmentUsage[]
+                    {FrameBuffer.AttachmentUsage.Color0,
+                        FrameBuffer.AttachmentUsage.Color1, FrameBuffer.AttachmentUsage.Color2,
+                        FrameBuffer.AttachmentUsage.Color3
+                    });*/
+
+            //Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
+
+            //Clear scene
+            /*PrivateRendererContext.Clear(Scene.BackgroundColor, 0);
+                    PrivateRendererContext.Clear(Scene.BackgroundColor, 1);
+                    PrivateRendererContext.Clear(Color4.Transparent, 2);
+                    PrivateRendererContext.Clear(Color4.Transparent, 3);
+                    PrivateRendererContext.Clear(Color4.Transparent, 4);
+                    */
+
+            PrivateRendererContext.Clear(Scene.BackgroundColor);
+
+            foreach (SceneObject obj in Scene.GetObjectsSorted())
+            {
+                if (obj.Enabled)
+                {
+                    //Find name for SceneObjectArray....
+                    bool array = (obj.GetName() == "SceneObjectArray");
+
+                    Vector3 dir = obj.Position - Scene.CameraManager.ActiveCamera.Position;
+                    float length = dir.Length;
+
+                    if (obj.Priority <= 5000)
+                        obj.Update();
+
+                    if (array || (length <= Scene.MaxRenderingDistance))
+                    {
+                        if (obj.Priority > 5000)
+                        {
+                            PostRenderingObjects.Add(obj);
+                            continue;
+                        }
+
+                        obj.Draw(PrivateRendererContext);
+
+                        RendererErrorCode err_code = PrivateRendererContext.GetError();
+                        if (err_code != RendererErrorCode.NoError)
+                            obj.ErrorCount++;
+
+                        if (obj.ErrorCount > 5)
+                        {
+                            Logger.Log.AddLogEntry(LogLevel.Error, "RendererContext", FreezingArcher.Core.Status.DeveloperWasDrunk,
+                                "Too many errors on Object " + obj.GetName() + "\nDelete object!");
+                            Scene.RemoveObject(obj);
+                        }
+                    }
+                }
+            }
+            //Scene.FrameBuffer.Unbind();
+
+            //Now.... use Funny stupid Deferred Shading shader
+
+            //Sprite spr = new Sprite();
+            //spr.Init(Scene.FrameBufferColorTexture);
+            //spr.AbsolutePosition = new Vector2(0.0f, 0.0f);
+            //spr.Scaling = new Vector2(1, 1);
+
+            //DrawSpriteAbsolute(spr);
         }
 
         public override void End()
@@ -121,10 +309,30 @@ namespace FreezingArcher.Renderer.Compositor
 
         public override void InitOtherStuff()
         {    
-            PrivateScene = new CoreScene(PrivateRendererContext, PrivateMessageProvider);
-            PrivateScene.Init(PrivateRendererContext);
-            PrivateScene.BackgroundColor = new Math.Color4(1.0f, 0.0f, 0.0f, 0.3f);
-            ExtendedName = "NodeScene";
+            long ticks = DateTime.Now.Ticks;
+
+            FrameBufferNormalTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferNormalTexture_"+ticks,
+                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
+
+            FrameBufferColorTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferColorTexture_" + ticks,
+                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
+
+            FrameBufferSpecularTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferSpecularTexture_" + ticks,
+                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
+
+            FrameBufferDepthTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferDepthTexture_" + ticks,
+                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
+
+            FrameBufferOutputTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferOutputTexture_" + ticks,
+                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
+
+            FrameBufferDepthStencilTexture = PrivateRendererContext.CreateTextureDepthStencil("CoreSceneFrameBufferDepthStencil_" + ticks,
+                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, IntPtr.Zero, false);
+        }
+
+        public override void PostInit()
+        {
+            OutputFramebuffer.AddTexture(FrameBufferDepthStencilTexture, FrameBuffer.AttachmentUsage.DepthStencil);
         }
 
         #region implemented abstract members of CompositorNode
@@ -134,20 +342,46 @@ namespace FreezingArcher.Renderer.Compositor
             Active = true;
 
             InputSlots = null;
-            OutputSlots = new CompositorOutputSlot[6];
+            OutputSlots = new CompositorOutputSlot[5];
            
-            OutputSlots[0] = new CompositorOutputSlot("DiffuseColor", 0, Scene.FrameBufferColorTexture, CompositorSlotType.Texture);
-            OutputSlots[1] = new CompositorOutputSlot("PositionColor", 1, Scene.FrameBufferDepthTexture, CompositorSlotType.Texture);
-            OutputSlots[2] = new CompositorOutputSlot("NormalColor", 2, Scene.FrameBufferNormalTexture, CompositorSlotType.Texture);
-            OutputSlots[3] = new CompositorOutputSlot("SpecularColor", 3, Scene.FrameBufferSpecularTexture, CompositorSlotType.Texture);
-            OutputSlots[4] = new CompositorOutputSlot("LightInformation", 4, null);
-            OutputSlots[5] = new CompositorOutputSlot("CameraInformation", 5, null);
+            OutputSlots[0] = new CompositorOutputSlot("SceneOutput", 0, FrameBufferOutputTexture, CompositorSlotType.Texture);
+            OutputSlots[1] = new CompositorOutputSlot("DiffuseColor", 1, FrameBufferColorTexture, CompositorSlotType.Texture);
+            OutputSlots[2] = new CompositorOutputSlot("PositionColor", 2, FrameBufferDepthTexture, CompositorSlotType.Texture);
+            OutputSlots[3] = new CompositorOutputSlot("NormalColor", 3, FrameBufferNormalTexture, CompositorSlotType.Texture);
+            OutputSlots[4] = new CompositorOutputSlot("SpecularColor", 4, FrameBufferSpecularTexture, CompositorSlotType.Texture);
         }
 
         public override void LoadEffect()
         {
+            long ticks = DateTime.Now.Ticks;
+
+            NoNodeEffect = PrivateRendererContext.CreateEffect("DeferredShading_Effect_" + ticks);
+
+            NoNodeEffect.PixelProgram = PrivateRendererContext.CreateShaderProgramFromFile("DeferredShading_PixelProgram_" + ticks, ShaderType.PixelShader,
+                "lib/Renderer/Effects/DeferredShading/pixel_shader.ps");
+
+            NoNodeEffect.VertexProgram = PrivateRendererContext.RC2DEffect.VertexProgram;
+
             NodeEffect = null;
         }
+
+        #endregion
+
+        #region IMessageConsumer implementation
+
+        public void ConsumeMessage(IMessage msg)
+        {
+            if (msg.MessageId == (int)MessageId.WindowResize)
+            {
+                WindowResizeMessage wrm = msg as WindowResizeMessage;
+
+                PrivateRendererContext.AddRCActionJob(new RCActionTextureResize(FrameBufferOutputTexture,
+                        FrameBufferColorTexture, FrameBufferDepthTexture, FrameBufferNormalTexture, 
+                        FrameBufferSpecularTexture, FrameBufferDepthStencilTexture, wrm.Width, wrm.Height));
+            }
+        }
+
+        public int[] ValidMessages { get; private set;}
 
         #endregion
     }

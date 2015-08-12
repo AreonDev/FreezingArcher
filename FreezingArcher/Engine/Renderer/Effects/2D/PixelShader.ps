@@ -4,6 +4,10 @@ layout(location = 0) in vec4 InColor;
 layout(location = 1) in vec2 InTexCoord1;
 
 layout(location = 0) out vec4 frag_color;
+layout(location = 1) out vec4 other1;
+layout(location = 2) out vec4 other2;
+layout(location = 3) out vec4 other3;
+layout(location = 4) out vec4 other4;
 
 uniform float UseTexture;
 uniform vec4  DrawColor;
@@ -20,4 +24,9 @@ void main()
                 frag_color = UseTexture * tex_color + (1-UseTexture)*(DrawColor * (1 - InColor.a) + InColor);
         else
                 frag_color = UseTexture * tex_color + (1-UseTexture)*DrawColor;
+
+        other1 = vec4(0.0, 0.0, 0.0, 0.0);
+        other2 = vec4(0.0, 0.0, 0.0, 0.0);
+        other3 = vec4(0.0, 0.0, 0.0, 0.0);
+        other4 = vec4(0.0, 0.0, 0.0, 0.0);
 }

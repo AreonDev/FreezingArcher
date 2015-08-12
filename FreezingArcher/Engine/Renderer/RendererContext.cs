@@ -28,6 +28,10 @@ using System.Collections.Generic;
 
 using System.Xml;
 
+using Gwen;
+using Gwen.Control;
+using Gwen.Renderer;
+
 using Pencil.Gaming.Graphics;
 using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Renderer.Scene;
@@ -39,6 +43,10 @@ namespace FreezingArcher.Renderer
 {
     public class RendererContext : RendererCore
     {
+        public Gwen.Renderer.Base Renderer { get; private set;}
+        public Gwen.Skin.TexturedBase Skin { get; private set;}
+        public Gwen.Control.Canvas Canvas{ get; private set;}
+
         private class RCActionInitSceneObject : RCAction
         {
             public SceneObject Object;
@@ -65,25 +73,7 @@ namespace FreezingArcher.Renderer
 
         private AssimpContext m_AssimpContext;
 
-
-        private CoreScene PrivateScene;
         private BasicCompositor PrivateCompositor;
-        /// <summary>
-        /// Gets or sets the scene.
-        /// </summary>
-        /// <value>The scene.</value>
-        public CoreScene Scene 
-        {
-            get
-            {
-                return PrivateScene;
-            }
-            set
-            {
-                PrivateScene = value;
-                //PrivateScene.Init(this);
-            }
-        }
 
         public BasicCompositor Compositor
         {
@@ -104,7 +94,6 @@ namespace FreezingArcher.Renderer
         {
             m_AssimpContext = new AssimpContext();
 
-            PrivateScene = null;
             PrivateCompositor = null;
         }
 
@@ -119,6 +108,10 @@ namespace FreezingArcher.Renderer
 
             SimpleMaterial = new SimpleMaterial();
             SimpleMaterial.Init(this);
+
+            Renderer = new Gwen.Renderer.FreezingArcherGwenRenderer(this);
+            Skin = new Gwen.Skin.TexturedBase(Renderer, "lib/UI/Skins/NoWayOutSkin.png");
+            Canvas = new Gwen.Control.Canvas(Skin);
 
             return true;
         }
@@ -367,6 +360,8 @@ namespace FreezingArcher.Renderer
             {
                 EnableDepthTest(mdl.EnableDepthTest);
 
+                SetCullMode(RendererCullMode.Front);
+
                 foreach (Mesh msh in mdl.Meshes)
                 {
                     Material mat = null;
@@ -395,16 +390,6 @@ namespace FreezingArcher.Renderer
                         SimpleMaterial.ColorTexture = mat.TextureDiffuse;
 
                         SimpleMaterial.Tile = 1.0f;
-
-                        if (scene == null)
-                            SimpleMaterial.Plane = new Vector2(0.1f, 100.0f);
-                        else
-                        {
-                            BaseCamera cam = scene.CameraManager.ActiveCamera;
-
-                            if(cam != null)
-                                SimpleMaterial.Plane = new Vector2(cam.ZNear, cam.ZFar);
-                        }
 
                         mat = SimpleMaterial;
                     }
@@ -463,76 +448,22 @@ namespace FreezingArcher.Renderer
             msh.m_VertexBufferArray.UnbindVertexBufferArray();
         }
 
-
-
-        /// <summary>
-        /// FOR THE FUCKING FIN
-        /// </summary>
-        public void DrawScene()
-        {
-            if (Scene != null)
-            {
-                if (Scene.Active)
-                {
-                    Scene.Update();
-
-                    /*
-                    if (Scene.FrameBufferDepthStencilTexture.Width != ViewportSize.X ||
-                        Scene.FrameBufferDepthStencilTexture.Height != ViewportSize.Y)
-                        Scene.ResizeTextures(ViewportSize.X, ViewportSize.Y);*/
-
-                    /*Scene.FrameBuffer.UseAttachments(new FrameBuffer.AttachmentUsage[]
-                    {FrameBuffer.AttachmentUsage.Color0,
-                        FrameBuffer.AttachmentUsage.Color1, FrameBuffer.AttachmentUsage.Color2,
-                        FrameBuffer.AttachmentUsage.Color3
-                    });*/
-
-                    //Scene.FrameBuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
-
-                    this.Clear(Scene.BackgroundColor, 1);
-
-                    foreach (SceneObject obj in Scene.GetObjectsSorted())
-                    {
-                        if (obj.Enabled)
-                        {
-                            obj.Update();
-                        
-                            obj.Draw(this);
-
-                            ErrorCode err_code = GL.GetError();
-                            if (err_code != ErrorCode.NoError)
-                                obj.ErrorCount++;
-
-                            if (obj.ErrorCount > 5)
-                            {
-                                Logger.Log.AddLogEntry(LogLevel.Error, "RendererContext", FreezingArcher.Core.Status.DeveloperWasDrunk,
-                                    "Too many errors on Object " + obj.GetName() + "\nDelete object!");
-                                Scene.RemoveObject(obj);
-                            }
-                        }
-                    }
-
-                    //Scene.FrameBuffer.Unbind();
-                }
-                else
-                    this.Clear(Math.Color4.Transparent);
-            }
-
-            //Now.... use Funny stupid Deferred Shading shader
-
-            //Sprite spr = new Sprite();
-            //spr.Init(Scene.FrameBufferColorTexture);
-            //spr.AbsolutePosition = new Vector2(0.0f, 0.0f);
-            //spr.Scaling = new Vector2(1, 1);
-
-            //DrawSpriteAbsolute(spr);
-        }
-
         public void Compose()
         {
             if (PrivateCompositor != null)
             {
                 PrivateCompositor.StartCompositing();
+            }
+        }
+
+        public override void ConsumeMessage(Messaging.Interfaces.IMessage msg)
+        {
+            base.ConsumeMessage(msg);
+
+            Messaging.WindowResizeMessage wrm = msg as Messaging.WindowResizeMessage;
+            if (wrm != null)
+            {
+                Canvas.SetBounds(new System.Drawing.Rectangle(0, 0, wrm.Width, wrm.Height));
             }
         }
     }

@@ -379,7 +379,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Compositor\CompositorNode.cs" />
     <Compile Include="UI\Renderer\FreezingArcherGwenRenderer.cs" />
     <Compile Include="UI\Renderer\TextRenderer.cs" />
-    <Compile Include="Renderer\Scene\SceneObjects\UISceneObject.cs" />
     <Compile Include="UI\Skin\Base.cs" />
     <Compile Include="UI\Skin\Simple.cs" />
     <Compile Include="UI\Skin\SkinColors.cs" />
@@ -414,6 +413,7 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Renderer\Scene\SceneObjects\ParticleSceneObject.cs" />
     <Compile Include="Content\ItemSystem.cs" />
     <Compile Include="Content\IItemUsageHandler.cs" />
+    <Compile Include="Renderer\Compositor\CompositorNodeSceneDepthAlphaMerger.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -606,6 +606,9 @@ echo Successfully finished!</PostBuildEvent>
     <None Include="Renderer\TestGraphics\particle_06.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Renderer\Effects\SceneDepthAlphaMerger\SceneDepthAlphaMerger.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />
@@ -618,6 +621,7 @@ echo Successfully finished!</PostBuildEvent>
     <Folder Include="Renderer\TestGraphics\Monkey\" />
     <Folder Include="Renderer\Effects\Blur\" />
     <Folder Include="Renderer\Effects\BasicParticleEffect\" />
+    <Folder Include="Renderer\Effects\SceneDepthAlphaMerger\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

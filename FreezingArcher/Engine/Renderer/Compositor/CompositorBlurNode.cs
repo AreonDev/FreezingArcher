@@ -54,7 +54,7 @@ namespace FreezingArcher.Renderer.Compositor
             if (InputSlots[0].SlotTexture.Width != OutputTexture.Width || InputSlots[0].SlotTexture.Height != OutputTexture.Height)
             {
                 OutputTexture.Resize(InputSlots[0].SlotTexture.Width, InputSlots[0].SlotTexture.Height);
-                OutputTexture.Bind(0);
+                //OutputTexture.Bind(0);
             }
 
             PrivateRendererContext.Clear(Math.Color4.Black);

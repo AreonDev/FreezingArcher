@@ -8,13 +8,14 @@ layout(location = 2) in vec4 vpos; // Position (View Space)
 layout(location = 3) in vec3 normal; // surface normal (view space)
 layout(location = 4) in vec3 tangent; // tangent vector (view space)
 layout(location = 5) in vec3 binormal; // binormal vector (view space)
-layout(location = 6) in vec3 view_position;
+layout(location = 6) in vec4 view_position;
 //####################################################
 
-layout(location = 2) out vec4 normal_color;
-layout(location = 0) out vec4 diffuse_color;
-layout(location = 3) out vec4 specular_color;
-layout(location = 1) out vec4 position_color;
+layout(location = 0) out vec4 FragColor;
+layout(location = 3) out vec4 normal_color;
+layout(location = 1) out vec4 diffuse_color;
+layout(location = 4) out vec4 specular_color;
+layout(location = 2) out vec4 position_color;
 
 uniform sampler2D NormalTexture;
 uniform sampler2D ColorTexture;
@@ -22,9 +23,10 @@ uniform sampler2D ColorTexture;
 uniform float Tile;
 uniform vec4 DiffuseColor;
 uniform vec4 SpecularColor;
-uniform vec2 PlaneInformation;
 
 uniform int EnableLighting;
+
+uniform vec3 EyePosition;
 
 vec4 float_to_color(float f)
 {
@@ -41,6 +43,8 @@ vec4 float_to_color(float f)
 
 void main()
 {
+        FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+
         vec2 texcrd = texcoord*Tile;
 
         vec3 normalcol = texture2D(NormalTexture, texcrd).xyz;

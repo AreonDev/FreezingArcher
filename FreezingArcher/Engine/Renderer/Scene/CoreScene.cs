@@ -25,6 +25,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
+using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Renderer;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene.SceneObjects;
@@ -33,37 +34,8 @@ using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Renderer.Scene
 {
-    public class CoreScene : IMessageConsumer
+    public class CoreScene
     {
-        private class RCActionChangeFramebufferSize : RendererCore.RCAction
-        {
-            public CoreScene Scene;
-            public RendererContext Renderer;
-
-            public int Width;
-            public int Height;
-
-            public RCActionChangeFramebufferSize(RendererContext rc, CoreScene cs, int w, int h)
-            {
-                Scene = cs;
-                Renderer = rc;
-
-                Width = w;
-                Height = h;
-            }
-
-            public RendererCore.RCActionDelegate Action
-            {
-                get
-                {
-                    return delegate()
-                    {
-                        Scene.ResizeTextures(Width, Height);
-                    };
-                }
-            }
-        }
-
         public class RCActionInitSceneObject : RendererCore.RCAction
         {
             public SceneObject Object;
@@ -112,8 +84,13 @@ namespace FreezingArcher.Renderer.Scene
             }
         }
 
+        public float DistanceFogIntensity{ get; set;}
+        public FreezingArcher.Math.Color4 DistanceFogColor { get; set;}
+
+        public float MaxRenderingDistance { get; set;}
+
         private List<SceneObject> Objects;
-        private List<CoreScene> SubScenes;
+        public List<CoreScene> SubScenes;
 
         private RendererContext PrivateRendererContext;
         public bool IsInitialized { get; private set;}
@@ -131,6 +108,14 @@ namespace FreezingArcher.Renderer.Scene
 
             if (IsInitialized)
             {
+                if (obj.IsAddedToScene)
+                {
+                    Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.BadArgument,
+                        "Object was already added to Scene!");
+                    
+                    return;
+                }
+
                 if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
                 {
                     if (!obj.IsInitialized)
@@ -154,6 +139,9 @@ namespace FreezingArcher.Renderer.Scene
 
                 if (obj.Priority == -1)
                     obj.Priority = Objects.Count;
+
+                obj.Scene = this;
+                obj.IsAddedToScene = true;
             }
             else
                 Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", FreezingArcher.Core.Status.AKittenDies, "Scene is not initialized!"); 
@@ -163,7 +151,13 @@ namespace FreezingArcher.Renderer.Scene
         public void RemoveObject(SceneObject obj)
         {
             if (!Objects.Remove(obj))
+            {
                 Output.Logger.Log.AddLogEntry(FreezingArcher.Output.LogLevel.Error, "CoreScene", "Could not remove Object");
+                return;
+            }
+
+            obj.Scene = null;
+            obj.IsAddedToScene = false;
         }
 
         public List<string> GetObjectNames()
@@ -231,14 +225,6 @@ namespace FreezingArcher.Renderer.Scene
         public string SceneName{ get; set;}
         public CameraManager CameraManager{ get; set;}
 
-
-        public FrameBuffer FrameBuffer{ get; private set;}
-        public Texture2D   FrameBufferNormalTexture { get; private set;}
-        public Texture2D   FrameBufferColorTexture{ get; private set;}
-        public Texture2D   FrameBufferSpecularTexture { get; private set;}
-        public Texture2D   FrameBufferDepthTexture { get; private set;}
-        public TextureDepthStencil FrameBufferDepthStencilTexture { get; private set;}
-
         public CoreScene(RendererContext rc, MessageProvider messageProvider)
         {
             CameraManager = new CameraManager(messageProvider);
@@ -246,39 +232,21 @@ namespace FreezingArcher.Renderer.Scene
             Lights = new List<Light>();
             SubScenes = new List<CoreScene>();
 
-
-
-            FrameBuffer = null;
-
             SceneName = "CoreScene";
 
             Active = true;
 
-            ValidMessages = new [] { (int)MessageId.WindowResize };
-            messageProvider += this;
+            DistanceFogIntensity = 0.08f;
+            DistanceFogColor = FreezingArcher.Math.Color4.Black;
+
+            MaxRenderingDistance = 20.0f;
+
+            ValidMessages = new int[0];
+            //messageProvider += this;
 
             Init(rc);
         }
-
-        public void ResizeTextures(int width, int height)
-        {
-            if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
-            {
-                FrameBufferNormalTexture.Resize(width, height);
-                FrameBufferColorTexture.Resize(width, height);
-                FrameBufferDepthTexture.Resize(width, height);
-                FrameBufferSpecularTexture.Resize(width, height);
             
-
-                FrameBufferDepthStencilTexture.Resize(width, height);
-            }
-            else
-            {
-                RCActionChangeFramebufferSize rcacfbs = new RCActionChangeFramebufferSize(PrivateRendererContext, this, width, height);
-                PrivateRendererContext.AddRCActionJob(rcacfbs);
-            }
-        }
-
         public void Update()
         {
             //Init objects, which are not initialized yet
@@ -301,39 +269,6 @@ namespace FreezingArcher.Renderer.Scene
 
         internal bool InitFromJob(RendererContext rc)
         {
-            long ticks = DateTime.Now.Ticks;
-
-            FrameBuffer = rc.CreateFrameBuffer("CoreSceneFrameBuffer_" + ticks);
-
-            FrameBufferNormalTexture = rc.CreateTexture2D("CoreSceneFrameBufferNormalTexture_"+ticks,
-                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false, true);
-
-            FrameBufferColorTexture = rc.CreateTexture2D("CoreSceneFrameBufferColorTexture_" + ticks,
-                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false, true);
-
-            FrameBufferSpecularTexture = rc.CreateTexture2D("CoreSceneFrameBufferSpecularTexture_" + ticks,
-                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false, true);
-
-            FrameBufferDepthTexture = rc.CreateTexture2D("CoreSceneFrameBufferDepthTexture_" + ticks,
-                rc.ViewportSize.X, rc.ViewportSize.Y, false, IntPtr.Zero, false, true);
-
-            FrameBufferDepthStencilTexture = rc.CreateTextureDepthStencil("CoreSceneFrameBufferDepthStencil_" + ticks,
-                rc.ViewportSize.X, rc.ViewportSize.Y, IntPtr.Zero, false);
-
-            //FrameBufferRenderedImamge = rc.CreateTexture2D("CoreSceneFrameBufferRendererImage_" + , rc.ViewportSize.Y, true,
-            //    IntPtr.Zero, );
-
-            FrameBuffer.BeginPrepare();
-
-            FrameBuffer.AddTexture(FrameBufferNormalTexture, FrameBuffer.AttachmentUsage.Color0);
-            FrameBuffer.AddTexture(FrameBufferColorTexture, FrameBuffer.AttachmentUsage.Color1);
-            FrameBuffer.AddTexture(FrameBufferSpecularTexture, FrameBuffer.AttachmentUsage.Color2);
-            FrameBuffer.AddTexture(FrameBufferDepthTexture, FrameBuffer.AttachmentUsage.Color3);
-
-            FrameBuffer.AddTexture(FrameBufferDepthStencilTexture, FrameBuffer.AttachmentUsage.DepthStencil);
-
-            FrameBuffer.EndPrepare();
-
             IsInitialized = true;
 
             return true;
@@ -358,16 +293,6 @@ namespace FreezingArcher.Renderer.Scene
         }
 
         #region IMessageConsumer implementation
-
-        public void ConsumeMessage(IMessage msg)
-        {
-            if (msg.MessageId == (int)MessageId.WindowResize)
-            {
-                WindowResizeMessage wrm = msg as WindowResizeMessage;
-
-                ResizeTextures(wrm.Width, wrm.Height);
-            }
-        }
 
         public int[] ValidMessages
         {

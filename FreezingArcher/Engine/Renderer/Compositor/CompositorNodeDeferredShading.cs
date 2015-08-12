@@ -30,6 +30,8 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
 
+using Pencil.Gaming.Graphics;
+
 namespace FreezingArcher.Renderer.Compositor
 {
     public class CompositorNodeDeferredShading : CompositorNode
@@ -41,19 +43,20 @@ namespace FreezingArcher.Renderer.Compositor
         }
 
         public float DistanceFogIntensity{ get; set;}
-        public Color4 DistanceFogColor { get; set;}
+        public FreezingArcher.Math.Color4 DistanceFogColor { get; set;}
 
         #region implemented abstract members of CompositorNode
 
         public override void ConfigureSlots()
         {
-            InputSlots = new CompositorInputSlot[6];
+            InputSlots = new CompositorInputSlot[7];
             InputSlots[0] = new CompositorInputSlot("DiffuseColor", CompositorInputSlotImportance.Required, 0, CompositorSlotType.Texture);
             InputSlots[1] = new CompositorInputSlot("PositionColor", CompositorInputSlotImportance.Required, 1, CompositorSlotType.Texture);
             InputSlots[2] = new CompositorInputSlot("NormalColor", CompositorInputSlotImportance.Required, 2, CompositorSlotType.Texture);
             InputSlots[3] = new CompositorInputSlot("SpecularColor", CompositorInputSlotImportance.Required, 3, CompositorSlotType.Texture);
             InputSlots[4] = new CompositorInputSlot("LightInformation", CompositorInputSlotImportance.Required, 4, CompositorSlotType.Value);
             InputSlots[5] = new CompositorInputSlot("CameraInformation", CompositorInputSlotImportance.Required, 5, CompositorSlotType.Value);
+            InputSlots[6] = new CompositorInputSlot("PostAddition", CompositorInputSlotImportance.Required, 6, CompositorSlotType.Texture);
 
             OutputSlots = new CompositorOutputSlot[1];
             OutputSlots[0] = new CompositorOutputSlot("DiffuseColor", 0, OutputTexture, CompositorSlotType.Texture);
@@ -65,15 +68,18 @@ namespace FreezingArcher.Renderer.Compositor
                 PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
 
             DistanceFogIntensity = 0.08f;
-            DistanceFogColor = Color4.Black;
+            DistanceFogColor = FreezingArcher.Math.Color4.Black;
         }
 
         public override void Draw()
         {
-            PrivateRendererContext.Clear(Color4.Black, 0);
-            PrivateRendererContext.Clear(Color4.Black, 1);
-            PrivateRendererContext.Clear(Color4.Black, 2);
-            PrivateRendererContext.Clear(Color4.Black, 3);
+            PrivateRendererContext.Clear(FreezingArcher.Math.Color4.Black, 0);
+            //PrivateRendererContext.Clear(Color4.Black, 1);
+            //PrivateRendererContext.Clear(Color4.Black, 2);
+            //PrivateRendererContext.Clear(Color4.Black, 3);
+            //PrivateRendererContext.Clear(Color4.Black, 4);
+
+            PrivateRendererContext.Clear(FreezingArcher.Math.Color4.Black);
 
             PrivateRendererContext.EnableDepthTest(false);
 
@@ -102,6 +108,7 @@ namespace FreezingArcher.Renderer.Compositor
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("TexturePosition"), 1);
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("TextureNormal"), 2);
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("TextureSpecular"), 3);
+            NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("TexturePostAddition"), 6);
 
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("DistanceFogIntensity"), DistanceFogIntensity);
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("DistanceFogColor"), DistanceFogColor);

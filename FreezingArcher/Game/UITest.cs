@@ -37,45 +37,25 @@ using Jitter.LinearMath;
 
 namespace FreezingArcher.Game
 {
-    public class UITest : FreezingArcher.Messaging.Interfaces.IMessageConsumer
+    public class UITest
     {
-        readonly UISceneObject sceneobj;
-
-        public UITest (Application app, MessageProvider messageProvider, Entity player, CoreScene scene)
+        public UITest (Application app, MessageProvider messageProvider, Entity player, RendererContext rc)
         {
-            ValidMessages = new[] { (int) MessageId.WindowResize };
-            messageProvider += this;
-
             var state = app.Game.GetGameState ("maze_overworld");
 
-            sceneobj = new UISceneObject ();
-            sceneobj.Priority = 999;
-            scene.BackgroundColor = Color4.Transparent;
-            scene.AddObject (sceneobj);
             this.player = player;
 
             var input = new FreezingArcher.UI.Input.FreezingArcherInput(app, state.MessageProxy);
-            input.Initialize (sceneobj.Canvas);
-            sceneobj.Canvas.SetSize(app.Window.Size.X, app.Window.Size.Y);
-            sceneobj.Canvas.ShouldDrawBackground = false;
+            input.Initialize (rc.Canvas);
+            rc.Canvas.SetSize(app.Window.Size.X, app.Window.Size.Y);
+            rc.Canvas.ShouldDrawBackground = false;
 
             inventoryGui = new InventoryGUI(app, state, player, messageProvider);
             var inventory = new Inventory(messageProvider, state, player, new Vector2i(5, 7), 9);
-            inventoryGui.Init(sceneobj.Canvas, inventory);
+            inventoryGui.Init(rc.Canvas, inventory);
         }
 
         Entity player;
         InventoryGUI inventoryGui;
-
-        public void ConsumeMessage (FreezingArcher.Messaging.Interfaces.IMessage msg)
-        {
-            var wrm = msg as WindowResizeMessage;
-            if (wrm != null)
-            {
-                sceneobj.Canvas.SetBounds (0, 0, wrm.Width, wrm.Height);
-            }
-        }
-
-        public int[] ValidMessages { get; private set; }
     }
 }

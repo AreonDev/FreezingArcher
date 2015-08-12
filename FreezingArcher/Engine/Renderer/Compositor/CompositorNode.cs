@@ -54,11 +54,12 @@ namespace FreezingArcher.Renderer.Compositor
                 return delegate ()
                 {
                     Node.InitOtherStuff();
-                    Node.ConfigureSlots();
                     Node.LoadEffect();
                   
                     Node.ConfigureSlots();
                     Node.InitFramebuffer();
+
+                    Node.PostInit();
 
                     WasCalled = true;
                 };
@@ -186,7 +187,7 @@ namespace FreezingArcher.Renderer.Compositor
                     }
                 }
 
-
+                OutputFramebuffer.UseAttachments(Attachments.ToArray());
 
                 OutputFramebuffer.EndPrepare();
             }
@@ -216,7 +217,6 @@ namespace FreezingArcher.Renderer.Compositor
             {
                 if (OutputFramebuffer != null)
                 {
-                    OutputFramebuffer.UseAttachments(Attachments.ToArray());
                     OutputFramebuffer.Bind(FrameBuffer.FrameBufferTarget.Draw);
                 }
 
@@ -238,6 +238,8 @@ namespace FreezingArcher.Renderer.Compositor
 
         public virtual void Draw()
         {
+            PrivateRendererContext.Clear(FreezingArcher.Math.Color4.Black);
+
             Sprite spr = new Sprite();
             spr.AbsolutePosition = new FreezingArcher.Math.Vector2(0, 0);
             spr.CustomEffect = false;
@@ -258,6 +260,15 @@ namespace FreezingArcher.Renderer.Compositor
         {
             if (IsInitialized)
             {
+                if (InputSlots != null && InputSlots.Length > 0)
+                {
+                    foreach (CompositorInputSlot sl in InputSlots)
+                    {
+                        if (sl.SlotTexture != null)
+                            sl.SlotTexture.Unbind();
+                    }
+                }
+
                 if(NodeEffect != null)
                     NodeEffect.UnbindPipeline();
 
@@ -275,7 +286,10 @@ namespace FreezingArcher.Renderer.Compositor
             spr.AbsolutePosition = new FreezingArcher.Math.Vector2(0, 0);
             spr.CustomEffect = false;
 
-            spr.Init(InputSlots[0].SlotTexture);
+            try
+            {
+                spr.Init(InputSlots[0].SlotTexture);
+            }catch{}
 
             PrivateRendererContext.DrawSpriteAbsolute(spr);
 
@@ -292,6 +306,7 @@ namespace FreezingArcher.Renderer.Compositor
         public abstract void ConfigureSlots();
         public abstract void LoadEffect();
         public virtual void InitOtherStuff(){}
+        public virtual void PostInit(){}
     }
 }
 

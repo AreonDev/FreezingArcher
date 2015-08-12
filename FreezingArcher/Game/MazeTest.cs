@@ -48,16 +48,13 @@ namespace FreezingArcher.Game
         double f = 0;
 
         LoadingScreen loadingScreen;
-        public CoreScene     UIScene{ get; private set;}
 
-        BasicCompositor compositor;
+        public CoreScene     Scene{ get; private set; }
 
-        CompositorNodeScene scenenode1;
-        CompositorNodeScene scenenode2;
-        CompositorNodeOutput outputnode;
-        CompositorNodeDeferredShading deferredshadingnode;
-        CompositorBlurNode blur;
-        CompositorNodeTextureAlphaMerger merger;
+        BasicCompositor Compositor;
+
+        CompositorNodeScene MazeSceneNode;
+        CompositorNodeOutput OutputNode;
 
         ParticleSceneObject particle;
         ParticleSceneObject particle_eye1;
@@ -76,31 +73,34 @@ namespace FreezingArcher.Game
         /// <param name="rendererContext">The renderer context for the maze scenes.</param>
         /// <param name="game">The game the maze should be generated in.</param>
         public MazeTest (MessageProvider messageProvider, ObjectManager objmnr, RendererContext rendererContext,
-            Content.Game game, Application app)
+                         Content.Game game, Application app)
         {
-            ValidMessages = new[] { (int) MessageId.Input, (int)MessageId.Update, (int)MessageId.Running, (int) MessageId.WindowClose };
+            ValidMessages = new[] {
+                (int)MessageId.Input,
+                (int)MessageId.Update,
+                (int)MessageId.Running,
+                (int)MessageId.WindowClose
+            };
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
             this.game = game;
             application = app;
 
-            scenenode1 = new CompositorNodeScene (rendererContext, messageProvider);
-            scenenode2 = new CompositorNodeScene (rendererContext, messageProvider);
-            outputnode = new CompositorNodeOutput (rendererContext, messageProvider);
-            deferredshadingnode = new CompositorNodeDeferredShading (rendererContext, messageProvider);
-            blur = new CompositorBlurNode (rendererContext, messageProvider);
-            merger = new CompositorNodeTextureAlphaMerger (rendererContext, messageProvider);
+            MazeSceneNode = new CompositorNodeScene (rendererContext, messageProvider);
+            OutputNode = new CompositorNodeOutput (rendererContext, messageProvider);
 
-            game.SceneNode = scenenode1;
+            game.MazeSceneNode = MazeSceneNode;
 
-            game.AddGameState("maze_overworld", Content.Environment.Default, null);
-            var state = game.GetGameState("maze_overworld");
-            state.Scene = new CoreScene(rendererContext, messageProvider);
-            state.Scene.BackgroundColor = Color4.Crimson;
+            game.AddGameState ("maze_overworld", Content.Environment.Default, null);
+            var state = game.GetGameState ("maze_overworld");
+            state.Scene = new CoreScene (rendererContext, messageProvider);
+            state.Scene.SceneName = "MazeOverworld";
+            state.Scene.Active = false;
+            state.Scene.BackgroundColor = Color4.Fuchsia;
 
             light = new Light (LightType.SpotLight);
             light.Color = new Color4 (0.3f, 0.3f, 0.3f, 1.0f);
-            light.AmbientIntensity = 0.5f;
+            light.AmbientIntensity = 0.9f;
             light.AmbientColor = new Color4 (0.2f, 0.2f, 0.2f, 1.0f);
             //light.PointLightConstantAttenuation = 0.8f;
             light.PointLightLinearAttenuation = 0.2f;
@@ -109,84 +109,59 @@ namespace FreezingArcher.Game
 
             state.Scene.Lights.Add (light);
 
-            state.MessageProxy.StartProcessing();
+            state.MessageProxy.StartProcessing ();
 
             particle_eye1 = new ParticleSceneObject (10);
             particle_eye2 = new ParticleSceneObject (10);
             particle_smoke = new ParticleSceneObject (200);
-            particle_eye1.Priority = 999;
-            particle_eye2.Priority = 999;
-            particle_smoke.Priority = 1000;
+            particle_eye1.Priority = 5999;
+            particle_eye2.Priority = 5999;
+            particle_smoke.Priority = 6000;
 
             state.Scene.AddObject (particle_eye1);
             state.Scene.AddObject (particle_eye2);
             state.Scene.AddObject (particle_smoke);
 
             paremitter = new ScobisParticleEmitter (particle_eye1, particle_eye2, particle_smoke);
-            paremitter.SpawnPosition = new Vector3 (30.0f, 20.0f, 30.0f);
+            paremitter.SpawnPosition = new Vector3 (30.0f, 30.0f, 40.0f);
 
             particle = new ParticleSceneObject (paremitter.ParticleCount);
-            particle.Priority = 998;
+            particle.Priority = 5998;
             state.Scene.AddObject (particle);
 
             paremitter.Init (particle, rendererContext);
 
-
-            UIScene = new CoreScene (rendererContext, messageProvider);
-            UIScene.BackgroundColor = Color4.Transparent;
-
-            scenenode2.Scene = UIScene;
-            UIScene.Active = false;
-
-            loadingScreen = new LoadingScreen(application, messageProvider, "loading.png",
+            loadingScreen = new LoadingScreen (application, messageProvider, "loading.png",
                 "MazeLoadingScreen",
-                to: new[] {new Tuple<string, GameStateTransition>(state.Name, new GameStateTransition(0))});
+                to: new[] { new Tuple<string, GameStateTransition> (state.Name, new GameStateTransition (0)) });
 
-            game.SwitchToGameState("MazeLoadingScreen");
+            game.SwitchToGameState ("MazeLoadingScreen");
 
-            compositor = new BasicCompositor (objmnr, rendererContext);
+            Compositor = new BasicCompositor (objmnr, rendererContext);
 
-            compositor.AddNode (scenenode1);
-            compositor.AddNode (scenenode2);
-            compositor.AddNode (outputnode);
-            compositor.AddNode (deferredshadingnode);
-            compositor.AddNode (blur);
-            compositor.AddNode (merger);
+            Compositor.AddNode (MazeSceneNode);
+            Compositor.AddNode (OutputNode);
 
-            compositor.AddConnection (scenenode1, deferredshadingnode, 0, 0);
-            compositor.AddConnection (scenenode1, deferredshadingnode, 1, 1);
-            compositor.AddConnection (scenenode1, deferredshadingnode, 2, 2);
-            compositor.AddConnection (scenenode1, deferredshadingnode, 3, 3);
-            compositor.AddConnection (scenenode1, deferredshadingnode, 4, 4);
-            compositor.AddConnection (scenenode1, deferredshadingnode, 5, 5);
+            Compositor.AddConnection (MazeSceneNode, OutputNode, 0, 0);
 
-            compositor.AddConnection (deferredshadingnode, merger, 0, 0);
-
-            compositor.AddConnection (merger, outputnode, 0, 0);
-            //compositor.AddConnection (blur, outputnode, 0, 0);
-
-            compositor.AddConnection (scenenode2, merger, 0, 1);
-
-            deferredshadingnode.Active = false;
-
-            rendererContext.Compositor = compositor;
+            rendererContext.Compositor = Compositor;
 
             Player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, new[] {
-                typeof (HealthComponent),
+                typeof(HealthComponent),
             }, new[] {
-                typeof (MovementSystem),
-                typeof (KeyboardControllerSystem),
-                typeof (MouseControllerSystem),
-                typeof (SkyboxSystem),
-                typeof (PhysicsSystem)
+                typeof(MovementSystem),
+                typeof(KeyboardControllerSystem),
+                typeof(MouseControllerSystem),
+                typeof(SkyboxSystem),
+                typeof(PhysicsSystem)
             });
 
             // embed new maze into game state logic and create a MoveEntityToScene
-            SkyboxSystem.CreateSkybox(state.Scene, Player);
-            Player.GetComponent<TransformComponent>().Position = new Vector3(0, 1.85f, 0);
+            SkyboxSystem.CreateSkybox (state.Scene, Player);
+            Player.GetComponent<TransformComponent> ().Position = new Vector3 (0, 1.85f, 0);
             state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
 
-            RigidBody playerBody = new RigidBody (new SphereShape(1f));
+            RigidBody playerBody = new RigidBody (new SphereShape (1f));
             playerBody.Position = Player.GetComponent<TransformComponent> ().Position.ToJitterVector ();
             playerBody.AllowDeactivation = false;
             playerBody.Material.StaticFriction = 0f;
@@ -194,29 +169,32 @@ namespace FreezingArcher.Game
             playerBody.Material.Restitution = 0.1f;
             //playerBody.Mass = 1000000.0f;
             playerBody.Update ();
-            Player.GetComponent<PhysicsComponent>().RigidBody = playerBody;
-            Player.GetComponent<PhysicsComponent>().World = state.PhysicsManager.World;
+            Player.GetComponent<PhysicsComponent> ().RigidBody = playerBody;
+            Player.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
             Player.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (playerBody);
 
-            int seed = new Random().Next();
-            var rand = new Random(seed);
-            Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
-            maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
+            int seed = new Random ().Next ();
+            var rand = new Random (seed);
+            Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
+            maze [0] = mazeGenerator.CreateMaze (rand.Next (), state.MessageProxy, state.PhysicsManager, 30, 30);
+            maze [0].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
 
-            game.AddGameState("maze_underworld", Content.Environment.Default,
-                new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
-                new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) });
-            state = game.GetGameState("maze_underworld");
-            state.Scene = new CoreScene(rendererContext, messageProvider);
+            game.AddGameState ("maze_underworld", Content.Environment.Default,
+                new[] { new Tuple<string, GameStateTransition> ("maze_overworld", new GameStateTransition (0)) },
+                new[] { new Tuple<string, GameStateTransition> ("maze_overworld", new GameStateTransition (0)) });
+            state = game.GetGameState ("maze_underworld");
+            state.Scene = new CoreScene (rendererContext, messageProvider);
+            state.Scene.SceneName = "MazeUnderworld";
+            state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.AliceBlue;
-            state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
-            maze[1] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
-            maze[1].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
 
-            state.MessageProxy.StopProcessing();
+            state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
+            maze [1] = mazeGenerator.CreateMaze (rand.Next (), state.MessageProxy, state.PhysicsManager, 30, 30);
+            maze [1].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
+
+            state.MessageProxy.StopProcessing ();
             //game.SwitchToGameState("maze_overworld");
         }
 
@@ -232,33 +210,40 @@ namespace FreezingArcher.Game
 
         int currentMaze;
 
-        void SwitchMaze()
+        void SwitchMaze ()
         {
             if (currentMaze == 0)
             {
-                maze[0].PlayerPosition = Player.GetComponent<TransformComponent>().Position;
-                game.MoveEntityToGameState(Player, game.GetGameState("maze_overworld"), game.GetGameState("maze_underworld"));
-                game.SwitchToGameState("maze_underworld");
+                game.CurrentGameState.Scene.Active = false;
+
+                maze [0].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
+                game.MoveEntityToGameState (Player, game.GetGameState ("maze_overworld"), game.GetGameState ("maze_underworld"));
+                game.SwitchToGameState ("maze_underworld");
                 if (MessageCreated != null)
                     MessageCreated (new TransformMessage (Player, maze [1].PlayerPosition, Quaternion.Identity));
                 //player.GetComponent<PhysicsComponent>().RigidBody.Position = maze[1].PlayerPosition;
                 currentMaze = 1;
-            }
-            else if (currentMaze == 1)
-            {
-                maze[1].PlayerPosition = Player.GetComponent<TransformComponent>().Position;
-                game.MoveEntityToGameState(Player, game.GetGameState("maze_underworld"), game.GetGameState("maze_overworld"));
-                game.SwitchToGameState("maze_overworld");
 
-                if (MessageCreated != null)
-                    MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
+                game.CurrentGameState.Scene.Active = true;
+            } else if (currentMaze == 1)
+                {
+                    game.CurrentGameState.Scene.Active = false;
 
-                //player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
-                currentMaze = 0;
-            }
+                    maze [1].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
+                    game.MoveEntityToGameState (Player, game.GetGameState ("maze_underworld"), game.GetGameState ("maze_overworld"));
+                    game.SwitchToGameState ("maze_overworld");
+
+                    if (MessageCreated != null)
+                        MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
+
+                    //player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
+                    currentMaze = 0;
+
+                    game.CurrentGameState.Scene.Active = true;
+                }
         }
 
-        #region IMessageConsumer implementation
+#region IMessageConsumer implementation
 
         bool finishedLoading = false;
 
@@ -268,41 +253,45 @@ namespace FreezingArcher.Game
         /// <param name="msg">Message to process</param>
         public void ConsumeMessage (IMessage msg)
         {
-            if (msg.MessageId == (int)MessageId.Update) 
+            if (msg.MessageId == (int)MessageId.Update)
             {
                 var um = msg as UpdateMessage;
 
-                if (maze[0].HasFinished && maze[1].HasFinished && !finishedLoading)
+                if (maze [0].HasFinished && maze [1].HasFinished && !finishedLoading)
                 {
-                    maze[0].ExportAsImage("overworld.png");
-                    maze[1].ExportAsImage("underworld.png");
+                    maze [0].ExportAsImage ("overworld.png");
+                    maze [1].ExportAsImage ("underworld.png");
 
                     finishedLoading = true;
 
-                    deferredshadingnode.Active = true;
-                    UIScene.Active = true;
+                    loadingScreen.Ready ();
 
                     if (game.CurrentGameState.Name != "maze_overworld")
-                        game.SwitchToGameState("maze_overworld");
-                }
+                    {
+                        game.SwitchToGameState ("maze_overworld");
+
+                        game.CurrentGameState.Scene.Active = true;
+                    }
+                } else if (!finishedLoading)
+                        loadingScreen.BringToFront ();
 
                 paremitter.Update ((float)um.TimeStamp.TotalSeconds);
 
-                if(game.CurrentGameState == game.GetGameState("maze_overworld") && maze[0].HasFinished)
-                    game.CurrentGameState.PhysicsManager.Update(um.TimeStamp);
+                if (game.CurrentGameState == game.GetGameState ("maze_overworld") && maze [0].HasFinished)
+                    game.CurrentGameState.PhysicsManager.Update (um.TimeStamp);
                 
-                if(game.CurrentGameState == game.GetGameState("maze_underworld") && maze[1].HasFinished)
-                    game.CurrentGameState.PhysicsManager.Update(um.TimeStamp);
+                if (game.CurrentGameState == game.GetGameState ("maze_underworld") && maze [1].HasFinished)
+                    game.CurrentGameState.PhysicsManager.Update (um.TimeStamp);
 
                 //Update pointlight position and direction
                 CoreScene scene = null;
                 scene = game.CurrentGameState.Scene;
 
-                if (scene != null) 
+                if (scene != null)
                 {
                     BaseCamera cam = scene.CameraManager.ActiveCamera;
 
-                    if (cam != null) 
+                    if (cam != null)
                     {
                         light.PointLightPosition = Player.GetComponent<TransformComponent> ().Position;
 
@@ -317,27 +306,27 @@ namespace FreezingArcher.Game
             var im = msg as InputMessage;
             if (im != null)
             {
-                if (im.IsActionPressedAndRepeated("frame"))
+                if (im.IsActionPressedAndRepeated ("frame"))
                 {
-                    SwitchMaze();
+                    SwitchMaze ();
                 }
 
-                if (im.IsActionDown ("bla_unfug_links")) 
+                if (im.IsActionDown ("bla_unfug_links"))
                 {
                     paremitter.SpawnPosition += new Vector3 (-0.02f, 0, 0);
                 }
 
-                if (im.IsActionDown ("bla_unfug_rechts")) 
+                if (im.IsActionDown ("bla_unfug_rechts"))
                 {
                     paremitter.SpawnPosition += new Vector3 (0.02f, 0, 0);
                 }
 
-                if (im.IsActionDown ("bla_unfug_runter")) 
+                if (im.IsActionDown ("bla_unfug_runter"))
                 {
                     paremitter.SpawnPosition += new Vector3 (0, -0.02f, 0);
                 }
 
-                if (im.IsActionDown ("bla_unfug_hoch")) 
+                if (im.IsActionDown ("bla_unfug_hoch"))
                 {
                     paremitter.SpawnPosition += new Vector3 (0, 0.02f, 0);
                 }
@@ -347,22 +336,24 @@ namespace FreezingArcher.Game
             {
                 Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Generate Mazes....");
 
-                maze[0].Generate(() => {
+                maze [0].Generate (() =>
+                {
                     if (MessageCreated != null)
                         MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
                     var state = game.GetGameState ("maze_underworld");
-                    maze[1].Generate (() => {
-                        if (maze[0].IsGenerated && !maze[0].AreFeaturesPlaced)
-                            maze[0].SpawnFeatures(null, maze[1].graph);
-                        if (maze[1].IsGenerated && !maze[1].AreFeaturesPlaced)
-                            maze[1].SpawnFeatures(maze[0].graph);
+                    maze [1].Generate (() =>
+                    {
+                        if (maze [0].IsGenerated && !maze [0].AreFeaturesPlaced)
+                            maze [0].SpawnFeatures (null, maze [1].graph);
+                        if (maze [1].IsGenerated && !maze [1].AreFeaturesPlaced)
+                            maze [1].SpawnFeatures (maze [0].graph);
                     }, state);
-                },game.GetGameState("maze_overworld"));
+                }, game.GetGameState ("maze_overworld"));
             }
 
-            if (msg.MessageId == (int) MessageId.WindowClose)
+            if (msg.MessageId == (int)MessageId.WindowClose)
             {
-                paremitter.Destroy();
+                paremitter.Destroy ();
             }
         }
 
@@ -372,12 +363,12 @@ namespace FreezingArcher.Game
         /// <value>The valid messages</value>
         public int[] ValidMessages { get; private set; }
 
-        #endregion
+#endregion
 
-        #region IMessageCreator implementation
+#region IMessageCreator implementation
 
         public event MessageEvent MessageCreated;
 
-        #endregion
+#endregion
     }
 }

@@ -58,7 +58,7 @@ namespace FreezingArcher.Content
             MessageProvider = messageProvider;
             RendererContext = rendererContext;
 
-            SceneNode = scenenode;
+            MazeSceneNode = scenenode;
 
             GameStateGraph = objmnr.CreateOrRecycle<DirectedWeightedGraph<GameState, GameStateTransition>>();
             GameStateGraph.Init();
@@ -79,7 +79,8 @@ namespace FreezingArcher.Content
         DirectedWeightedNode<GameState, GameStateTransition> currentNode;
         MessageProvider MessageProvider;
         RendererContext RendererContext;
-        public CompositorNodeScene SceneNode { get; set;}
+
+        public CompositorNodeScene MazeSceneNode { get; set;}
 
         /// <summary>
         /// Gets the game state graph.
@@ -105,16 +106,13 @@ namespace FreezingArcher.Content
                     return false;
                 }
 
-                if (currentNode.Data.Scene.CameraManager.ActiveCamera == null)
+                if (currentNode.Data.Scene != null && currentNode.Data.Scene.CameraManager.ActiveCamera == null)
                 {
                     currentNode.Data.Scene.CameraManager.ToggleCamera();
                 }
+                    
+                MazeSceneNode.Scene = currentNode.Data.Scene;
 
-                if (SceneNode == null)
-                    RendererContext.Scene = currentNode.Data.Scene;
-                else
-                    SceneNode.Scene = currentNode.Data.Scene;
-                
                 currentNode.Data.MessageProxy.StartProcessing();
                 return true;
             }
@@ -149,15 +147,12 @@ namespace FreezingArcher.Content
             currentNode.Data.MessageProxy.StopProcessing();
             currentNode = newstate;
 
-            if (currentNode.Data.Scene.CameraManager.ActiveCamera == null)
+            if (currentNode.Data.Scene != null && currentNode.Data.Scene.CameraManager.ActiveCamera == null)
             {
                 currentNode.Data.Scene.CameraManager.ToggleCamera();
             }
 
-            if (SceneNode == null)
-                RendererContext.Scene = currentNode.Data.Scene;
-            else
-                SceneNode.Scene = currentNode.Data.Scene;
+            MazeSceneNode.Scene = currentNode.Data.Scene;;
             
             currentNode.Data.MessageProxy.StartProcessing();
             return true;

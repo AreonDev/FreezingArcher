@@ -53,7 +53,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             if (MyModel != null)
             {
                 MyModel.EnableLighting = !NoLighting;
-                rc.DrawModel(MyModel, this.WorldMatrix, 1, rc.Scene);
+                rc.DrawModel(MyModel, this.WorldMatrix, 1, Scene);
             }
             else
                 this.ErrorCount++;
@@ -64,7 +64,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             if (MyModel != null)
             {
                 MyModel.EnableLighting = !NoLighting;
-                rc.DrawModel(MyModel, count == 1 ? WorldMatrix : FreezingArcher.Math.Matrix.Identity, count, rc.Scene);
+                rc.DrawModel(MyModel, count == 1 ? WorldMatrix : FreezingArcher.Math.Matrix.Identity, count, Scene);
             }
             else
                 this.ErrorCount++;

@@ -94,22 +94,7 @@ namespace FreezingArcher.Renderer
                 }
             }
         }
-
-        public Vector2 Plane
-        {
-            get
-            {
-                return plane;
-            }
-
-            set
-            {
-                plane = value;
-                if (OptionalEffect != null)
-                    OptionalEffect.PixelProgram.SetUniform(OptionalEffect.PixelProgram.GetUniformLocation("PlaneInformation"), plane);
-            }
-        }
-
+            
         public float Tile
         {
             get

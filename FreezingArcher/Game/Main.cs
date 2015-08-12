@@ -51,7 +51,7 @@ namespace FreezingArcher.Game
                 //new PhysicsTest(Application.Instance, messageManager);
                 //new InventoryTest();
 
-                new UITest(Application.Instance, messageManager, maze.Player, maze.UIScene);
+                new UITest(Application.Instance, messageManager, maze.Player, Application.Instance.RendererContext);
                 //new JitterTest(Application.Instance);
             }
 

@@ -34,7 +34,7 @@ layout(location = 2) out vec4 vpos; // Position (View Space)
 layout(location = 3) out vec3 normal; // surface normal (view space)
 layout(location = 4) out vec3 tangent; // tangent vector (view space)
 layout(location = 5) out vec3 binormal; // binormal vector (view space)
-layout(location = 6) out vec3 view_position;
+layout(location = 6) out vec4 view_position;
 //####################################################
  
 uniform int  InstancedDrawing;
@@ -42,9 +42,6 @@ uniform int  InstancedDrawing;
 uniform mat4 WorldMatrix;
 uniform mat4 ViewMatrix;
 uniform mat4 ProjectionMatrix;
-
-uniform vec3 LightPosition;
-uniform vec3 EyePosition;
 
 void main()
 {
@@ -71,6 +68,12 @@ void main()
                 vpos = (/*ViewMatrix * */WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0));
         else
                 vpos = (/*ViewMatrix * */WorldMatrix * vec4(InPosition, 1.0));
+
+        //Vertex position in view space (with model transformations)
+        if(InstancedDrawing == 1)
+                view_position = (ViewMatrix * WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0));
+        else
+                view_position = (ViewMatrix * WorldMatrix * vec4(InPosition, 1.0));
 
         //Tangent space vectors in view space (with model transformations)
         normal = normalize((normalmat * vec4(InNormal, 1.0)).xyz);

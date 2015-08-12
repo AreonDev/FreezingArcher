@@ -212,11 +212,11 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
             ParticleEffect.GeometryProgram.SetUniform(ParticleEffect.GeometryProgram.GetUniformLocation("WorldMatrix"), WorldMatrix);
 
-            if (rc.Scene.CameraManager.ActiveCamera != null)
+            if (Scene.CameraManager.ActiveCamera != null)
             {
-                ParticleEffect.GeometryProgram.SetUniform(ParticleEffect.GeometryProgram.GetUniformLocation("CameraPosition"), rc.Scene.CameraManager.ActiveCamera.Position);
-                ParticleEffect.GeometryProgram.SetUniform(ParticleEffect.GeometryProgram.GetUniformLocation("ViewMatrix"), rc.Scene.CameraManager.ActiveCamera.ViewMatrix);
-                ParticleEffect.GeometryProgram.SetUniform(ParticleEffect.GeometryProgram.GetUniformLocation("ProjectionMatrix"), rc.Scene.CameraManager.ActiveCamera.ProjectionMatrix);
+                ParticleEffect.GeometryProgram.SetUniform(ParticleEffect.GeometryProgram.GetUniformLocation("CameraPosition"), Scene.CameraManager.ActiveCamera.Position);
+                ParticleEffect.GeometryProgram.SetUniform(ParticleEffect.GeometryProgram.GetUniformLocation("ViewMatrix"), Scene.CameraManager.ActiveCamera.ViewMatrix);
+                ParticleEffect.GeometryProgram.SetUniform(ParticleEffect.GeometryProgram.GetUniformLocation("ProjectionMatrix"), Scene.CameraManager.ActiveCamera.ProjectionMatrix);
             }
 
             if (BillboardTexture != null)

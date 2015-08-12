@@ -82,6 +82,34 @@ namespace FreezingArcher.Renderer.Compositor
             }
         }
 
+        private int TextureDiffuseLocation = 0;
+        private int TexturePositionLocation = 0;
+        private int TextureNomalLocation = 0;
+        private int TextureSpecularLocation = 0;
+        private int DistanceFogIntensityLocation = 0;
+        private int DistanceFogColorLocation = 0;
+        private int CameraPositionLocation = 0;        
+
+        private struct LightLocationStruct
+        {
+            public int TypeLocation;
+            public int OnLocation;
+            public int LightColorLocation;
+            public int DirectionalLightDirectionLocation;
+            public int PointLightPositionLocation;
+            public int PointLightConstantAttLocation;
+            public int PointLightLinearAttLocation;
+            public int PointLightExpAttLocation;
+            public int SpotLightConeAngleLocation;
+            public int SpotLightConeCosineLocation;
+        }
+
+        private int AmbientColorLocation = 0;
+        private int AmbientIntensityLocation = 0;
+
+        private LightLocationStruct[] LightLocations = new LightLocationStruct[16];
+
+
         Texture2D FrameBufferOutputTexture;
         Texture2D FrameBufferColorTexture;
         Texture2D FrameBufferDepthTexture;
@@ -150,49 +178,37 @@ namespace FreezingArcher.Renderer.Compositor
 
             NoNodeEffect.BindPipeline();
 
-            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("TextureDiffuse"), 1);
-            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("TexturePosition"), 2);
-            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("TextureNormal"), 3);
-            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("TextureSpecular"), 4);
+            NoNodeEffect.PixelProgram.SetUniform(TextureDiffuseLocation, 1);
+            NoNodeEffect.PixelProgram.SetUniform(TexturePositionLocation, 2);
+            NoNodeEffect.PixelProgram.SetUniform(TextureNomalLocation, 3);
+            NoNodeEffect.PixelProgram.SetUniform(TextureSpecularLocation, 4);
 
-            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("DistanceFogIntensity"), 
-                Scene.DistanceFogIntensity);
-            NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("DistanceFogColor"), 
-                Scene.DistanceFogColor);
+            NoNodeEffect.PixelProgram.SetUniform(DistanceFogIntensityLocation, Scene.DistanceFogIntensity);
+            NoNodeEffect.PixelProgram.SetUniform(DistanceFogColorLocation, Scene.DistanceFogColor);
 
             if (Scene != null && Scene.CameraManager.ActiveCamera != null)
-                NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("CameraPosition"), 
-                    Scene.CameraManager.ActiveCamera.Position);
+                NoNodeEffect.PixelProgram.SetUniform(CameraPositionLocation, Scene.CameraManager.ActiveCamera.Position);
 
             //Setup lights
+            NoNodeEffect.PixelProgram.SetUniform(AmbientIntensityLocation, Scene.AmbientIntensity);
+            NoNodeEffect.PixelProgram.SetUniform(AmbientColorLocation, Scene.AmbientColor);
+
             List<Light> Lights = Scene != null ? Scene.Lights : null;
 
             if (Lights != null)
             {
                 for (int i = 0; i < Lights.Count; i++)
                 {
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].Type"), 
-                        (int)Lights[i].Type);
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].LightColor"), 
-                        Lights[i].Color);
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].AmbientIntensity"), 
-                        Lights[i].AmbientIntensity);
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].AmbientColor"), 
-                        Lights[i].AmbientColor);
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].DirectionalLightDirection"), 
-                        Lights[i].DirectionalLightDirection);
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightPosition"), 
-                        Lights[i].PointLightPosition);
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightConstantAtt"), 
-                        Lights[i].PointLightConstantAttenuation);
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightLinearAtt"), 
-                        Lights[i].PointLightLinearAttenuation);
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightExpAtt"), 
-                        Lights[i].PointLightExponentialAttenuation);
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].SpotLightConeAngle"), 
-                        Lights[i].SpotLightConeAngle);
-                    NoNodeEffect.PixelProgram.SetUniform(NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].SpotLightConeCosine"), 
-                        Lights[i].SpotLightConeCosine);
+                    NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].TypeLocation, (int)Lights[i].Type);
+                    NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].OnLocation, Lights[i].On ? 1 : 0);
+                    NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].LightColorLocation, Lights[i].Color);
+                    NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].DirectionalLightDirectionLocation, Lights[i].DirectionalLightDirection);
+                    NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].PointLightPositionLocation, Lights[i].PointLightPosition);
+                    NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].PointLightConstantAttLocation, Lights[i].PointLightConstantAttenuation);
+                    NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].PointLightLinearAttLocation, Lights[i].PointLightLinearAttenuation);
+                    NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].PointLightExpAttLocation, Lights[i].PointLightExponentialAttenuation);
+                    NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].SpotLightConeAngleLocation, Lights[i].SpotLightConeAngle);
+                    NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].SpotLightConeCosineLocation, Lights[i].SpotLightConeCosine);
                 }
             }
 
@@ -312,19 +328,19 @@ namespace FreezingArcher.Renderer.Compositor
             long ticks = DateTime.Now.Ticks;
 
             FrameBufferNormalTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferNormalTexture_"+ticks,
-                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
+                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, false);
 
             FrameBufferColorTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferColorTexture_" + ticks,
-                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
+                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, false);
 
             FrameBufferSpecularTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferSpecularTexture_" + ticks,
-                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
+                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, false);
 
             FrameBufferDepthTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferDepthTexture_" + ticks,
                 PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
 
             FrameBufferOutputTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferOutputTexture_" + ticks,
-                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, true);
+                PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, false, IntPtr.Zero, false, false);
 
             FrameBufferDepthStencilTexture = PrivateRendererContext.CreateTextureDepthStencil("CoreSceneFrameBufferDepthStencil_" + ticks,
                 PrivateRendererContext.ViewportSize.X, PrivateRendererContext.ViewportSize.Y, IntPtr.Zero, false);
@@ -363,6 +379,31 @@ namespace FreezingArcher.Renderer.Compositor
             NoNodeEffect.VertexProgram = PrivateRendererContext.RC2DEffect.VertexProgram;
 
             NodeEffect = null;
+
+            //Load all Locations
+            TextureDiffuseLocation =       NoNodeEffect.PixelProgram.GetUniformLocation("TextureDiffuse");
+            TexturePositionLocation =      NoNodeEffect.PixelProgram.GetUniformLocation("TexturePosition");
+            TextureNomalLocation =         NoNodeEffect.PixelProgram.GetUniformLocation("TextureNormal");
+            TextureSpecularLocation =      NoNodeEffect.PixelProgram.GetUniformLocation("TextureSpecular");
+            DistanceFogIntensityLocation = NoNodeEffect.PixelProgram.GetUniformLocation("DistanceFogIntensity");
+            DistanceFogColorLocation =     NoNodeEffect.PixelProgram.GetUniformLocation("DistanceFogColor");
+            CameraPositionLocation =       NoNodeEffect.PixelProgram.GetUniformLocation("CameraPosition");
+            AmbientIntensityLocation = NoNodeEffect.PixelProgram.GetUniformLocation("AmbientIntensity");
+            AmbientColorLocation = NoNodeEffect.PixelProgram.GetUniformLocation("AmbientColor");
+
+            for (int i = 0; i < LightLocations.Length; i++)
+            {
+                LightLocations[i].TypeLocation = NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].Type");
+                LightLocations[i].OnLocation = NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].On");
+                LightLocations[i].LightColorLocation = NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].LightColor");
+                LightLocations[i].DirectionalLightDirectionLocation = NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].DirectionalLightDirection");
+                LightLocations[i].PointLightPositionLocation = NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightPosition");
+                LightLocations[i].PointLightConstantAttLocation = NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightConstantAtt");
+                LightLocations[i].PointLightLinearAttLocation = NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightLinearAtt");
+                LightLocations[i].PointLightExpAttLocation = NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].PointLightExpAtt");
+                LightLocations[i].SpotLightConeAngleLocation = NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].SpotLightConeAngle");
+                LightLocations[i].SpotLightConeCosineLocation = NoNodeEffect.PixelProgram.GetUniformLocation("Lights[" + i + "].SpotLightConeCosine");
+            }
         }
 
         #endregion

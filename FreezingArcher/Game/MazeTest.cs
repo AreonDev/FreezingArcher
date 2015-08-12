@@ -63,7 +63,7 @@ namespace FreezingArcher.Game
 
         ScobisParticleEmitter paremitter;
 
-        Light light;
+        Light light1;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
@@ -98,16 +98,21 @@ namespace FreezingArcher.Game
             state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.Fuchsia;
 
-            light = new Light (LightType.SpotLight);
-            light.Color = new Color4 (0.3f, 0.3f, 0.3f, 1.0f);
-            light.AmbientIntensity = 0.9f;
-            light.AmbientColor = new Color4 (0.2f, 0.2f, 0.2f, 1.0f);
+            state.Scene.DistanceFogIntensity = 0.1f;
+
+            state.Scene.AmbientColor = Color4.White;
+            state.Scene.AmbientIntensity = 0.35f;
+
+            state.Scene.MaxRenderingDistance = 30.0f;
+
+            light1 = new Light (LightType.SpotLight);
+            light1.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
             //light.PointLightConstantAttenuation = 0.8f;
-            light.PointLightLinearAttenuation = 0.2f;
-            light.SpotLightConeAngle = Math.MathHelper.ToRadians (9.66f);
+            light1.PointLightLinearAttenuation = 0.05f;
+            light1.SpotLightConeAngle = Math.MathHelper.ToRadians (15.66f);
             //light.PointLightExponentialAttenuation = 0.000600f;
 
-            state.Scene.Lights.Add (light);
+            state.Scene.Lights.Add (light1);
 
             state.MessageProxy.StartProcessing ();
 
@@ -293,12 +298,12 @@ namespace FreezingArcher.Game
 
                     if (cam != null)
                     {
-                        light.PointLightPosition = Player.GetComponent<TransformComponent> ().Position;
+                        light1.PointLightPosition = Player.GetComponent<TransformComponent> ().Position;
 
-                        Vector3 SpotLightDir = (light.PointLightPosition + cam.Direction * 75.0f) - light.PointLightPosition;
+                        Vector3 SpotLightDir = (light1.PointLightPosition + cam.Direction * 75.0f) - light1.PointLightPosition;
                         SpotLightDir.Normalize ();
 
-                        light.DirectionalLightDirection = SpotLightDir;
+                        light1.DirectionalLightDirection = SpotLightDir;
                     }
                 }
             }

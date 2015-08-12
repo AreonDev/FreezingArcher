@@ -450,29 +450,29 @@ namespace Gwen.Renderer
         /// <returns>Width and height of the rendered text.</returns>
         public override Point MeasureText(Gwen.Font font, string text)
         {
-            System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
+                System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
 
-            if (sysFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
-            {
-                FreeFont(font);
-                LoadFont(font);
-                sysFont = font.RendererData as System.Drawing.Font;
-            }
+                if (sysFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
+                {
+                    FreeFont(font);
+                    LoadFont(font);
+                    sysFont = font.RendererData as System.Drawing.Font;
+                }
 
-            var key = new Tuple<String, Font>(text, font);
+                var key = new Tuple<String, Font>(text, font);
 
-            if (m_StringCache.ContainsKey(key))
-            {
-                var tex = m_StringCache[key].Texture;
-                return new Point(tex.Width, tex.Height);
-            }
+                if (m_StringCache.ContainsKey(key))
+                {
+                    var tex = m_StringCache[key].Texture;
+                    return new Point(tex.Width, tex.Height);
+                }
 
-            SizeF TabSize = m_Graphics.MeasureString("....", sysFont);
+                SizeF TabSize = m_Graphics.MeasureString("....", sysFont);
 
-            m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
-            SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
+                m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
+                SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
 
-            return new Point((int)Math.Round(size.Width+5), (int)Math.Round(size.Height+5));
+                return new Point((int)Math.Round(size.Width + 5), (int)Math.Round(size.Height + 5));
         }
 
         /// <summary>

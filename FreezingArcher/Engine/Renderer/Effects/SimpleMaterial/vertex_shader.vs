@@ -34,7 +34,6 @@ layout(location = 2) out vec4 vpos; // Position (View Space)
 layout(location = 3) out vec3 normal; // surface normal (view space)
 layout(location = 4) out vec3 tangent; // tangent vector (view space)
 layout(location = 5) out vec3 binormal; // binormal vector (view space)
-layout(location = 6) out vec4 view_position;
 //####################################################
  
 uniform int  InstancedDrawing;
@@ -45,35 +44,23 @@ uniform mat4 ProjectionMatrix;
 
 void main()
 {
-        // Vertex position in clip space
+        mat4 pre_multiplied_world;
+
         if(InstancedDrawing == 1)
-                hpos = ProjectionMatrix * ViewMatrix * WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0);
+                pre_multiplied_world = WorldMatrix * InInstanceWorld;
         else
-                hpos = ProjectionMatrix * ViewMatrix * WorldMatrix * vec4(InPosition, 1.0);
+                pre_multiplied_world = WorldMatrix;
+
+        hpos = ProjectionMatrix * ViewMatrix * pre_multiplied_world * vec4(InPosition, 1.0);
 
         gl_Position = hpos;
 
         //copy texture coordinates
         texcoord = InTexCoord1.xy;
 
-        mat4 normalmat;
+        mat4 normalmat = transpose(inverse(pre_multiplied_world));
 
-        if(InstancedDrawing == 1)
-                normalmat = transpose(inverse(/*ViewMatrix * */WorldMatrix * InInstanceWorld));
-        else
-                normalmat = transpose(inverse(/*ViewMatrix * */WorldMatrix));
-
-        //Vertex position in view space (with model transformations)
-        if(InstancedDrawing == 1)
-                vpos = (/*ViewMatrix * */WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0));
-        else
-                vpos = (/*ViewMatrix * */WorldMatrix * vec4(InPosition, 1.0));
-
-        //Vertex position in view space (with model transformations)
-        if(InstancedDrawing == 1)
-                view_position = (ViewMatrix * WorldMatrix * InInstanceWorld * vec4(InPosition, 1.0));
-        else
-                view_position = (ViewMatrix * WorldMatrix * vec4(InPosition, 1.0));
+        vpos = (pre_multiplied_world * vec4(InPosition, 1.0));
 
         //Tangent space vectors in view space (with model transformations)
         normal = normalize((normalmat * vec4(InNormal, 1.0)).xyz);

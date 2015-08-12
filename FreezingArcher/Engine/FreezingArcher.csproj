@@ -404,7 +404,6 @@ echo Successfully finished!</PostBuildEvent>
     <Compile Include="Messaging\ItemAddedToInventoryMessage.cs" />
     <Compile Include="Messaging\ActiveInventoryBarItemChangedMessage.cs" />
     <Compile Include="Renderer\Compositor\CompositorNodeScene.cs" />
-    <Compile Include="Renderer\Compositor\CompositorNodeDeferredShading.cs" />
     <Compile Include="Renderer\DeferredShading.cs" />
     <Compile Include="Renderer\Compositor\CompositorBlurNode.cs" />
     <Compile Include="Renderer\Compositor\CompositorNodeTextureAlphaMerger.cs" />

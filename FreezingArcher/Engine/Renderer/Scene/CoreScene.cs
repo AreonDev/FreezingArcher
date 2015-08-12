@@ -220,7 +220,10 @@ namespace FreezingArcher.Renderer.Scene
            return Objects.OrderBy(o => o.Priority);
         }
 
-        public List<Light> Lights { get; set;}
+        public Color4 AmbientColor { get; set;}
+        public float  AmbientIntensity { get; set;}
+
+        public List<Light> Lights { get; private set;}
         public Color4 BackgroundColor{ get; set;}
         public string SceneName{ get; set;}
         public CameraManager CameraManager{ get; set;}
@@ -239,7 +242,7 @@ namespace FreezingArcher.Renderer.Scene
             DistanceFogIntensity = 0.08f;
             DistanceFogColor = FreezingArcher.Math.Color4.Black;
 
-            MaxRenderingDistance = 20.0f;
+            MaxRenderingDistance = 1000.0f;
 
             ValidMessages = new int[0];
             //messageProvider += this;

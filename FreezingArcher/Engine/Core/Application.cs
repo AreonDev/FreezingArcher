@@ -460,19 +460,25 @@ namespace FreezingArcher.Core
         {
             Logger.Log.AddLogEntry(LogLevel.Fine, ClassName, "Destroying application '{0}' ...", Name);
             Loaded = false;
-            MessageManager.StopProcessing ();
 
             if (!IsCommandLineInterface)
             {
-                Game.Destroy();
+                Window.Destroy ();
+
+                Thread.Sleep(100);
+
                 PeriodicInputTask.Stop ();
                 PeriodicUpdateTask.Stop ();
                 PeriodicFramecounterTask.Stop (); 
                 updateStopwatch.Stop ();
                 frameStopwatch.Stop();
+
+                Game.Destroy();
+
                 AudioManager.Dispose ();
-                Window.Destroy ();
             }
+
+            MessageManager.StopProcessing ();
 
             #if DEBUG_EVENTS
             Console.SetCursorPosition (0, OrigRow + 17);

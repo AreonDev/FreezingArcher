@@ -54,9 +54,6 @@ namespace FreezingArcher.Renderer.Compositor
 
             SlotType = type;
 
-            if ((SlotType == CompositorSlotType.Texture || SlotType == CompositorSlotType.ValueTexture) && SlotTexture == null)
-                Logger.Log.AddLogEntry(LogLevel.Error, "CompositorInputSlot: " + Name, FreezingArcher.Core.Status.BadArgument);
-
             IsConnected = false;
         }
     }

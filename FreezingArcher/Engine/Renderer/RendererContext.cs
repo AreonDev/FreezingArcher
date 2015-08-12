@@ -43,7 +43,7 @@ namespace FreezingArcher.Renderer
 {
     public class RendererContext : RendererCore
     {
-        public Gwen.Renderer.Base Renderer { get; private set;}
+        public Gwen.Renderer.Base GwenRenderer { get; private set;}
         public Gwen.Skin.TexturedBase Skin { get; private set;}
         public Gwen.Control.Canvas Canvas{ get; private set;}
 
@@ -109,8 +109,8 @@ namespace FreezingArcher.Renderer
             SimpleMaterial = new SimpleMaterial();
             SimpleMaterial.Init(this);
 
-            Renderer = new Gwen.Renderer.FreezingArcherGwenRenderer(this);
-            Skin = new Gwen.Skin.TexturedBase(Renderer, "lib/UI/Skins/NoWayOutSkin.png");
+            GwenRenderer = new Gwen.Renderer.FreezingArcherGwenRenderer(this);
+            Skin = new Gwen.Skin.TexturedBase(GwenRenderer, "lib/UI/Skins/NoWayOutSkin.png");
             Canvas = new Gwen.Control.Canvas(Skin);
 
             return true;
@@ -359,6 +359,7 @@ namespace FreezingArcher.Renderer
             if (mdl != null)
             {
                 EnableDepthTest(mdl.EnableDepthTest);
+                EnableDepthMaskWriting(mdl.EnableDepthTest);
 
                 SetCullMode(RendererCullMode.Front);
 
@@ -430,6 +431,7 @@ namespace FreezingArcher.Renderer
                 }
 
                 EnableDepthTest(true);
+                EnableDepthMaskWriting(true);
             }
         }
 

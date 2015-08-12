@@ -30,6 +30,19 @@ namespace FreezingArcher.Renderer.Scene
             }
         }
 
+        public bool On 
+        {
+            get
+            {
+                return _On == 1;
+            }
+
+            set
+            {
+                _On = value ? 1 : 0;
+            }
+        }
+
         public Color4 LightColor
         {
             get
@@ -45,36 +58,7 @@ namespace FreezingArcher.Renderer.Scene
                 _LightColorA = value.A;
             }
         }
-
-        public Color4 AmbientColor
-        {
-            get
-            {
-                return new Color4(_AmbientColorR, _AmbientColorG, _AmbientColorB, _AmbientColorA);
-            }
-
-            set
-            {
-                _AmbientColorR = value.R;
-                _AmbientColorG = value.G;
-                _AmbientColorB = value.B;
-                _AmbientColorA = value.A;
-            }
-        }
-
-        public float AmbientIntensity 
-        {
-            get
-            {
-                return _AmbientIntensity;
-            }
-
-            set
-            {
-                _AmbientIntensity = value;
-            }
-        }
-
+            
         public Vector3 DirectionalLightDirection
         {
             get
@@ -173,17 +157,12 @@ namespace FreezingArcher.Renderer.Scene
 
         int _Type;
 
+        int _On;
+
         float _LightColorB;
         float _LightColorG;
         float _LightColorR;
         float _LightColorA;
-
-        float _AmbientColorR;
-        float _AmbientColorG;
-        float _AmbientColorB;
-        float _AmbientColorA;
-
-        float _AmbientIntensity;
 
         //Directional Light
         float _LightDirectionX;
@@ -223,6 +202,19 @@ namespace FreezingArcher.Renderer.Scene
             }
         }
 
+        public bool On
+        {
+            get
+            {
+                return _Definition.On;
+            }
+
+            set
+            {
+                _Definition.On = value;
+            }
+        }
+
         public Color4 Color 
         { 
             get
@@ -233,32 +225,6 @@ namespace FreezingArcher.Renderer.Scene
             set
             {
                 _Definition.LightColor = value;
-            }
-        }
-
-        public Color4 AmbientColor
-        {
-            get
-            {
-                return _Definition.AmbientColor;
-            }
-
-            set
-            {
-                _Definition.AmbientColor = value;
-            }
-        }
-
-        public float  AmbientIntensity  
-        {
-            get
-            {
-                return _Definition.AmbientIntensity;
-            }
-
-            set
-            {
-                _Definition.AmbientIntensity = value;
             }
         }
 
@@ -360,8 +326,9 @@ namespace FreezingArcher.Renderer.Scene
         {
             _Definition = new LightDefinition();
 
+            On = true;
+
             Color = Color4.White;
-            AmbientIntensity = 1.0f;
             DirectionalLightDirection = new Vector3(1.0f, -1.0f, 0.0f);
 
             PointLightPosition = Vector3.Zero;

@@ -163,6 +163,9 @@ namespace FreezingArcher.Core
         {
             running = false;
             World.Clear();
+
+            updateEvent.Set();
+
             updateEvent.Close();
             updateEvent.Dispose();
             physicsThread.Abort();

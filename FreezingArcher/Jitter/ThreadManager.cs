@@ -76,6 +76,19 @@ namespace Jitter
 
         private ThreadManager() { }
 
+        ~ThreadManager()
+        {
+            running = false;
+
+            waitHandleA.Set ();
+            waitHandleA.Close ();
+            waitHandleA.Dispose ();
+
+            waitHandleB.Set ();
+            waitHandleB.Close ();
+            waitHandleB.Dispose ();
+        }
+
         private void Initialize()
         {
 
@@ -95,6 +108,8 @@ namespace Jitter
             currentWaitHandle = waitHandleA;
 
             AutoResetEvent initWaitHandle = new AutoResetEvent(false);
+
+            running = true;
 
             for (int i = 1; i < threads.Length; i++)
             {
@@ -150,9 +165,11 @@ namespace Jitter
             parameters.Add(param);
         }
 
+        bool running = false;
+
         private void ThreadProc()
         {
-            while (true)
+            while (running)
             {
                 Interlocked.Increment(ref waitingThreadCount);
                 waitHandleA.WaitOne();

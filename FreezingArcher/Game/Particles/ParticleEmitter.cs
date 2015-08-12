@@ -132,6 +132,8 @@ namespace FreezingArcher.Game
         {
             running = false;
 
+            updateEvent.Set ();
+
             updateEvent.Close ();
             updateEvent.Dispose ();
 

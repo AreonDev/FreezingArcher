@@ -432,7 +432,7 @@ namespace FreezingArcher.Game
             if (shape == null)
             {
                 List<JVector> vertices = new List<JVector>();
-                model.Model.Meshes[0].Vertices.ForEach(x => (vertices.Add(x.ToJitterVector())));
+                model.Model.Meshes[0].Vertices.ForEach(x => vertices.Add(x.ToJitterVector()));
 
                 List<TriangleVertexIndices> indices = new List<TriangleVertexIndices>();
 

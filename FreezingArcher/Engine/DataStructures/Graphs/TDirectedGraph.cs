@@ -366,7 +366,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 return startNode;
 
             reachedNodes.Add(startNode);
-            startNode.OutgoingEdges.ForEach(stack.Push);
+            startNode.OutgoingEdges.ForEach((Action<DirectedEdge<TData>>)stack.Push);
 
             do
             {
@@ -378,7 +378,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         return edge.DestinationNode;
 
                     reachedNodes.Add(edge.DestinationNode);
-                    edge.DestinationNode.OutgoingEdges.ForEach(stack.Push);
+                    edge.DestinationNode.OutgoingEdges.ForEach((Action<DirectedEdge<TData>>)stack.Push);
                 }
             } while (stack.Count > 0);
 
@@ -470,7 +470,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 yield return graph.Nodes[0].Data;
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].OutgoingEdges.ForEach(stack.Push);
+                graph.Nodes[0].OutgoingEdges.ForEach((Action<DirectedEdge<TData>>)stack.Push);
 
                 do
                 {
@@ -481,7 +481,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         yield return edge.DestinationNode.Data;
 
                         reachedNodes.Add(edge.DestinationNode);
-                        edge.DestinationNode.OutgoingEdges.ForEach(stack.Push);
+                        edge.DestinationNode.OutgoingEdges.ForEach((Action<DirectedEdge<TData>>)stack.Push);
                     }
                 } while (stack.Count > 0);
             }
@@ -501,7 +501,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 yield return graph.Nodes[0];
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].OutgoingEdges.ForEach(stack.Push);
+                graph.Nodes[0].OutgoingEdges.ForEach((Action<DirectedEdge<TData>>)stack.Push);
 
                 do
                 {
@@ -512,7 +512,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         yield return edge.DestinationNode;
 
                         reachedNodes.Add(edge.DestinationNode);
-                        edge.DestinationNode.OutgoingEdges.ForEach(stack.Push);
+                        edge.DestinationNode.OutgoingEdges.ForEach((Action<DirectedEdge<TData>>)stack.Push);
                     }
                 } while (stack.Count > 0);
             }
@@ -530,7 +530,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 List<DirectedNode<TData>> reachedNodes = new List<DirectedNode<TData>>();
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].OutgoingEdges.ForEach(stack.Push);
+                graph.Nodes[0].OutgoingEdges.ForEach((Action<DirectedEdge<TData>>)stack.Push);
 
                 do
                 {
@@ -541,7 +541,7 @@ namespace FreezingArcher.DataStructures.Graphs
                     if (!reachedNodes.Contains(edge.DestinationNode))
                     {
                         reachedNodes.Add(edge.DestinationNode);
-                        edge.DestinationNode.OutgoingEdges.ForEach(stack.Push);
+                        edge.DestinationNode.OutgoingEdges.ForEach((Action<DirectedEdge<TData>>)stack.Push);
                     }
                 } while (stack.Count > 0);
             }
@@ -561,7 +561,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 yield return graph.Nodes[0];
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].OutgoingEdges.ForEach(stack.Push);
+                graph.Nodes[0].OutgoingEdges.ForEach((Action<DirectedEdge<TData>>)stack.Push);
 
                 do
                 {
@@ -572,7 +572,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         yield return edge.DestinationNode;
 
                         reachedNodes.Add(edge.DestinationNode);
-                        edge.DestinationNode.OutgoingEdges.ForEach(stack.Push);
+                        edge.DestinationNode.OutgoingEdges.ForEach((Action<DirectedEdge<TData>>)stack.Push);
                     }
                 } while (stack.Count > 0);
             }

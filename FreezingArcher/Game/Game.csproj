@@ -93,12 +93,11 @@
     <ConsolePause>false</ConsolePause>
     <Prefer32Bit>false</Prefer32Bit>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
-xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
-move /Y *.dll* lib\ 
-move /Y *.pdb lib\
-move /Y *.xml lib\
-echo Successfully finished!</PostBuildEvent>
+    <CustomCommands>
+        <CustomCommands>
+             <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="" />
+        </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
     <DebugType>none</DebugType>
@@ -111,11 +110,11 @@ echo Successfully finished!</PostBuildEvent>
     <ConsolePause>false</ConsolePause>
     <Prefer32Bit>false</Prefer32Bit>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
-xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir) 
-move /Y *.dll* lib\ 
-move /Y *.xml lib\
-echo Successfully finished!</PostBuildEvent>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="${TargetDir}/../Utils/PostProcessor.exe ${TargetDir} ${TargetFile}" workingdir="" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

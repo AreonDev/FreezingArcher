@@ -370,7 +370,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 return startNode;
 
             reachedNodes.Add(startNode);
-            startNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+            startNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach((Action<DirectedWeightedEdge<TData, TWeight>>)stack.Push);
 
             do
             {
@@ -382,7 +382,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         return edge.DestinationNode;
 
                     reachedNodes.Add(edge.DestinationNode);
-                    edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                    edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach((Action<DirectedWeightedEdge<TData, TWeight>>)stack.Push);
                 }
             } while (stack.Count > 0);
 
@@ -474,7 +474,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 yield return graph.Nodes[0].Data;
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach((Action<DirectedWeightedEdge<TData, TWeight>>)stack.Push);
 
                 do
                 {
@@ -485,7 +485,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         yield return edge.DestinationNode.Data;
 
                         reachedNodes.Add(edge.DestinationNode);
-                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach((Action<DirectedWeightedEdge<TData, TWeight>>)stack.Push);
                     }
                 } while (stack.Count > 0);
             }
@@ -505,7 +505,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 yield return graph.Nodes[0];
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach((Action<DirectedWeightedEdge<TData, TWeight>>)stack.Push);
 
                 do
                 {
@@ -516,7 +516,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         yield return edge.DestinationNode;
 
                         reachedNodes.Add(edge.DestinationNode);
-                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach((Action<DirectedWeightedEdge<TData, TWeight>>)stack.Push);
                     }
                 } while (stack.Count > 0);
             }
@@ -534,7 +534,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 List<DirectedWeightedNode<TData, TWeight>> reachedNodes = new List<DirectedWeightedNode<TData, TWeight>>();
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach((Action<DirectedWeightedEdge<TData, TWeight>>)stack.Push);
 
                 do
                 {
@@ -545,7 +545,7 @@ namespace FreezingArcher.DataStructures.Graphs
                     if (!reachedNodes.Contains(edge.DestinationNode))
                     {
                         reachedNodes.Add(edge.DestinationNode);
-                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach((Action<DirectedWeightedEdge<TData, TWeight>>)stack.Push);
                     }
                 } while (stack.Count > 0);
             }
@@ -565,7 +565,7 @@ namespace FreezingArcher.DataStructures.Graphs
                 yield return graph.Nodes[0];
 
                 reachedNodes.Add(graph.Nodes[0]);
-                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                graph.Nodes[0].OutgoingEdges.OrderByDescending(j => j.Weight).ForEach((Action<DirectedWeightedEdge<TData, TWeight>>)stack.Push);
 
                 do
                 {
@@ -576,7 +576,7 @@ namespace FreezingArcher.DataStructures.Graphs
                         yield return edge.DestinationNode;
 
                         reachedNodes.Add(edge.DestinationNode);
-                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach(stack.Push);
+                        edge.DestinationNode.OutgoingEdges.OrderByDescending(j => j.Weight).ForEach((Action<DirectedWeightedEdge<TData, TWeight>>)stack.Push);
                     }
                 } while (stack.Count > 0);
             }

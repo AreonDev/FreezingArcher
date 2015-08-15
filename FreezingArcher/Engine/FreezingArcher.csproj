@@ -63,10 +63,12 @@
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
-xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Debug $(TargetDir)
-xcopy /Y $(SolutionDir)assimp\AssimpNet\bin\Debug $(TargetDir)
-echo Successfully finished!</PostBuildEvent>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="${TargetDir}/../../Utils/PostProcessor.exe ${TargetDir}/.. ${TargetFile}" workingdir="" />
+        <Command type="AfterBuild" command="rm -rf ${TargetDir}/lib32 ${TargetDir}/lib64" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseWindows|x86' ">
     <DebugType>none</DebugType>
@@ -80,10 +82,12 @@ echo Successfully finished!</PostBuildEvent>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Externalconsole>true</Externalconsole>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PostBuildEvent>$(TargetDir)/../Utils/PostProcessor.exe $(TargetDir) $(TargetPath)
-xcopy /Y $(SolutionDir)Pencil.Gaming\Pencil.Gaming\bin\Release $(TargetDir)
-xcopy /Y $(SolutionDir)assimp\AssimpNet\bin\Release $(TargetDir)
-echo Successfully finished!</PostBuildEvent>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="${TargetDir}/../../Utils/PostProcessor.exe ${TargetDir}/.. ${TargetFile}" workingdir="" />
+        <Command type="AfterBuild" command="rm -rf ${TargetDir}/lib32 ${TargetDir}/lib64" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

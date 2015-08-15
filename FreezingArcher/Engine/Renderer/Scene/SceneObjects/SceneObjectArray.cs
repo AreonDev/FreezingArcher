@@ -138,6 +138,16 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             ObjectName = object_name;
         }
             
+        public void BeginPrepare()
+        {
+            NeedsInit = true;
+        }
+
+        public void EndPrepare()
+        {
+            NeedsInit = false;
+        }
+
         public void AddObject(SceneObject obj)
         {
             if (obj.GetName() == ObjectName)
@@ -146,9 +156,16 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
                 if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
                 {
-     
-                    if (!obj.IsInitialized)
-                        obj.Init(PrivateRendererContext);
+                    if (!NeedsInit)
+                    {
+                        if (!obj.IsInitialized)
+                            obj.Init(PrivateRendererContext);
+                    }
+                    else
+                    {
+                        if(!obj.IsInitialized)
+                            PrivateRendererContext.AddRCActionJob(new CoreScene.RCActionInitSceneObject(obj, PrivateRendererContext));
+                    }
 
                     lock (ListLock)
                     {
@@ -197,45 +214,39 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
         {
             if (InstanceDataVertexBuffer == null)
             {
-                lock (ListLock)
+                if (SceneObjects.Count > 0)
                 {
-                    if (SceneObjects.Count > 0)
-                    {
-                        InstanceDataVertexBuffer = PrivateRendererContext.CreateVertexBuffer(IntPtr.Zero,
-                            SceneObjectArrayInstanceData.SIZE, 
-                            RendererBufferUsage.DynamicDraw, "SceneObjectArrayInstanceData_VBO_" + ObjectName + "_" + DateTime.Now.Ticks);
+                    InstanceDataVertexBuffer = PrivateRendererContext.CreateVertexBuffer(IntPtr.Zero,
+                        SceneObjectArrayInstanceData.SIZE, 
+                        RendererBufferUsage.DynamicDraw, "SceneObjectArrayInstanceData_VBO_" + ObjectName + "_" + DateTime.Now.Ticks);
                     
 
-                        SceneObjectArrayInstanceData[] data = CollectData();
+                    SceneObjectArrayInstanceData[] data = CollectData();
 
-                        InstanceDataVertexBuffer.Clear();
+                    InstanceDataVertexBuffer.Clear();
 
-                        InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, 0, data.Length * SceneObjectArrayInstanceData.SIZE);
-                    }
+                    InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, 0, data.Length * SceneObjectArrayInstanceData.SIZE);
                 }
             }
             else
             {
-                lock (ListLock)
+                SceneObjectArrayInstanceData[] data = CollectData();
+
+                if ((SceneObjects.Count * SceneObjectArrayInstanceData.SIZE) > InstanceDataVertexBuffer.SizeInBytes)
                 {
-                    if ((SceneObjects.Count * SceneObjectArrayInstanceData.SIZE) > InstanceDataVertexBuffer.SizeInBytes)
+                    int actual_size = data.Length * SceneObjectArrayInstanceData.SIZE;
+
+                    PrivateRendererContext.DeleteGraphicsResource(InstanceDataVertexBuffer);
+
+                    if (SceneObjects.Count > 0)
                     {
-                        int actual_size = InstanceDataVertexBuffer.SizeInBytes + ((int)SceneObjects.Count / 2) * SceneObjectArrayInstanceData.SIZE;
-
-                        PrivateRendererContext.DeleteGraphicsResource(InstanceDataVertexBuffer);
-
-                        if (SceneObjects.Count > 0)
-                        {
-                            InstanceDataVertexBuffer = PrivateRendererContext.CreateVertexBuffer(IntPtr.Zero, actual_size * 2, 
-                                RendererBufferUsage.DynamicDraw, "SceneObjectArrayInstanceData_VBO_" + ObjectName + "_" + DateTime.Now.Ticks);
-                        }
-
-                        SceneObjectArrayInstanceData[] data = CollectData();
-
-                        InstanceDataVertexBuffer.Clear();
-
-                        InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, 0, data.Length * SceneObjectArrayInstanceData.SIZE);
+                        InstanceDataVertexBuffer = PrivateRendererContext.CreateVertexBuffer(IntPtr.Zero, actual_size, 
+                            RendererBufferUsage.DynamicDraw, "SceneObjectArrayInstanceData_VBO_" + ObjectName + "_" + DateTime.Now.Ticks);
                     }
+
+                    InstanceDataVertexBuffer.Clear();
+
+                    InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, 0, data.Length * SceneObjectArrayInstanceData.SIZE);
                 }
             }
         }
@@ -272,27 +283,30 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public override void Update()
         {
-            lock (ListLock)
+            if (!NeedsInit)
             {
-                PrepareBuffer();
-
-                foreach (int index in ObjectsChanged)
+                lock (ListLock)
                 {
-                    if (index < 0)
-                        continue;
-                    
-                    SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { SceneObjects[index].GetData() };
+                    PrepareBuffer();
 
-                    if (InstanceDataVertexBuffer != null)
+                    foreach (int index in ObjectsChanged)
                     {
-                        InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, index * SceneObjectArrayInstanceData.SIZE,
-                            SceneObjectArrayInstanceData.SIZE);
+                        if (index < 0)
+                            continue;
+                    
+                        SceneObjectArrayInstanceData[] data = new SceneObjectArrayInstanceData[] { SceneObjects[index].GetData() };
+
+                        if (InstanceDataVertexBuffer != null)
+                        {
+                            InstanceDataVertexBuffer.UpdateSubBuffer<SceneObjectArrayInstanceData>(data, index * SceneObjectArrayInstanceData.SIZE,
+                                SceneObjectArrayInstanceData.SIZE);
+                        }
+
+                        //Logger.Log.AddLogEntry (LogLevel.Debug, "SceneObjectArray", "Object changed: " + data[0].ToString());
                     }
 
-                    //Logger.Log.AddLogEntry (LogLevel.Debug, "SceneObjectArray", "Object changed: " + data[0].ToString());
+                    ObjectsChanged.Clear();
                 }
-
-                ObjectsChanged.Clear();
             }
         }
 

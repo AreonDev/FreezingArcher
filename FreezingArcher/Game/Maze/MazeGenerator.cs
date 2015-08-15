@@ -388,6 +388,9 @@ namespace FreezingArcher.Game.Maze
             scnobjarr_ground.LayoutLocationOffset = 10;
             state.Scene.AddObject (scnobjarr_ground);
 
+            scnobjarr_wall.BeginPrepare ();
+            scnobjarr_ground.BeginPrepare ();
+
             var systems = new[] { typeof (ModelSystem), typeof (PhysicsSystem) };
 
             Vector3 scale = new Vector3 (4, 4, 4);
@@ -537,6 +540,9 @@ namespace FreezingArcher.Game.Maze
                     y++;
                 }
             }
+
+            scnobjarr_wall.EndPrepare ();
+            scnobjarr_ground.EndPrepare ();
         }
 
         static void CalculatePathToExit(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph)

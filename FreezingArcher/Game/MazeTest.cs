@@ -186,8 +186,6 @@ namespace FreezingArcher.Game
             maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
             maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
 
-            mazeWallMover = new MazeWallMover(maze[0], state.MessageProxy, state);
-
             game.AddGameState("maze_underworld", Content.Environment.Default,
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) });
@@ -200,6 +198,9 @@ namespace FreezingArcher.Game
             state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
             maze [1] = mazeGenerator.CreateMaze (rand.Next (), state.MessageProxy, state.PhysicsManager, 30, 30);
             maze [1].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
+
+            mazeWallMover = new MazeWallMover(maze[0], maze[1], game.GetGameState("maze_overworld").MessageProxy,
+                game.GetGameState("maze_overworld"));
 
             state.MessageProxy.StopProcessing ();
             //game.SwitchToGameState("maze_overworld");
@@ -318,9 +319,7 @@ namespace FreezingArcher.Game
             {
                 if (im.IsActionPressedAndRepeated ("frame"))
                 {
-                    //SwitchMaze();
-                    mazeWallMover.Step();
-                    maze[0].ExportAsImage("overworld_" + count++ + ".png");
+                    SwitchMaze();
                 }
 
                 if (im.IsActionDown ("bla_unfug_links"))

@@ -22,12 +22,10 @@
 //
 using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
-using System.Threading;
 using FreezingArcher.Content;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using Jitter.Dynamics;
@@ -39,9 +37,10 @@ namespace FreezingArcher.Game.Maze
 {
     public sealed class MazeWallMover : IMessageConsumer
     {
-        public MazeWallMover (Maze maze, MessageProvider messageProvider, GameState state)
+        public MazeWallMover (Maze maze, Maze secondMaze, MessageProvider messageProvider, GameState state)
         {
             Maze = maze;
+            SecondMaze = secondMaze;
             this.state = state;
             rand = new Random(maze.Seed);
 
@@ -53,17 +52,19 @@ namespace FreezingArcher.Game.Maze
 
         public Maze Maze { get; private set; }
 
+        public Maze SecondMaze { get; private set; }
+
         readonly GameState state;
 
         readonly MessageProvider messageProvider;
 
         readonly Random rand;
 
-        public void Step ()
+        void Step ()
         {
             foreach (var deadEnd in GetDeadEndGrounds ())
             {
-                if (rand.Next() % 5 != 0)
+                if (rand.Next() % 10000 != 0)
                     continue;
 
                 WeightedNode<MazeCell, MazeCellEdgeWeight> connection = null;
@@ -125,7 +126,7 @@ namespace FreezingArcher.Game.Maze
                             }
                         }
 
-                        AnimateMovement(next_gen_ground, new_ground, connection, state);
+                        AnimateMovement(next_gen_ground, new_ground, connection);
                     }
                 }
             }
@@ -133,12 +134,12 @@ namespace FreezingArcher.Game.Maze
 
         int temp_counter = 0;
 
-        void AnimateMovement(WeightedNode<MazeCell, MazeCellEdgeWeight> ground_node,
-            WeightedNode<MazeCell, MazeCellEdgeWeight> wall_node,
-            WeightedNode<MazeCell, MazeCellEdgeWeight> connection, GameState state)
+        void AnimateMovement(WeightedNode<MazeCell, MazeCellEdgeWeight> groundNode,
+            WeightedNode<MazeCell, MazeCellEdgeWeight> wallNode,
+            WeightedNode<MazeCell, MazeCellEdgeWeight> connection)
         {
-            var ground1 = Maze.entities[ground_node.Data.Position.X, ground_node.Data.Position.Y];
-            var wall = Maze.entities[wall_node.Data.Position.X, wall_node.Data.Position.Y];
+            var ground1 = Maze.entities[groundNode.Data.Position.X, groundNode.Data.Position.Y];
+            var wall = Maze.entities[wallNode.Data.Position.X, wallNode.Data.Position.Y];
 
             var ground2 = EntityFactory.Instance.CreateWith ("ground_temp" + temp_counter++, messageProvider,
                 systems: new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
@@ -148,6 +149,7 @@ namespace FreezingArcher.Game.Maze
             var transform = ground2.GetComponent<TransformComponent>();
             transform.Position = ground1.GetComponent<TransformComponent>().Position;
             transform.Scale = ground1.GetComponent<TransformComponent>().Scale;
+            ground2_model.Position = transform.Position;
             var body = new RigidBody(new BoxShape (2.0f * transform.Scale.X, 0.2f, 2.0f * transform.Scale.Y));
             body.Position = transform.Position.ToJitterVector ();
             body.Material.Restitution = -10;
@@ -158,28 +160,39 @@ namespace FreezingArcher.Game.Maze
                 AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (body);
+            state.Scene.AddObject(ground2_model);
+
+            var position = ground1.GetComponent<TransformComponent>().Position;
+            position = new Vector3 (position.X, -0.5f, position.Z);
 
             var wall_transform = wall.GetComponent<TransformComponent>();
-            ground1.GetComponent<TransformComponent>().Position = wall_transform.Position;
-            ground1.GetComponent<PhysicsComponent>().RigidBody.Position = wall_transform.Position.ToJitterVector();
+            var new_ground_position = new Vector3 (wall_transform.Position.X, 0, wall_transform.Position.Z);
+            ground1.GetComponent<TransformComponent>().Position = new_ground_position;
+            ground1.GetComponent<PhysicsComponent>().RigidBody.Position = new_ground_position.ToJitterVector();
 
-            Maze.entities[wall_node.Data.Position.X, wall_node.Data.Position.Y] = ground1;
-            Maze.entities[ground_node.Data.Position.X, ground_node.Data.Position.Y] = wall;
+            Maze.entities[wallNode.Data.Position.X, wallNode.Data.Position.Y] = ground1;
+            Maze.entities[groundNode.Data.Position.X, groundNode.Data.Position.Y] = wall;
 
-            MoveEntityTo (wall,
-                Maze.entities[connection.Data.Position.X, connection.Data.Position.Y]
-                .GetComponent<TransformComponent>().Position, transform.Position, ground2.Destroy);
+            var tmp_wall_position = Maze.entities[connection.Data.Position.X, connection.Data.Position.Y]
+                .GetComponent<TransformComponent>().Position;
+            tmp_wall_position = new Vector3 (tmp_wall_position.X, -0.5f, tmp_wall_position.Z);
+
+            MoveEntityTo (wall, tmp_wall_position, position, () => {
+                state.Scene.RemoveObject(ground2_model);
+                ground2.Destroy();
+            });
         }
 
         class EntityMover : IMessageConsumer
         {
             public EntityMover(MessageProvider messageProvider, int steps, Vector3 position_1, Vector3 position_2,
-                TransformComponent transform, Action finishedCallback)
+                TransformComponent transform, RigidBody rigidBody, Action finishedCallback)
             {
                 this.steps = steps;
                 this.position_1 = position_1;
                 this.position_2 = position_2;
                 this.transform = transform;
+                this.rigidBody = rigidBody;
                 step = (position_1 - transform.Position) / (float) steps;
                 this.finishedCallback = finishedCallback;
                 this.messageProvider = messageProvider;
@@ -194,6 +207,7 @@ namespace FreezingArcher.Game.Maze
             readonly Vector3 position_2;
             Vector3 step;
             readonly TransformComponent transform;
+            readonly RigidBody rigidBody;
             readonly Action finishedCallback;
             MessageProvider messageProvider;
 
@@ -217,11 +231,13 @@ namespace FreezingArcher.Game.Maze
                     if (count_1 < steps)
                     {
                         transform.Position += step;
+                        rigidBody.Position += step.ToJitterVector();
                         count_1++;
                     }
                     else if (count_2 < steps)
                     {
                         transform.Position += step;
+                        rigidBody.Position += step.ToJitterVector();
                         count_2++;
                     }
                 }
@@ -232,10 +248,11 @@ namespace FreezingArcher.Game.Maze
             
         }
 
-        void MoveEntityTo (Entity entity, Vector3 position_1, Vector3 position_2, Action finishedCallback, int time_steps = 60)
+        void MoveEntityTo (Entity entity, Vector3 position_1, Vector3 position_2, Action finishedCallback, int time_steps = 200)
         {
             var transform = entity.GetComponent<TransformComponent>();
-            new EntityMover(messageProvider, time_steps, position_1, position_2, transform, finishedCallback);
+            var rigidBody = entity.GetComponent<PhysicsComponent>().RigidBody;
+            new EntityMover(messageProvider, time_steps, position_1, position_2, transform, rigidBody, finishedCallback);
         }
 
         IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>> GetDeadEndGrounds ()
@@ -246,10 +263,9 @@ namespace FreezingArcher.Game.Maze
         #region IMessageConsumer implementation
         public void ConsumeMessage (IMessage msg)
         {
-            if (msg.MessageId == (int) MessageId.Update)
+            if (msg.MessageId == (int) MessageId.Update && Maze.HasFinished && SecondMaze.HasFinished)
             {
-                var um = msg as UpdateMessage;
-
+                Step();
             }
         }
 

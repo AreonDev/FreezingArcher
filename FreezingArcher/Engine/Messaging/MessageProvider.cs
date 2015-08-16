@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using FreezingArcher.Core;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
+using System.Collections.Concurrent;
 
 namespace FreezingArcher.Messaging
 {
@@ -93,20 +94,18 @@ namespace FreezingArcher.Messaging
             Logger.Log.AddLogEntry(LogLevel.Fine, ClassName, "Registering new message consumer '{0}'",
                 consumer.GetType().ToString());
 
-            consumer.ValidMessages.ForEach(i => {
-                List<IMessageConsumer> tmp;
-                lock (MessageList)
+            DeferredRegisters.Enqueue (() => consumer.ValidMessages.ForEach (i =>
                 {
+                    List<IMessageConsumer> tmp;
                     if (MessageList.TryGetValue(i, out tmp))
-                        lock (tmp)
-                            tmp.Add(consumer);
+                        tmp.Add(consumer);
                     else
                     {
                         tmp = new List<IMessageConsumer>(consumer.ToCollection());
                         MessageList[i] = tmp;
                     }
-                }
-            });
+                })
+            );
         }
 
         /// <summary>
@@ -121,19 +120,16 @@ namespace FreezingArcher.Messaging
             DeferredUnregisters.Enqueue(() => consumer.ValidMessages.ForEach(i =>
                 {
                     List<IMessageConsumer> tmp;
-                    lock (MessageList)
+                    if (MessageList.TryGetValue(i, out tmp))
                     {
-                        if (MessageList.TryGetValue(i, out tmp))
-                        {
-                            lock (tmp)
-                                tmp.Remove(consumer);
-                        }
+                        tmp.Remove(consumer);
                     }
                 })
             );
         }
 
-        protected Queue<Action> DeferredUnregisters = new Queue<Action>();
+        protected ConcurrentQueue<Action> DeferredUnregisters = new ConcurrentQueue<Action>();
+        protected ConcurrentQueue<Action> DeferredRegisters = new ConcurrentQueue<Action>();
 
         /// <summary>
         /// Adds the message creator.
@@ -167,7 +163,7 @@ namespace FreezingArcher.Messaging
         internal virtual void HandleMessageCreated (IMessage message)
         {
             if (Running)
-                parentProvider.HandleMessageCreated(message);
+                parentProvider.HandleMessageCreated (message);
         }
 
         /// <summary>

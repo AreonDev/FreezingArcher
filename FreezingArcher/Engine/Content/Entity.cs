@@ -256,12 +256,12 @@ namespace FreezingArcher.Content
         /// </summary>
         public override void Destroy()
         {
-            Name = null;
-            MessageProvider = null;
-            Components.ForEach(c => c.Value.Destroy());
-            Components.Clear();
             Systems.ForEach(s => s.Value.Destroy());
             Systems.Clear();
+            Components.ForEach(c => c.Value.Destroy());
+            Components.Clear();
+            Name = null;
+            MessageProvider = null;
             base.Destroy();
         }
     }

@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Threading;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Output;
+using System.Collections.Concurrent;
 
 namespace FreezingArcher.Messaging
 {
@@ -38,7 +39,7 @@ namespace FreezingArcher.Messaging
     {
         readonly Thread messageThread;
 
-        readonly Queue<IMessage> MessageQueue;
+        readonly ConcurrentQueue<IMessage> MessageQueue;
 
         static MessageManager()
         {
@@ -51,7 +52,7 @@ namespace FreezingArcher.Messaging
         public MessageManager() : base(null)
         {
             messageThread = new Thread(Process);
-            MessageQueue = new Queue<IMessage>(2000);
+            MessageQueue = new ConcurrentQueue<IMessage>();
         }
 
         /// <summary>
@@ -61,8 +62,7 @@ namespace FreezingArcher.Messaging
         internal override void HandleMessageCreated (IMessage message)
         {
             if (Running)
-                lock (MessageQueue)
-                    MessageQueue.Enqueue (message);
+                MessageQueue.Enqueue (message);
         }
 
         /// <summary>
@@ -96,27 +96,34 @@ namespace FreezingArcher.Messaging
             {
                 while (DeferredUnregisters.Count > 0)
                 {
-                    DeferredUnregisters.Dequeue()();
+                    Action tmp;
+                    if (DeferredUnregisters.TryDequeue (out tmp))
+                    {
+                        tmp ();
+                    }
                 }
 
-                if (MessageQueue.Count != 0)
+                while (DeferredRegisters.Count > 0)
+                {
+                    Action tmp;
+                    if (DeferredRegisters.TryDequeue (out tmp))
+                    {
+                        tmp ();
+                    }
+                }
+
+                if (MessageQueue.Count > 0)
                 {
                     IMessage Message = null;
-                    lock (MessageQueue)
-                        Message = MessageQueue.Dequeue ();
+                    while (!MessageQueue.TryDequeue(out Message)) {}
                     List<IMessageConsumer> tmp;
-                    lock (MessageList)
+                    if (MessageList.TryGetValue (Message.MessageId, out tmp))
                     {
-                        if (MessageList.TryGetValue (Message.MessageId, out tmp))
-                        {
-                            lock (tmp)
-                                tmp.ForEach (i => i.ConsumeMessage (Message));
-                        }
-                        if (MessageList.TryGetValue((int) MessageId.All, out tmp))
-                        {
-                            lock (tmp)
-                                tmp.ForEach(i => i.ConsumeMessage(Message));
-                        }
+                        tmp.ForEach (i => i.ConsumeMessage (Message));
+                    }
+                    if (MessageList.TryGetValue((int) MessageId.All, out tmp))
+                    {
+                        tmp.ForEach(i => i.ConsumeMessage(Message));
                     }
                 }
                 else
@@ -127,8 +134,13 @@ namespace FreezingArcher.Messaging
                 
                 pauseTime = 0;
             }
+
             //ensure queue is empty
-            MessageQueue.Clear ();
+            while (!MessageQueue.IsEmpty)
+            {
+                IMessage tmp;
+                MessageQueue.TryDequeue (out tmp);
+            }
         }
 
         /// <param name="j">MessageManager to register object to</param>

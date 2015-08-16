@@ -47,7 +47,25 @@ namespace FreezingArcher.Messaging
         {
             if (!Running)
                 return;
-            
+
+            while (DeferredUnregisters.Count > 0)
+            {
+                Action unreg;
+                if (DeferredUnregisters.TryDequeue (out unreg))
+                {
+                    unreg ();
+                }
+            }
+
+            while (DeferredRegisters.Count > 0)
+            {
+                Action reg;
+                if (DeferredRegisters.TryDequeue (out reg))
+                {
+                    reg ();
+                }
+            }
+
             if (messageIdBlacklist.Contains(msg.MessageId))
                 return;
 
@@ -56,18 +74,13 @@ namespace FreezingArcher.Messaging
                     return;
 
             List<IMessageConsumer> tmp;
-            lock (MessageList)
+            if (MessageList.TryGetValue((int) MessageId.All, out tmp))
             {
-                if (MessageList.TryGetValue((int) MessageId.All, out tmp))
-                {
-                    lock (tmp)
-                        tmp.ForEach(i => i.ConsumeMessage(msg));
-                }
-                if (MessageList.TryGetValue(msg.MessageId, out tmp))
-                {
-                    lock (tmp)
-                        tmp.ForEach(i => i.ConsumeMessage(msg));
-                }
+                tmp.ForEach(i => i.ConsumeMessage(msg));
+            }
+            if (MessageList.TryGetValue(msg.MessageId, out tmp))
+            {
+                tmp.ForEach(i => i.ConsumeMessage(msg));
             }
         }
 

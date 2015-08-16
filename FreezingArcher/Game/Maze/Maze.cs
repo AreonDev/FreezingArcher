@@ -270,6 +270,8 @@ namespace FreezingArcher.Game.Maze
 
                     if (postGenerateHook != null)
                         postGenerateHook();
+                    
+                    HasFinished = true;
                 });
                 generationThread.Start();
             }
@@ -332,7 +334,6 @@ namespace FreezingArcher.Game.Maze
             {
                 addMazeToGameStateDelegate(graph, state.MessageProxy, entities, ref playerPosition, state, rand, scale,
                     (uint) Size.X, Offset.X, Offset.Y);
-                HasFinished = true;
             }
             else
             {

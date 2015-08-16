@@ -118,8 +118,13 @@ namespace Gwen.Control
             CloseButtonPressed(this, EventArgs.Empty);
         }
 
+        public event GwenEventHandler<EventArgs> OnClose;
+
         protected virtual void CloseButtonPressed(Base control, EventArgs args)
         {
+            if (OnClose != null)
+                OnClose(this, EventArgs.Empty);
+
             IsHidden = true;
 
             if (m_Modal != null)

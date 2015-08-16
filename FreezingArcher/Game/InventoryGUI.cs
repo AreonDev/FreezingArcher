@@ -262,8 +262,8 @@ namespace FreezingArcher.Game
                 if (m_Image != null)
                 {
                     m_Image.Width = Width;
-                    m_Image.Height = Height;
-                    m_Image.SetUV(0, 1, 1, 0);
+                    m_Image.Height = Width / (Height / Width);
+                    m_Image.SetUV(0, 0, 1, 1);
                 }
             }
         }
@@ -567,6 +567,7 @@ namespace FreezingArcher.Game
             window = new WindowControl (canvasFrame, Localizer.Instance.GetValueForName("inventory"));
             window.DisableResizing ();
             window.IsMoveable = false;
+            window.OnClose += (sender, arguments) => application.Window.CaptureMouse ();
 
             itemGridFrame = new Base (window);
             itemGridFrame.SetSize ((BoxSize + 1) * inventory.Size.X, (BoxSize + 1) * inventory.Size.Y);

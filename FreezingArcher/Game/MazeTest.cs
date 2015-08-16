@@ -108,8 +108,8 @@ namespace FreezingArcher.Game
             light1 = new Light (LightType.SpotLight);
             light1.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
             //light.PointLightConstantAttenuation = 0.8f;
-            light1.PointLightLinearAttenuation = 0.05f;
-            light1.SpotLightConeAngle = Math.MathHelper.ToRadians (15.66f);
+            light1.PointLightLinearAttenuation = 0.01f;
+            light1.SpotLightConeAngle = Math.MathHelper.ToRadians (30f);
             //light.PointLightExponentialAttenuation = 0.000600f;
 
             state.Scene.Lights.Add (light1);

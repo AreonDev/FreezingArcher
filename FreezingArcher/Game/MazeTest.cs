@@ -48,6 +48,7 @@ namespace FreezingArcher.Game
         double f = 0;
 
         LoadingScreen loadingScreen;
+        Gwen.ControlInternal.Text FPS_Text;
 
         public CoreScene     Scene{ get; private set; }
 
@@ -85,6 +86,12 @@ namespace FreezingArcher.Game
             mazeGenerator = new MazeGenerator (objmnr);
             this.game = game;
             application = app;
+
+            FPS_Text = new Gwen.ControlInternal.Text (app.RendererContext.Canvas);
+            FPS_Text.String = "0 FPS";
+            FPS_Text.Font = new Gwen.Font (app.RendererContext.GwenRenderer);
+            FPS_Text.SetPosition (5, 5);
+            FPS_Text.Font.Size = 15;
 
             MazeSceneNode = new CompositorNodeScene (rendererContext, messageProvider);
             OutputNode = new CompositorNodeOutput (rendererContext, messageProvider);
@@ -312,6 +319,15 @@ namespace FreezingArcher.Game
                         light1.DirectionalLightDirection = SpotLightDir;
                     }
                 }
+
+                if (application.FPSCounter >= 50)
+                    FPS_Text.TextColor = System.Drawing.Color.Green;
+                else if (application.FPSCounter < 50 && application.FPSCounter > 30)
+                        FPS_Text.TextColor = System.Drawing.Color.Yellow;
+                else
+                        FPS_Text.TextColor = System.Drawing.Color.Red;
+
+                FPS_Text.String = application.FPSCounter + " FPS";
             }
 
             var im = msg as InputMessage;

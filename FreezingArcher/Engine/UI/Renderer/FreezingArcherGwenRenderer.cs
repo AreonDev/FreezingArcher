@@ -50,6 +50,9 @@ namespace Gwen.Renderer
         private readonly Graphics m_Graphics;
         private readonly Dictionary<Tuple<String, Font>, TextRenderer> m_StringCache;
 
+        private object AllowTextDrawing = new object();
+        private bool IgnoreTextDrawing = false;
+
         public FreezingArcherGwenRenderer(RendererContext rc)
         {
             PrivateRendererContext = rc;
@@ -412,15 +415,22 @@ namespace Gwen.Renderer
         /// <returns>True if succeeded.</returns>
         public override bool LoadFont(Gwen.Font font)
         {
-            font.RealSize = font.Size * Scale;
-            System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
+            lock (AllowTextDrawing)
+            {
+                IgnoreTextDrawing = true;
 
-            if (sysFont != null)
-                sysFont.Dispose();
+                font.RealSize = font.Size * Scale;
+                System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
 
-            sysFont = new System.Drawing.Font(font.FaceName, font.Size);
-            font.RendererData = sysFont;
-            
+                if (sysFont != null)
+                    sysFont.Dispose();
+
+                sysFont = new System.Drawing.Font(font.FaceName, font.Size);
+                font.RendererData = sysFont;
+
+                IgnoreTextDrawing = false;
+            }
+
             return true;
         }
 
@@ -430,16 +440,23 @@ namespace Gwen.Renderer
         /// <param name="font">Font to free.</param>
         public override void FreeFont(Gwen.Font font)
         {
-            if (font.RendererData == null)
-                return;
+            lock (AllowTextDrawing)
+            {
+                IgnoreTextDrawing = true;
 
-            System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
-            if (sysFont == null)
-                Logger.Log.AddLogEntry(LogLevel.Crash, "FreezingArcherGwenRenderer",
-                    FreezingArcher.Core.Status.BadData);
+                if (font.RendererData == null)
+                    return;
 
-            sysFont.Dispose();
-            font.RendererData = null;
+                System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
+                if (sysFont == null)
+                    Logger.Log.AddLogEntry(LogLevel.Crash, "FreezingArcherGwenRenderer",
+                        FreezingArcher.Core.Status.BadData);
+
+                sysFont.Dispose();
+                font.RendererData = null;
+
+                IgnoreTextDrawing = false;
+            }
         }
 
         /// <summary>
@@ -450,29 +467,37 @@ namespace Gwen.Renderer
         /// <returns>Width and height of the rendered text.</returns>
         public override Point MeasureText(Gwen.Font font, string text)
         {
-                System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
+            SizeF size = new SizeF(0.0f, 0.0f);
 
-                if (sysFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
+            if (!IgnoreTextDrawing)
+            {
+                lock (AllowTextDrawing)
                 {
-                    FreeFont(font);
-                    LoadFont(font);
-                    sysFont = font.RendererData as System.Drawing.Font;
+                    System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
+
+                    if (sysFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
+                    {
+                        FreeFont(font);
+                        LoadFont(font);
+                        sysFont = font.RendererData as System.Drawing.Font;
+                    }
+
+                    var key = new Tuple<String, Font>(text, font);
+
+                    if (m_StringCache.ContainsKey(key))
+                    {
+                        var tex = m_StringCache[key].Texture;
+                        return new Point(tex.Width, tex.Height);
+                    }
+
+                    SizeF TabSize = m_Graphics.MeasureString("....", sysFont);
+
+                    m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
+                    size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
                 }
+            }
 
-                var key = new Tuple<String, Font>(text, font);
-
-                if (m_StringCache.ContainsKey(key))
-                {
-                    var tex = m_StringCache[key].Texture;
-                    return new Point(tex.Width, tex.Height);
-                }
-
-                SizeF TabSize = m_Graphics.MeasureString("....", sysFont);
-
-                m_StringFormat.SetTabStops(0f, new float[] { TabSize.Width });
-                SizeF size = m_Graphics.MeasureString(text, sysFont, Point.Empty, m_StringFormat);
-
-                return new Point((int)Math.Round(size.Width + 5), (int)Math.Round(size.Height + 5));
+            return new Point((int)Math.Round(size.Width + 5), (int)Math.Round(size.Height + 5));
         }
 
         /// <summary>
@@ -483,36 +508,46 @@ namespace Gwen.Renderer
         /// <param name="text">Text to render.</param>
         public override void RenderText(Gwen.Font font, Point position, string text)
         {
-            System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
-
-            if (sysFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
+            if (!IgnoreTextDrawing)
             {
-                FreeFont(font);
-                LoadFont(font);
-                sysFont = font.RendererData as System.Drawing.Font;
-            }
+                lock (AllowTextDrawing)
+                {
+                    System.Drawing.Font sysFont = font.RendererData as System.Drawing.Font;
 
-            var key = new Tuple<String, Font>(text, font);
+                    if (sysFont == null || Math.Abs(font.RealSize - font.Size * Scale) > 2)
+                    {
+                        FreeFont(font);
+                        LoadFont(font);
+                        sysFont = font.RendererData as System.Drawing.Font;
+                    }
 
-            if (!m_StringCache.ContainsKey(key))
-            {
-                Point size = MeasureText(font, text);
-                TextRenderer tr = new TextRenderer(size.X, size.Y, this);
-                tr.DrawString(text, sysFont, new SolidBrush(DrawColor), Point.Empty, m_StringFormat);
+                    var key = new Tuple<String, Font>(text, font);
 
-                DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
+                    if (!m_StringCache.ContainsKey(key))
+                    {
+                        Point size = MeasureText(font, text);
+                        TextRenderer tr = new TextRenderer(size.X, size.Y, this);
+                        tr.DrawString(text, sysFont, new SolidBrush(DrawColor), Point.Empty, m_StringFormat);
 
-                m_StringCache[key] = tr;
-            }
-            else
-            {
-                TextRenderer tr = m_StringCache[key];
+                        PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.DstAlpha, RendererBlendingFactorDest.One);
 
-                PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.DstAlpha, RendererBlendingFactorDest.One);
+                        DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
 
-                DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
+                        PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.SrcAlpha, RendererBlendingFactorDest.OneMinusSrcAlpha);
 
-                PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.SrcAlpha, RendererBlendingFactorDest.OneMinusSrcAlpha);
+                        m_StringCache[key] = tr;
+                    }
+                    else
+                    {
+                        TextRenderer tr = m_StringCache[key];
+
+                        PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.DstAlpha, RendererBlendingFactorDest.One);
+
+                        DrawTexturedRect(tr.Texture, new Rectangle(position.X, position.Y, tr.Texture.Width, tr.Texture.Height));
+
+                        PrivateRendererContext.SetBlendFunc(RendererBlendingFactorSrc.SrcAlpha, RendererBlendingFactorDest.OneMinusSrcAlpha);
+                    }
+                }
             }
         }
 
@@ -535,9 +570,25 @@ namespace Gwen.Renderer
 
             if (tex != null)
             {
-                FreezingArcher.Math.Color4 col = tex.GetPixelColor((int)x, (int)y);
+                if (PrivateRendererContext.Application.ManagedThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
+                {
+                    FreezingArcher.Math.Color4 col = tex.GetPixelColor((int)x, (int)y);
 
-                return Color.FromArgb((int)(col.A), (int)(col.R), (int)(col.G), (int)(col.B));
+                    return Color.FromArgb((int)(col.A), (int)(col.R), (int)(col.G), (int)(col.B));
+                }
+                else
+                {
+
+                    RendererCore.RCActionGetPixelColor getpix = new RendererCore.RCActionGetPixelColor(tex, (int)x, (int)y);
+
+                    PrivateRendererContext.AddRCActionJob(getpix);
+
+                    while (!getpix.OutputReady);
+
+                    FreezingArcher.Math.Color4 col = getpix.OutputColor;
+
+                    return Color.FromArgb((int)(col.A), (int)(col.R), (int)(col.G), (int)(col.B));
+                }
             }
 
             return defaultColor;

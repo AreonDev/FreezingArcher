@@ -31,6 +31,7 @@ namespace FreezingArcher.Renderer
         public int ID { get; private set; }
         public GraphicsResourceType Type { get; private set; }
         public uint InternalUseCount { get; private set; }
+        public RendererCore Renderer { get; internal set;}
         #endregion
 
         #region Public Methods

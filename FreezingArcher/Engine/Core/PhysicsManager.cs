@@ -151,8 +151,12 @@ namespace FreezingArcher.Core
             }
             else
             {
+                try
+                {
                 this.timeStamp = timeStamp;
                 updateEvent.Set();
+                }catch {
+                }
             }
         }
 

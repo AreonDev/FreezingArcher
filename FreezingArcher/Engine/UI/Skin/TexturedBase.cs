@@ -420,9 +420,9 @@ namespace Gwen.Skin
             Textures.Tab.HeaderBar       = new Bordered(m_Texture, 128, 352, 127, 31, Margin.Four);
 
             Textures.Window.Close       = new Single(m_Texture, 0, 224, 24, 24);
-            Textures.Window.Close_Hover = new Single(m_Texture, 32, 224, 24, 24);
+            Textures.Window.Close_Down = new Single(m_Texture, 32, 224, 24, 24);
             Textures.Window.Close_Hover = new Single(m_Texture, 64, 224, 24, 24);
-            Textures.Window.Close_Hover = new Single(m_Texture, 96, 224, 24, 24);
+            Textures.Window.Close_Disabled = new Single(m_Texture, 96, 224, 24, 24);
 
             Textures.Scroller.TrackV           = new Bordered(m_Texture, 384, 208, 15, 127, Margin.Four);
             Textures.Scroller.ButtonV_Normal   = new Bordered(m_Texture, 384 + 16, 208, 15, 127, Margin.Four);

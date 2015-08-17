@@ -112,7 +112,7 @@ namespace FreezingArcher.Renderer
 
             int size = Width * Height * 4 * ((Is32Bit) ? 4 : 1);
 
-            byte[] data = new byte[Width * Height * 4];
+            byte[] data = new byte[size];
 
             GL.GetTexImage<byte>(TextureTarget.Texture2D, 0, (Is32Bit) ? PixelFormat.RgbaInteger : PixelFormat.Rgba, 
                 (Is32Bit) ? PixelType.UnsignedInt : PixelType.UnsignedByte, data);
@@ -122,8 +122,8 @@ namespace FreezingArcher.Renderer
             int index = (y * Width + x) * 4 * ((Is32Bit) ? 4 : 1);
             int stepsize = (Is32Bit) ? 4 : 1;
 
-            col = new FreezingArcher.Math.Color4(data[index] / (float)System.Math.Pow(2, stepsize), data[index + 1*stepsize] / (float)System.Math.Pow(2, stepsize), 
-                data[index + 2*stepsize] / (float)System.Math.Pow(2, stepsize), data[index + 3*stepsize] / (float)System.Math.Pow(2, stepsize));
+            col = new FreezingArcher.Math.Color4(data[index] / ((float)System.Math.Pow(2, stepsize)-1), data[index + 1 * stepsize] / ((float)System.Math.Pow(2, stepsize)-1), 
+                data[index + 2 * stepsize] / ((float)System.Math.Pow(2, stepsize)-1), data[index + 3 * stepsize] / ((float)System.Math.Pow(2, stepsize)-1));
 
             return col;
         }

@@ -480,6 +480,38 @@ namespace FreezingArcher.Renderer
             }
         }
 
+        public class RCActionGetPixelColor : RCAction
+        {
+            public Texture2D Texture;
+            public int X;
+            public int Y;
+
+            public FreezingArcher.Math.Color4 OutputColor;
+            public bool OutputReady;
+
+            public RCActionGetPixelColor(Texture2D tex, int x, int y)
+            {
+                Texture = tex;
+                X = x;
+                Y = y;
+
+                OutputReady = false;
+                OutputColor = FreezingArcher.Math.Color4.Transparent;
+            }
+
+            public RCActionDelegate Action
+            {
+                get
+                {
+                    return delegate()
+                    {
+                        OutputColor = Texture.GetPixelColor(X, Y);
+                        OutputReady = true;
+                    };
+                }
+            }
+        }
+
 	private class RCActionCreateTexture2D : RCAction
         {
             private enum CreationParam
@@ -686,6 +718,8 @@ namespace FreezingArcher.Renderer
 
             _GraphicsResourceManager.AddResource(vb);
 
+            vb.Renderer = this;
+
             return vb;
         }
 
@@ -702,6 +736,8 @@ namespace FreezingArcher.Renderer
             vb.VertexCount = size;
 
             _GraphicsResourceManager.AddResource(vb);
+
+            vb.Renderer = this;
 
             return vb;
         }
@@ -720,6 +756,8 @@ namespace FreezingArcher.Renderer
 
             _GraphicsResourceManager.AddResource(ib);
 
+            ib.Renderer = this;
+
             return ib;
         }
 
@@ -734,6 +772,8 @@ namespace FreezingArcher.Renderer
 
             UniformBuffer ub = new UniformBuffer(name, ubo, size);
             _GraphicsResourceManager.AddResource(ub);
+
+            ub.Renderer = this;
 
             return ub;
         }
@@ -758,6 +798,8 @@ namespace FreezingArcher.Renderer
             _GraphicsResourceManager.AddResource(vba);
 
             GL.BindVertexArray(0);
+
+            vba.Renderer = this;
 
             return vba;
         }
@@ -787,6 +829,8 @@ namespace FreezingArcher.Renderer
             Shader sh = new Shader(name, (int)shader_id, shadersource, st);
             _GraphicsResourceManager.AddResource(sh);
 
+            sh.Renderer = this;
+
             return sh;
         }
 
@@ -796,6 +840,8 @@ namespace FreezingArcher.Renderer
 
             ShaderProgram sp = new ShaderProgram(name, (int)shader_program);
             _GraphicsResourceManager.AddResource(sp);
+
+            sp.Renderer = this;
 
             return sp;
         }
@@ -831,6 +877,8 @@ namespace FreezingArcher.Renderer
 
             ShaderProgram sp = new ShaderProgram(name, (int)shader_program);
             _GraphicsResourceManager.AddResource(sp);
+
+            sp.Renderer = this;
 
             return sp;
         }
@@ -876,6 +924,8 @@ namespace FreezingArcher.Renderer
             ShaderProgram sp = new ShaderProgram(name, (int)shader_program);
             _GraphicsResourceManager.AddResource(sp);
 
+            sp.Renderer = this;
+
             return sp;
         }
 
@@ -890,6 +940,8 @@ namespace FreezingArcher.Renderer
             GL.UseProgramStages(id, ProgramStageMask.AllShaderBits, 0);
 
             GL.BindProgramPipeline(0);
+
+            eff.Renderer = this;
 
             return eff;
         }
@@ -953,6 +1005,8 @@ namespace FreezingArcher.Renderer
             Sampler s2d = new Sampler(name, id);
             _GraphicsResourceManager.AddResource(s2d);
 
+            s2d.Renderer = this;
+
             return s2d;
         }
 
@@ -977,6 +1031,8 @@ namespace FreezingArcher.Renderer
             Sampler s2d = CreateSampler(name + "_Sampler");
             tex.Sampler = s2d;
             tex.SamplerAllowed = true;
+
+            tex.Renderer = this;
 
             return tex;
         }
@@ -1010,6 +1066,8 @@ namespace FreezingArcher.Renderer
                 tex.SamplerAllowed = generate_sampler;
                 tex.Sampler.MagnificationFilter = MagnificationFilter.UseNearest;
                 tex.Sampler.MinificationFilter = MinificationFilter.UseNearest;
+
+                tex.Renderer = this;
 
                 return tex;
             }
@@ -1056,6 +1114,8 @@ namespace FreezingArcher.Renderer
                     Sampler s2d = CreateSampler(name + "_Sampler");
                     tex.Sampler = s2d;
                     tex.SamplerAllowed = true;
+
+                    tex.Renderer = this;
 
                     return tex;
                 }
@@ -1110,6 +1170,8 @@ namespace FreezingArcher.Renderer
                     tex.Sampler = s2d;
                     tex.SamplerAllowed = true;
 
+                    tex.Renderer = this;
+
                     return tex;
                 }
             }
@@ -1149,6 +1211,8 @@ namespace FreezingArcher.Renderer
             tex.Sampler = s2d;
             tex.SamplerAllowed = true;
 
+            tex.Renderer = this;
+
             return tex;
         }
 
@@ -1171,6 +1235,8 @@ namespace FreezingArcher.Renderer
             tds.Sampler = s2d;
             tds.SamplerAllowed = generate_sampler;
 
+            tds.Renderer = this;
+
             return tds;
         }
 
@@ -1180,6 +1246,8 @@ namespace FreezingArcher.Renderer
 
             FrameBuffer fb = new FrameBuffer(name, id);
             _GraphicsResourceManager.AddResource(fb);
+
+            fb.Renderer = this;
 
             return fb;
         }

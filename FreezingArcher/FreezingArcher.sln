@@ -225,6 +225,25 @@ Global
 		$0.DotNetNamingPolicy = $27
 		$27.DirectoryNamespaceAssociation = PrefixedHierarchical
 		$27.ResourceNamePolicy = FileFormatDefault
+		$0.TextStylePolicy = $28
+		$28.inheritsSet = null
+		$28.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $29
+		$29.AnonymousMethodBraceStyle = NextLine
+		$29.PropertyBraceStyle = NextLine
+		$29.PropertyGetBraceStyle = NextLine
+		$29.PropertySetBraceStyle = NextLine
+		$29.StatementBraceStyle = NextLine
+		$29.ElseNewLinePlacement = NewLine
+		$29.ElseIfNewLinePlacement = NewLine
+		$29.CatchNewLinePlacement = NewLine
+		$29.FinallyNewLinePlacement = NewLine
+		$29.BeforeIndexerDeclarationBracket = False
+		$29.AfterDelegateDeclarationParameterComma = True
+		$29.SpacesAfterTypecast = True
+		$29.inheritsSet = Mono
+		$29.inheritsScope = text/x-csharp
+		$29.scope = text/x-csharp
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

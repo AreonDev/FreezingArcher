@@ -424,6 +424,7 @@ namespace FreezingArcher.Game.Maze
 
                     transform = entities [x, y].GetComponent<TransformComponent>();
                     transform.Position = new Vector3 (x * scale.X * 2 + xOffs, 0, y * scale.Y * 2 + yOffs);
+                    node.Data.WorldPosition = transform.Position;
                     transform.Scale = scale;
 
                     var body = new RigidBody (new BoxShape (2.0f * scale.X, 0.2f, 2.0f * scale.Y));
@@ -517,6 +518,7 @@ namespace FreezingArcher.Game.Maze
 
                     transform = entities [x, y].GetComponent<TransformComponent>();
                     transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.5f, y * scale.Y * 2 + yOffs);
+                    node.Data.WorldPosition = transform.Position;
                     transform.Rotation = node.Data.Rotation;
                     transform.Scale = scale;
 

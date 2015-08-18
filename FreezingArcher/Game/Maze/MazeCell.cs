@@ -29,7 +29,7 @@ namespace FreezingArcher.Game.Maze
     /// <summary>
     /// Map node.
     /// </summary>
-    public sealed class MazeCell
+    public sealed class MazeCell : IMapNodeData
     {
         /// <summary>
         /// Initializes a new instance of the MapNode class.
@@ -118,6 +118,12 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <value>The position.</value>
         public Vector2i Position { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the world position.
+        /// </summary>
+        /// <value>The world position.</value>
+        public Vector3 WorldPosition { get; set; }
 
         /// <summary>
         /// Gets or sets the rotation.

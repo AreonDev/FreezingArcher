@@ -21,13 +21,14 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using FreezingArcher.Content;
 
 namespace FreezingArcher.Game.Maze
 {
     /// <summary>
     /// Maze cell edge weight.
     /// </summary>
-    public class MazeCellEdgeWeight : IComparable<MazeCellEdgeWeight>, IComparable
+    public sealed class MazeCellEdgeWeight : IMapEdgeWeight
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.Maze.MazeCellEdgeWeight"/> class.
@@ -44,7 +45,7 @@ namespace FreezingArcher.Game.Maze
         /// <summary>
         /// The even flag.
         /// </summary>
-        public readonly bool Even;
+        public bool Even { get; private set; }
 
         /// <summary>
         /// The direction.
@@ -64,7 +65,7 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <returns>The compare result.</returns>
         /// <param name="other">The value to compare to.</param>
-        public int CompareTo (MazeCellEdgeWeight other)
+        public int CompareTo (IMapEdgeWeight other)
         {
             return other != null ? Even.CompareTo (other.Even) : -1;
         }
@@ -76,7 +77,7 @@ namespace FreezingArcher.Game.Maze
         /// <param name="obj">The value to compare to.</param>
         public int CompareTo (object obj)
         {
-            return CompareTo (obj as MazeCellEdgeWeight);
+            return CompareTo (obj as IMapEdgeWeight);
         }
 
         #endregion

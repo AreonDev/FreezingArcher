@@ -257,6 +257,14 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             return null;
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose (disposing);
+
+            ParticleVAO.Renderer.DeleteGraphicsResourceAsync (ParticleVAO);
+            ParticleVBO.Renderer.DeleteGraphicsResourceAsync (ParticleVBO);
+        }
+
         #endregion
     }
 }

@@ -57,13 +57,6 @@ namespace FreezingArcher.Game
         CompositorNodeScene MazeSceneNode;
         CompositorNodeOutput OutputNode;
 
-        ParticleSceneObject particle;
-        ParticleSceneObject particle_eye1;
-        ParticleSceneObject particle_eye2;
-        ParticleSceneObject particle_smoke;
-
-        ScobisParticleEmitter paremitter;
-
         Light light1;
 
         /// <summary>
@@ -110,7 +103,7 @@ namespace FreezingArcher.Game
             state.Scene.AmbientColor = Color4.White;
             state.Scene.AmbientIntensity = 0.35f;
 
-            state.Scene.MaxRenderingDistance = 30.0f;
+            state.Scene.MaxRenderingDistance = 300.0f;
 
             light1 = new Light (LightType.SpotLight);
             light1.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
@@ -123,9 +116,34 @@ namespace FreezingArcher.Game
 
             state.MessageProxy.StartProcessing ();
 
-            particle_eye1 = new ParticleSceneObject (10);
-            particle_eye2 = new ParticleSceneObject (10);
-            particle_smoke = new ParticleSceneObject (200);
+            ParticleSceneObject particle;
+            ParticleSceneObject particle_eye1;
+            ParticleSceneObject particle_eye2;
+            ParticleSceneObject particle_smoke;
+            ParticleSceneObject particle_black_ghost;
+            ParticleSceneObject particle_passus_ghost;
+
+            ScobisParticleEmitter paremitter;
+            BlackGhostParticleEmitter blackemitter;
+            PassusGhostParticleEmitter passusemitter;
+
+            paremitter = new ScobisParticleEmitter ();
+            blackemitter = new BlackGhostParticleEmitter ();
+            passusemitter = new PassusGhostParticleEmitter ();
+
+            particle_black_ghost = new ParticleSceneObject (blackemitter.ParticleCount);
+            particle_black_ghost.Priority = 7000;
+            state.Scene.AddObject (particle_black_ghost);
+            blackemitter.Init (particle_black_ghost, rendererContext);
+
+            particle_passus_ghost = new ParticleSceneObject (passusemitter.ParticleCount);
+            particle_passus_ghost.Priority = 7001;
+            state.Scene.AddObject (particle_passus_ghost);
+            passusemitter.Init (particle_passus_ghost, rendererContext);
+
+            particle_eye1 = new ParticleSceneObject (paremitter.RedEye1.ParticleCount);
+            particle_eye2 = new ParticleSceneObject (paremitter.RedEye2.ParticleCount);
+            particle_smoke = new ParticleSceneObject (paremitter.Smoke.ParticleCount);
             particle_eye1.Priority = 5999;
             particle_eye2.Priority = 5999;
             particle_smoke.Priority = 6000;
@@ -134,14 +152,32 @@ namespace FreezingArcher.Game
             state.Scene.AddObject (particle_eye2);
             state.Scene.AddObject (particle_smoke);
 
-            paremitter = new ScobisParticleEmitter (particle_eye1, particle_eye2, particle_smoke);
-            paremitter.SpawnPosition = new Vector3 (30.0f, 30.0f, 40.0f);
-
             particle = new ParticleSceneObject (paremitter.ParticleCount);
             particle.Priority = 5998;
             state.Scene.AddObject (particle);
 
-            paremitter.Init (particle, rendererContext);
+            paremitter.Init (particle, particle_eye1, particle_eye2, particle_smoke, rendererContext);
+
+            Scobis = EntityFactory.Instance.CreateWith ("Scobis", state.MessageProxy, systems:
+                new[] { typeof(ParticleSystem) });
+
+            Scobis.GetComponent<ParticleComponent> ().Emitter = paremitter;
+            Scobis.GetComponent<ParticleComponent> ().Particle = particle;
+            Scobis.GetComponent<TransformComponent> ().Position = new Vector3 (30.0f, 30.0f, 40.0f);
+
+            BaclGhost = EntityFactory.Instance.CreateWith ("BlackGhost", state.MessageProxy, systems:
+                new[] { typeof(ParticleSystem) });
+
+            BaclGhost.GetComponent<ParticleComponent> ().Emitter = blackemitter;
+            BaclGhost.GetComponent<ParticleComponent> ().Particle = particle_black_ghost;
+            BaclGhost.GetComponent<TransformComponent> ().Position = new Vector3 (50.0f, 30.0f, 70.0f);
+
+            Passus = EntityFactory.Instance.CreateWith ("PassusGhost", state.MessageProxy, systems:
+                new[] { typeof(ParticleSystem) });
+
+            Passus.GetComponent<ParticleComponent> ().Emitter = passusemitter;
+            Passus.GetComponent<ParticleComponent> ().Particle = particle_passus_ghost;
+            Passus.GetComponent<TransformComponent> ().Position = new Vector3 (10.0f, 30.0f, 70.0f);
 
             loadingScreen = new LoadingScreen (application, messageProvider, "loading.png",
                 "MazeLoadingScreen",
@@ -220,6 +256,9 @@ namespace FreezingArcher.Game
         readonly Maze.Maze[] maze = new Maze.Maze[2];
 
         public Entity Player { get; private set; }
+        public Entity Scobis { get; private set; }
+        public Entity BaclGhost { get; private set;}
+        public Entity Passus { get; private set;}
 
         readonly Content.Game game;
 
@@ -290,10 +329,10 @@ namespace FreezingArcher.Game
 
                         game.CurrentGameState.Scene.Active = true;
                     }
-                } else if (!finishedLoading)
-                        loadingScreen.BringToFront ();
-
-                paremitter.Update ((float)um.TimeStamp.TotalSeconds);
+                }
+                else
+                if (!finishedLoading)
+                    loadingScreen.BringToFront ();
 
                 if (game.CurrentGameState == game.GetGameState ("maze_overworld") && maze [0].HasFinished)
                     game.CurrentGameState.PhysicsManager.Update (um.TimeStamp);
@@ -338,6 +377,7 @@ namespace FreezingArcher.Game
                     SwitchMaze();
                 }
 
+                /*
                 if (im.IsActionDown ("bla_unfug_links"))
                 {
                     paremitter.SpawnPosition += new Vector3 (-0.02f, 0, 0);
@@ -356,7 +396,7 @@ namespace FreezingArcher.Game
                 if (im.IsActionDown ("bla_unfug_hoch"))
                 {
                     paremitter.SpawnPosition += new Vector3 (0, 0.02f, 0);
-                }
+                }*/
             }
 
             if (msg.MessageId == (int)MessageId.Running)
@@ -380,7 +420,7 @@ namespace FreezingArcher.Game
 
             if (msg.MessageId == (int)MessageId.WindowClose)
             {
-                paremitter.Destroy ();
+                
             }
         }
 

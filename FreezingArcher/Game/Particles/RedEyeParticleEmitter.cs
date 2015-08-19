@@ -25,6 +25,7 @@ using System;
 using FreezingArcher.Math;
 
 using FreezingArcher.Renderer;
+using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {
@@ -41,7 +42,7 @@ namespace FreezingArcher.Game
 
         #region implemented abstract members of ParticleEmitter
 
-        public override void UpdateParticle (Particle par, float time)
+        protected override void UpdateParticle (Particle par, float time)
         {
             par.Velocity = Vector3.Zero;
             par.Position -= cachedSpawnPoint;
@@ -86,7 +87,7 @@ namespace FreezingArcher.Game
             cachedSpawnPoint = SpawnPosition;
         }
 
-        public override void InitializeParticles (RendererContext rc)
+        protected override void InitializeParticles (RendererContext rc)
         {
             if (SceneObject != null) 
             {

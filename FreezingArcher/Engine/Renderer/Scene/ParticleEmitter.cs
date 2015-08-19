@@ -27,7 +27,7 @@ using FreezingArcher.Renderer;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Output;
 
-namespace FreezingArcher.Game
+namespace FreezingArcher.Renderer.Scene
 {
     public abstract class ParticleEmitter
     {
@@ -47,8 +47,8 @@ namespace FreezingArcher.Game
             for (int i = 0; i < ParticleCount; i++)
                 Particles [i] = new Particle ();
 
-            updatethread = new Thread (InnerUpdate);
-            updatethread.Start ();
+            //updatethread = new Thread (InnerUpdate);
+            //updatethread.Start ();
 
             time = 0.0f;
         }
@@ -64,8 +64,8 @@ namespace FreezingArcher.Game
 
         public virtual void EndUpdate(float time) {}
 
-        public abstract void UpdateParticle(Particle par, float time);
-        public abstract void InitializeParticles(RendererContext rc);
+        protected abstract void UpdateParticle(Particle par, float time);
+        protected abstract void InitializeParticles(RendererContext rc);
 
         readonly AutoResetEvent updateEvent = new AutoResetEvent(false);
         bool running = false;
@@ -74,6 +74,7 @@ namespace FreezingArcher.Game
 
         private void InnerUpdate()
         {
+            /*
             try
             {
                 running = true;
@@ -102,13 +103,14 @@ namespace FreezingArcher.Game
             finally 
             {
                 
-            }
+            }*/
         }
 
         Thread updatethread;
 
         public void Update(float time)
         {
+            /*
             if (particleUpdateRunning)
             {
                 Logger.Log.AddLogEntry(LogLevel.Warning, "ParticleEmitter",
@@ -122,7 +124,21 @@ namespace FreezingArcher.Game
                 this.time = time;
                 if (running)
                     updateEvent.Set();
+            }*/
+
+            for (int i = 0; i < ParticleCount; i++) 
+            {
+                UpdateParticle (Particles [i], (float)time);
+                if (SceneObject != null) 
+                {
+                    SceneObject.Particles [i].Position = Particles [i].Position;
+                    SceneObject.Particles [i].Color = Particles [i].Color;
+                    SceneObject.Particles [i].Life = Particles [i].Life;
+                    SceneObject.Particles [i].Size = Particles [i].Size;
+                }
             }
+
+            EndUpdate (time);
         }
 
         /// <summary>

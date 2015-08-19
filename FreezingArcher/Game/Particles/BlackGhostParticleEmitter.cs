@@ -1,5 +1,5 @@
 ﻿//
-//  ScobisParticleEmitter.cs
+//  RandomParticleSystem.cs
 //
 //  Author:
 //       dboeg <>
@@ -22,76 +22,27 @@
 //
 using System;
 
-using FreezingArcher.Math;
 using FreezingArcher.Renderer;
 using FreezingArcher.Renderer.Scene;
-using FreezingArcher.Renderer.Scene.SceneObjects;
 
 namespace FreezingArcher.Game
 {
-    public class ScobisParticleEmitter : ParticleEmitter
+    public class BlackGhostParticleEmitter : ParticleEmitter
     {
-        private ParticleSceneObject eye1;
-        private ParticleSceneObject eye2;
-        private ParticleSceneObject smoke;
-
-        public ScobisParticleEmitter () : base(100)
+        public BlackGhostParticleEmitter () : base(100)
         {
-            RedEye1 = new RedEyeParticleEmitter ();
-            RedEye2 = new RedEyeParticleEmitter ();
-            Smoke = new ScobisSmokeParticleEmitter ();
-        }
-
-        public RedEyeParticleEmitter RedEye1 { get; private set;}
-        public RedEyeParticleEmitter RedEye2 {get; private set;}
-        public ScobisSmokeParticleEmitter Smoke {get; private set;}
-
-        public bool Init(ParticleSceneObject part, ParticleSceneObject eye1, ParticleSceneObject eye2, ParticleSceneObject smoke, RendererContext rc)
-        {
-            this.eye1 = eye1;
-            this.eye2 = eye2;
-            this.smoke = smoke;
-
-            return base.Init (part, rc);
+            //SpawnPosition = Math.Vector3.Zero
         }
 
         #region implemented abstract members of ParticleEmitter
 
-        public override void EndUpdate(float time)
-        {
-            Vector3 looking_dir = SpawnPosition - cachedSpawnPoint;
-
-            cachedSpawnPoint = SpawnPosition;
-
-            if (looking_dir.Length > 0.02f) 
-            {
-                Vector3 up = Vector3.UnitY;
-                Vector3 right = Vector3.Normalize(Vector3.Cross (up, looking_dir));
-
-                RedEye1.SpawnPosition = SpawnPosition - right * 0.3f + Vector3.Normalize (looking_dir) * 0.5f;
-                RedEye2.SpawnPosition = SpawnPosition + right * 0.3f + Vector3.Normalize (looking_dir) * 0.5f;
-            }
-
-            Smoke.SpawnPosition = SpawnPosition;
-
-            RedEye1.Update (time);
-            RedEye2.Update (time);
-            Smoke.Update (time);
-        }
-
         Random rnd = new Random ();
-
-        Vector3 cachedSpawnPoint;
 
         protected override void UpdateParticle (Particle par, float time)
         {
-            //par.Velocity = Vector3.Zero;
-            par.Position -= cachedSpawnPoint;
-            par.Position += SpawnPosition;
-
             if (par.Life >= 0.05f) 
             {
-                if ((par.Position - SpawnPosition).Length > 1.0f)
+                if ((par.Position - SpawnPosition).Length > 1.3f)
                 {
                     par.Color = new FreezingArcher.Math.Color4(par.Color.R, par.Color.G, par.Color.B, par.Color.A - time * 0.40f);
 
@@ -101,14 +52,14 @@ namespace FreezingArcher.Game
                 {
                     //par.Life -= time * 4.0f;
 
-                    if (par.Color.A < 0.6f)
+                    if (par.Color.A < 0.7f)
                         par.Color = new FreezingArcher.Math.Color4 (par.Color.R, par.Color.G, par.Color.B, par.Color.A + time * 0.80f);
 
                     FreezingArcher.Math.Vector3 actual = par.Velocity;
                     par.Velocity = actual;
                     par.Update (time);
                 }
-
+                    
             } else
             {
                 par.Reset ();
@@ -119,22 +70,25 @@ namespace FreezingArcher.Game
 
                 par.Position = SpawnPosition + (new FreezingArcher.Math.Vector3 ((float)rnd.NextDouble () * 0.2f * invert1, (float)rnd.NextDouble () * 0.2f * invert2, 
                     (float)rnd.NextDouble () * 0.2f * invert3));
-
+                
                 par.Velocity = (new FreezingArcher.Math.Vector3 ((float)rnd.NextDouble () * 0.4f * invert1, (float)rnd.NextDouble () * 0.4f * invert2, 
                     (float)rnd.NextDouble () * 0.4f * invert3));
-
+                
                 par.Life = 0.7f;
                 par.LifeTime = 1.0f * (float)rnd.NextDouble();
-                par.Size = new Vector2(1.2f, 1.2f);
-                par.Color = new FreezingArcher.Math.Color4(0.05f, 0.01f , 0.00f, 0.3f);
+                par.Size = new FreezingArcher.Math.Vector2(1.2f, 1.2f);
+                par.Color = new FreezingArcher.Math.Color4(0.1f, 0.1f , 0.1f, 1.0f);
             }
         }
 
         protected override void InitializeParticles (RendererContext rc)
         {
-            RedEye1.Init (eye1, rc);
-            RedEye2.Init (eye2, rc);
-            Smoke.Init (smoke, rc);
+            if (SceneObject != null) 
+            {
+                SceneObject.SourceBlendingFactor = RendererBlendingFactorSrc.SrcAlpha;
+                SceneObject.DestinationBlendingFactor = RendererBlendingFactorDest.OneMinusSrcAlpha;
+                SceneObject.BlendEquation = RendererBlendEquationMode.FuncAdd;
+            }
 
             foreach (Particle par in Particles) 
             {
@@ -146,24 +100,16 @@ namespace FreezingArcher.Game
 
                 par.Position = (new FreezingArcher.Math.Vector3 ((float)rnd.NextDouble () * 0.8f * invert1, (float)rnd.NextDouble () * 0.8f * invert2, 
                     (float)rnd.NextDouble () * 0.8f * invert3)) + SpawnPosition;
-
+                
                 //par.Velocity = (new FreezingArcher.Math.Vector3 ((float)rnd.NextDouble () * 10.5f, (float)rnd.NextDouble () * 10.5f, (float)rnd.NextDouble () * 10.5f))*invert;
                 par.Mass = 1.0f;
-                par.Size = new Vector2(1.2f, 1.2f);
-                par.Color = new FreezingArcher.Math.Color4(0.05f, 0.01f , 0.00f, 0.4f);
+                par.Size = new FreezingArcher.Math.Vector2(1.2f, 1.2f);
+                par.Color = new FreezingArcher.Math.Color4(0.1f, 0.1f , 0.1f, 1.0f);
                 par.Life = 1.2f;
                 par.LifeTime = 1.0f * (float)rnd.NextDouble();
             }
         }
 
-        public override void Destroy ()
-        {
-            RedEye1.Destroy();
-            RedEye2.Destroy();
-            Smoke.Destroy();
-
-            base.Destroy ();
-        }
         #endregion
     }
 }

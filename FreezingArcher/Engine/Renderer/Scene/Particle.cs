@@ -25,7 +25,7 @@ using System;
 using FreezingArcher.Math;
 using FreezingArcher.Core;
 
-namespace FreezingArcher.Game
+namespace FreezingArcher.Renderer.Scene
 {
     public class Particle
     {

@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {
@@ -34,7 +35,7 @@ namespace FreezingArcher.Game
 
         #region implemented abstract members of ParticleEmitter
 
-        public override void UpdateParticle (Particle par, float time)
+        protected override void UpdateParticle (Particle par, float time)
         {
             if (par.Life >= 0.05f) 
             {
@@ -81,7 +82,7 @@ namespace FreezingArcher.Game
             }
         }
 
-        public override void InitializeParticles (FreezingArcher.Renderer.RendererContext rc)
+        protected override void InitializeParticles (FreezingArcher.Renderer.RendererContext rc)
         {
             foreach (Particle par in Particles) 
             {

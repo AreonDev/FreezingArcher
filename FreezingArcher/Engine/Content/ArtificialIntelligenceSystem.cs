@@ -22,6 +22,10 @@
 //
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
+using System;
+using FreezingArcher.Math;
+using FreezingArcher.Core;
+using Jitter.LinearMath;
 
 namespace FreezingArcher.Content
 {
@@ -31,8 +35,7 @@ namespace FreezingArcher.Content
         {
             base.Init(messageProvider, entity);
 
-            NeededComponents = new[] { typeof (TransformComponent), typeof (HealthComponent),
-                typeof (ArtificialIntelligenceComponent) };
+            NeededComponents = new[] { typeof (HealthComponent), typeof (ArtificialIntelligenceComponent) };
 
             internalValidMessages = new[] { (int) MessageId.Update };
             messageProvider += this;
@@ -45,9 +48,11 @@ namespace FreezingArcher.Content
                 var ai = Entity.GetComponent<ArtificialIntelligenceComponent> ();
                 if (ai.ArtificialIntelligence != null)
                 {
-                    var transform = Entity.GetComponent<TransformComponent>();
-                    ai.ArtificialIntelligence.Think (transform, Entity.GetComponent<HealthComponent>(),
-                        ai.AIManager.Map, ai.AIManager.CollectEntitiesNearby (transform, ai.MaximumEntityDistance));
+                    var physics = Entity.GetComponent<PhysicsComponent>();
+                    ai.ArtificialIntelligence.Think (Entity.GetComponent<PhysicsComponent>(),
+                        Entity.GetComponent<HealthComponent>(), ai.AIManager.Map,
+                        ai.AIManager.CollectEntitiesNearby (physics.RigidBody.Position.ToFreezingArcherVector (),
+                            ai.MaximumEntityDistance));
                 }
             }
         }

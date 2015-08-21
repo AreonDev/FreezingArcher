@@ -30,28 +30,30 @@ namespace FreezingArcher.Content
 {
     public class AIManager
     {
-        public AIManager (object map)
+        public AIManager (object map, Random rand)
         {
             Map = map;
+            this.rand = rand;
         }
 
         readonly List<Entity> entities = new List<Entity>();
 
         public object Map { get; private set; }
 
-        public List<Entity> CollectEntitiesNearby (TransformComponent transform, float maximumEntityDistance)
+        readonly Random rand;
+
+        public List<Entity> CollectEntitiesNearby (Vector3 position, float maximumEntityDistance)
         {
             List<Entity> nearby = new List<Entity>();
 
             float d;
             lock (entities)
             {
-                Vector3 pos1, pos2;
-                pos2 = transform.Position;
+                Vector3 pos;
                 foreach (var e in entities)
                 {
-                    pos1 = e.GetComponent<TransformComponent> ().Position;
-                    Vector3.Distance (ref pos1, ref pos2, out d);
+                    pos = e.GetComponent<TransformComponent> ().Position;
+                    Vector3.Distance (ref pos, ref position, out d);
                     if (d <= maximumEntityDistance)
                         nearby.Add (e);
                 }
@@ -92,7 +94,8 @@ namespace FreezingArcher.Content
                     if (e.HasComponent<ArtificialIntelligenceComponent>())
                     {
                         var ai_component = e.GetComponent<ArtificialIntelligenceComponent>();
-                        ai_component.ArtificialIntelligence.SetSpawnPosition (e.GetComponent<TransformComponent>(), Map);
+                        ai_component.ArtificialIntelligence.SetSpawnPosition (e.GetComponent<PhysicsComponent>(), Map,
+                            rand);
                     }
                 }
             }

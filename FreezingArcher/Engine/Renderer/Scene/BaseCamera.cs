@@ -164,6 +164,8 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         Vector3 cameraLookat;
 
+        bool orthographic;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Renderer.Scene.BaseCamera"/> class.
         /// </summary>
@@ -176,7 +178,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="up">Up.</param>
         public BaseCamera (Entity entity, MessageProvider messageProvider, Vector3 position = default(Vector3),
             Quaternion rotation = default(Quaternion), float near = 0.1f, float far = 400.0f,
-            float fov = MathHelper.PiOver3)
+            float fov = MathHelper.PiOver3, bool orthographic = false)
         {
             MPosition = position;
             MRotation = rotation;
@@ -188,10 +190,18 @@ namespace FreezingArcher.Renderer.Scene
             NeededComponents = new[] { typeof(TransformComponent) };
             messageProvider += this;
             Entity = entity;
+            this.orthographic = orthographic;
 
-            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (MFov,
-                (float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y,
-                MZNear, MZFar); 
+            if (orthographic)
+            {
+                ProjectionMatrix = Matrix.CreateOrthographic (427, 240, MZNear, MZFar);
+            }
+            else
+            {
+                ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (MFov,
+                    (float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y,
+                    MZNear, MZFar); 
+            }
             
             UpdateCamera ();
 
@@ -233,8 +243,15 @@ namespace FreezingArcher.Renderer.Scene
         /// </summary>
         protected void UpdateProjectionMatrix ()
         {
-            ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (MFov, 
-                (float)WindowX / (float)WindowY, MZNear, MZFar); 
+            if (orthographic)
+            {
+                ProjectionMatrix = Matrix.CreateOrthographic (427, 240, MZNear, MZFar);
+            }
+            else
+            {
+                ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (MFov, 
+                    (float)WindowX / (float)WindowY, MZNear, MZFar);
+            }
         }
 
         /// <summary>

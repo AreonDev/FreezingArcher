@@ -64,7 +64,7 @@ namespace FreezingArcher.Game.Maze
         {
             foreach (var deadEnd in GetDeadEndGrounds ())
             {
-                if (rand.Next() % 500/*10000*/ != 0)
+                if (rand.Next() % 10000 != 0)
                     continue;
 
                 WeightedNode<MazeCell, MazeCellEdgeWeight> connection = null;
@@ -146,8 +146,6 @@ namespace FreezingArcher.Game.Maze
             var wall_transform = wall.GetComponent<TransformComponent>();
             wall.GetComponent<WallComponent>().IsMoving = true;
             var new_ground_position = new Vector3 (wall_transform.Position.X, 0, wall_transform.Position.Z);
-            ground1.GetComponent<TransformComponent>().Position = new_ground_position;
-            ground1.GetComponent<PhysicsComponent>().RigidBody.Position = new_ground_position.ToJitterVector();
 
             var ground2 = EntityFactory.Instance.CreateWith ("ground_temp" + temp_counter++, messageProvider,
                 systems: new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
@@ -169,6 +167,9 @@ namespace FreezingArcher.Game.Maze
 
             state.PhysicsManager.World.AddBody (body);
             state.Scene.AddObject(ground2_model);
+
+            ground1.GetComponent<TransformComponent>().Position = new_ground_position;
+            ground1.GetComponent<PhysicsComponent>().RigidBody.Position = new_ground_position.ToJitterVector();
 
             var position = old_pos;
             position = new Vector3 (position.X, -0.5f, position.Z);

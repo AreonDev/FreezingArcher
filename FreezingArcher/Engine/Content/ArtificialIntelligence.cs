@@ -28,9 +28,9 @@ namespace FreezingArcher.Content
 {
     public abstract class ArtificialIntelligence
     {
-        public abstract void Think (TransformComponent ownTransform, HealthComponent ownHealth,
-            object map, List<Entity> entitiesNearby);
+        public abstract void Think (PhysicsComponent ownPhysics, HealthComponent ownHealth, object map,
+            List<Entity> entitiesNearby);
 
-        public abstract void SetSpawnPosition (TransformComponent ownTransform, object map);
+        public abstract void SetSpawnPosition (PhysicsComponent ownPhysics, object map, Random rand);
     }
 }

@@ -160,11 +160,20 @@ namespace FreezingArcher.Game
             paremitter.Init (particle, particle_eye1, particle_eye2, particle_smoke, rendererContext);
 
             Scobis = EntityFactory.Instance.CreateWith ("Scobis", state.MessageProxy, systems:
-                new[] { typeof(ParticleSystem), typeof (ArtificialIntelligenceSystem) });
+                new[] { typeof(ParticleSystem), typeof (ArtificialIntelligenceSystem), typeof (PhysicsSystem) });
 
             Scobis.GetComponent<ParticleComponent> ().Emitter = paremitter;
             Scobis.GetComponent<ParticleComponent> ().Particle = particle;
-            Scobis.GetComponent<TransformComponent> ().Position = new Vector3 (30.0f, 30.0f, 40.0f);
+            //Scobis.GetComponent<TransformComponent> ().Position = new Vector3 (30.0f, 30.0f, 40.0f);
+            RigidBody scobisBody = new RigidBody (new SphereShape (0.3f));
+            scobisBody.AffectedByGravity = false;
+            scobisBody.AllowDeactivation = false;
+            Scobis.GetComponent<PhysicsComponent> ().RigidBody = scobisBody;
+            Scobis.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+            Scobis.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
+
+            state.PhysicsManager.World.AddBody (scobisBody);
+
 
             BlackGhost = EntityFactory.Instance.CreateWith ("BlackGhost", state.MessageProxy, systems:
                 new[] { typeof(ParticleSystem) });
@@ -210,7 +219,7 @@ namespace FreezingArcher.Game
             Player.GetComponent<TransformComponent> ().Position = new Vector3 (0, 1.85f, 0);
             var maze_cam_entity = EntityFactory.Instance.CreateWith ("maze_cam_transform", state.MessageProxy, new[] {typeof (TransformComponent)});
             var maze_cam_transform = maze_cam_entity.GetComponent<TransformComponent>();
-            var maze_cam = new BaseCamera (maze_cam_entity, state.MessageProxy);
+            var maze_cam = new BaseCamera (maze_cam_entity, state.MessageProxy, orthographic: true);
             state.Scene.CameraManager.AddCamera (maze_cam, "maze");
             maze_cam_transform.Position = new Vector3 (115, 240, 110);
             maze_cam_transform.Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2);
@@ -238,6 +247,7 @@ namespace FreezingArcher.Game
             Scobis.GetComponent<ArtificialIntelligenceComponent>().AIManager = maze[0].AIManager;
             Scobis.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence = new ScobisAI ();
             maze[0].AIManager.RegisterEntity (Player);
+            maze[0].AIManager.RegisterEntity (Scobis);
 
             game.AddGameState("maze_underworld", Content.Environment.Default,
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },

@@ -65,7 +65,7 @@ namespace FreezingArcher.Content
         /// Gets or sets the scene.
         /// </summary>
         /// <value>The scene.</value>
-        public CoreScene Scene {get; set;}
+        public CoreScene Scene { get; set; }
 
         /// <summary>
         /// Gets the physics manager.

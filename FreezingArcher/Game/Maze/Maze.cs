@@ -94,7 +94,7 @@ namespace FreezingArcher.Game.Maze
             objectManager = objmnr;
             Seed = seed;
             Size = new Vector2i(sizeX, sizeY);
-            this.scale = scale;
+            this.Scale = scale;
             Turbulence = turbulence;
             PortalSpawnFactor = portalSpawnFactor;
             MaximumContinuousPathLength = maximumContinuousPathLength;
@@ -126,7 +126,7 @@ namespace FreezingArcher.Game.Maze
 
         readonly PlaceFeaturesDelegate placeFeaturesDelegate;
 
-        readonly float scale;
+        public float Scale { get; set; }
 
         readonly PhysicsManager physics;
 
@@ -208,7 +208,17 @@ namespace FreezingArcher.Game.Maze
         /// <value>The portal spawn factor.</value>
         public uint PortalSpawnFactor { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance has finished.
+        /// </summary>
+        /// <value><c>true</c> if this instance has finished; otherwise, <c>false</c>.</value>
         public bool HasFinished{ get; private set;}
+
+        /// <summary>
+        /// Gets or sets the AI manager.
+        /// </summary>
+        /// <value>The AI manager.</value>
+        public AIManager AIManager { get; set; }
 
         /// <summary>
         /// Init this instance.
@@ -219,6 +229,7 @@ namespace FreezingArcher.Game.Maze
             {
                 IsInitialized = true;
                 initMazeDelegate(ref objectManager, ref graph, ref entities, ref rand, (uint) Size.X, (uint) Size.Y);
+                AIManager = new AIManager (graph);
             }
             else
             {
@@ -332,7 +343,7 @@ namespace FreezingArcher.Game.Maze
 
             if (addMazeToGameStateDelegate != null)
             {
-                addMazeToGameStateDelegate(graph, state.MessageProxy, entities, ref playerPosition, state, rand, scale,
+                addMazeToGameStateDelegate(graph, state.MessageProxy, entities, ref playerPosition, state, rand, Scale,
                     (uint) Size.X, Offset.X, Offset.Y);
             }
             else

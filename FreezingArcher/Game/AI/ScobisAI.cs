@@ -1,5 +1,5 @@
 ﻿//
-//  ArtificialIntelligence.cs
+//  ScobisAI.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -21,14 +21,27 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using FreezingArcher.Content;
 using FreezingArcher.DataStructures.Graphs;
 using System.Collections.Generic;
+using FreezingArcher.Math;
 
-namespace FreezingArcher.Content
+namespace FreezingArcher.Game.AI
 {
-    public abstract class ArtificialIntelligence
+    public sealed class ScobisAI : ArtificialIntelligence
     {
-        public abstract void Think (TransformComponent ownTransform, HealthComponent ownHealth,
-            object map, List<Entity> entitiesNearby);
+        public ScobisAI ()
+        {
+        }
+
+        public override void Think (TransformComponent ownTransform, HealthComponent ownHealth,
+            object map, List<Entity> entitiesNearby)
+        {
+            Maze.Maze maze = map as Maze.Maze;
+            if (maze != null)
+            {
+                ownTransform.Position += Vector3.UnitX / 100f;
+            }
+        }
     }
 }

@@ -30,14 +30,14 @@ namespace FreezingArcher.Content
 {
     public class AIManager
     {
-        public AIManager (WeightedGraph<IMapNodeData, IMapEdgeWeight> map)
+        public AIManager (object map)
         {
             Map = map;
         }
 
         readonly List<Entity> entities = new List<Entity>();
 
-        public WeightedGraph<IMapNodeData, IMapEdgeWeight> Map { get; private set; }
+        public object Map { get; private set; }
 
         public List<Entity> CollectEntitiesNearby (TransformComponent transform, float maximumEntityDistance)
         {

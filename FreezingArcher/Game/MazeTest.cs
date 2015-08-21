@@ -37,6 +37,7 @@ using Jitter.LinearMath;
 using Jitter.Dynamics;
 using Jitter.Collision;
 using Jitter.Collision.Shapes;
+using FreezingArcher.Game.AI;
 
 namespace FreezingArcher.Game
 {
@@ -159,7 +160,7 @@ namespace FreezingArcher.Game
             paremitter.Init (particle, particle_eye1, particle_eye2, particle_smoke, rendererContext);
 
             Scobis = EntityFactory.Instance.CreateWith ("Scobis", state.MessageProxy, systems:
-                new[] { typeof(ParticleSystem) });
+                new[] { typeof(ParticleSystem), typeof (ArtificialIntelligenceSystem) });
 
             Scobis.GetComponent<ParticleComponent> ().Emitter = paremitter;
             Scobis.GetComponent<ParticleComponent> ().Particle = particle;
@@ -234,6 +235,9 @@ namespace FreezingArcher.Game
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
             maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
             maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
+            Scobis.GetComponent<ArtificialIntelligenceComponent>().AIManager = maze[0].AIManager;
+            Scobis.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence = new ScobisAI ();
+            maze[0].AIManager.RegisterEntity (Player);
 
             game.AddGameState("maze_underworld", Content.Environment.Default,
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },

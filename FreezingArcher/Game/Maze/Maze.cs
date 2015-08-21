@@ -229,7 +229,7 @@ namespace FreezingArcher.Game.Maze
             {
                 IsInitialized = true;
                 initMazeDelegate(ref objectManager, ref graph, ref entities, ref rand, (uint) Size.X, (uint) Size.Y);
-                AIManager = new AIManager (graph);
+                AIManager = new AIManager (this);
             }
             else
             {

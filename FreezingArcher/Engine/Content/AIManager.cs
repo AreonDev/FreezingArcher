@@ -82,5 +82,20 @@ namespace FreezingArcher.Content
                 entities.Remove (entity);
             }
         }
+
+        public void CalculateSpawnPositions ()
+        {
+            lock (entities)
+            {
+                foreach (var e in entities)
+                {
+                    if (e.HasComponent<ArtificialIntelligenceComponent>())
+                    {
+                        var ai_component = e.GetComponent<ArtificialIntelligenceComponent>();
+                        ai_component.ArtificialIntelligence.SetSpawnPosition (e.GetComponent<TransformComponent>(), Map);
+                    }
+                }
+            }
+        }
     }
 }

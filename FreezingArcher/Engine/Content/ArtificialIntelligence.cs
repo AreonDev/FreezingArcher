@@ -30,5 +30,7 @@ namespace FreezingArcher.Content
     {
         public abstract void Think (TransformComponent ownTransform, HealthComponent ownHealth,
             object map, List<Entity> entitiesNearby);
+
+        public abstract void SetSpawnPosition (TransformComponent ownTransform, object map);
     }
 }

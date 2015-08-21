@@ -445,6 +445,8 @@ namespace FreezingArcher.Game
                             maze [0].SpawnFeatures (null, maze [1].graph);
                         if (maze [1].IsGenerated && !maze [1].AreFeaturesPlaced)
                             maze [1].SpawnFeatures (maze [0].graph);
+                        maze[0].AIManager.CalculateSpawnPositions();
+                        maze[1].AIManager.CalculateSpawnPositions();
                     }, state);
                 }, game.GetGameState ("maze_overworld"));
             }

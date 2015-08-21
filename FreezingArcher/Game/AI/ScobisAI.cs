@@ -38,11 +38,13 @@ namespace FreezingArcher.Game.AI
         {
         }
 
-        const float acceleration = .5f;
+        const float acceleration = 0.02f;
 
-        const float speed = 0.75f;
+        const float speed = 3f;
 
-        JVector direction = JVector.Backward;
+        JVector direction;
+
+        JVector fallback;
 
         public override void Think (PhysicsComponent ownPhysics, HealthComponent ownHealth, object map,
             List<Entity> entitiesNearby)
@@ -50,35 +52,34 @@ namespace FreezingArcher.Game.AI
             Maze.Maze maze = map as Maze.Maze;
             if (maze != null && maze.HasFinished)
             {
-                if (ownPhysics.RigidBody.Arbiters.Count > 0)
+                RigidBody rigidBody;
+                JVector normal;
+                float fraction;
+                ownPhysics.World.CollisionSystem.Raycast (
+                    ownPhysics.RigidBody.Position,
+                    direction,
+                    new Jitter.Collision.RaycastCallback((rb, n, f) => {
+                        var e = rb.Tag as Entity;
+                        return f < 6 && e != null && e.HasComponent<WallComponent>();
+                    }),
+                    out rigidBody, out normal, out fraction);
+                if (rigidBody != null)
                 {
-                    try
-                    {
-                        foreach (Arbiter arbiter in ownPhysics.RigidBody.Arbiters)
-                        {
-                            var body = arbiter.Body1 == ownPhysics.RigidBody ? arbiter.Body2 : arbiter.Body1;
-                            var diff = ownPhysics.RigidBody.Position - body.Position;
-                            direction += new JVector (diff.X, 0, diff.Z);
-                        }
-
-                        if (direction.Length() > 0)
-                            direction.Normalize ();
-                        else
-                            direction = JVector.Backward;
-                    }
-                    catch {}
+                    var diff = ownPhysics.RigidBody.Position - rigidBody.Position;
+                    direction += new JVector (diff.X, 0, diff.Z);
                 }
-                /*else
-                {
-                    direction = ownPhysics.RigidBody.Force;
-                    if (direction.Length() > 0)
-                        direction.Normalize ();
-                    else
-                        direction = JVector.Backward;
-                }*/
 
-                if (ownPhysics.RigidBody.Force.Length() < speed)
-                    ownPhysics.RigidBody.AddForce (direction * acceleration);
+                if (direction.Length() > 0.1)
+                    direction.Normalize();
+                else
+                    direction = fallback;
+
+                if (ownPhysics.RigidBody.Position.X > maze.Size.X * 8 || ownPhysics.RigidBody.Position.X < 0 ||
+                    ownPhysics.RigidBody.Position.Z > maze.Size.Y * 8 || ownPhysics.RigidBody.Position.Z < 0)
+                    direction = direction * -1;
+
+                if (ownPhysics.RigidBody.LinearVelocity.Length() < speed)
+                    ownPhysics.RigidBody.LinearVelocity += (direction * acceleration);
             }
         }
 
@@ -104,6 +105,10 @@ namespace FreezingArcher.Game.AI
                 {
                     Logger.Log.AddLogEntry (LogLevel.Severe, "ScobisAI", "Failed to generate spawn position!");
                 }
+
+                fallback = JVector.Transform (JVector.Backward, JMatrix.CreateFromAxisAngle (JVector.Up,
+                    (float) rand.NextDouble() * 2 * MathHelper.Pi));
+                direction = fallback;
             }
         }
     }

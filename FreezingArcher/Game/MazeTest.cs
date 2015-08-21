@@ -38,6 +38,8 @@ using Jitter.Dynamics;
 using Jitter.Collision;
 using Jitter.Collision.Shapes;
 using FreezingArcher.Game.AI;
+using System.Collections.Generic;
+using FreezingArcher.Game.Ghosts;
 
 namespace FreezingArcher.Game
 {
@@ -46,7 +48,7 @@ namespace FreezingArcher.Game
     /// </summary>
     public class MazeTest : IMessageConsumer, IMessageCreator
     {
-        double f = 0;
+        const int ScobisCount = 10;
 
         LoadingScreen loadingScreen;
         Gwen.ControlInternal.Text FPS_Text;
@@ -117,18 +119,12 @@ namespace FreezingArcher.Game
 
             state.MessageProxy.StartProcessing ();
 
-            ParticleSceneObject particle;
-            ParticleSceneObject particle_eye1;
-            ParticleSceneObject particle_eye2;
-            ParticleSceneObject particle_smoke;
             ParticleSceneObject particle_black_ghost;
             ParticleSceneObject particle_passus_ghost;
 
-            ScobisParticleEmitter paremitter;
             BlackGhostParticleEmitter blackemitter;
             PassusGhostParticleEmitter passusemitter;
 
-            paremitter = new ScobisParticleEmitter ();
             blackemitter = new BlackGhostParticleEmitter ();
             passusemitter = new PassusGhostParticleEmitter ();
 
@@ -141,39 +137,6 @@ namespace FreezingArcher.Game
             particle_passus_ghost.Priority = 7001;
             state.Scene.AddObject (particle_passus_ghost);
             passusemitter.Init (particle_passus_ghost, rendererContext);
-
-            particle_eye1 = new ParticleSceneObject (paremitter.RedEye1.ParticleCount);
-            particle_eye2 = new ParticleSceneObject (paremitter.RedEye2.ParticleCount);
-            particle_smoke = new ParticleSceneObject (paremitter.Smoke.ParticleCount);
-            particle_eye1.Priority = 5999;
-            particle_eye2.Priority = 5999;
-            particle_smoke.Priority = 6000;
-
-            state.Scene.AddObject (particle_eye1);
-            state.Scene.AddObject (particle_eye2);
-            state.Scene.AddObject (particle_smoke);
-
-            particle = new ParticleSceneObject (paremitter.ParticleCount);
-            particle.Priority = 5998;
-            state.Scene.AddObject (particle);
-
-            paremitter.Init (particle, particle_eye1, particle_eye2, particle_smoke, rendererContext);
-
-            Scobis = EntityFactory.Instance.CreateWith ("Scobis", state.MessageProxy, systems:
-                new[] { typeof(ParticleSystem), typeof (ArtificialIntelligenceSystem), typeof (PhysicsSystem) });
-
-            Scobis.GetComponent<ParticleComponent> ().Emitter = paremitter;
-            Scobis.GetComponent<ParticleComponent> ().Particle = particle;
-            //Scobis.GetComponent<TransformComponent> ().Position = new Vector3 (30.0f, 30.0f, 40.0f);
-            RigidBody scobisBody = new RigidBody (new SphereShape (0.3f));
-            scobisBody.AffectedByGravity = false;
-            scobisBody.AllowDeactivation = false;
-            Scobis.GetComponent<PhysicsComponent> ().RigidBody = scobisBody;
-            Scobis.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-            Scobis.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
-
-            state.PhysicsManager.World.AddBody (scobisBody);
-
 
             BlackGhost = EntityFactory.Instance.CreateWith ("BlackGhost", state.MessageProxy, systems:
                 new[] { typeof(ParticleSystem) });
@@ -244,10 +207,12 @@ namespace FreezingArcher.Game
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
             maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
             maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
-            Scobis.GetComponent<ArtificialIntelligenceComponent>().AIManager = maze[0].AIManager;
-            Scobis.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence = new ScobisAI ();
             maze[0].AIManager.RegisterEntity (Player);
-            maze[0].AIManager.RegisterEntity (Scobis);
+
+            for (int i = 0; i < ScobisCount; i++)
+            {
+                ScobisInstances.Add (new Scobis (state, maze[0].AIManager, rendererContext));
+            }
 
             game.AddGameState("maze_underworld", Content.Environment.Default,
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
@@ -276,9 +241,10 @@ namespace FreezingArcher.Game
         readonly Maze.Maze[] maze = new Maze.Maze[2];
 
         public Entity Player { get; private set; }
-        public Entity Scobis { get; private set; }
         public Entity BlackGhost { get; private set;}
         public Entity Passus { get; private set;}
+
+        List<Scobis> ScobisInstances = new List<Scobis>();
 
         readonly Content.Game game;
 

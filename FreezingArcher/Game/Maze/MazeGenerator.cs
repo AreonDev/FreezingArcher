@@ -431,6 +431,7 @@ namespace FreezingArcher.Game.Maze
                     body.Position = new JVector(transform.Position.X, transform.Position.Y - 0.1f, transform.Position.Z);
                     body.Material.Restitution = -10;
                     body.IsStatic = true;
+                    body.Tag = node.Data;
                        
                     entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
                     entities [x, y].GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;

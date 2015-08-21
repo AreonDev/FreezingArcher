@@ -81,6 +81,7 @@
     <Compile Include="Particles\NiceGhostParticleEmitter.cs.cs" />
     <Compile Include="Particles\PassusGhostParticleEmitter.cs" />
     <Compile Include="AI\ScobisAI.cs" />
+    <Compile Include="Ghosts\Scobis.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -259,5 +260,6 @@
     <Folder Include="Particles\" />
     <Folder Include="Content\Particles\" />
     <Folder Include="AI\" />
+    <Folder Include="Ghosts\" />
   </ItemGroup>
 </Project>

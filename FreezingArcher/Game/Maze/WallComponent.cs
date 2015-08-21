@@ -41,6 +41,11 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         public static readonly bool DefaultIsMoveable = true;
 
+        /// <summary>
+        /// The default is moving.
+        /// </summary>
+        public static readonly bool DefaultIsMoving = false;
+
         #endregion
 
         /// <summary>
@@ -54,5 +59,11 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <value><c>true</c> if this instance is moveable; otherwise, <c>false</c>.</value>
         public bool IsMoveable { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is moving.
+        /// </summary>
+        /// <value><c>true</c> if this instance is moving; otherwise, <c>false</c>.</value>
+        public bool IsMoving { get; set; }
     }
 }

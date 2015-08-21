@@ -64,14 +64,15 @@ namespace FreezingArcher.Game.Maze
         {
             foreach (var deadEnd in GetDeadEndGrounds ())
             {
-                if (rand.Next() % 10000 != 0)
+                if (rand.Next() % 500/*10000*/ != 0)
                     continue;
 
                 WeightedNode<MazeCell, MazeCellEdgeWeight> connection = null;
                 var new_ground_edge = deadEnd.Edges.FirstOrDefault(e => {
                     var n = e.FirstNode != deadEnd ? e.FirstNode : e.SecondNode;
+                    var wall_component = Maze.entities[n.Data.Position.X, n.Data.Position.Y].GetComponent<WallComponent>();
                     if (n.Data.MazeCellType == MazeCellType.Wall && e.Weight.Direction != Direction.Diagonal &&
-                        Maze.entities[n.Data.Position.X, n.Data.Position.Y].GetComponent<WallComponent>().IsMoveable)
+                        wall_component.IsMoveable && !wall_component.IsMoving)
                     {
                         foreach (var e2 in n.Edges)
                         {
@@ -141,13 +142,20 @@ namespace FreezingArcher.Game.Maze
             var ground1 = Maze.entities[groundNode.Data.Position.X, groundNode.Data.Position.Y];
             var wall = Maze.entities[wallNode.Data.Position.X, wallNode.Data.Position.Y];
 
+            var old_pos = ground1.GetComponent<TransformComponent>().Position;
+            var wall_transform = wall.GetComponent<TransformComponent>();
+            wall.GetComponent<WallComponent>().IsMoving = true;
+            var new_ground_position = new Vector3 (wall_transform.Position.X, 0, wall_transform.Position.Z);
+            ground1.GetComponent<TransformComponent>().Position = new_ground_position;
+            ground1.GetComponent<PhysicsComponent>().RigidBody.Position = new_ground_position.ToJitterVector();
+
             var ground2 = EntityFactory.Instance.CreateWith ("ground_temp" + temp_counter++, messageProvider,
                 systems: new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
 
             var ground2_model = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
             ground2.GetComponent<ModelComponent>().Model = ground2_model;
             var transform = ground2.GetComponent<TransformComponent>();
-            transform.Position = ground1.GetComponent<TransformComponent>().Position;
+            transform.Position = old_pos;
             transform.Scale = ground1.GetComponent<TransformComponent>().Scale;
             ground2_model.Position = transform.Position;
             var body = new RigidBody(new BoxShape (2.0f * transform.Scale.X, 0.2f, 2.0f * transform.Scale.Y));
@@ -162,13 +170,8 @@ namespace FreezingArcher.Game.Maze
             state.PhysicsManager.World.AddBody (body);
             state.Scene.AddObject(ground2_model);
 
-            var position = ground1.GetComponent<TransformComponent>().Position;
+            var position = old_pos;
             position = new Vector3 (position.X, -0.5f, position.Z);
-
-            var wall_transform = wall.GetComponent<TransformComponent>();
-            var new_ground_position = new Vector3 (wall_transform.Position.X, 0, wall_transform.Position.Z);
-            ground1.GetComponent<TransformComponent>().Position = new_ground_position;
-            ground1.GetComponent<PhysicsComponent>().RigidBody.Position = new_ground_position.ToJitterVector();
 
             Maze.entities[wallNode.Data.Position.X, wallNode.Data.Position.Y] = ground1;
             Maze.entities[groundNode.Data.Position.X, groundNode.Data.Position.Y] = wall;
@@ -179,6 +182,7 @@ namespace FreezingArcher.Game.Maze
 
             MoveEntityTo (wall, tmp_wall_position, position, () => {
                 state.Scene.RemoveObject(ground2_model);
+                wall.GetComponent<WallComponent>().IsMoving = false;
                 ground2.Destroy();
             });
         }

@@ -165,12 +165,12 @@ namespace FreezingArcher.Game
             Scobis.GetComponent<ParticleComponent> ().Particle = particle;
             Scobis.GetComponent<TransformComponent> ().Position = new Vector3 (30.0f, 30.0f, 40.0f);
 
-            BaclGhost = EntityFactory.Instance.CreateWith ("BlackGhost", state.MessageProxy, systems:
+            BlackGhost = EntityFactory.Instance.CreateWith ("BlackGhost", state.MessageProxy, systems:
                 new[] { typeof(ParticleSystem) });
 
-            BaclGhost.GetComponent<ParticleComponent> ().Emitter = blackemitter;
-            BaclGhost.GetComponent<ParticleComponent> ().Particle = particle_black_ghost;
-            BaclGhost.GetComponent<TransformComponent> ().Position = new Vector3 (50.0f, 30.0f, 70.0f);
+            BlackGhost.GetComponent<ParticleComponent> ().Emitter = blackemitter;
+            BlackGhost.GetComponent<ParticleComponent> ().Particle = particle_black_ghost;
+            BlackGhost.GetComponent<TransformComponent> ().Position = new Vector3 (50.0f, 30.0f, 70.0f);
 
             Passus = EntityFactory.Instance.CreateWith ("PassusGhost", state.MessageProxy, systems:
                 new[] { typeof(ParticleSystem) });
@@ -207,6 +207,12 @@ namespace FreezingArcher.Game
             // embed new maze into game state logic and create a MoveEntityToScene
             SkyboxSystem.CreateSkybox (state.Scene, Player);
             Player.GetComponent<TransformComponent> ().Position = new Vector3 (0, 1.85f, 0);
+            var maze_cam_entity = EntityFactory.Instance.CreateWith ("maze_cam_transform", state.MessageProxy, new[] {typeof (TransformComponent)});
+            var maze_cam_transform = maze_cam_entity.GetComponent<TransformComponent>();
+            var maze_cam = new BaseCamera (maze_cam_entity, state.MessageProxy);
+            state.Scene.CameraManager.AddCamera (maze_cam, "maze");
+            maze_cam_transform.Position = new Vector3 (115, 240, 110);
+            maze_cam_transform.Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2);
             state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
 
             RigidBody playerBody = new RigidBody (new SphereShape (1f));
@@ -257,7 +263,7 @@ namespace FreezingArcher.Game
 
         public Entity Player { get; private set; }
         public Entity Scobis { get; private set; }
-        public Entity BaclGhost { get; private set;}
+        public Entity BlackGhost { get; private set;}
         public Entity Passus { get; private set;}
 
         readonly Content.Game game;
@@ -302,6 +308,7 @@ namespace FreezingArcher.Game
 #region IMessageConsumer implementation
 
         bool finishedLoading = false;
+        bool lighting = true;
         int count = 0;
 
         /// <summary>
@@ -375,6 +382,26 @@ namespace FreezingArcher.Game
                 if (im.IsActionPressedAndRepeated ("frame"))
                 {
                     SwitchMaze();
+                }
+
+                if (im.IsActionPressed ("camera"))
+                {
+                    if (lighting)
+                    {
+                        var state = game.CurrentGameState;
+                        state.Scene.DistanceFogIntensity = 0;
+                        state.Scene.AmbientIntensity = 1f;
+                        light1.PointLightLinearAttenuation = 99999;
+                        lighting = false;
+                    }
+                    else
+                    {
+                        var state = game.CurrentGameState;
+                        state.Scene.DistanceFogIntensity = 0.02f;
+                        state.Scene.AmbientIntensity = 0.35f;
+                        light1.PointLightLinearAttenuation = 0.01f;
+                        lighting = true;
+                    }
                 }
 
                 /*

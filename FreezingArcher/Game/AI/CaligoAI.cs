@@ -1,5 +1,5 @@
 ﻿//
-//  ScobisAI.cs
+//  CaligoAI.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -32,17 +32,17 @@ using Jitter.LinearMath;
 
 namespace FreezingArcher.Game.AI
 {
-    public sealed class ScobisAI : ArtificialIntelligence
+    public sealed class CaligoAI : ArtificialIntelligence
     {
-        const float acceleration = 0.1f;
+        const float acceleration = 0.2f;
 
-        const float speed = 3f;
+        const float speed = 5f;
 
         const int resolution = 2;
 
         const float max_distance = 6;
 
-        const float height = 0.31f;
+        const float height = 1.3f;
 
         JVector direction;
 
@@ -131,7 +131,7 @@ namespace FreezingArcher.Game.AI
 
                 if (!gotit)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Severe, "ScobisAI", "Failed to generate spawn position!");
+                    Logger.Log.AddLogEntry (LogLevel.Severe, "CaligoAI", "Failed to generate spawn position!");
                 }
 
                 fallback = JVector.Transform (JVector.Backward, JMatrix.CreateFromAxisAngle (JVector.Up,

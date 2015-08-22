@@ -39,6 +39,7 @@ namespace FreezingArcher.Game
             Application.Instance.Init ();
             Application.Instance.Load ();
 
+            MazeTest maze = null;
             if (!Application.Instance.IsCommandLineInterface)
             {
                 Content.Game game = Application.Instance.Game;
@@ -46,7 +47,7 @@ namespace FreezingArcher.Game
                 var messageManager = Application.Instance.MessageManager;
                 var objmnr = Application.Instance.ObjectManager;
 
-                var maze = new MazeTest(messageManager, objmnr, rc, game, Application.Instance);
+                maze = new MazeTest(messageManager, objmnr, rc, game, Application.Instance);
                 //new ECSTest(msgmnr, rc.Scene);
                 //new PhysicsTest(Application.Instance, messageManager);
                 //new InventoryTest();
@@ -56,6 +57,8 @@ namespace FreezingArcher.Game
             }
 
             Application.Instance.Run ();
+            if (maze != null)
+                maze.Destroy ();
             Application.Instance.Destroy ();
         }
     }

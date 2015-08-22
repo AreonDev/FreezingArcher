@@ -85,8 +85,8 @@ namespace FreezingArcher.Game.Maze
         /// <param name="turbulence">Turbulence.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor.</param>
-        internal Maze (ObjectManager objmnr, int seed, int sizeX, int sizeY, float scale, PhysicsManager physics,
-            InitializeMazeDelegate initFunc, GenerateMazeDelegate generateFunc,
+        internal Maze (ObjectManager objmnr, MessageProvider messageProvider, int seed, int sizeX, int sizeY,
+            float scale, PhysicsManager physics, InitializeMazeDelegate initFunc, GenerateMazeDelegate generateFunc,
             AddMazeToGameStateDelegate addToSceneDelegate, CalculatePathToExitDelegate exitFunc,
             PlaceFeaturesDelegate placeFeaturesFunc, double turbulence, int maximumContinuousPathLength,
             uint portalSpawnFactor)
@@ -105,6 +105,7 @@ namespace FreezingArcher.Game.Maze
             calcExitPathDelegate = exitFunc;
             placeFeaturesDelegate = placeFeaturesFunc;
             this.physics = physics;
+            this.messageProvider = messageProvider;
             HasFinished = false;
         }
 
@@ -125,6 +126,8 @@ namespace FreezingArcher.Game.Maze
         readonly CalculatePathToExitDelegate calcExitPathDelegate;
 
         readonly PlaceFeaturesDelegate placeFeaturesDelegate;
+
+        readonly MessageProvider messageProvider;
 
         public float Scale { get; set; }
 
@@ -267,15 +270,15 @@ namespace FreezingArcher.Game.Maze
                         state.MessageProxy.StartProcessing();
                     }
                     
-                    generateMazeDelegate(ref graph, ref rand, MaximumContinuousPathLength, Turbulence);
+                    generateMazeDelegate (ref graph, ref rand, MaximumContinuousPathLength, Turbulence);
                     if (state != null)
-                        AddToGameState(state);
+                        AddToGameState (state);
 
-                    CalculatePathToExit();
+                    CalculatePathToExit ();
 
                     if (proxy)
                     {
-                        Thread.Sleep(1000); // we don't wanna loose messages here :)
+                        Thread.Sleep (1000); // we don't wanna loose messages here :)
                         state.MessageProxy.StopProcessing();
                     }
 
@@ -283,12 +286,13 @@ namespace FreezingArcher.Game.Maze
                         postGenerateHook();
                     
                     HasFinished = true;
+                    AIManager.StartThinking ();
                 });
-                generationThread.Start();
+                generationThread.Start ();
             }
             else
             {
-                Logger.Log.AddLogEntry(LogLevel.Error, "Maze", "Failed to generate maze as the generator is null!");
+                Logger.Log.AddLogEntry (LogLevel.Error, "Maze", "Failed to generate maze as the generator is null!");
             }
         }
 
@@ -384,6 +388,11 @@ namespace FreezingArcher.Game.Maze
             {
                 Logger.Log.AddLogEntry(LogLevel.Error, "Maze", "Failed to calculate path to exit as calculator is null!");
             }
+        }
+
+        public void Destroy ()
+        {
+            AIManager.Destroy ();
         }
     }
 }

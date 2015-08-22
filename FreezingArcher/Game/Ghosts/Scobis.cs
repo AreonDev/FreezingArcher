@@ -32,50 +32,54 @@ namespace FreezingArcher.Game.Ghosts
 {
     public class Scobis
     {
+        public static int InstanceCount = 0;
+
         public Scobis (GameState state, AIManager aiManager, RendererContext rendererContext)
         {
             paremitter = new ScobisParticleEmitter ();
-            particle_eye1 = new ParticleSceneObject (paremitter.RedEye1.ParticleCount);
-            particle_eye2 = new ParticleSceneObject (paremitter.RedEye2.ParticleCount);
-            particle_smoke = new ParticleSceneObject (paremitter.Smoke.ParticleCount);
-            particle_eye1.Priority = 5999;
-            particle_eye2.Priority = 5999;
-            particle_smoke.Priority = 6000;
+            particleEye1 = new ParticleSceneObject (paremitter.RedEye1.ParticleCount);
+            particleEye2 = new ParticleSceneObject (paremitter.RedEye2.ParticleCount);
+            particleSmoke = new ParticleSceneObject (paremitter.Smoke.ParticleCount);
+            particleEye1.Priority = 5999;
+            particleEye2.Priority = 5999;
+            particleSmoke.Priority = 6000;
 
-            state.Scene.AddObject (particle_eye1);
-            state.Scene.AddObject (particle_eye2);
-            state.Scene.AddObject (particle_smoke);
+            state.Scene.AddObject (particleEye1);
+            state.Scene.AddObject (particleEye2);
+            state.Scene.AddObject (particleSmoke);
 
             particle = new ParticleSceneObject (paremitter.ParticleCount);
             particle.Priority = 5998;
             state.Scene.AddObject (particle);
 
-            paremitter.Init (particle, particle_eye1, particle_eye2, particle_smoke, rendererContext);
+            paremitter.Init (particle, particleEye1, particleEye2, particleSmoke, rendererContext);
 
-            ScobisEntity = EntityFactory.Instance.CreateWith ("Scobis", state.MessageProxy, systems:
-                new[] { typeof(ParticleSystem), typeof (ArtificialIntelligenceSystem), typeof (PhysicsSystem) });
+            scobisEntity = EntityFactory.Instance.CreateWith ("Scobis." + InstanceCount++, state.MessageProxy,
+                new[] { typeof (ArtificialIntelligenceComponent) },
+                new[] { typeof (ParticleSystem), typeof (PhysicsSystem) });
 
-            ScobisEntity.GetComponent<ParticleComponent> ().Emitter = paremitter;
-            ScobisEntity.GetComponent<ParticleComponent> ().Particle = particle;
+            scobisEntity.GetComponent<ParticleComponent> ().Emitter = paremitter;
+            scobisEntity.GetComponent<ParticleComponent> ().Particle = particle;
             RigidBody scobisBody = new RigidBody (new SphereShape (0.3f));
             scobisBody.AffectedByGravity = false;
             scobisBody.AllowDeactivation = false;
-            ScobisEntity.GetComponent<PhysicsComponent> ().RigidBody = scobisBody;
-            ScobisEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-            ScobisEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
+            scobisBody.Mass = 20;
+            scobisEntity.GetComponent<PhysicsComponent> ().RigidBody = scobisBody;
+            scobisEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+            scobisEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (scobisBody);
 
-            ScobisEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
-            ScobisEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence = new ScobisAI ();
-            aiManager.RegisterEntity (ScobisEntity);
+            scobisEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
+            scobisEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence = new ScobisAI ();
+            aiManager.RegisterEntity (scobisEntity);
         }
 
         readonly ParticleSceneObject particle;
-        readonly ParticleSceneObject particle_eye1;
-        readonly ParticleSceneObject particle_eye2;
-        readonly ParticleSceneObject particle_smoke;
+        readonly ParticleSceneObject particleEye1;
+        readonly ParticleSceneObject particleEye2;
+        readonly ParticleSceneObject particleSmoke;
         readonly ScobisParticleEmitter paremitter;
-        readonly Entity ScobisEntity;
+        readonly Entity scobisEntity;
     }
 }

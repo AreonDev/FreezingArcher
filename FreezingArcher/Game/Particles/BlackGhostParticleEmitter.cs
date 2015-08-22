@@ -27,9 +27,9 @@ using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {
-    public class BlackGhostParticleEmitter : ParticleEmitter
+    public class CaligoParticleEmitter : ParticleEmitter
     {
-        public BlackGhostParticleEmitter () : base(100)
+        public CaligoParticleEmitter () : base(100)
         {
             //SpawnPosition = Math.Vector3.Zero
         }

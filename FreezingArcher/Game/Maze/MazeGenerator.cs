@@ -152,9 +152,9 @@ namespace FreezingArcher.Game.Maze
             int sizeX = 40, int sizeY = 40, float scale = 10, double turbulence = 2,
             int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
         {
-            Maze maze = new Maze (objectManager, seed, sizeX, sizeY, scale, physics, InitializeMaze, CreateMaze,
-                AddMazeToGameState, CalculatePathToExit, SpawnPortals, turbulence, maximumContinuousPathLength,
-                portalSpawnFactor);
+            Maze maze = new Maze (objectManager, messageProvider, seed, sizeX, sizeY, scale, physics, InitializeMaze,
+                CreateMaze, AddMazeToGameState, CalculatePathToExit, SpawnPortals, turbulence,
+                maximumContinuousPathLength, portalSpawnFactor);
             maze.Offset = Offset;
             var offs = Offset;
             offs.X += (int) (sizeX * scale);

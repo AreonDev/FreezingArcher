@@ -46,14 +46,15 @@ namespace FreezingArcher.Game
     /// <summary>
     /// Maze test.
     /// </summary>
-    public class MazeTest : IMessageConsumer, IMessageCreator
+    public sealed class MazeTest : IMessageConsumer, IMessageCreator
     {
-        const int ScobisCount = 10;
+        const int ScobisCount = 6;
+        const int CaligoCount = 2;
 
         LoadingScreen loadingScreen;
         Gwen.ControlInternal.Text FPS_Text;
 
-        public CoreScene     Scene{ get; private set; }
+        public CoreScene Scene { get; private set; }
 
         BasicCompositor Compositor;
 
@@ -119,31 +120,16 @@ namespace FreezingArcher.Game
 
             state.MessageProxy.StartProcessing ();
 
-            ParticleSceneObject particle_black_ghost;
             ParticleSceneObject particle_passus_ghost;
 
-            BlackGhostParticleEmitter blackemitter;
             PassusGhostParticleEmitter passusemitter;
 
-            blackemitter = new BlackGhostParticleEmitter ();
             passusemitter = new PassusGhostParticleEmitter ();
-
-            particle_black_ghost = new ParticleSceneObject (blackemitter.ParticleCount);
-            particle_black_ghost.Priority = 7000;
-            state.Scene.AddObject (particle_black_ghost);
-            blackemitter.Init (particle_black_ghost, rendererContext);
 
             particle_passus_ghost = new ParticleSceneObject (passusemitter.ParticleCount);
             particle_passus_ghost.Priority = 7001;
             state.Scene.AddObject (particle_passus_ghost);
             passusemitter.Init (particle_passus_ghost, rendererContext);
-
-            BlackGhost = EntityFactory.Instance.CreateWith ("BlackGhost", state.MessageProxy, systems:
-                new[] { typeof(ParticleSystem) });
-
-            BlackGhost.GetComponent<ParticleComponent> ().Emitter = blackemitter;
-            BlackGhost.GetComponent<ParticleComponent> ().Particle = particle_black_ghost;
-            BlackGhost.GetComponent<TransformComponent> ().Position = new Vector3 (50.0f, 30.0f, 70.0f);
 
             Passus = EntityFactory.Instance.CreateWith ("PassusGhost", state.MessageProxy, systems:
                 new[] { typeof(ParticleSystem) });
@@ -214,6 +200,11 @@ namespace FreezingArcher.Game
                 ScobisInstances.Add (new Scobis (state, maze[0].AIManager, rendererContext));
             }
 
+            for (int i = 0; i < CaligoCount; i++)
+            {
+                CaligoInstances.Add (new Caligo (state, maze[0].AIManager, rendererContext));
+            }
+
             game.AddGameState("maze_underworld", Content.Environment.Default,
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) });
@@ -226,6 +217,7 @@ namespace FreezingArcher.Game
             state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
             maze [1] = mazeGenerator.CreateMaze (rand.Next (), state.MessageProxy, state.PhysicsManager, 30, 30);
             maze [1].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
+            maze [1].AIManager.RegisterEntity (Player);
 
             mazeWallMover = new MazeWallMover(maze[0], maze[1], game.GetGameState("maze_overworld").MessageProxy,
                 game.GetGameState("maze_overworld"));
@@ -241,10 +233,10 @@ namespace FreezingArcher.Game
         readonly Maze.Maze[] maze = new Maze.Maze[2];
 
         public Entity Player { get; private set; }
-        public Entity BlackGhost { get; private set;}
         public Entity Passus { get; private set;}
 
         List<Scobis> ScobisInstances = new List<Scobis>();
+        List<Caligo> CaligoInstances = new List<Caligo>();
 
         readonly Content.Game game;
 
@@ -446,5 +438,11 @@ namespace FreezingArcher.Game
         public event MessageEvent MessageCreated;
 
 #endregion
+
+        public void Destroy ()
+        {
+            maze[0].Destroy ();
+            maze[1].Destroy ();
+        }
     }
 }

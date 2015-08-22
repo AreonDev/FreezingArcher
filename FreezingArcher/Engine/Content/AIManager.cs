@@ -186,6 +186,7 @@ namespace FreezingArcher.Content
         {
             lock (entities)
             {
+                entities.Shuffle();
                 foreach (var e in entities)
                 {
                     if (e.HasComponent<ArtificialIntelligenceComponent>())

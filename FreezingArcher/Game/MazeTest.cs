@@ -48,8 +48,10 @@ namespace FreezingArcher.Game
     /// </summary>
     public sealed class MazeTest : IMessageConsumer, IMessageCreator
     {
-        const int ScobisCount = 6;
+        const int ScobisCount = 5;
         const int CaligoCount = 2;
+        const int PassusCount = 5;
+        const int GhostCount = 7;
 
         LoadingScreen loadingScreen;
         Gwen.ControlInternal.Text FPS_Text;
@@ -76,8 +78,7 @@ namespace FreezingArcher.Game
             ValidMessages = new[] {
                 (int)MessageId.Input,
                 (int)MessageId.Update,
-                (int)MessageId.Running,
-                (int)MessageId.WindowClose
+                (int)MessageId.Running
             };
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
@@ -119,24 +120,6 @@ namespace FreezingArcher.Game
             state.Scene.Lights.Add (light1);
 
             state.MessageProxy.StartProcessing ();
-
-            ParticleSceneObject particle_passus_ghost;
-
-            PassusGhostParticleEmitter passusemitter;
-
-            passusemitter = new PassusGhostParticleEmitter ();
-
-            particle_passus_ghost = new ParticleSceneObject (passusemitter.ParticleCount);
-            particle_passus_ghost.Priority = 7001;
-            state.Scene.AddObject (particle_passus_ghost);
-            passusemitter.Init (particle_passus_ghost, rendererContext);
-
-            Passus = EntityFactory.Instance.CreateWith ("PassusGhost", state.MessageProxy, systems:
-                new[] { typeof(ParticleSystem) });
-
-            Passus.GetComponent<ParticleComponent> ().Emitter = passusemitter;
-            Passus.GetComponent<ParticleComponent> ().Particle = particle_passus_ghost;
-            Passus.GetComponent<TransformComponent> ().Position = new Vector3 (10.0f, 30.0f, 70.0f);
 
             loadingScreen = new LoadingScreen (application, messageProvider, "loading.png",
                 "MazeLoadingScreen",
@@ -205,6 +188,16 @@ namespace FreezingArcher.Game
                 CaligoInstances.Add (new Caligo (state, maze[0].AIManager, rendererContext));
             }
 
+            for (int i = 0; i < PassusCount; i++)
+            {
+                PassusInstances.Add (new Passus (state, maze[0].AIManager, rendererContext)); 
+            }
+
+            for (int i = 0; i < GhostCount; i++)
+            {
+                GhostInstances.Add (new Ghost (state, maze[0].AIManager, rendererContext)); 
+            }
+
             game.AddGameState("maze_underworld", Content.Environment.Default,
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) });
@@ -233,10 +226,11 @@ namespace FreezingArcher.Game
         readonly Maze.Maze[] maze = new Maze.Maze[2];
 
         public Entity Player { get; private set; }
-        public Entity Passus { get; private set;}
 
         List<Scobis> ScobisInstances = new List<Scobis>();
         List<Caligo> CaligoInstances = new List<Caligo>();
+        List<Passus> PassusInstances = new List<Passus>();
+        List<Ghost> GhostInstances = new List<Ghost>();
 
         readonly Content.Game game;
 
@@ -309,8 +303,7 @@ namespace FreezingArcher.Game
                         game.CurrentGameState.Scene.Active = true;
                     }
                 }
-                else
-                if (!finishedLoading)
+                else if (!finishedLoading)
                     loadingScreen.BringToFront ();
 
                 if (game.CurrentGameState == game.GetGameState ("maze_overworld") && maze [0].HasFinished)
@@ -375,32 +368,11 @@ namespace FreezingArcher.Game
                         lighting = true;
                     }
                 }
-
-                /*
-                if (im.IsActionDown ("bla_unfug_links"))
-                {
-                    paremitter.SpawnPosition += new Vector3 (-0.02f, 0, 0);
-                }
-
-                if (im.IsActionDown ("bla_unfug_rechts"))
-                {
-                    paremitter.SpawnPosition += new Vector3 (0.02f, 0, 0);
-                }
-
-                if (im.IsActionDown ("bla_unfug_runter"))
-                {
-                    paremitter.SpawnPosition += new Vector3 (0, -0.02f, 0);
-                }
-
-                if (im.IsActionDown ("bla_unfug_hoch"))
-                {
-                    paremitter.SpawnPosition += new Vector3 (0, 0.02f, 0);
-                }*/
             }
 
             if (msg.MessageId == (int)MessageId.Running)
             {
-                Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Generate Mazes....");
+                Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Generating mazes....");
 
                 maze [0].Generate (() =>
                 {
@@ -417,11 +389,6 @@ namespace FreezingArcher.Game
                         maze[1].AIManager.CalculateSpawnPositions();
                     }, state);
                 }, game.GetGameState ("maze_overworld"));
-            }
-
-            if (msg.MessageId == (int)MessageId.WindowClose)
-            {
-                
             }
         }
 

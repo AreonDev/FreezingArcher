@@ -1,5 +1,5 @@
 ﻿//
-//  CaligoAI.cs
+//  GhostAI.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -32,11 +32,11 @@ using Jitter.LinearMath;
 
 namespace FreezingArcher.Game.AI
 {
-    public sealed class CaligoAI : ArtificialIntelligence
+    public sealed class GhostAI : ArtificialIntelligence
     {
-        const float acceleration = 0.2f;
+        const float acceleration = 0.3f;
 
-        const float speed = 5f;
+        const float speed = 8f;
 
         const int resolution = 2;
 
@@ -131,7 +131,7 @@ namespace FreezingArcher.Game.AI
 
                 if (!gotit)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Severe, "CaligoAI", "Failed to generate spawn position!");
+                    Logger.Log.AddLogEntry (LogLevel.Severe, "GhostAI", "Failed to generate spawn position!");
                 }
 
                 fallback = JVector.Transform (JVector.Backward, JMatrix.CreateFromAxisAngle (JVector.Up,

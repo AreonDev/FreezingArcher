@@ -49,7 +49,7 @@ namespace FreezingArcher.Game.Ghosts
             caligoEntity.GetComponent<ParticleComponent> ().Emitter = caligoEmitter;
             caligoEntity.GetComponent<ParticleComponent> ().Particle = particleCaligo;
 
-            RigidBody caligoBody = new RigidBody (new SphereShape (1f));
+            RigidBody caligoBody = new RigidBody (new SphereShape (1.2f));
             caligoBody.AffectedByGravity = false;
             caligoBody.AllowDeactivation = false;
             caligoBody.Mass = 20;

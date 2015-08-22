@@ -1,5 +1,5 @@
 ﻿//
-//  CaligoAI.cs
+//  PassusAI.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -32,11 +32,11 @@ using Jitter.LinearMath;
 
 namespace FreezingArcher.Game.AI
 {
-    public sealed class CaligoAI : ArtificialIntelligence
+    public sealed class PassusAI : ArtificialIntelligence
     {
-        const float acceleration = 0.2f;
+        const float acceleration = 0.1f;
 
-        const float speed = 5f;
+        const float speed = 4f;
 
         const int resolution = 2;
 
@@ -131,7 +131,7 @@ namespace FreezingArcher.Game.AI
 
                 if (!gotit)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Severe, "CaligoAI", "Failed to generate spawn position!");
+                    Logger.Log.AddLogEntry (LogLevel.Severe, "PassusAI", "Failed to generate spawn position!");
                 }
 
                 fallback = JVector.Transform (JVector.Backward, JMatrix.CreateFromAxisAngle (JVector.Up,

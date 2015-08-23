@@ -28,16 +28,11 @@ using FreezingArcher.Core;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
-using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Content;
 using FreezingArcher.Renderer;
-using Jitter;
-using Jitter.LinearMath;
 using Jitter.Dynamics;
-using Jitter.Collision;
 using Jitter.Collision.Shapes;
-using FreezingArcher.Game.AI;
 using System.Collections.Generic;
 using FreezingArcher.Game.Ghosts;
 
@@ -344,12 +339,12 @@ namespace FreezingArcher.Game
             var im = msg as InputMessage;
             if (im != null)
             {
-                if (im.IsActionPressedAndRepeated ("frame"))
+                if (im.IsActionPressed ("frame"))
                 {
-                    SwitchMaze();
+                    //SwitchMaze();
                 }
 
-                if (im.IsActionPressed ("camera"))
+                if (im.IsActionPressed ("frame"))
                 {
                     if (lighting)
                     {

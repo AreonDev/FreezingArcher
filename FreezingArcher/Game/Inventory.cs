@@ -408,7 +408,7 @@ namespace FreezingArcher.Game
 
         public static ItemComponent CreateNewItem(MessageProvider messageProvider, GameState state,
             string name, string imageLocation, string description,
-            string modelPath, Vector2i size, Vector3 offset, Shape shape, ItemLocation location,
+            string modelPath, Vector2i size, Vector3 offset, Quaternion rotation, Shape shape, ItemLocation location,
             AttackClass attackClasses, ItemUsage itemUsages, Protection protection, Material physicsMaterial,
             float mass, float healthDelta, float usageDeltaPerUsage, float attackStrength, float throwPower, float usage)
         {
@@ -431,6 +431,7 @@ namespace FreezingArcher.Game
             item.Mass = mass;
             item.PhysicsMaterial = physicsMaterial;
             item.PositionOffset = offset;
+            item.Rotation = rotation;
             item.ItemUsageHandler = new MazeItemUseHandler();
 
             var model = new ModelSceneObject(modelPath);
@@ -462,7 +463,6 @@ namespace FreezingArcher.Game
 
             var body = new RigidBody(shape);
             body.Position = transform.Position.ToJitterVector ();
-            body.Orientation = JMatrix.CreateFromAxisAngle(new JVector(1,1,0), MathHelper.PiOver4);
             if (mass >= 0)
                 body.Mass = mass;
             body.Material = physicsMaterial;

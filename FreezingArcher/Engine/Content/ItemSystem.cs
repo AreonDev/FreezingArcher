@@ -60,7 +60,7 @@ namespace FreezingArcher.Content
             {
                 var player_transform = item.Player.GetComponent<TransformComponent>();
                 transform.Position = position + Vector3.Transform(item.PositionOffset, player_transform.Rotation);
-                transform.Rotation = player_transform.Rotation;
+                transform.Rotation = player_transform.Rotation * item.Rotation;
             }
         }
 
@@ -72,7 +72,7 @@ namespace FreezingArcher.Content
             {
                 var player_transform = item.Player.GetComponent<TransformComponent>();
                 transform.Position = player_transform.Position + Vector3.Transform(item.PositionOffset, rotation);
-                transform.Rotation = rotation;
+                transform.Rotation = rotation * item.Rotation;
             }
         }
 

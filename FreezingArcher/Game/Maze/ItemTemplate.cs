@@ -38,6 +38,8 @@ namespace FreezingArcher.Game.Maze
 
         public Vector3 PositionOffset { get; set; }
 
+        public Quaternion Rotation { get; set; }
+
         public string Description { get; set; }
 
         public AttackClass AttackClasses { get; set; }

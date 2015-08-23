@@ -105,6 +105,11 @@ namespace FreezingArcher.Content
         public static readonly Vector3 DefaultPositionOffset = Vector3.Zero;
 
         /// <summary>
+        /// The default rotation.
+        /// </summary>
+        public static readonly Quaternion DefaultRotation = Quaternion.Identity;
+
+        /// <summary>
         /// The default mass.
         /// </summary>
         public static readonly float DefaultMass = 0.2f;
@@ -143,6 +148,12 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <value>The position offset.</value>
         public Vector3 PositionOffset { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rotation.
+        /// </summary>
+        /// <value>The rotation.</value>
+        public Quaternion Rotation { get; set; }
 
         /// <summary>
         /// Gets or sets the description describing the usage of this item.

@@ -47,7 +47,7 @@ namespace FreezingArcher.Content
                 var light = Entity.GetComponent<LightComponent>().Light;
                 if (light != null)
                 {
-                    light.DirectionalLightDirection = Vector3.Transform (Vector3.UnitX, rot);
+                    light.DirectionalLightDirection = Vector3.Transform (Vector3.UnitZ, rot);
                 }
             };
 

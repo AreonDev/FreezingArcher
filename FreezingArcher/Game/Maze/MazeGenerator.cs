@@ -74,7 +74,8 @@ namespace FreezingArcher.Game.Maze
                 ModelPath = "Content/Flashlight/flashlight.xml",
                 Size = new Vector2i(2, 1),
                 PositionOffset = new Vector3(-0.45f, -0.33f, 0.5f),
-                Rotation = ItemComponent.DefaultRotation,
+                Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2),
+                Shape = new CylinderShape (0.552666f, 0.080992f),
                 AttackClasses = AttackClass.Object,
                 ItemUsages =  ItemUsage.Throwable,
                 Protection = ItemComponent.DefaultProtection,
@@ -113,6 +114,7 @@ namespace FreezingArcher.Game.Maze
                 Size = new Vector2i(1, 1),
                 PositionOffset = new Vector3(-0.4f, -0.25f, 0.5f),
                 Rotation = ItemComponent.DefaultRotation,
+                Shape = new CylinderShape (0.13f, 0.032f),
                 AttackClasses = AttackClass.Object,
                 ItemUsages =  ItemUsage.Eatable,
                 Protection = ItemComponent.DefaultProtection,
@@ -120,6 +122,26 @@ namespace FreezingArcher.Game.Maze
                 Mass = .5f,
                 HealthDelta = 20,
                 UsageDeltaPerUsage = .2f,
+                AttackStrength = 0,
+                ThrowPower = .2f,
+                Usage = 0
+            },
+            new ItemTemplate {
+                Name = "apple",
+                ImageLocation = "Content/Apple/thumb.png",
+                Description = "apple_description",
+                ModelPath = "Content/Apple/apple.xml",
+                Size = new Vector2i (1, 1),
+                PositionOffset = new Vector3 (-.4f, -.25f, .5f),
+                Rotation = ItemComponent.DefaultRotation,
+                Shape = new SphereShape (.08f),
+                AttackClasses = AttackClass.Object,
+                ItemUsages = ItemUsage.Eatable,
+                Protection = ItemComponent.DefaultProtection,
+                PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
+                Mass = .5f,
+                HealthDelta = 20,
+                UsageDeltaPerUsage = .25f,
                 AttackStrength = 0,
                 ThrowPower = .2f,
                 Usage = 0
@@ -380,6 +402,11 @@ namespace FreezingArcher.Game.Maze
         }
 
         static int lightCount = 0;
+        static int choco_milk_idx = 0;
+        static int flashlight_idx = 0;
+        static int pickaxe_idx = 0;
+        static int soda_can_idx = 0;
+        static int apple_idx = 0;
 
         static void AddMazeToGameState (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, MessageProvider messageProvider,
             Entity[,] entities, ref Vector3 playerPosition, GameState state, Random rand,
@@ -413,11 +440,6 @@ namespace FreezingArcher.Game.Maze
 
             ModelSceneObject model;
             TransformComponent transform;
-
-            int choco_milk_idx = 0;
-            int flashlight_idx = 0;
-            int pickaxe_idx = 0;
-            int soda_can_idx = 0;
 
             foreach (var node in (IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>>) graph)
             {
@@ -482,6 +504,11 @@ namespace FreezingArcher.Game.Maze
                         idx = 3;
                         name = ItemTemplates[idx].Name + soda_can_idx++;
                     }
+                    else if (r > 28 && r <= 36)
+                    {
+                        idx = 4;
+                        name = ItemTemplates[idx].Name + apple_idx++;
+                    }
                     else
                     {
                         idx = -1;
@@ -515,7 +542,12 @@ namespace FreezingArcher.Game.Maze
                         var pos = transform.Position;
                         float y_rot = (float) rand.NextDouble();
                         pos.X += (float) rand.NextDouble() * 3.8f - 2f;
-                        pos.Y -= item_body.RigidBody.Shape.BoundingBox.Min.Y;
+
+                        if (idx != 1)
+                            pos.Y -= item_body.RigidBody.Shape.BoundingBox.Min.Y;
+                        else
+                            pos.Y -= item_body.RigidBody.Shape.BoundingBox.Min.X;
+                        
                         pos.Z += (float) rand.NextDouble() * 3.8f - 2f;
                         item_body.RigidBody.Position = pos.ToJitterVector();
                         item_body.RigidBody.Orientation = JMatrix.CreateFromAxisAngle(JVector.Up, y_rot);
@@ -532,6 +564,8 @@ namespace FreezingArcher.Game.Maze
                             light.SpotLightConeAngle = MathHelper.ToRadians (30f);
                             light.On = true;
                             state.Scene.Lights.Add (light);
+                            item_model.Model.Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2) * item_model.Model.Rotation;
+                            item_body.RigidBody.Orientation = JMatrix.CreateFromQuaternion (item_model.Model.Rotation.ToJitterQuaternion ());
                         }
                     }
                 }

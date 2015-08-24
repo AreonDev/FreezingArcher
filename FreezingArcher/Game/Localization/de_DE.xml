@@ -26,4 +26,8 @@
         Diese Schokomilch riecht bereits etwas sauer. Das
         ist definitiv nicht die erste Wahl!
     </string>
+    <string name="apple_description">
+        Dieser Apfel enthält einen Wurm. Proteine sind aber
+        nicht so übel wie du vielleicht denken magst.
+    </string>
 </locale>

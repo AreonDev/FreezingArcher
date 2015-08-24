@@ -233,6 +233,21 @@
     <None Include="Content\Particles\particle_06.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Apple\apple.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Apple\apple.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Apple\diffuse.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Apple\normal.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Apple\thumb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
@@ -267,5 +282,6 @@
     <Folder Include="Content\Particles\" />
     <Folder Include="AI\" />
     <Folder Include="Ghosts\" />
+    <Folder Include="Content\Apple\" />
   </ItemGroup>
 </Project>

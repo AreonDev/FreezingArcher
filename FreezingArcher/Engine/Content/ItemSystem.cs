@@ -148,11 +148,11 @@ namespace FreezingArcher.Content
 
                     itemcomp.ItemUsageHandler.Eat(itemcomp);
                 }
-                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Throwable) && ium.Usage.HasFlag(ItemUsage.Throwable))
+                else if (ium.Item.ItemUsages.HasFlag(ItemUsage.Throwable) && ium.Usage.HasFlag(ItemUsage.Throwable))
                 {
                     itemcomp.ItemUsageHandler.Throw(itemcomp);
                 }
-                if (ium.Item.ItemUsages.HasFlag(ItemUsage.Hitable) && ium.Usage.HasFlag(ItemUsage.Hitable))
+                else if (ium.Item.ItemUsages.HasFlag(ItemUsage.Hitable) && ium.Usage.HasFlag(ItemUsage.Hitable))
                 {
                     var physics = Entity.GetComponent<PhysicsComponent>();
                     var transform = Entity.GetComponent<TransformComponent>();

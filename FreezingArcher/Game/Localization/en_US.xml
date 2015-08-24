@@ -22,4 +22,8 @@
         This choco milk smells slightly sour. This is
         definitely not the first choice!
     </string>
+    <string name="apple_description">
+        This apple has a worm in it. Proteins aren't that bad
+        for you!
+    </string>
 </locale>

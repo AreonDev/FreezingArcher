@@ -40,6 +40,7 @@ using Jitter.Dynamics;
 using Jitter.LinearMath;
 using Jitter.Collision.Shapes;
 using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.Game.Maze;
 
 namespace FreezingArcher.Game
 {
@@ -976,16 +977,52 @@ namespace FreezingArcher.Game
                             return;
                         }
                     }
-                    else if (/*application.Window.IsMouseCaptured() && */inventory.ActiveBarItem != null)
+                    else if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
                     {
                         MessageCreated(new ItemUseMessage(player, gameState.Scene, inventory.ActiveBarItem,
                             ItemUsage.Hitable | ItemUsage.Eatable));
+                    }
+                    else if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem == null)
+                    {
+                        RigidBody rb;
+                        JVector n;
+                        float f;
+                        gameState.PhysicsManager.World.CollisionSystem.Raycast(
+                            player.GetComponent<TransformComponent>().Position.ToJitterVector(),
+                            Vector3.Transform(Vector3.UnitZ, gameState.Scene.CameraManager.ActiveCamera.Rotation).ToJitterVector() * 20,
+                            new Jitter.Collision.RaycastCallback((body, normal, fraction) => {
+                                var entity = body.Tag as Entity;
+                                return entity != null && entity.Name.Contains ("wall") && fraction < 1 && !entity.GetComponent<WallComponent> ().IsEdge;
+                            }),
+                            out rb, out n, out f);
+                        if (rb != null)
+                        {
+                            var entity = rb.Tag as Entity;
+
+                            if (entity != null)
+                            {
+                                var model = entity.GetComponent<ModelComponent>().Model;
+                                var health = entity.GetComponent<HealthComponent>();
+                                var wallcomp = entity.GetComponent<WallComponent>();
+                                var temp_health = health.Health - 1f;
+                                health.Health = temp_health < 0 ? 0 : temp_health;
+                                var tmp = (health.MaximumHealth - health.Health) / health.MaximumHealth;
+                                var tmp_pos = model.Position;
+                                tmp_pos.Y = -15.5f * tmp - 0.5f;
+                                model.Position = tmp_pos;
+                                var rbpos = rb.Position;
+                                rbpos.Y = tmp_pos.Y + 8;
+                                rb.Position = rbpos;
+                                wallcomp.IsMoveable = false;
+                                return;
+                            }
+                        }
                     }
                 }
 
                 if (im.IsMouseButtonPressed(MouseButton.RightButton))
                 {
-                    if (/*application.Window.IsMouseCaptured() && */inventory.ActiveBarItem != null)
+                    if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
                     {
                         var btn = barItems.FirstOrDefault(b => b.ToggleState);
                         var invBtn = items.FirstOrDefault(b => b.Item == btn.Item);

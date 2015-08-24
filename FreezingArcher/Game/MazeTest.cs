@@ -43,10 +43,10 @@ namespace FreezingArcher.Game
     /// </summary>
     public sealed class MazeTest : IMessageConsumer, IMessageCreator
     {
-        const int ScobisCount = 5;
-        const int CaligoCount = 2;
-        const int PassusCount = 5;
-        const int GhostCount = 7;
+        const int ScobisCount = 3;
+        const int CaligoCount = 1;
+        const int PassusCount = 3;
+        const int GhostCount = 5;
 
         LoadingScreen loadingScreen;
         Gwen.ControlInternal.Text FPS_Text;
@@ -57,8 +57,6 @@ namespace FreezingArcher.Game
 
         CompositorNodeScene MazeSceneNode;
         CompositorNodeOutput OutputNode;
-
-        Light light1;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
@@ -104,15 +102,6 @@ namespace FreezingArcher.Game
             state.Scene.AmbientIntensity = 0.35f;
 
             state.Scene.MaxRenderingDistance = 300.0f;
-
-            light1 = new Light (LightType.SpotLight);
-            light1.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
-            //light.PointLightConstantAttenuation = 0.8f;
-            light1.PointLightLinearAttenuation = 0.01f;
-            light1.SpotLightConeAngle = Math.MathHelper.ToRadians (30f);
-            //light.PointLightExponentialAttenuation = 0.000600f;
-
-            state.Scene.Lights.Add (light1);
 
             state.MessageProxy.StartProcessing ();
 
@@ -185,12 +174,12 @@ namespace FreezingArcher.Game
 
             for (int i = 0; i < PassusCount; i++)
             {
-                PassusInstances.Add (new Passus (state, maze[0].AIManager, rendererContext)); 
+                PassusInstances.Add (new Passus (state, maze[0].AIManager, rendererContext));
             }
 
             for (int i = 0; i < GhostCount; i++)
             {
-                GhostInstances.Add (new Ghost (state, maze[0].AIManager, rendererContext)); 
+                GhostInstances.Add (new Ghost (state, maze[0].AIManager, rendererContext));
             }
 
             game.AddGameState("maze_underworld", Content.Environment.Default,
@@ -303,35 +292,16 @@ namespace FreezingArcher.Game
 
                 if (game.CurrentGameState == game.GetGameState ("maze_overworld") && maze [0].HasFinished)
                     game.CurrentGameState.PhysicsManager.Update (um.TimeStamp);
-                
+
                 if (game.CurrentGameState == game.GetGameState ("maze_underworld") && maze [1].HasFinished)
                     game.CurrentGameState.PhysicsManager.Update (um.TimeStamp);
-
-                //Update pointlight position and direction
-                CoreScene scene = null;
-                scene = game.CurrentGameState.Scene;
-
-                if (scene != null)
-                {
-                    BaseCamera cam = scene.CameraManager.ActiveCamera;
-
-                    if (cam != null)
-                    {
-                        light1.PointLightPosition = Player.GetComponent<TransformComponent> ().Position;
-
-                        Vector3 SpotLightDir = (light1.PointLightPosition + cam.Direction * 75.0f) - light1.PointLightPosition;
-                        SpotLightDir.Normalize ();
-
-                        light1.DirectionalLightDirection = SpotLightDir;
-                    }
-                }
 
                 if (application.FPSCounter >= 50)
                     FPS_Text.TextColor = System.Drawing.Color.Green;
                 else if (application.FPSCounter < 50 && application.FPSCounter > 30)
-                        FPS_Text.TextColor = System.Drawing.Color.Yellow;
+                    FPS_Text.TextColor = System.Drawing.Color.Yellow;
                 else
-                        FPS_Text.TextColor = System.Drawing.Color.Red;
+                    FPS_Text.TextColor = System.Drawing.Color.Red;
 
                 FPS_Text.String = application.FPSCounter + " FPS";
             }
@@ -351,7 +321,7 @@ namespace FreezingArcher.Game
                         var state = game.CurrentGameState;
                         state.Scene.DistanceFogIntensity = 0;
                         state.Scene.AmbientIntensity = 1f;
-                        light1.PointLightLinearAttenuation = 99999;
+                        //light1.PointLightLinearAttenuation = 99999;
                         lighting = false;
                     }
                     else
@@ -359,7 +329,7 @@ namespace FreezingArcher.Game
                         var state = game.CurrentGameState;
                         state.Scene.DistanceFogIntensity = 0.02f;
                         state.Scene.AmbientIntensity = 0.35f;
-                        light1.PointLightLinearAttenuation = 0.01f;
+                        //light1.PointLightLinearAttenuation = 0.01f;
                         lighting = true;
                     }
                 }

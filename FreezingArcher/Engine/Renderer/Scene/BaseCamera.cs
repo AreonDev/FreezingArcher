@@ -235,7 +235,6 @@ namespace FreezingArcher.Renderer.Scene
                 Vector3.Transform(Vector3.UnitY, MRotation));
 
             Direction = Vector3.Transform(Vector3.UnitZ, MRotation);
-            Direction.Normalize();
         }
 
         /// <summary>

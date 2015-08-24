@@ -429,6 +429,8 @@
     <Compile Include="Renderer\Scene\Particle.cs" />
     <Compile Include="Renderer\Scene\ParticleEmitter.cs" />
     <Compile Include="Content\ParticleSystem.cs" />
+    <Compile Include="Content\LightComponent.cs" />
+    <Compile Include="Content\LightSystem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

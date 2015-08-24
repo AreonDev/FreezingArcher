@@ -93,7 +93,7 @@ namespace FreezingArcher.Game.Maze
                 ModelPath = "Content/Pickaxe/pickaxe.xml",
                 Size = new Vector2i(2, 4),
                 PositionOffset = new Vector3(-0.4f, -0.3f, 0.5f),
-                Rotation = ItemComponent.DefaultRotation,
+                Rotation = Quaternion.FromAxisAngle (Vector3.UnitZ, MathHelper.PiOver2),
                 AttackClasses = AttackClass.Object,
                 ItemUsages =  ItemUsage.Hitable,
                 Protection = ItemComponent.DefaultProtection,
@@ -379,6 +379,8 @@ namespace FreezingArcher.Game.Maze
             }
         }
 
+        static int lightCount = 0;
+
         static void AddMazeToGameState (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, MessageProvider messageProvider,
             Entity[,] entities, ref Vector3 playerPosition, GameState state, Random rand,
             float scaling, uint maxX, int xOffs, int yOffs)
@@ -445,7 +447,7 @@ namespace FreezingArcher.Game.Maze
                     state.PhysicsManager.World.AddBody (body);
 
                     // TODO add items here
-                    var r = rand.Next(0, 100);
+                    var r = rand.Next(0, 200);
 
                     string name = string.Empty;
                     int idx;
@@ -458,8 +460,15 @@ namespace FreezingArcher.Game.Maze
                     // flashlight
                     else if (r > 0 && r <= 4)
                     {
-                        idx = 1;
-                        name = ItemTemplates[idx].Name + flashlight_idx++;
+                        if (lightCount++ < 16)
+                        {
+                            idx = 1;
+                            name = ItemTemplates[idx].Name + flashlight_idx++;
+                        }
+                        else
+                        {
+                            idx = -1;
+                        }
                     }
                     // choco_milk
                     else if (r > 4 && r <= 20)
@@ -512,6 +521,18 @@ namespace FreezingArcher.Game.Maze
                         item_body.RigidBody.Orientation = JMatrix.CreateFromAxisAngle(JVector.Up, y_rot);
                         item_model.Model.Position = pos;
                         item_model.Model.Rotation = Quaternion.FromAxisAngle(Vector3.UnitY, y_rot);
+
+                        if (idx == 1)
+                        {
+                            item.Entity.AddSystem<LightSystem>();
+                            var light = item.Entity.GetComponent<LightComponent>().Light;
+                            light = new Light (LightType.SpotLight);
+                            light.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
+                            light.PointLightLinearAttenuation = 0.01f;
+                            light.SpotLightConeAngle = MathHelper.ToRadians (30f);
+                            light.On = true;
+                            state.Scene.Lights.Add (light);
+                        }
                     }
                 }
                 else

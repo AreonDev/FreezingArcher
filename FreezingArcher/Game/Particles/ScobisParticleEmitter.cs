@@ -72,7 +72,7 @@ namespace FreezingArcher.Game
                 RedEye2.SpawnPosition = SpawnPosition + right * 0.3f + Vector3.Normalize (looking_dir) * 0.5f;
             }
 
-            Smoke.SpawnPosition = SpawnPosition;
+            Smoke.SpawnPosition = SpawnPosition - new Vector3(0.0f, -0.4f, 0.0f);
 
             RedEye1.Update (time);
             RedEye2.Update (time);

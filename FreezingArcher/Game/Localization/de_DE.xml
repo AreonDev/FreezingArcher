@@ -30,4 +30,7 @@
         Dieser Apfel enthält einen Wurm. Proteine sind aber
         nicht so übel wie du vielleicht denken magst.
     </string>
+    <string name="mate_description">
+        Hier könnte ihre Werbung stehen!
+    </string>
 </locale>

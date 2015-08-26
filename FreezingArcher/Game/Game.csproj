@@ -50,7 +50,6 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="GraphTest.cs" />
     <Compile Include="Maze\MazeCell.cs" />
@@ -88,6 +87,7 @@
     <Compile Include="AI\PassusAI.cs" />
     <Compile Include="Ghosts\Ghost.cs" />
     <Compile Include="AI\GhostAI.cs" />
+    <Compile Include="Main.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -248,6 +248,21 @@
     <None Include="Content\Apple\thumb.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Mate\diffuse.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mate\mate.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mate\mate.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mate\normal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mate\thumb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
@@ -283,5 +298,6 @@
     <Folder Include="AI\" />
     <Folder Include="Ghosts\" />
     <Folder Include="Content\Apple\" />
+    <Folder Include="Content\Mate\" />
   </ItemGroup>
 </Project>

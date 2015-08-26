@@ -35,7 +35,7 @@ namespace FreezingArcher.Game
         /// <param name="args">The command-line arguments.</param>
         public static void Main (string[] args)
         {
-            Application.Instance = new Application ("Freezing Archer", args);
+            Application.Instance = new Application ("No Way Out", args);
             Application.Instance.Init ();
             Application.Instance.Load ();
 
@@ -48,12 +48,8 @@ namespace FreezingArcher.Game
                 var objmnr = Application.Instance.ObjectManager;
 
                 maze = new MazeTest(messageManager, objmnr, rc, game, Application.Instance);
-                //new ECSTest(msgmnr, rc.Scene);
-                //new PhysicsTest(Application.Instance, messageManager);
-                //new InventoryTest();
 
                 new UITest(Application.Instance, messageManager, maze.Player, Application.Instance.RendererContext);
-                //new JitterTest(Application.Instance);
             }
 
             Application.Instance.Run ();

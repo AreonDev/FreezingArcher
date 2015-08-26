@@ -26,4 +26,7 @@
         This apple has a worm in it. Proteins aren't that bad
         for you!
     </string>
+    <string name="mate_description">
+        To appear...
+    </string>
 </locale>

@@ -57,13 +57,13 @@ namespace FreezingArcher.Game.Maze
                 Rotation = ItemComponent.DefaultRotation,
                 Shape = new BoxShape(0.1f, 0.14f, 0.1f),
                 AttackClasses = AttackClass.Object,
-                ItemUsages =  ItemUsage.Eatable,
+                ItemUsages =  ItemUsage.Eatable | ItemUsage.Hitable,
                 Protection = ItemComponent.DefaultProtection,
                 PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
                 Mass = .5f,
                 HealthDelta = 20,
                 UsageDeltaPerUsage = .2f,
-                AttackStrength = 0,
+                AttackStrength = 5,
                 ThrowPower = 0.2f,
                 Usage = .2f
             },
@@ -77,13 +77,13 @@ namespace FreezingArcher.Game.Maze
                 Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2),
                 Shape = new CylinderShape (0.552666f, 0.080992f),
                 AttackClasses = AttackClass.Object,
-                ItemUsages =  ItemUsage.Throwable,
+                ItemUsages =  ItemUsage.Throwable | ItemUsage.Hitable,
                 Protection = ItemComponent.DefaultProtection,
                 PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
                 Mass = 1,
                 HealthDelta = 0,
                 UsageDeltaPerUsage = .01f,
-                AttackStrength = 0,
+                AttackStrength = 10,
                 ThrowPower = 5,
                 Usage = 0
             },
@@ -116,13 +116,13 @@ namespace FreezingArcher.Game.Maze
                 Rotation = ItemComponent.DefaultRotation,
                 Shape = new CylinderShape (0.13f, 0.032f),
                 AttackClasses = AttackClass.Object,
-                ItemUsages =  ItemUsage.Eatable,
+                ItemUsages =  ItemUsage.Eatable | ItemUsage.Hitable,
                 Protection = ItemComponent.DefaultProtection,
                 PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
                 Mass = .5f,
                 HealthDelta = 20,
                 UsageDeltaPerUsage = .2f,
-                AttackStrength = 0,
+                AttackStrength = 5,
                 ThrowPower = .2f,
                 Usage = 0
             },
@@ -136,13 +136,33 @@ namespace FreezingArcher.Game.Maze
                 Rotation = ItemComponent.DefaultRotation,
                 Shape = new SphereShape (.08f),
                 AttackClasses = AttackClass.Object,
-                ItemUsages = ItemUsage.Eatable,
+                ItemUsages = ItemUsage.Eatable | ItemUsage.Hitable,
                 Protection = ItemComponent.DefaultProtection,
                 PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
                 Mass = .5f,
                 HealthDelta = 20,
                 UsageDeltaPerUsage = .25f,
-                AttackStrength = 0,
+                AttackStrength = 5,
+                ThrowPower = .2f,
+                Usage = 0
+            },
+            new ItemTemplate {
+                Name = "mate",
+                ImageLocation = "Content/Mate/thumb.png",
+                Description = "mate_description",
+                ModelPath = "Content/Mate/mate.xml",
+                Size = new Vector2i (1, 2),
+                PositionOffset = new Vector3 (-.4f, -.25f, .5f),
+                Rotation = ItemComponent.DefaultRotation,
+                Shape = new CylinderShape (.342884f, .043448f),
+                AttackClasses = AttackClass.Object,
+                ItemUsages = ItemUsage.Eatable | ItemUsage.Hitable,
+                Protection = ItemComponent.DefaultProtection,
+                PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
+                Mass = .5f,
+                HealthDelta = 25,
+                UsageDeltaPerUsage = .25f,
+                AttackStrength = 5,
                 ThrowPower = .2f,
                 Usage = 0
             }
@@ -407,6 +427,7 @@ namespace FreezingArcher.Game.Maze
         static int pickaxe_idx = 0;
         static int soda_can_idx = 0;
         static int apple_idx = 0;
+        static int mate_idx = 0;
 
         static void AddMazeToGameState (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, MessageProvider messageProvider,
             Entity[,] entities, ref Vector3 playerPosition, GameState state, Random rand,
@@ -508,6 +529,11 @@ namespace FreezingArcher.Game.Maze
                     {
                         idx = 4;
                         name = ItemTemplates[idx].Name + apple_idx++;
+                    }
+                    else if (r > 36 && r <= 44)
+                    {
+                        idx = 5;
+                        name = ItemTemplates[idx].Name + mate_idx++;
                     }
                     else
                     {

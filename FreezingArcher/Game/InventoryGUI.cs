@@ -979,8 +979,16 @@ namespace FreezingArcher.Game
                     }
                     else if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem != null)
                     {
-                        MessageCreated(new ItemUseMessage(player, gameState.Scene, inventory.ActiveBarItem,
-                            ItemUsage.Hitable | ItemUsage.Eatable));
+                        if (inventory.ActiveBarItem.Entity.HasComponent<LightComponent>())
+                        {
+                            var light = inventory.ActiveBarItem.Entity.GetComponent<LightComponent>().Light;
+                            light.On = !light.On;
+                        }
+                        else
+                        {
+                            MessageCreated(new ItemUseMessage(player, gameState.Scene, inventory.ActiveBarItem,
+                                ItemUsage.Hitable | ItemUsage.Eatable));
+                        }
                     }
                     else if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem == null)
                     {

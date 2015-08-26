@@ -82,7 +82,7 @@ namespace FreezingArcher.Game.Maze
                 PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
                 Mass = 1,
                 HealthDelta = 0,
-                UsageDeltaPerUsage = .01f,
+                UsageDeltaPerUsage = .0001f,
                 AttackStrength = 10,
                 ThrowPower = 5,
                 Usage = 0
@@ -614,7 +614,7 @@ namespace FreezingArcher.Game.Maze
                                 light.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
                                 light.PointLightLinearAttenuation = 0.01f;
                                 light.SpotLightConeAngle = MathHelper.ToRadians (30f);
-                                light.On = true;
+                                light.On = false;
 
                                 item.Entity.GetComponent<LightComponent> ().Light = light;
                            

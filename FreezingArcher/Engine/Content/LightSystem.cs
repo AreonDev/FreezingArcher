@@ -33,7 +33,7 @@ namespace FreezingArcher.Content
         {
             base.Init (messageProvider, entity);
 
-            NeededComponents = new[] { typeof (TransformComponent), typeof (LightComponent) };
+            NeededComponents = new[] { typeof (TransformComponent), typeof (LightComponent), typeof (ItemComponent) };
 
             onPositionChangedHandler = pos => {
                 var light = Entity.GetComponent<LightComponent>().Light;
@@ -51,7 +51,7 @@ namespace FreezingArcher.Content
                 }
             };
 
-            internalValidMessages = new int[0];
+            internalValidMessages = new[] { (int) MessageId.Update };
             messageProvider += this;
         }
 
@@ -67,13 +67,26 @@ namespace FreezingArcher.Content
         }
 
         public override void ConsumeMessage (IMessage msg)
-        {}
+        {
+            if (msg.MessageId == (int) MessageId.Update)
+            {
+                var light = Entity.GetComponent<LightComponent>().Light;
+                if (light.On)
+                {
+                    var item = Entity.GetComponent<ItemComponent>();
+                    item.Usage += item.UsageDeltaPerUsage;
+                }
+            }
+        }
 
         public override void Destroy ()
         {
             var transform = Entity.GetComponent<TransformComponent>();
             transform.OnPositionChanged -= onPositionChangedHandler;
             transform.OnRotationChanged -= onRotationChangedHandler;
+            var light = Entity.GetComponent<LightComponent>().Light;
+            light.On = false;
+            //light.Destroy();
             base.Destroy ();
         }
     }

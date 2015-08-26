@@ -101,7 +101,7 @@ namespace FreezingArcher.Game
             state.Scene.AmbientColor = Color4.White;
             state.Scene.AmbientIntensity = 0.35f;
 
-            state.Scene.MaxRenderingDistance = 300.0f;
+            state.Scene.MaxRenderingDistance = 100.0f;
 
             state.MessageProxy.StartProcessing ();
 

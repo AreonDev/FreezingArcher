@@ -171,7 +171,6 @@ namespace FreezingArcher.Renderer.Compositor
 
             spr.CustomEffect = true;
 
-
             FrameBufferDepthTexture.Bind(2);
             FrameBufferNormalTexture.Bind(3);
             FrameBufferSpecularTexture.Bind(4);
@@ -193,7 +192,7 @@ namespace FreezingArcher.Renderer.Compositor
             NoNodeEffect.PixelProgram.SetUniform(AmbientIntensityLocation, Scene.AmbientIntensity);
             NoNodeEffect.PixelProgram.SetUniform(AmbientColorLocation, Scene.AmbientColor);
 
-            List<Light> Lights = Scene != null ? Scene.Lights : null;
+            List<Light> Lights = (Scene != null) ? Scene.Lights : null;
 
             if (Lights != null)
             {

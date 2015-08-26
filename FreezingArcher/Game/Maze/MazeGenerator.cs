@@ -608,16 +608,20 @@ namespace FreezingArcher.Game.Maze
 
                         if (idx == 1)
                         {
-                            item.Entity.AddSystem<LightSystem>();
-                            var light = item.Entity.GetComponent<LightComponent>().Light;
-                            light = new Light (LightType.SpotLight);
-                            light.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
-                            light.PointLightLinearAttenuation = 0.01f;
-                            light.SpotLightConeAngle = MathHelper.ToRadians (30f);
-                            light.On = true;
-                            state.Scene.Lights.Add (light);
-                            item_model.Model.Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2) * item_model.Model.Rotation;
-                            item_body.RigidBody.Orientation = JMatrix.CreateFromQuaternion (item_model.Model.Rotation.ToJitterQuaternion ());
+                                item.Entity.AddSystem<LightSystem> ();
+                                var light = item.Entity.GetComponent<LightComponent> ().Light;
+                                light = new Light (LightType.SpotLight);
+                                light.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
+                                light.PointLightLinearAttenuation = 0.01f;
+                                light.SpotLightConeAngle = MathHelper.ToRadians (30f);
+                                light.On = true;
+
+                                item.Entity.GetComponent<LightComponent> ().Light = light;
+                           
+                                state.Scene.Lights.Add (light);
+                            
+                                item_model.Model.Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2) * item_model.Model.Rotation;
+                                item_body.RigidBody.Orientation = JMatrix.CreateFromQuaternion (item_model.Model.Rotation.ToJitterQuaternion ());
                         }
                     }
                 }

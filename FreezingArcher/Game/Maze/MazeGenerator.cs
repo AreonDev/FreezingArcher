@@ -173,7 +173,7 @@ namespace FreezingArcher.Game.Maze
                 ModelPath = "Content/Toast/toast.xml",
                 Size = new Vector2i (1, 1),
                 PositionOffset = new Vector3 (-.4f, -.25f, .5f),
-                Rotation = ItemComponent.DefaultRotation,
+                Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2),
                 Shape = new BoxShape (0.278638f, 0.045314f, 0.230326f),
                 AttackClasses = AttackClass.Object,
                 ItemUsages = ItemUsage.Eatable | ItemUsage.Hitable,

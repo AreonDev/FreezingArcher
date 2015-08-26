@@ -161,7 +161,27 @@ namespace FreezingArcher.Game.Maze
                 PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
                 Mass = .5f,
                 HealthDelta = 25,
-                UsageDeltaPerUsage = .25f,
+                UsageDeltaPerUsage = .20f,
+                AttackStrength = 5,
+                ThrowPower = .2f,
+                Usage = 0
+            },
+            new ItemTemplate {
+                Name = "toast",
+                ImageLocation = "Content/Toast/thumb.png",
+                Description = "toast_description",
+                ModelPath = "Content/Toast/toast.xml",
+                Size = new Vector2i (1, 1),
+                PositionOffset = new Vector3 (-.4f, -.25f, .5f),
+                Rotation = ItemComponent.DefaultRotation,
+                Shape = new BoxShape (0.278638f, 0.045314f, 0.230326f),
+                AttackClasses = AttackClass.Object,
+                ItemUsages = ItemUsage.Eatable | ItemUsage.Hitable,
+                Protection = ItemComponent.DefaultProtection,
+                PhysicsMaterial = new Material { KineticFriction = 50, StaticFriction = 50, Restitution = -10 },
+                Mass = .5f,
+                HealthDelta = 25,
+                UsageDeltaPerUsage = .20f,
                 AttackStrength = 5,
                 ThrowPower = .2f,
                 Usage = 0
@@ -428,6 +448,7 @@ namespace FreezingArcher.Game.Maze
         static int soda_can_idx = 0;
         static int apple_idx = 0;
         static int mate_idx = 0;
+        static int toast_idx = 0;
 
         static void AddMazeToGameState (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, MessageProvider messageProvider,
             Entity[,] entities, ref Vector3 playerPosition, GameState state, Random rand,
@@ -534,6 +555,11 @@ namespace FreezingArcher.Game.Maze
                     {
                         idx = 5;
                         name = ItemTemplates[idx].Name + mate_idx++;
+                    }
+                    else if (r > 44 && r <= 52)
+                    {
+                        idx = 6;
+                        name = ItemTemplates[idx].Name + toast_idx++;
                     }
                     else
                     {

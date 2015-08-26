@@ -263,6 +263,21 @@
     <None Include="Content\Mate\thumb.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Toast\diffuse.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Toast\normal.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Toast\thumb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Toast\toast.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Toast\toast.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
@@ -299,5 +314,6 @@
     <Folder Include="Ghosts\" />
     <Folder Include="Content\Apple\" />
     <Folder Include="Content\Mate\" />
+    <Folder Include="Content\Toast\" />
   </ItemGroup>
 </Project>

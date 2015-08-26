@@ -39,7 +39,7 @@ namespace FreezingArcher.Content
                 var light = Entity.GetComponent<LightComponent>().Light;
                 if (light != null)
                 {
-                    light.PointLightPosition = pos + light.DirectionalLightDirection * 0.25f;
+                    light.PointLightPosition = pos + light.DirectionalLightDirection * 0.20f;
                 }
             };
 

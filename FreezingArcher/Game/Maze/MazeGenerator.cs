@@ -622,6 +622,10 @@ namespace FreezingArcher.Game.Maze
                             
                                 item_model.Model.Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2) * item_model.Model.Rotation;
                                 item_body.RigidBody.Orientation = JMatrix.CreateFromQuaternion (item_model.Model.Rotation.ToJitterQuaternion ());
+
+                            //Update position
+                            item_body.RigidBody.Position = pos.ToJitterVector();
+                            item_body.RigidBody.Orientation = JMatrix.CreateFromAxisAngle(JVector.Up, y_rot);
                         }
                     }
                 }

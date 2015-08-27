@@ -220,6 +220,16 @@ namespace FreezingArcher.Renderer.Scene
            return Objects.OrderBy(o => o.Priority);
         }
 
+        public void AddLight(Light light)
+        {
+            Lights.Add (light);
+        }
+
+        public void RemoveLight(Light light)
+        {
+            Lights.Remove (light);
+        }
+
         public Color4 AmbientColor { get; set;}
         public float  AmbientIntensity { get; set;}
 

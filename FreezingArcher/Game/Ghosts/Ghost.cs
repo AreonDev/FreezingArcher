@@ -45,10 +45,22 @@ namespace FreezingArcher.Game.Ghosts
 
             ghostEntity = EntityFactory.Instance.CreateWith ("Ghost." + InstanceCount++, state.MessageProxy,
                 new[] { typeof (ArtificialIntelligenceComponent) },
-                new[] { typeof (ParticleSystem), typeof (PhysicsSystem) });
+                new[] { typeof (ParticleSystem), typeof (PhysicsSystem), typeof(LightSystem) });
 
             ghostEntity.GetComponent<ParticleComponent> ().Emitter = ghostEmitter;
             ghostEntity.GetComponent<ParticleComponent> ().Particle = particleGhost;
+
+            var light = ghostEntity.GetComponent<LightComponent> ().Light;
+            light = new FreezingArcher.Renderer.Scene.Light (FreezingArcher.Renderer.Scene.LightType.PointLight);
+            light.On = true;
+            light.Color = new FreezingArcher.Math.Color4 (0.6f, 1.0f, 0.6f, 1.0f);
+            light.PointLightLinearAttenuation = 0.4f;
+            light.PointLightConstantAttenuation = 0.7f;
+            light.PointLightExponentialAttenuation = 0.008f;
+
+            ghostEntity.GetComponent<LightComponent> ().Light = light;
+
+            state.Scene.AddLight (light);
 
             RigidBody ghostBody = new RigidBody (new SphereShape (1.2f));
             ghostBody.AffectedByGravity = false;

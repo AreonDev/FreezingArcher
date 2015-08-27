@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using FreezingArcher.Core;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
@@ -39,7 +40,9 @@ namespace FreezingArcher.Content
                 var light = Entity.GetComponent<LightComponent>().Light;
                 if (light != null)
                 {
-                    light.PointLightPosition = pos + light.DirectionalLightDirection * 0.20f;
+                    light.PointLightPosition = pos + 
+                        ((light.Type == FreezingArcher.Renderer.Scene.LightType.SpotLight) ? light.DirectionalLightDirection * 0.19f : 
+                            Vector3.Zero);
                 }
             };
 
@@ -71,10 +74,17 @@ namespace FreezingArcher.Content
             if (msg.MessageId == (int) MessageId.Update)
             {
                 var light = Entity.GetComponent<LightComponent>().Light;
-                if (light.On)
+                var item = Entity.GetComponent<ItemComponent> ();
+
+                if (light != null)
                 {
-                    var item = Entity.GetComponent<ItemComponent>();
-                    item.Usage += item.UsageDeltaPerUsage;
+                    if (light.On)
+                    {
+                        if (item != null)
+                            item.Usage += item.UsageDeltaPerUsage;
+                        //else
+                        //    light.PointLightPosition = Entity.GetComponent<PhysicsComponent> ().RigidBody.Position.ToFreezingArcherVector();
+                    }
                 }
             }
         }
@@ -86,7 +96,7 @@ namespace FreezingArcher.Content
             transform.OnRotationChanged -= onRotationChangedHandler;
             var light = Entity.GetComponent<LightComponent>().Light;
             light.On = false;
-            //light.Destroy();
+            light.Destroy();
             base.Destroy ();
         }
     }

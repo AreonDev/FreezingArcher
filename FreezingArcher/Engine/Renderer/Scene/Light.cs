@@ -322,6 +322,13 @@ namespace FreezingArcher.Renderer.Scene
             }
         }
 
+        public CoreScene Scene { get; internal set;}
+
+        public void Destroy()
+        {
+            Scene.RemoveLight (this);
+        }
+
         public Light(LightType type)
         {
             _Definition = new LightDefinition();
@@ -339,6 +346,8 @@ namespace FreezingArcher.Renderer.Scene
             SpotLightConeAngle = 13.66f;
 
             Type = type;
+
+            Scene = null;
         }
     }
 }

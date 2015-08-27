@@ -1061,13 +1061,16 @@ namespace FreezingArcher.Renderer
                 Texture2D tex = new Texture2D(width, height, generateMipMaps, name, id, bigger);
                 _GraphicsResourceManager.AddResource(tex);
 
-                Sampler s2d = CreateSampler(name + "_Sampler");
-                tex.Sampler = s2d;
-                tex.SamplerAllowed = generate_sampler;
-                tex.Sampler.MagnificationFilter = MagnificationFilter.UseNearest;
-                tex.Sampler.MinificationFilter = MinificationFilter.UseNearest;
+                //if (generate_sampler)
+                //{
+                    Sampler s2d = CreateSampler (name + "_Sampler");
+                    tex.Sampler = s2d;
+                    tex.SamplerAllowed = generate_sampler;
+                    tex.Sampler.MagnificationFilter = MagnificationFilter.InterpolateLinear;
+                    tex.Sampler.MinificationFilter = MinificationFilter.InterpolateLinearAndInterpolateMipmapLinear;
 
-                tex.Renderer = this;
+                    tex.Renderer = this;
+                //}
 
                 return tex;
             }
@@ -1169,6 +1172,8 @@ namespace FreezingArcher.Renderer
                     Sampler s2d = CreateSampler(name + "_Sampler");
                     tex.Sampler = s2d;
                     tex.SamplerAllowed = true;
+                    tex.Sampler.MinificationFilter = MinificationFilter.InterpolateLinearAndInterpolateMipmapLinear;
+                    tex.Sampler.MagnificationFilter = MagnificationFilter.InterpolateLinear;
 
                     tex.Renderer = this;
 

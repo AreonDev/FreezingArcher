@@ -107,7 +107,7 @@ namespace FreezingArcher.Renderer.Compositor
         private int AmbientColorLocation = 0;
         private int AmbientIntensityLocation = 0;
 
-        private LightLocationStruct[] LightLocations = new LightLocationStruct[16];
+        private LightLocationStruct[] LightLocations = new LightLocationStruct[20];
 
 
         Texture2D FrameBufferOutputTexture;

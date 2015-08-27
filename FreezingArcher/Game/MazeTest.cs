@@ -96,10 +96,10 @@ namespace FreezingArcher.Game
             state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.Fuchsia;
 
-            state.Scene.DistanceFogIntensity = 0.02f;
+            state.Scene.DistanceFogIntensity = 0.08f;
 
             state.Scene.AmbientColor = Color4.White;
-            state.Scene.AmbientIntensity = 0.35f;
+            state.Scene.AmbientIntensity = 0.30f;
 
             state.Scene.MaxRenderingDistance = 300.0f;
 

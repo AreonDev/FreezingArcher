@@ -618,7 +618,7 @@ namespace FreezingArcher.Game.Maze
 
                                 item.Entity.GetComponent<LightComponent> ().Light = light;
                            
-                                state.Scene.Lights.Add (light);
+                                state.Scene.AddLight(light);
                             
                                 item_model.Model.Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2) * item_model.Model.Rotation;
                                 item_body.RigidBody.Orientation = JMatrix.CreateFromQuaternion (item_model.Model.Rotation.ToJitterQuaternion ());

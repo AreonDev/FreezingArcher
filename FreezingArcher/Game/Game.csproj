@@ -279,6 +279,9 @@
     <None Include="Content\Toast\toast.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Audio\footstep.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\FreezingArcher.csproj">
@@ -316,5 +319,6 @@
     <Folder Include="Content\Apple\" />
     <Folder Include="Content\Mate\" />
     <Folder Include="Content\Toast\" />
+    <Folder Include="Content\Audio\" />
   </ItemGroup>
 </Project>

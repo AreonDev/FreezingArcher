@@ -98,9 +98,7 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Package>xbuild12</Package>
-    </Reference>
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -431,6 +429,9 @@
     <Compile Include="Content\ParticleSystem.cs" />
     <Compile Include="Content\LightComponent.cs" />
     <Compile Include="Content\LightSystem.cs" />
+    <Compile Include="Content\AudioComponent.cs" />
+    <Compile Include="Content\AudioSystem.cs" />
+    <Compile Include="Content\AudioListenerSystem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

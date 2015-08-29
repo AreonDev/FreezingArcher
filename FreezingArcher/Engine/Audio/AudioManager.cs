@@ -27,7 +27,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming.Audio;
-using Pencil.Gaming.MathUtils;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Audio
 {
@@ -87,7 +87,7 @@ namespace FreezingArcher.Audio
             Sources = new List<Source> ();
             SupportedEffects = new List<ALEffectType>();
             Listener = new Listener (Vector3.Zero, Vector3.Zero,
-                new Pair<Vector3, UpVector> (Vector3.Zero, UpVector.UnitX), 1);
+                new Pair<Vector3, UpVector> (Vector3.Zero, UpVector.UnitY), 1);
             Groups = new Dictionary<SourceGroup, float> ();
             Groups.Add (SourceGroup.Music, 1);
             Groups.Add (SourceGroup.Environment, 1);

@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Output;
 using Pencil.Gaming.Audio;
-using Pencil.Gaming.MathUtils;
+using FreezingArcher.Math;
 using FreezingArcher.Core;
 
 namespace FreezingArcher.Audio

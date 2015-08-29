@@ -101,7 +101,7 @@ namespace FreezingArcher.Game
             state.Scene.AmbientColor = Color4.White;
             state.Scene.AmbientIntensity = 0.30f;
 
-            state.Scene.MaxRenderingDistance = 300.0f;
+            state.Scene.MaxRenderingDistance = 400.0f;
 
             state.MessageProxy.StartProcessing ();
 
@@ -127,8 +127,38 @@ namespace FreezingArcher.Game
                 typeof(KeyboardControllerSystem),
                 typeof(MouseControllerSystem),
                 typeof(SkyboxSystem),
-                typeof(PhysicsSystem)
+                typeof(PhysicsSystem),
+                typeof(AudioSystem),
+                typeof(AudioListenerSystem)
             });
+
+            //Add player walking sound
+            AudioComponent player_ac = Player.GetComponent<AudioComponent> ();
+            PhysicsComponent player_pc = Player.GetComponent<PhysicsComponent> ();
+
+            player_ac.AudioManager = app.AudioManager;
+            player_ac.AudioComponentEvents.Add (new AudioComponentEvent (MessageId.MoveStraight, 
+                AudioComponentReaction.Play, 500.0f, 
+                prepact: () =>
+                {
+                    if (player_pc.RigidBody.Position.Y > 1.10f)
+                    {
+                        player_ac.SoundSource.Gain = 0.0f;
+                        player_ac.AudioComponentEvents [0].EventCoolDownTime = 0f;
+                    }
+                    else
+                    {
+                        player_ac.SoundSource.Gain = 0.2f + MathHelper.Min(0.5f, player_pc.RigidBody.LinearVelocity.Length() / 6.0f);
+                        player_ac.AudioComponentEvents [0].EventCoolDownTime = 2500.0f / (player_pc.RigidBody.LinearVelocity.Length () + 0.0001f);
+                    }
+                }
+            ));
+
+            app.AudioManager.LoadSound ("footstep_Sound", "Content/Audio/footstep.wav");
+
+            player_ac.SoundSource = app.AudioManager.CreateSource ("Footstep_SoundSource", "footstep_Sound");
+            player_ac.SoundSource.Loop = false;
+            player_ac.SoundSource.Relative = false;
 
             // embed new maze into game state logic and create a MoveEntityToScene
             SkyboxSystem.CreateSkybox (state.Scene, Player);

@@ -223,10 +223,12 @@ namespace FreezingArcher.Renderer.Scene
         public void AddLight(Light light)
         {
             Lights.Add (light);
+            light.Scene = this;
         }
 
         public void RemoveLight(Light light)
         {
+            light.Scene = null;
             Lights.Remove (light);
         }
 

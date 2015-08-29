@@ -88,7 +88,7 @@ namespace FreezingArcher.Renderer.Compositor
         private int TextureSpecularLocation = 0;
         private int DistanceFogIntensityLocation = 0;
         private int DistanceFogColorLocation = 0;
-        private int CameraPositionLocation = 0;        
+        private int CameraPositionLocation = 0;
 
         private struct LightLocationStruct
         {
@@ -107,7 +107,9 @@ namespace FreezingArcher.Renderer.Compositor
         private int AmbientColorLocation = 0;
         private int AmbientIntensityLocation = 0;
 
-        private LightLocationStruct[] LightLocations = new LightLocationStruct[20];
+        public static readonly int MaximumLightCount = 20;
+
+        private LightLocationStruct[] LightLocations = new LightLocationStruct[MaximumLightCount];
 
 
         Texture2D FrameBufferOutputTexture;
@@ -323,7 +325,7 @@ namespace FreezingArcher.Renderer.Compositor
         }
 
         public override void InitOtherStuff()
-        {    
+        {
             long ticks = DateTime.Now.Ticks;
 
             FrameBufferNormalTexture = PrivateRendererContext.CreateTexture2D("CoreSceneFrameBufferNormalTexture_"+ticks,
@@ -358,7 +360,7 @@ namespace FreezingArcher.Renderer.Compositor
 
             InputSlots = null;
             OutputSlots = new CompositorOutputSlot[5];
-           
+
             OutputSlots[0] = new CompositorOutputSlot("SceneOutput", 0, FrameBufferOutputTexture, CompositorSlotType.Texture);
             OutputSlots[1] = new CompositorOutputSlot("DiffuseColor", 1, FrameBufferColorTexture, CompositorSlotType.Texture);
             OutputSlots[2] = new CompositorOutputSlot("PositionColor", 2, FrameBufferDepthTexture, CompositorSlotType.Texture);
@@ -416,7 +418,7 @@ namespace FreezingArcher.Renderer.Compositor
                 WindowResizeMessage wrm = msg as WindowResizeMessage;
 
                 PrivateRendererContext.AddRCActionJob(new RCActionTextureResize(FrameBufferOutputTexture,
-                        FrameBufferColorTexture, FrameBufferDepthTexture, FrameBufferNormalTexture, 
+                        FrameBufferColorTexture, FrameBufferDepthTexture, FrameBufferNormalTexture,
                         FrameBufferSpecularTexture, FrameBufferDepthStencilTexture, wrm.Width, wrm.Height));
             }
         }
@@ -426,4 +428,3 @@ namespace FreezingArcher.Renderer.Compositor
         #endregion
     }
 }
-

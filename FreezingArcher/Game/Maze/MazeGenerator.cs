@@ -27,6 +27,7 @@ using FreezingArcher.DataStructures.Graphs;
 using System.Collections.Generic;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Math;
 using FreezingArcher.Content;
 using FreezingArcher.Messaging;
@@ -324,7 +325,7 @@ namespace FreezingArcher.Game.Maze
                             if (n.Data.MazeCellType == MazeCellType.Ground && !n.Data.IsFinal && e.Weight.Even)
                             {
                                 // set walls of current node to non-preview to avoid artifacts
-                                node.GetNeighbours ().ForEach ((n_old, e_old) => 
+                                node.GetNeighbours ().ForEach ((n_old, e_old) =>
                                     n_old.GetNeighbours ().ForEach ((n2_old, e2_old) =>
                                 {
                                     if (n2_old.Data.MazeCellType == MazeCellType.Wall && n2_old.Data.IsPreview)
@@ -502,7 +503,7 @@ namespace FreezingArcher.Game.Maze
                     body.Material.Restitution = -10;
                     body.IsStatic = true;
                     body.Tag = node.Data;
-                       
+
                     entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
                     entities [x, y].GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
                     entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying =
@@ -524,7 +525,7 @@ namespace FreezingArcher.Game.Maze
                     // flashlight
                     else if (r > 0 && r <= 4)
                     {
-                        if (lightCount++ < 16)
+                        if (lightCount++ < CompositorNodeScene.MaximumLightCount)
                         {
                             idx = 1;
                             name = ItemTemplates[idx].Name + flashlight_idx++;
@@ -599,7 +600,7 @@ namespace FreezingArcher.Game.Maze
                             pos.Y -= item_body.RigidBody.Shape.BoundingBox.Min.Y;
                         else
                             pos.Y -= item_body.RigidBody.Shape.BoundingBox.Min.X;
-                        
+
                         pos.Z += (float) rand.NextDouble() * 3.8f - 2f;
                         item_body.RigidBody.Position = pos.ToJitterVector();
                         item_body.RigidBody.Orientation = JMatrix.CreateFromAxisAngle(JVector.Up, y_rot);
@@ -617,9 +618,9 @@ namespace FreezingArcher.Game.Maze
                                 light.On = false;
 
                                 item.Entity.GetComponent<LightComponent> ().Light = light;
-                           
+
                                 state.Scene.AddLight(light);
-                            
+
                                 item_model.Model.Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2) * item_model.Model.Rotation;
                                 item_body.RigidBody.Orientation = JMatrix.CreateFromQuaternion (item_model.Model.Rotation.ToJitterQuaternion ());
 
@@ -655,7 +656,7 @@ namespace FreezingArcher.Game.Maze
                         AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
                     entities [x, y].GetComponent<WallComponent>().IsEdge = node.Data.IsEdge;
-                    
+
                     state.PhysicsManager.World.AddBody (body);
                 }
 
@@ -673,7 +674,7 @@ namespace FreezingArcher.Game.Maze
         static void CalculatePathToExit(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph)
         {
             WeightedNode<MazeCell, MazeCellEdgeWeight> node = null;
-            WeightedNode<MazeCell, MazeCellEdgeWeight> lastNode; 
+            WeightedNode<MazeCell, MazeCellEdgeWeight> lastNode;
             graph.Nodes.ForEach(n => {
                 if (n.Data.MazeCellType == MazeCellType.Ground)
                 {
@@ -691,7 +692,7 @@ namespace FreezingArcher.Game.Maze
                 lastNode = node;
                 node = lastNode.GetNeighbours().FirstOrDefault((n, e) =>
                     n.Data.MazeCellType == MazeCellType.Ground && !n.Data.IsPath && !n.Data.IsFinal && e.Weight.Even).Item1;
-                
+
                 while (node == null)
                 {
                     lastNode.Data.IsFinal = true;
@@ -734,7 +735,7 @@ namespace FreezingArcher.Game.Maze
                         current.Nodes[i].Data.IsDeadEnd &&
                         rand.Next() % portalSpawnFactor == 0)
                         current.Nodes[i].Data.IsPortal = true;
-                }                
+                }
             }
             else
             {

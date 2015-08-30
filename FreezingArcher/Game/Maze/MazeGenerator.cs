@@ -215,12 +215,12 @@ namespace FreezingArcher.Game.Maze
         /// <param name="turbulence">Turbulence. The higher the more straight the maze will be.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will appear.</param>
-        public Maze CreateMaze(int seed, MessageProvider messageProvider, PhysicsManager physics,
+        public Maze CreateMaze<TTheme>(int seed, MessageProvider messageProvider, PhysicsManager physics,
             int sizeX = 40, int sizeY = 40, float scale = 10, double turbulence = 2,
-            int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3)
+            int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3) where TTheme : IMazeTheme, new ()
         {
-            Maze maze = new Maze (objectManager, messageProvider, seed, sizeX, sizeY, scale, physics, InitializeMaze,
-                CreateMaze, AddMazeToGameState, CalculatePathToExit, SpawnPortals, turbulence,
+            Maze maze = new Maze (objectManager, messageProvider, seed, sizeX, sizeY, scale, physics, new TTheme (),
+                InitializeMaze, CreateMaze, AddMazeToGameState, CalculatePathToExit, SpawnPortals, turbulence,
                 maximumContinuousPathLength, portalSpawnFactor);
             maze.Offset = Offset;
             var offs = Offset;
@@ -451,27 +451,15 @@ namespace FreezingArcher.Game.Maze
         static int mate_idx = 0;
         static int toast_idx = 0;
 
-        static void AddMazeToGameState (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, MessageProvider messageProvider,
-            Entity[,] entities, ref Vector3 playerPosition, GameState state, Random rand,
-            float scaling, uint maxX, int xOffs, int yOffs)
+        static void AddMazeToGameState (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
+            MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
+            Random rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs)
         {
-            int x = 0;
-            int y = 0;
+            int x = 0, y = 0;
 
-            SceneObjectArray scnobjarr_wall = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Wall/wall.xml");
-            scnobjarr_wall.LayoutLocationOffset = 10;
-            state.Scene.AddObject (scnobjarr_wall);
+            theme.Init (state);
 
-            SceneObjectArray scnobjarr_ground = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/Ground/ground.xml");
-            scnobjarr_ground.LayoutLocationOffset = 10;
-            state.Scene.AddObject (scnobjarr_ground);
-
-            scnobjarr_wall.BeginPrepare ();
-            scnobjarr_ground.BeginPrepare ();
-
-            var systems = new[] { typeof (ModelSystem), typeof (PhysicsSystem) };
-
-            Vector3 scale = new Vector3 (4, 4, 4);
+            var scale = new Vector3 (4, 4, 4);
 
             var startNode = graph.Nodes.FirstOrDefault (n => n.Data.IsSpawn);
             if (startNode != null)
@@ -481,37 +469,17 @@ namespace FreezingArcher.Game.Maze
                     startNode.Data.Position.Y * scale.Y * 2 + yOffs);
             }
 
-            ModelSceneObject model;
             TransformComponent transform;
 
             foreach (var node in (IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>>) graph)
             {
+                entities [x, y] = theme.ProcessAndAddCell (node.Data,
+                    new Vector3 (x * scale.X * 2 + xOffs, 0, y * scale.Y * 2 + yOffs), new Vector2i (x, y));
+                transform = entities [x, y].GetComponent<TransformComponent>();
+                node.Data.WorldPosition = transform.Position;
+
                 if (node.Data.MazeCellType == MazeCellType.Ground)
                 {
-                    entities [x, y] = EntityFactory.Instance.CreateWith("ground" + x + "." + y, messageProvider, systems: systems);
-                    model = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
-                    entities [x, y].GetComponent<ModelComponent>().Model = model;
-                    scnobjarr_ground.AddObject (model);
-
-                    transform = entities [x, y].GetComponent<TransformComponent>();
-                    transform.Position = new Vector3 (x * scale.X * 2 + xOffs, 0, y * scale.Y * 2 + yOffs);
-                    node.Data.WorldPosition = transform.Position;
-                    transform.Scale = scale;
-
-                    var body = new RigidBody (new BoxShape (2.0f * scale.X, 0.2f, 2.0f * scale.Y));
-                    body.Position = new JVector(transform.Position.X, transform.Position.Y - 0.1f, transform.Position.Z);
-                    body.Material.Restitution = -10;
-                    body.IsStatic = true;
-                    body.Tag = node.Data;
-
-                    entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
-                    entities [x, y].GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying =
-                        AffectedByPhysics.Orientation | AffectedByPhysics.Position;
-
-                    state.PhysicsManager.World.AddBody (body);
-
-                    // TODO add items here
                     var r = rand.Next(0, 200);
 
                     string name = string.Empty;
@@ -609,55 +577,28 @@ namespace FreezingArcher.Game.Maze
 
                         if (idx == 1)
                         {
-                                item.Entity.AddSystem<LightSystem> ();
-                                var light = item.Entity.GetComponent<LightComponent> ().Light;
-                                light = new Light (LightType.SpotLight);
-                                light.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
-                                light.PointLightLinearAttenuation = 0.01f;
-                                light.SpotLightConeAngle = MathHelper.ToRadians (30f);
-                                light.On = false;
+                            item.Entity.AddSystem<LightSystem> ();
+                            var light = item.Entity.GetComponent<LightComponent> ().Light;
+                            light = new Light (LightType.SpotLight);
+                            light.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
+                            light.PointLightLinearAttenuation = 0.01f;
+                            light.SpotLightConeAngle = MathHelper.ToRadians (30f);
+                            light.On = false;
 
-                                item.Entity.GetComponent<LightComponent> ().Light = light;
+                            item.Entity.GetComponent<LightComponent> ().Light = light;
 
-                                state.Scene.AddLight(light);
+                            state.Scene.AddLight(light);
 
-                                item_model.Model.Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2) * item_model.Model.Rotation;
-                                item_body.RigidBody.Orientation = JMatrix.CreateFromQuaternion (item_model.Model.Rotation.ToJitterQuaternion ());
+                            item_model.Model.Rotation = Quaternion.FromAxisAngle (Vector3.UnitX, MathHelper.PiOver2) *
+                                item_model.Model.Rotation;
+                            item_body.RigidBody.Orientation = JMatrix.CreateFromQuaternion (
+                                item_model.Model.Rotation.ToJitterQuaternion ());
 
                             //Update position
                             item_body.RigidBody.Position = pos.ToJitterVector();
                             item_body.RigidBody.Orientation = JMatrix.CreateFromAxisAngle(JVector.Up, y_rot);
                         }
                     }
-                }
-                else
-                {
-                    entities [x, y] = EntityFactory.Instance.CreateWith("wall" + x + "." + y, messageProvider,
-                        new[] { typeof (HealthComponent), typeof(WallComponent) }, systems);
-                    model = new ModelSceneObject("lib/Renderer/TestGraphics/Wall/wall.xml");
-                    entities [x, y].GetComponent<ModelComponent>().Model = model;
-                    scnobjarr_wall.AddObject(model);
-
-                    transform = entities [x, y].GetComponent<TransformComponent>();
-                    transform.Position = new Vector3 (x * scale.X * 2 + xOffs, -0.5f, y * scale.Y * 2 + yOffs);
-                    node.Data.WorldPosition = transform.Position;
-                    transform.Rotation = node.Data.Rotation;
-                    transform.Scale = scale;
-
-                    var body = new RigidBody (new BoxShape (scale.X * 2, scale.Y * 4, scale.Z * 2));
-                    body.Position = transform.Position.ToJitterVector () + JVector.Up * (scale.Y * 4 * 0.5f);
-                    body.Material.Restitution = -10;
-                    body.IsStatic = true;
-                    body.Tag = entities [x, y];
-
-                    entities [x, y].GetComponent<PhysicsComponent> ().RigidBody = body;
-                    entities [x, y].GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-                    entities [x, y].GetComponent<PhysicsComponent> ().PhysicsApplying =
-                        AffectedByPhysics.Orientation | AffectedByPhysics.Position;
-
-                    entities [x, y].GetComponent<WallComponent>().IsEdge = node.Data.IsEdge;
-
-                    state.PhysicsManager.World.AddBody (body);
                 }
 
                 if (++x >= maxX)
@@ -667,8 +608,7 @@ namespace FreezingArcher.Game.Maze
                 }
             }
 
-            scnobjarr_wall.EndPrepare ();
-            scnobjarr_ground.EndPrepare ();
+            theme.Finish ();
         }
 
         static void CalculatePathToExit(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph)

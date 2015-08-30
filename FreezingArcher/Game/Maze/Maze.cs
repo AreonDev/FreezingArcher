@@ -49,7 +49,7 @@ namespace FreezingArcher.Game.Maze
     /// </summary>
     delegate void AddMazeToGameStateDelegate(WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
         MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
-        Random rand, float scaling, uint maxX, int xOffs, int yOffs);
+        Random rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs);
 
     /// <summary>
     /// Calculate path to exit delegate.
@@ -69,7 +69,7 @@ namespace FreezingArcher.Game.Maze
     public class Maze
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Game.Maze.Maze"/> class.
+        /// Initializes a new instance of the Maze<TTheme> class.
         /// </summary>
         /// <param name="objmnr">Object manager.</param>
         /// <param name="seed">Seed.</param>
@@ -86,10 +86,10 @@ namespace FreezingArcher.Game.Maze
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor.</param>
         internal Maze (ObjectManager objmnr, MessageProvider messageProvider, int seed, int sizeX, int sizeY,
-            float scale, PhysicsManager physics, InitializeMazeDelegate initFunc, GenerateMazeDelegate generateFunc,
-            AddMazeToGameStateDelegate addToSceneDelegate, CalculatePathToExitDelegate exitFunc,
-            PlaceFeaturesDelegate placeFeaturesFunc, double turbulence, int maximumContinuousPathLength,
-            uint portalSpawnFactor)
+            float scale, PhysicsManager physics, IMazeTheme theme, InitializeMazeDelegate initFunc,
+            GenerateMazeDelegate generateFunc, AddMazeToGameStateDelegate addToSceneDelegate,
+            CalculatePathToExitDelegate exitFunc, PlaceFeaturesDelegate placeFeaturesFunc, double turbulence,
+            int maximumContinuousPathLength, uint portalSpawnFactor)
         {
             objectManager = objmnr;
             Seed = seed;
@@ -107,11 +107,14 @@ namespace FreezingArcher.Game.Maze
             this.physics = physics;
             this.messageProvider = messageProvider;
             HasFinished = false;
+            this.theme = theme;
         }
 
         internal WeightedGraph<MazeCell, MazeCellEdgeWeight> graph;
 
         Random rand;
+
+        IMazeTheme theme;
 
         internal Entity[,] entities;
 
@@ -200,7 +203,7 @@ namespace FreezingArcher.Game.Maze
         public bool IsExitPathCalculated { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="FreezingArcher.Game.Maze.Maze"/> are features placed.
+        /// Gets a value indicating whether this Maze<TTheme> are features placed.
         /// </summary>
         /// <value><c>true</c> if are features placed; otherwise, <c>false</c>.</value>
         public bool AreFeaturesPlaced { get; private set; }
@@ -347,8 +350,8 @@ namespace FreezingArcher.Game.Maze
 
             if (addMazeToGameStateDelegate != null)
             {
-                addMazeToGameStateDelegate(graph, state.MessageProxy, entities, ref playerPosition, state, rand, Scale,
-                    (uint) Size.X, Offset.X, Offset.Y);
+                addMazeToGameStateDelegate(graph, state.MessageProxy, entities, ref playerPosition, state, rand, theme,
+                    Scale, (uint) Size.X, Offset.X, Offset.Y);
             }
             else
             {

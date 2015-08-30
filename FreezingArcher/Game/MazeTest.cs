@@ -188,7 +188,7 @@ namespace FreezingArcher.Game
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze[0] = mazeGenerator.CreateMaze(rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
+            maze[0] = mazeGenerator.CreateMaze<UnderworldMazeTheme> (rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
             maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
             maze[0].AIManager.RegisterEntity (Player);
 
@@ -222,7 +222,7 @@ namespace FreezingArcher.Game
             state.Scene.BackgroundColor = Color4.AliceBlue;
 
             state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
-            maze [1] = mazeGenerator.CreateMaze (rand.Next (), state.MessageProxy, state.PhysicsManager, 30, 30);
+            maze [1] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next (), state.MessageProxy, state.PhysicsManager, 30, 30);
             maze [1].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
             maze [1].AIManager.RegisterEntity (Player);
 

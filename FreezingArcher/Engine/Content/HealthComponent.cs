@@ -57,8 +57,10 @@ namespace FreezingArcher.Content
             }
             set
             {
-                var delta = value - health;
-                health = value;
+                float new_health = value;
+                new_health = new_health > MaximumHealth ? MaximumHealth : new_health;
+                var delta = new_health - health;
+                health = new_health;
                 CreateMessage(new HealthChangedMessage (value, delta, Entity));
             }
         }

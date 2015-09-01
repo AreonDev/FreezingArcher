@@ -27,6 +27,7 @@ using Jitter.Dynamics;
 using Jitter.Collision.Shapes;
 using FreezingArcher.Renderer;
 using FreezingArcher.Game.AI;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game.Ghosts
 {
@@ -34,7 +35,8 @@ namespace FreezingArcher.Game.Ghosts
     {
         public static int InstanceCount = 0;
 
-        public Viridion (GameState state, AIManager aiManager, RendererContext rendererContext)
+        public Viridion (GameState state, AIManager aiManager, RendererContext rendererContext,
+            CompositorColorCorrectionNode colorCorrectionNode)
         {
             viridionEmitter = new ViridionParticleEmitter ();
 
@@ -73,7 +75,8 @@ namespace FreezingArcher.Game.Ghosts
             state.PhysicsManager.World.AddBody (ghostBody);
 
             viridionEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
-            viridionEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence = new ViridionAI ();
+            viridionEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence =
+                new ViridionAI (viridionEntity, state, colorCorrectionNode);
             aiManager.RegisterEntity (viridionEntity);
         }
 

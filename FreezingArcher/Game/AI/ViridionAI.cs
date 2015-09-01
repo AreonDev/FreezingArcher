@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Linq;
 using FreezingArcher.Content;
 using System.Collections.Generic;
 using FreezingArcher.Math;
@@ -29,11 +30,20 @@ using FreezingArcher.Output;
 using Jitter.Dynamics;
 using FreezingArcher.Core;
 using Jitter.LinearMath;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game.AI
 {
     public sealed class ViridionAI : ArtificialIntelligence
     {
+        public ViridionAI (Entity entity, GameState state, CompositorColorCorrectionNode colorCorrectionNode)
+        {
+            this.colorCorrectionNode = colorCorrectionNode;
+            this.entity = entity;
+            gameState = state;
+            AIcomp = entity.GetComponent<ArtificialIntelligenceComponent>();
+        }
+
         const float acceleration = 0.3f;
 
         const float speed = 8f;
@@ -47,6 +57,13 @@ namespace FreezingArcher.Game.AI
         JVector direction;
 
         JVector fallback;
+
+        readonly CompositorColorCorrectionNode colorCorrectionNode;
+        readonly GameState gameState;
+        readonly Entity entity;
+        readonly ArtificialIntelligenceComponent AIcomp;
+
+        bool do_reset;
 
         public override void Think (PhysicsComponent ownPhysics, HealthComponent ownHealth, object map,
             List<Entity> entitiesNearby)
@@ -108,6 +125,28 @@ namespace FreezingArcher.Game.AI
 
                 ownPhysics.RigidBody.Position = new JVector (ownPhysics.RigidBody.Position.X, height,
                     ownPhysics.RigidBody.Position.Z);
+
+                var player = entitiesNearby.FirstOrDefault (e => e.Name == "player");
+                if (player != null)
+                {
+                    do_reset = true;
+                    var player_pos = player.GetComponent<TransformComponent>().Position;
+                    var ghost_pos = ownPhysics.RigidBody.Position.ToFreezingArcherVector();
+                    float distance;
+                    Vector3.Distance(ref player_pos, ref ghost_pos, out distance);
+                    float fac = ((AIcomp.MaximumEntityDistance - distance) / AIcomp.MaximumEntityDistance);
+                    colorCorrectionNode.Saturation = -fac * MathHelper.Pi;
+                    colorCorrectionNode.Lightness = -fac;
+                    var player_health = player.GetComponent<HealthComponent>();
+                    player_health.Health += fac * 5;
+                }
+                else if (do_reset)
+                {
+                    do_reset = false;
+                    colorCorrectionNode.Contrast = 1;
+                    colorCorrectionNode.Brightness = 0;
+                    gameState.Scene.CameraManager.ActiveCamera.Fov = MathHelper.PiOver3;
+                }
             }
         }
 

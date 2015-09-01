@@ -224,14 +224,9 @@ namespace FreezingArcher.Game
                 CaligoInstances.Add (new Caligo (state, maze[0].AIManager, rendererContext));
             }
 
-            for (int i = 0; i < PassusCount; i++)
-            {
-                PassusInstances.Add (new Passus (state, maze[0].AIManager, rendererContext));
-            }
-
             for (int i = 0; i < ViridionCount; i++)
             {
-                ViridionInstances.Add (new Viridion (state, maze[0].AIManager, rendererContext)); 
+                ViridionInstances.Add (new Viridion (state, maze[0].AIManager, rendererContext, ColorCorrectionNode)); 
             }
 
             for (int i = 0; i < GhostCount; i++)
@@ -259,11 +254,6 @@ namespace FreezingArcher.Game
             state.MessageProxy.StopProcessing ();
             //game.SwitchToGameState("maze_overworld");
 
-            for (int i = 0; i < ScobisCount; i++)
-            {
-                ScobisInstances.Add (new Scobis (state, maze[1].AIManager, rendererContext));
-            }
-
             for (int i = 0; i < CaligoCount; i++)
             {
                 CaligoInstances.Add (new Caligo (state, maze[1].AIManager, rendererContext));
@@ -272,16 +262,6 @@ namespace FreezingArcher.Game
             for (int i = 0; i < PassusCount; i++)
             {
                 PassusInstances.Add (new Passus (state, maze[1].AIManager, rendererContext));
-            }
-
-            for (int i = 0; i < ViridionCount; i++)
-            {
-                ViridionInstances.Add (new Viridion (state, maze[1].AIManager, rendererContext)); 
-            }
-
-            for (int i = 0; i < GhostCount; i++)
-            {
-                GhostInstances.Add (new Ghost (state, maze[1].AIManager, rendererContext, ColorCorrectionNode));
             }
         }
 

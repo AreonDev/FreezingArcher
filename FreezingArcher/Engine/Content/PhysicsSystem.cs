@@ -45,6 +45,8 @@ namespace FreezingArcher.Content
 
             NeededComponents = new[] { typeof(TransformComponent), typeof(PhysicsComponent) };
 
+
+
             internalValidMessages = new[] { (int) MessageId.Update };
             messageProvider += this;
         }

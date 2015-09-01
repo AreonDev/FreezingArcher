@@ -52,30 +52,66 @@ namespace FreezingArcher.Content
         {
             float movement = 6f;
 
+            int msr = 0;
+
             if (msg.MessageId == (int)MessageId.Input)
             {
                 InputMessage im = msg as InputMessage;
 
-                if (im.IsActionDown("sneek"))
+                if (im.IsActionDown ("sneek"))
+                {
                     movement *= 0.25f;
-
-                if (im.IsActionDown("run"))
+                    msr = 1;
+                }
+                else
+                if (im.IsActionDown ("run"))
+                {
                     movement *= 4;
+                    msr = 2;
+                }   
 
                 if (im.IsActionDown("forward"))
                 {
+                    switch (msr)
+                    {
+                    case 0:
+                        CreateMessage (new PlayerMoveMessage (this.Entity));
+                        break;
+                    }
+
                     CreateMessage(new MoveStraightMessage(Entity, movement));
                 }
                 if (im.IsActionDown("backward"))
                 {
+                    switch (msr)
+                    {
+                    case 0:
+                        CreateMessage (new PlayerMoveMessage (this.Entity));
+                        break;
+                    }
+
                     CreateMessage(new MoveStraightMessage(Entity, -movement));
                 }
                 if (im.IsActionDown("left"))
                 {
+                    switch (msr)
+                    {
+                    case 0:
+                        CreateMessage (new PlayerMoveMessage (this.Entity));
+                        break;
+                    }
+
                     CreateMessage(new MoveSidewardsMessage(Entity, -movement));
                 }
                 if (im.IsActionDown("right"))
                 {
+                    switch (msr)
+                    {
+                    case 0:
+                        CreateMessage (new PlayerMoveMessage (this.Entity));
+                        break;
+                    }
+
                     CreateMessage(new MoveSidewardsMessage(Entity, movement));
                 }
                 if (im.IsActionDown("up"))

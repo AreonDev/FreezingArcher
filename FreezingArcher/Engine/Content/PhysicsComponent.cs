@@ -70,13 +70,26 @@ namespace FreezingArcher.Content
         /// Gets or sets the rigid body.
         /// </summary>
         /// <value>The rigid body.</value>
-        public RigidBody RigidBody { get; set; }
+        public RigidBody RigidBody;
+
+        private World _World;
 
         /// <summary>
         /// Gets or sets the world.
         /// </summary>
         /// <value>The world.</value>
-        public World World { get; set; }
+        public World World 
+        {
+            get
+            {
+                return _World;
+            }
+
+            set
+            {
+                _World = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the physics applying.

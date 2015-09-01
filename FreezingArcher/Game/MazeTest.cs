@@ -79,6 +79,7 @@ namespace FreezingArcher.Game
             };
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
+
             this.game = game;
             application = app;
 
@@ -106,6 +107,9 @@ namespace FreezingArcher.Game
             state.Scene.BackgroundColor = Color4.Fuchsia;
 
             state.Scene.DistanceFogIntensity = 0.04f;
+
+            state.AudioContext = new FreezingArcher.Audio.AudioContext (messageProvider);
+
 
             state.Scene.AmbientColor = Color4.White;
             state.Scene.AmbientIntensity = 0.30f;
@@ -140,9 +144,7 @@ namespace FreezingArcher.Game
                 typeof(KeyboardControllerSystem),
                 typeof(MouseControllerSystem),
                 typeof(SkyboxSystem),
-                typeof(PhysicsSystem),
-                typeof(AudioSystem),
-                typeof(AudioListenerSystem)
+                typeof(PhysicsSystem)
             });
 
             var input = new FreezingArcher.UI.Input.FreezingArcherInput(app, state.MessageProxy);
@@ -154,33 +156,7 @@ namespace FreezingArcher.Game
             var inventory = new Inventory(messageProvider, state, Player, new Vector2i(5, 7), 9);
             inventoryGui.Init(rendererContext.Canvas, inventory);
 
-            //Add player walking sound
-            AudioComponent player_ac = Player.GetComponent<AudioComponent> ();
-            PhysicsComponent player_pc = Player.GetComponent<PhysicsComponent> ();
-
-            player_ac.AudioManager = app.AudioManager;
-            player_ac.AudioComponentEvents.Add (new AudioComponentEvent (MessageId.MoveStraight, 
-                AudioComponentReaction.Play, 500.0f, 
-                prepact: () =>
-                {
-                    if (player_pc.RigidBody.Position.Y > 1.10f)
-                    {
-                        player_ac.SoundSource.Gain = 0.0f;
-                        player_ac.AudioComponentEvents [0].EventCoolDownTime = 0f;
-                    }
-                    else
-                    {
-                        player_ac.SoundSource.Gain = 0.2f + MathHelper.Min(0.5f, player_pc.RigidBody.LinearVelocity.Length() / 6.0f);
-                        player_ac.AudioComponentEvents [0].EventCoolDownTime = 2500.0f / (player_pc.RigidBody.LinearVelocity.Length () + 0.0001f);
-                    }
-                }
-            ));
-
-            app.AudioManager.LoadSound ("footstep_Sound", "Content/Audio/footstep.wav");
-
-            player_ac.SoundSource = app.AudioManager.CreateSource ("Footstep_SoundSource", "footstep_Sound");
-            player_ac.SoundSource.Loop = false;
-            player_ac.SoundSource.Relative = false;
+            AddAudio (state);
 
             // embed new maze into game state logic and create a MoveEntityToScene
             SkyboxSystem.CreateSkybox (state.Scene, Player);
@@ -210,7 +186,9 @@ namespace FreezingArcher.Game
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze[0] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
+
+            maze[0] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next(), state.MessageProxy, state.PhysicsManager, app.AudioManager, 30, 30);
+
             maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
             maze[0].AIManager.RegisterEntity (Player);
 
@@ -243,8 +221,12 @@ namespace FreezingArcher.Game
             state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.AliceBlue;
 
+            state.AudioContext = new FreezingArcher.Audio.AudioContext (messageProvider);
+
+            AddAudio (state);
+
             state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
-            maze [1] = mazeGenerator.CreateMaze<UnderworldMazeTheme> (rand.Next (), state.MessageProxy, state.PhysicsManager, 30, 30);
+            maze [1] = mazeGenerator.CreateMaze<UnderworldMazeTheme> (rand.Next (), state.MessageProxy, state.PhysicsManager, app.AudioManager, 30, 30);
             maze [1].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
             maze [1].AIManager.RegisterEntity (Player);
 
@@ -285,6 +267,77 @@ namespace FreezingArcher.Game
         readonly Application application;
 
         int currentMaze;
+
+        void AddAudio(GameState state)
+        {
+            //Load walking sound
+            Audio.Source src = application.AudioManager.GetSource("footstep_SoundSource");
+
+            if (src == null)
+            {
+                application.AudioManager.LoadSound ("footstep_Sound", "Content/Audio/footstep.wav");
+                src = application.AudioManager.CreateSource ("footstep_SoundSource", "footstep_Sound");
+            }
+
+            src.Gain = 1.0f;
+            src.Loop = false;
+
+            state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.PlayerMove,
+                new FreezingArcher.Audio.SoundSourceDescription (src, FreezingArcher.Audio.SoundAction.Play, Player));
+
+            //Set listener Position from PlayerPosition
+            TransformComponent tfc = Player.GetComponent<TransformComponent>();
+            tfc.OnPositionChanged += (Vector3 obj) => application.AudioManager.Listener.Position = obj;
+
+            //Item collect sound
+            src = application.AudioManager.GetSource("item_collected_SoundSource");
+
+            if (src == null)
+            {
+                application.AudioManager.LoadSound ("item_collected_Sound", "Content/Audio/item_collected.wav");
+                src = application.AudioManager.CreateSource ("item_collected_SoundSource", "item_collected_Sound");
+            }
+
+            src.Gain = 1.0f;
+            src.Loop = false;
+
+            state.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.ItemCollected,
+                new FreezingArcher.Audio.SoundSourceDescription(src, FreezingArcher.Audio.SoundAction.Play, Player));
+
+            //Item dropped sound
+            src = application.AudioManager.GetSource("item_dropped_SoundSource");
+
+            if (src == null)
+            {
+                application.AudioManager.LoadSound ("item_dropped_Sound", "Content/Audio/item_dropped.wav");
+                src = application.AudioManager.CreateSource ("item_dropped_SoundSource", "item_dropped_Sound");
+            }
+
+            src.Gain = 1.0f;
+            src.Loop = false;
+
+            state.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.ItemDropped,
+                new FreezingArcher.Audio.SoundSourceDescription(src, FreezingArcher.Audio.SoundAction.Play, Player));
+
+            //Wall moving sound
+            src = application.AudioManager.GetSource("moving_wall_SoundSource");
+
+            if (src == null)
+            {
+                application.AudioManager.LoadSound ("moving_wall_Sound", "Content/Audio/moving_wall.wav");
+                src = application.AudioManager.CreateSource ("moving_wall_SoundSource", "moving_wall_Sound");
+            }
+
+            src.Gain = 1.0f;
+            src.Loop = false;
+
+            state.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.BeginWallMovement,
+                new FreezingArcher.Audio.SoundSourceDescription(src, FreezingArcher.Audio.SoundAction.Play));
+
+            //Stop wall moving sound on stop
+            state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.EndWallMovement,
+                new FreezingArcher.Audio.SoundSourceDescription (src, FreezingArcher.Audio.SoundAction.Stop));
+        }
 
         void SwitchMaze ()
         {

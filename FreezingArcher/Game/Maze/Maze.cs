@@ -25,6 +25,7 @@ using FreezingArcher.Renderer.Scene;
 using FreezingArcher.DataStructures.Graphs;
 using FreezingArcher.Math;
 using FreezingArcher.Core;
+using FreezingArcher.Audio;
 using FreezingArcher.Output;
 using FreezingArcher.Content;
 using FreezingArcher.Messaging;
@@ -47,7 +48,7 @@ namespace FreezingArcher.Game.Maze
     /// <summary>
     /// Add maze to scene delegate.
     /// </summary>
-    delegate void AddMazeToGameStateDelegate(WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
+    delegate void AddMazeToGameStateDelegate(AudioManager am, WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
         MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
         Random rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs);
 
@@ -85,7 +86,7 @@ namespace FreezingArcher.Game.Maze
         /// <param name="turbulence">Turbulence.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor.</param>
-        internal Maze (ObjectManager objmnr, MessageProvider messageProvider, int seed, int sizeX, int sizeY,
+        internal Maze (ObjectManager objmnr, MessageProvider messageProvider, AudioManager am, int seed, int sizeX, int sizeY,
             float scale, PhysicsManager physics, IMazeTheme theme, InitializeMazeDelegate initFunc,
             GenerateMazeDelegate generateFunc, AddMazeToGameStateDelegate addToSceneDelegate,
             CalculatePathToExitDelegate exitFunc, PlaceFeaturesDelegate placeFeaturesFunc, double turbulence,
@@ -105,6 +106,7 @@ namespace FreezingArcher.Game.Maze
             calcExitPathDelegate = exitFunc;
             placeFeaturesDelegate = placeFeaturesFunc;
             this.physics = physics;
+            this.audio = am;
             this.messageProvider = messageProvider;
             HasFinished = false;
             this.theme = theme;
@@ -135,6 +137,8 @@ namespace FreezingArcher.Game.Maze
         public float Scale { get; set; }
 
         readonly PhysicsManager physics;
+
+        readonly AudioManager audio;
 
         Vector3 playerPosition;
 
@@ -350,7 +354,7 @@ namespace FreezingArcher.Game.Maze
 
             if (addMazeToGameStateDelegate != null)
             {
-                addMazeToGameStateDelegate(graph, state.MessageProxy, entities, ref playerPosition, state, rand, theme,
+                addMazeToGameStateDelegate(audio, graph, state.MessageProxy, entities, ref playerPosition, state, rand, theme,
                     Scale, (uint) Size.X, Offset.X, Offset.Y);
             }
             else

@@ -35,8 +35,14 @@ using FreezingArcher.Math;
 
 namespace FreezingArcher.Game.Maze
 {
-    public sealed class MazeWallMover : IMessageConsumer
+    public sealed class MazeWallMover : IMessageConsumer, IMessageCreator
     {
+        #region IMessageCreator implementation
+
+        public event MessageEvent MessageCreated;
+
+        #endregion
+
         public MazeWallMover (Maze maze, Maze secondMaze, MessageProvider messageProvider, GameState state)
         {
             Maze = maze;
@@ -184,7 +190,7 @@ namespace FreezingArcher.Game.Maze
             MoveEntityTo (wall, tmp_wall_position, position, () => {
                 state.Scene.RemoveObject(ground2_model);
                 wall.GetComponent<WallComponent>().IsMoving = false;
-                ground2.Destroy();
+                ground2.Destroy(); if(MessageCreated != null) MessageCreated(new EndWallMovementMessage(wall));
             });
         }
 
@@ -255,6 +261,9 @@ namespace FreezingArcher.Game.Maze
 
         void MoveEntityTo (Entity entity, Vector3 position_1, Vector3 position_2, Action finishedCallback, int time_steps = 200)
         {
+            if (MessageCreated != null)
+                MessageCreated (new BeginWallMovementMessage (entity));
+
             var transform = entity.GetComponent<TransformComponent>();
             var rigidBody = entity.GetComponent<PhysicsComponent>().RigidBody;
             new EntityMover(messageProvider, time_steps, position_1, position_2, transform, rigidBody, finishedCallback);

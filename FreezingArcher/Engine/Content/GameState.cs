@@ -25,7 +25,12 @@ using FreezingArcher.Core.Interfaces;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
 using FreezingArcher.Core;
+using FreezingArcher.Audio;
 using FreezingArcher.Renderer.Compositor;
+using System;
+using Jitter;
+using Jitter.LinearMath;
+using Jitter.Dynamics;
 
 namespace FreezingArcher.Content
 {
@@ -55,6 +60,8 @@ namespace FreezingArcher.Content
         /// <value>The environment.</value>
         public Environment Environment { get; set; }
 
+        public AudioContext AudioContext { get; set;}
+
         /// <summary>
         /// Gets the message proxy.
         /// </summary>
@@ -71,7 +78,7 @@ namespace FreezingArcher.Content
         /// Gets the physics manager.
         /// </summary>
         /// <value>The physics manager.</value>
-        public PhysicsManager PhysicsManager { get; private set; }
+        public PhysicsManager PhysicsManager {get; set;}
 
         // TODO add transition effects
 

@@ -160,5 +160,15 @@ namespace FreezingArcher.Messaging
         /// Occurs when an inventory bar item moved to a different position.
         /// </summary>
         BarItemMoved,
+
+
+
+        BeginWallMovement,
+        EndWallMovement,
+
+        PlayerSprint,
+        PlayerMove,
+        PlayerJump,
+        PlayerSneak
     }
 }

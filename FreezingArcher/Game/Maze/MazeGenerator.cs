@@ -32,6 +32,7 @@ using FreezingArcher.Math;
 using FreezingArcher.Content;
 using FreezingArcher.Messaging;
 using FreezingArcher.Output;
+using FreezingArcher.Audio;
 using Jitter;
 using Jitter.Collision;
 using Jitter.Collision.Shapes;
@@ -215,11 +216,11 @@ namespace FreezingArcher.Game.Maze
         /// <param name="turbulence">Turbulence. The higher the more straight the maze will be.</param>
         /// <param name="maximumContinuousPathLength">Maximum continuous path length.</param>
         /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will appear.</param>
-        public Maze CreateMaze<TTheme>(int seed, MessageProvider messageProvider, PhysicsManager physics,
+        public Maze CreateMaze<TTheme>(int seed, MessageProvider messageProvider, PhysicsManager physics, AudioManager am, 
             int sizeX = 40, int sizeY = 40, float scale = 10, double turbulence = 2,
             int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3) where TTheme : IMazeTheme, new ()
         {
-            Maze maze = new Maze (objectManager, messageProvider, seed, sizeX, sizeY, scale, physics, new TTheme (),
+            Maze maze = new Maze (objectManager, messageProvider, am, seed, sizeX, sizeY, scale, physics, new TTheme (),
                 InitializeMaze, CreateMaze, AddMazeToGameState, CalculatePathToExit, SpawnPortals, turbulence,
                 maximumContinuousPathLength, portalSpawnFactor);
             maze.Offset = Offset;
@@ -451,7 +452,7 @@ namespace FreezingArcher.Game.Maze
         static int mate_idx = 0;
         static int toast_idx = 0;
 
-        static void AddMazeToGameState (WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
+        static void AddMazeToGameState (AudioManager am, WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
             MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
             Random rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs)
         {

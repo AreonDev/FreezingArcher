@@ -52,7 +52,7 @@ namespace FreezingArcher.Game.AI
 
         const float max_distance = 6;
 
-        const float height = 1.5f;
+        const float height = 2f;
 
         JVector direction;
 

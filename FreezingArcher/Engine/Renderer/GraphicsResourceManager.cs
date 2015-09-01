@@ -58,7 +58,7 @@ namespace FreezingArcher.Renderer
         internal void DeleteResource(GraphicsResource resource)
         {
             if (resource.InternalUseCount > 0)
-                return;//throw new Exception("Resource with name \"" + resource.Name + "\" is still used! InternalUseCount: " + resource.InternalUseCount);
+                throw new Exception("Resource with name \"" + resource.Name + "\" is still used! InternalUseCount: " + resource.InternalUseCount);
 
             _GraphicsResources.Remove(resource);
         }

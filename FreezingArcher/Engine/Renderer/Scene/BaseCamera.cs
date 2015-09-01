@@ -177,7 +177,7 @@ namespace FreezingArcher.Renderer.Scene
         /// <param name="fov">Fov.</param>
         /// <param name="up">Up.</param>
         public BaseCamera (Entity entity, MessageProvider messageProvider, Vector3 position = default(Vector3),
-            Quaternion rotation = default(Quaternion), float near = 0.1f, float far = 400.0f,
+            Quaternion rotation = default(Quaternion), float near = 0.1f, float far = 100.0f,
             float fov = MathHelper.PiOver3, bool orthographic = false)
         {
             MPosition = position;

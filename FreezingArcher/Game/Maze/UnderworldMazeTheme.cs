@@ -100,7 +100,7 @@ namespace FreezingArcher.Game.Maze
                 
                 state.PhysicsManager.World.AddBody (body);
 
-                var e2 = EntityFactory.Instance.CreateWith ("ceiling" + gridPosition.X + "." + gridPosition.Y,
+                /*var e2 = EntityFactory.Instance.CreateWith ("ceiling" + gridPosition.X + "." + gridPosition.Y,
                     state.MessageProxy, systems: new[] { typeof (ModelSystem) });
 
                 var m2 = new ModelSceneObject ("lib/Renderer/TestGraphics/UnderworldCeiling/underworld_ceiling.xml");
@@ -109,7 +109,7 @@ namespace FreezingArcher.Game.Maze
 
                 var t2 = e2.GetComponent<TransformComponent>();
                 t2.Position = new Vector3 (worldPosition.X, 4 * scale.Y, worldPosition.Z);
-                t2.Scale = scale;
+                t2.Scale = scale;*/
             }
             else if (cell.MazeCellType == MazeCellType.Wall)
             {

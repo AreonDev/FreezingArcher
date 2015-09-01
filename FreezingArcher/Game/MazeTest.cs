@@ -57,6 +57,7 @@ namespace FreezingArcher.Game
 
         CompositorNodeScene MazeSceneNode;
         CompositorImageOverlayNode HealthOverlayNode;
+        CompositorColorCorrectionNode ColorCorrectionNode;
         CompositorNodeOutput OutputNode;
 
         /// <summary>
@@ -72,7 +73,8 @@ namespace FreezingArcher.Game
             ValidMessages = new[] {
                 (int)MessageId.Input,
                 (int)MessageId.Update,
-                (int)MessageId.Running
+                (int)MessageId.Running,
+                (int)MessageId.HealthChanged
             };
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
@@ -87,9 +89,11 @@ namespace FreezingArcher.Game
 
             MazeSceneNode = new CompositorNodeScene (rendererContext, messageProvider);
             OutputNode = new CompositorNodeOutput (rendererContext, messageProvider);
+            ColorCorrectionNode = new CompositorColorCorrectionNode (rendererContext, messageProvider);
             HealthOverlayNode = new CompositorImageOverlayNode (rendererContext, messageProvider);
             HealthOverlayNode.OverlayTexture = rendererContext.CreateTexture2D ("bloodsplatter", true, "Content/bloodsplatter.png");
             HealthOverlayNode.Factor = 0;
+            HealthOverlayNode.Blending = OverlayBlendMode.Multiply;
 
             game.MazeSceneNode = MazeSceneNode;
 
@@ -120,9 +124,11 @@ namespace FreezingArcher.Game
             Compositor.AddNode (MazeSceneNode);
             Compositor.AddNode (OutputNode);
             Compositor.AddNode (HealthOverlayNode);
+            Compositor.AddNode (ColorCorrectionNode);
 
             Compositor.AddConnection (MazeSceneNode, HealthOverlayNode, 0, 0);
-            Compositor.AddConnection (HealthOverlayNode, OutputNode, 0, 0);
+            Compositor.AddConnection (HealthOverlayNode, ColorCorrectionNode, 0, 0);
+            Compositor.AddConnection (ColorCorrectionNode, OutputNode, 0, 0);
 
             rendererContext.Compositor = Compositor;
 
@@ -350,6 +356,30 @@ namespace FreezingArcher.Game
                     FPS_Text.TextColor = System.Drawing.Color.Red;
 
                 FPS_Text.String = application.FPSCounter + " FPS";
+
+                if (HealthOverlayNode.Factor > 0.0001f)
+                {
+                    var factor = HealthOverlayNode.Factor - 0.01f;
+                    HealthOverlayNode.Factor = factor < 0 ? 0 : factor;
+                }
+            }
+
+            if (msg.MessageId == (int) MessageId.HealthChanged)
+            {
+                var hcm = msg as HealthChangedMessage;
+
+                if (hcm.Entity == Player)
+                {
+                    if (hcm.HealthDelta < 0)
+                    {
+                        var factor = -hcm.HealthDelta / 20;
+                        HealthOverlayNode.Factor = factor > 1 ? 1 : factor;
+                    }
+
+                    var healthComponent = Player.GetComponent<HealthComponent>();
+                    var health = healthComponent.Health > 0 ? healthComponent.Health : 0;
+                    ColorCorrectionNode.Saturation = -((healthComponent.MaximumHealth - health) / (healthComponent.MaximumHealth)) / 4;
+                }
             }
 
             var im = msg as InputMessage;
@@ -378,6 +408,12 @@ namespace FreezingArcher.Game
                         //light1.PointLightLinearAttenuation = 0.01f;
                         lighting = true;
                     }
+                }
+
+                if (im.IsActionPressed("damage"))
+                {
+                    var healthComponent = Player.GetComponent<HealthComponent>();
+                    healthComponent.Health -= 10;
                 }
             }
 

@@ -435,6 +435,8 @@
     <Compile Include="Content\AudioSystem.cs" />
     <Compile Include="Content\AudioListenerSystem.cs" />
     <Compile Include="Renderer\Compositor\CompositorImageOverlayNode.cs" />
+    <Compile Include="Renderer\Compositor\CompositorColorCorrectionNode.cs" />
+    <Compile Include="Messaging\HealthChangedMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -679,6 +681,9 @@
     <None Include="Renderer\Effects\ImageOverlay\overlay.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Renderer\Effects\ColorCorrection\color_correction.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />
@@ -695,6 +700,7 @@
     <Folder Include="Renderer\TestGraphics\UnderworldWall\" />
     <Folder Include="Renderer\TestGraphics\UnderworldCeiling\" />
     <Folder Include="Renderer\Effects\ImageOverlay\" />
+    <Folder Include="Renderer\Effects\ColorCorrection\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

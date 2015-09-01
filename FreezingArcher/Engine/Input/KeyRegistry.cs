@@ -75,10 +75,7 @@ namespace FreezingArcher.Input
             Keys.Add ("inventory_item7", Key.Seven);
             Keys.Add ("inventory_item8", Key.Eight);
             Keys.Add ("inventory_item9", Key.Nine);
-            Keys.Add("bla_unfug_links", Key.G);
-            Keys.Add("bla_unfug_rechts", Key.H);
-            Keys.Add("bla_unfug_runter", Key.B);
-            Keys.Add("bla_unfug_hoch", Key.Y);
+            Keys.Add ("damage", Key.M);
         }
 
         /// <summary>

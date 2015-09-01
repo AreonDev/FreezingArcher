@@ -133,6 +133,10 @@ namespace FreezingArcher.Messaging
         /// </summary>
         ItemUsageChanged,
         /// <summary>
+        /// Occurs when the health of an entity changes.
+        /// </summary>
+        HealthChanged,
+        /// <summary>
         /// Occurs when an item is removed from the inventory.
         /// </summary>
         RemoveItemFromInventory,

@@ -27,8 +27,9 @@ void main() {
         }
         else if (overlayBlendMode == 3) // Multiply
         {
-                frag_color = (texture2D(input, InTexCoord) * (1 - overlayFactor)) *
-                             (texture2D(overlayTexture, InTexCoord) * overlayFactor);
+                vec4 inp = texture2D(input, InTexCoord);
+                vec4 mult_color = inp * texture2D(overlayTexture, InTexCoord);
+                frag_color = (inp * (1 - overlayFactor)) + (mult_color * overlayFactor);
         }
         else if (overlayBlendMode == 4) // Divide
         {

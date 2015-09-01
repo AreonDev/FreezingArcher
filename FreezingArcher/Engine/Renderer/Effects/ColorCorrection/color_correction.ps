@@ -1,0 +1,151 @@
+﻿#version 410
+
+layout(location = 1) in vec2 InTexCoord;
+
+layout(location = 0) out vec4 frag_color;
+
+uniform sampler2D input;
+uniform float hue;
+uniform float saturation;
+uniform float lightness;
+uniform float gamma;
+uniform float contrast;
+uniform float brightness;
+
+float maxValue(vec4 color)
+{
+        return max(color.r, max(color.g, color.b));
+}
+
+float minValue(vec4 color)
+{
+        return min(color.r, min(color.g, color.b));
+}
+
+vec4 rgbToHsl(vec4 color)
+{
+        float max_value = maxValue(color);
+        float min_value = minValue(color);
+        float dif = max_value - min_value;
+        float add = max_value + min_value;
+        vec4 outColor = vec4(0.0, 0.0, 0.0, color.a);
+        
+        if (min_value == max_value)
+        {
+                outColor.r = 0.0;
+        }
+        else if (color.r == max_value)
+        {
+                outColor.r = mod(((60.0 * (color.g - color.b) / dif) + 360.0), 360.0);
+        }
+        else if (color.g == max_value)
+        {
+                outColor.r = (60.0 * (color.b - color.r) / dif) + 120.0;
+        }
+        else
+        {
+                outColor.r = (60.0 * (color.r - color.g) / dif) + 240.0;
+        }
+        
+        outColor.b = 0.5 * add;
+        
+        if (outColor.b == 0.0)
+        {
+                outColor.g = 0.0;
+        }
+        else if (outColor.b <= 0.5)
+        {
+                outColor.g = dif / add;
+        }
+        else
+        {
+                outColor.g = dif / (2.0 - add);
+        }
+        
+        outColor.r /= 360.0;
+        
+        return outColor;
+}
+
+float hueToRgb(float p, float q, float h)
+{
+        if (h < 0.0)
+        {
+                h += 1.0;
+        }
+        else if (h > 1.0)
+        {
+                h -= 1.0;
+        }
+        if ((h * 6.0) < 1.0)
+        {
+                return p + (q - p) * h * 6.0;
+        }
+        else if ((h * 2.0) < 1.0)
+        {
+                return q;
+        }
+        else if ((h * 3.0) < 2.0)
+        {
+                return p + (q - p) * ((2.0 / 3.0) - h) * 6.0;
+        }
+        else
+        {
+                return p;
+        }
+}
+
+vec4 hslToRgb(vec4 col)
+{
+        vec4 outColor = vec4(0.0, 0.0, 0.0, col.a);
+        float p, q, tr, tg, tb;
+        if (col.b <= 0.5)
+        {
+                q = col.b * (1.0 + col.g);
+        }
+        else
+        {
+                q = col.b + col.g - (col.b * col.g);
+        }
+        
+        p = 2.0 * col.b - q;
+        tr = col.r + (1.0 / 3.0);
+        tg = col.r;
+        tb = col.r - (1.0 / 3.0);
+        
+        outColor.r = hueToRgb(p, q, tr);
+        outColor.g = hueToRgb(p, q, tg);
+        outColor.b = hueToRgb(p, q, tb);
+        
+        return outColor;
+}
+
+vec4 hueSatLig (vec4 color, float h, float s, float l)
+{
+        vec4 hsl = rgbToHsl(color);
+        hsl.r = mod(hsl.r + h, 1.0);
+        hsl.g = clamp(hsl.g + s, 0.0, 1.0);
+        hsl.b = clamp(hsl.b + l, 0.0, 1.0);
+        
+        return hslToRgb(hsl);
+}
+
+vec4 brightnessContrast(vec4 color, float b, float c)
+{
+        return vec4((color.rgb - 0.5) * c + 0.5 + b, color.a);
+}
+
+vec4 addGamma(vec4 color, float g)
+{
+        return vec4(pow(abs(color.r), g),
+                    pow(abs(color.g), g),
+                    pow(abs(color.b), g), color.a);
+}
+
+void main() {
+        vec4 inColor = texture2D(input, InTexCoord);
+        inColor = hueSatLig(inColor, hue, saturation, lightness);
+        inColor = brightnessContrast(inColor, brightness, contrast);
+        inColor = addGamma(inColor, gamma);
+        frag_color = inColor;
+}

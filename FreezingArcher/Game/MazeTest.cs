@@ -43,10 +43,11 @@ namespace FreezingArcher.Game
     /// </summary>
     public sealed class MazeTest : IMessageConsumer, IMessageCreator
     {
-        const int ScobisCount = 3;
+        const int ScobisCount = 2;
         const int CaligoCount = 1;
-        const int PassusCount = 3;
-        const int GhostCount = 5;
+        const int PassusCount = 2;
+        const int ViridionCount = 2;
+        const int GhostCount = 3;
 
         LoadingScreen loadingScreen;
         Gwen.ControlInternal.Text FPS_Text;
@@ -104,7 +105,7 @@ namespace FreezingArcher.Game
             state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.Fuchsia;
 
-            state.Scene.DistanceFogIntensity = 0.08f;
+            state.Scene.DistanceFogIntensity = 0.04f;
 
             state.Scene.AmbientColor = Color4.White;
             state.Scene.AmbientIntensity = 0.30f;
@@ -209,7 +210,7 @@ namespace FreezingArcher.Game
             int seed = new Random().Next();
             var rand = new Random(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
-            maze[0] = mazeGenerator.CreateMaze<UnderworldMazeTheme> (rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
+            maze[0] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next(), state.MessageProxy, state.PhysicsManager, 30, 30);
             maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
             maze[0].AIManager.RegisterEntity (Player);
 
@@ -228,9 +229,14 @@ namespace FreezingArcher.Game
                 PassusInstances.Add (new Passus (state, maze[0].AIManager, rendererContext));
             }
 
+            for (int i = 0; i < ViridionCount; i++)
+            {
+                ViridionInstances.Add (new Viridion (state, maze[0].AIManager, rendererContext)); 
+            }
+
             for (int i = 0; i < GhostCount; i++)
             {
-                GhostInstances.Add (new Ghost (state, maze[0].AIManager, rendererContext));
+                GhostInstances.Add (new Ghost (state, maze[0].AIManager, rendererContext, ColorCorrectionNode));
             }
 
             game.AddGameState("maze_underworld", Content.Environment.Default,
@@ -243,7 +249,7 @@ namespace FreezingArcher.Game
             state.Scene.BackgroundColor = Color4.AliceBlue;
 
             state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
-            maze [1] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next (), state.MessageProxy, state.PhysicsManager, 30, 30);
+            maze [1] = mazeGenerator.CreateMaze<UnderworldMazeTheme> (rand.Next (), state.MessageProxy, state.PhysicsManager, 30, 30);
             maze [1].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
             maze [1].AIManager.RegisterEntity (Player);
 
@@ -252,6 +258,31 @@ namespace FreezingArcher.Game
 
             state.MessageProxy.StopProcessing ();
             //game.SwitchToGameState("maze_overworld");
+
+            for (int i = 0; i < ScobisCount; i++)
+            {
+                ScobisInstances.Add (new Scobis (state, maze[1].AIManager, rendererContext));
+            }
+
+            for (int i = 0; i < CaligoCount; i++)
+            {
+                CaligoInstances.Add (new Caligo (state, maze[1].AIManager, rendererContext));
+            }
+
+            for (int i = 0; i < PassusCount; i++)
+            {
+                PassusInstances.Add (new Passus (state, maze[1].AIManager, rendererContext));
+            }
+
+            for (int i = 0; i < ViridionCount; i++)
+            {
+                ViridionInstances.Add (new Viridion (state, maze[1].AIManager, rendererContext)); 
+            }
+
+            for (int i = 0; i < GhostCount; i++)
+            {
+                GhostInstances.Add (new Ghost (state, maze[1].AIManager, rendererContext, ColorCorrectionNode));
+            }
         }
 
         readonly MazeWallMover mazeWallMover;
@@ -265,6 +296,7 @@ namespace FreezingArcher.Game
         List<Scobis> ScobisInstances = new List<Scobis>();
         List<Caligo> CaligoInstances = new List<Caligo>();
         List<Passus> PassusInstances = new List<Passus>();
+        List<Viridion> ViridionInstances = new List<Viridion>();
         List<Ghost> GhostInstances = new List<Ghost>();
 
         readonly InventoryGUI inventoryGui;
@@ -403,7 +435,7 @@ namespace FreezingArcher.Game
                     else
                     {
                         var state = game.CurrentGameState;
-                        state.Scene.DistanceFogIntensity = 0.02f;
+                        state.Scene.DistanceFogIntensity = 0.04f;
                         state.Scene.AmbientIntensity = 0.35f;
                         //light1.PointLightLinearAttenuation = 0.01f;
                         lighting = true;

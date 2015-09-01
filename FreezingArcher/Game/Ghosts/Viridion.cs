@@ -1,5 +1,5 @@
 ﻿//
-//  Ghost.cs
+//  Viridion.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -27,32 +27,30 @@ using Jitter.Dynamics;
 using Jitter.Collision.Shapes;
 using FreezingArcher.Renderer;
 using FreezingArcher.Game.AI;
-using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game.Ghosts
 {
-    public class Ghost
+    public class Viridion
     {
         public static int InstanceCount = 0;
 
-        public Ghost (GameState state, AIManager aiManager, RendererContext rendererContext,
-            CompositorColorCorrectionNode colorCorrectionNode)
+        public Viridion (GameState state, AIManager aiManager, RendererContext rendererContext)
         {
-            ghostEmitter = new WhiteGhostParticleEmitter ();
+            viridionEmitter = new ViridionParticleEmitter ();
 
-            particleGhost = new ParticleSceneObject (ghostEmitter.ParticleCount);
-            particleGhost.Priority = 7002;
-            state.Scene.AddObject (particleGhost);
-            ghostEmitter.Init (particleGhost, rendererContext);
+            particleViridion = new ParticleSceneObject (viridionEmitter.ParticleCount);
+            particleViridion.Priority = 7002;
+            state.Scene.AddObject (particleViridion);
+            viridionEmitter.Init (particleViridion, rendererContext);
 
-            ghostEntity = EntityFactory.Instance.CreateWith ("Ghost." + InstanceCount++, state.MessageProxy,
+            viridionEntity = EntityFactory.Instance.CreateWith ("Viridion." + InstanceCount++, state.MessageProxy,
                 new[] { typeof (ArtificialIntelligenceComponent) },
                 new[] { typeof (ParticleSystem), typeof (PhysicsSystem), typeof(LightSystem) });
 
-            ghostEntity.GetComponent<ParticleComponent> ().Emitter = ghostEmitter;
-            ghostEntity.GetComponent<ParticleComponent> ().Particle = particleGhost;
+            viridionEntity.GetComponent<ParticleComponent> ().Emitter = viridionEmitter;
+            viridionEntity.GetComponent<ParticleComponent> ().Particle = particleViridion;
 
-            var light = ghostEntity.GetComponent<LightComponent> ().Light;
+            var light = viridionEntity.GetComponent<LightComponent> ().Light;
             light = new FreezingArcher.Renderer.Scene.Light (FreezingArcher.Renderer.Scene.LightType.PointLight);
             light.On = true;
             light.Color = new FreezingArcher.Math.Color4 (0.6f, 0.6f, 0.6f, 1.0f);
@@ -60,7 +58,7 @@ namespace FreezingArcher.Game.Ghosts
             light.PointLightConstantAttenuation = 0.7f;
             light.PointLightExponentialAttenuation = 0.008f;
 
-            ghostEntity.GetComponent<LightComponent> ().Light = light;
+            viridionEntity.GetComponent<LightComponent> ().Light = light;
 
             state.Scene.AddLight (light);
 
@@ -68,20 +66,19 @@ namespace FreezingArcher.Game.Ghosts
             ghostBody.AffectedByGravity = false;
             ghostBody.AllowDeactivation = false;
             ghostBody.Mass = 20;
-            ghostEntity.GetComponent<PhysicsComponent> ().RigidBody = ghostBody;
-            ghostEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-            ghostEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
+            viridionEntity.GetComponent<PhysicsComponent> ().RigidBody = ghostBody;
+            viridionEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+            viridionEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (ghostBody);
 
-            ghostEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
-            ghostEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence =
-                new GhostAI (ghostEntity, state, colorCorrectionNode);
-            aiManager.RegisterEntity (ghostEntity);
+            viridionEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
+            viridionEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence = new ViridionAI ();
+            aiManager.RegisterEntity (viridionEntity);
         }
 
-        readonly Entity ghostEntity;
-        readonly ParticleSceneObject particleGhost;
-        readonly WhiteGhostParticleEmitter ghostEmitter;
+        readonly Entity viridionEntity;
+        readonly ParticleSceneObject particleViridion;
+        readonly ViridionParticleEmitter viridionEmitter;
     }
 }

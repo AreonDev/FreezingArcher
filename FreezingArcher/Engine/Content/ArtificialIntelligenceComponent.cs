@@ -44,7 +44,7 @@ namespace FreezingArcher.Content
         /// <summary>
         /// The default maximum distance.
         /// </summary>
-        public static readonly float DefaultMaximumEntityDistance = 30f;
+        public static readonly float DefaultMaximumEntityDistance = 10f;
 
         #endregion
 

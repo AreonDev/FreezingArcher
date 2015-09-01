@@ -1,5 +1,5 @@
 ﻿//
-//  GhostAI.cs
+//  ViridionAI.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -21,7 +21,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
-using System.Linq;
 using FreezingArcher.Content;
 using System.Collections.Generic;
 using FreezingArcher.Math;
@@ -30,20 +29,11 @@ using FreezingArcher.Output;
 using Jitter.Dynamics;
 using FreezingArcher.Core;
 using Jitter.LinearMath;
-using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game.AI
 {
-    public sealed class GhostAI : ArtificialIntelligence
+    public sealed class ViridionAI : ArtificialIntelligence
     {
-        public GhostAI (Entity entity, GameState state, CompositorColorCorrectionNode colorCorrectionNode)
-        {
-            gameState = state;
-            this.entity = entity;
-            AIcomp = entity.GetComponent<ArtificialIntelligenceComponent>();
-            this.colorCorrectionNode = colorCorrectionNode;
-        }
-
         const float acceleration = 0.3f;
 
         const float speed = 8f;
@@ -57,16 +47,6 @@ namespace FreezingArcher.Game.AI
         JVector direction;
 
         JVector fallback;
-
-        readonly GameState gameState;
-
-        readonly Entity entity;
-
-        readonly ArtificialIntelligenceComponent AIcomp;
-
-        readonly CompositorColorCorrectionNode colorCorrectionNode;
-
-        bool do_reset = false;
 
         public override void Think (PhysicsComponent ownPhysics, HealthComponent ownHealth, object map,
             List<Entity> entitiesNearby)
@@ -128,27 +108,6 @@ namespace FreezingArcher.Game.AI
 
                 ownPhysics.RigidBody.Position = new JVector (ownPhysics.RigidBody.Position.X, height,
                     ownPhysics.RigidBody.Position.Z);
-
-                var player = entitiesNearby.FirstOrDefault (e => e.Name == "player");
-                if (player != null)
-                {
-                    do_reset = true;
-                    var player_pos = player.GetComponent<TransformComponent>().Position;
-                    var ghost_pos = ownPhysics.RigidBody.Position.ToFreezingArcherVector();
-                    float distance;
-                    Vector3.Distance(ref player_pos, ref ghost_pos, out distance);
-                    float fov = ((AIcomp.MaximumEntityDistance - distance) / AIcomp.MaximumEntityDistance);
-                    gameState.Scene.CameraManager.ActiveCamera.Fov = MathHelper.PiOver3 + fov / 2;
-                    colorCorrectionNode.Contrast = 1 - (fov / 1.5f);
-                    colorCorrectionNode.Brightness = fov / 2;
-                }
-                else if (do_reset)
-                {
-                    do_reset = false;
-                    colorCorrectionNode.Contrast = 1;
-                    colorCorrectionNode.Brightness = 0;
-                    gameState.Scene.CameraManager.ActiveCamera.Fov = MathHelper.PiOver3;
-                }
             }
         }
 
@@ -172,7 +131,7 @@ namespace FreezingArcher.Game.AI
 
                 if (!gotit)
                 {
-                    Logger.Log.AddLogEntry (LogLevel.Severe, "GhostAI", "Failed to generate spawn position!");
+                    Logger.Log.AddLogEntry (LogLevel.Severe, "ViridionAI", "Failed to generate spawn position!");
                 }
 
                 fallback = JVector.Transform (JVector.Backward, JMatrix.CreateFromAxisAngle (JVector.Up,

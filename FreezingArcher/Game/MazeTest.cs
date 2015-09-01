@@ -188,7 +188,6 @@ namespace FreezingArcher.Game
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
 
             maze[0] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next(), state.MessageProxy, state.PhysicsManager, app.AudioManager, 30, 30);
-
             maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
             maze[0].AIManager.RegisterEntity (Player);
 

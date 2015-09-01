@@ -48,8 +48,6 @@ namespace FreezingArcher.Game
                 var objmnr = Application.Instance.ObjectManager;
 
                 maze = new MazeTest(messageManager, objmnr, rc, game, Application.Instance);
-
-                new UITest(Application.Instance, messageManager, maze.Player, Application.Instance.RendererContext);
             }
 
             Application.Instance.Run ();

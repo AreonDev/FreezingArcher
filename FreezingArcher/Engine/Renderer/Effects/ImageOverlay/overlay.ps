@@ -1,0 +1,43 @@
+﻿#version 410
+
+layout(location = 1) in vec2 InTexCoord;
+
+layout(location = 0) out vec4 frag_color;
+
+uniform sampler2D input;
+uniform sampler2D overlayTexture;
+uniform int overlayBlendMode;
+uniform float overlayFactor;
+ 
+void main() {
+        if (overlayBlendMode == 0) // Add
+        {
+                frag_color = (texture2D(input, InTexCoord) * (1 - overlayFactor)) +
+                             (texture2D(overlayTexture, InTexCoord) * overlayFactor);
+        }
+        else if (overlayBlendMode == 1) // Subtract
+        {
+                frag_color = (texture2D(input, InTexCoord) * (1 - overlayFactor)) -
+                             (texture2D(overlayTexture, InTexCoord) * overlayFactor);
+        }
+        else if (overlayBlendMode == 2) // SubtractInverse
+        {
+                frag_color = (texture2D(overlayTexture, InTexCoord) * (1 - overlayFactor)) -
+                             (texture2D(input, InTexCoord) * overlayFactor);
+        }
+        else if (overlayBlendMode == 3) // Multiply
+        {
+                frag_color = (texture2D(input, InTexCoord) * (1 - overlayFactor)) *
+                             (texture2D(overlayTexture, InTexCoord) * overlayFactor);
+        }
+        else if (overlayBlendMode == 4) // Divide
+        {
+                frag_color = (texture2D(input, InTexCoord) * (1 - overlayFactor)) /
+                             (texture2D(overlayTexture, InTexCoord) * overlayFactor);
+        }
+        else if (overlayBlendMode == 5) // DivideInverse
+        {
+                frag_color = (texture2D(overlayTexture, InTexCoord) * (1 - overlayFactor)) /
+                             (texture2D(input, InTexCoord) * overlayFactor);
+        }
+}

@@ -41,6 +41,7 @@ using Jitter.LinearMath;
 using Jitter.Collision.Shapes;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Game.Maze;
+using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {
@@ -706,6 +707,49 @@ namespace FreezingArcher.Game
             inventory.Items.ForEach((item, position) => {
                 AddItem(item, position);
             });
+        }
+
+        public void CreateInitialFlashlight ()
+        {
+            var flashlight = Inventory.CreateNewItem (gameState.MessageProxy, gameState,
+                "flashlight_initial",
+                MazeGenerator.ItemTemplates[1].ImageLocation,
+                MazeGenerator.ItemTemplates[1].Description,
+                MazeGenerator.ItemTemplates[1].ModelPath,
+                MazeGenerator.ItemTemplates[1].Size,
+                MazeGenerator.ItemTemplates[1].PositionOffset,
+                MazeGenerator.ItemTemplates[1].Rotation,
+                MazeGenerator.ItemTemplates[1].Shape,
+                ItemLocation.Inventory,
+                MazeGenerator.ItemTemplates[1].AttackClasses,
+                MazeGenerator.ItemTemplates[1].ItemUsages,
+                MazeGenerator.ItemTemplates[1].Protection,
+                MazeGenerator.ItemTemplates[1].PhysicsMaterial,
+                MazeGenerator.ItemTemplates[1].Mass,
+                MazeGenerator.ItemTemplates[1].HealthDelta,
+                MazeGenerator.ItemTemplates[1].UsageDeltaPerUsage,
+                MazeGenerator.ItemTemplates[1].AttackStrength,
+                MazeGenerator.ItemTemplates[1].ThrowPower,
+                MazeGenerator.ItemTemplates[1].Usage
+            );
+
+            var item_body = flashlight.Entity.GetComponent<PhysicsComponent>();
+            var item_model = flashlight.Entity.GetComponent<ModelComponent>();
+            item_body.RigidBody.Position = flashlight.Entity.GetComponent<TransformComponent>().Position.ToJitterVector();
+            item_model.Model.Position = flashlight.Entity.GetComponent<TransformComponent>().Position;
+            flashlight.Entity.AddSystem<LightSystem> ();
+            var light = flashlight.Entity.GetComponent<LightComponent> ().Light;
+            light = new Light (LightType.SpotLight);
+            light.Color = new Color4 (0.1f, 0.1f, 0.1f, 1.0f);
+            light.PointLightLinearAttenuation = 0.01f;
+            light.SpotLightConeAngle = MathHelper.ToRadians (30f);
+            light.On = false;
+
+            flashlight.Entity.GetComponent<LightComponent> ().Light = light;
+
+            gameState.Scene.AddLight (light);
+
+            AddItem (flashlight);
         }
 
         public InventoryGUI (Application application, GameState state, Entity player, MessageProvider messageProvider)

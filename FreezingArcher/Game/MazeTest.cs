@@ -56,6 +56,7 @@ namespace FreezingArcher.Game
         BasicCompositor Compositor;
 
         CompositorNodeScene MazeSceneNode;
+        CompositorImageOverlayNode HealthOverlayNode;
         CompositorNodeOutput OutputNode;
 
         /// <summary>
@@ -86,6 +87,9 @@ namespace FreezingArcher.Game
 
             MazeSceneNode = new CompositorNodeScene (rendererContext, messageProvider);
             OutputNode = new CompositorNodeOutput (rendererContext, messageProvider);
+            HealthOverlayNode = new CompositorImageOverlayNode (rendererContext, messageProvider);
+            HealthOverlayNode.OverlayTexture = rendererContext.CreateTexture2D ("bloodsplatter", true, "Content/bloodsplatter.png");
+            HealthOverlayNode.Factor = 0;
 
             game.MazeSceneNode = MazeSceneNode;
 
@@ -115,8 +119,10 @@ namespace FreezingArcher.Game
 
             Compositor.AddNode (MazeSceneNode);
             Compositor.AddNode (OutputNode);
+            Compositor.AddNode (HealthOverlayNode);
 
-            Compositor.AddConnection (MazeSceneNode, OutputNode, 0, 0);
+            Compositor.AddConnection (MazeSceneNode, HealthOverlayNode, 0, 0);
+            Compositor.AddConnection (HealthOverlayNode, OutputNode, 0, 0);
 
             rendererContext.Compositor = Compositor;
 
@@ -131,6 +137,15 @@ namespace FreezingArcher.Game
                 typeof(AudioSystem),
                 typeof(AudioListenerSystem)
             });
+
+            var input = new FreezingArcher.UI.Input.FreezingArcherInput(app, state.MessageProxy);
+            input.Initialize (rendererContext.Canvas);
+            rendererContext.Canvas.SetSize(app.Window.Size.X, app.Window.Size.Y);
+            rendererContext.Canvas.ShouldDrawBackground = false;
+
+            inventoryGui = new InventoryGUI(app, state, Player, messageProvider);
+            var inventory = new Inventory(messageProvider, state, Player, new Vector2i(5, 7), 9);
+            inventoryGui.Init(rendererContext.Canvas, inventory);
 
             //Add player walking sound
             AudioComponent player_ac = Player.GetComponent<AudioComponent> ();
@@ -246,6 +261,7 @@ namespace FreezingArcher.Game
         List<Passus> PassusInstances = new List<Passus>();
         List<Ghost> GhostInstances = new List<Ghost>();
 
+        readonly InventoryGUI inventoryGui;
         readonly Content.Game game;
 
         readonly Application application;
@@ -382,6 +398,7 @@ namespace FreezingArcher.Game
                             maze [1].SpawnFeatures (maze [0].graph);
                         maze[0].AIManager.CalculateSpawnPositions();
                         maze[1].AIManager.CalculateSpawnPositions();
+                        inventoryGui.CreateInitialFlashlight ();
                     }, state);
                 }, game.GetGameState ("maze_overworld"));
             }

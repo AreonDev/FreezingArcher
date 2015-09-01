@@ -1,4 +1,4 @@
-﻿//
+﻿////
 //  RandomParticleSystem.cs
 //
 //  Author:
@@ -27,9 +27,9 @@ using FreezingArcher.Renderer.Scene;
 
 namespace FreezingArcher.Game
 {
-    public class NiceGhostParticleEmitter : ParticleEmitter
+    public class WhiteGhostParticleEmitter : ParticleEmitter
     {
-        public NiceGhostParticleEmitter () : base(100)
+        public WhiteGhostParticleEmitter () : base(100)
         {
             //SpawnPosition = Math.Vector3.Zero;
         }
@@ -59,7 +59,7 @@ namespace FreezingArcher.Game
                     par.Velocity = actual;
                     par.Update (time);
                 }
-                    
+
             } else
             {
                 par.Reset ();
@@ -70,14 +70,14 @@ namespace FreezingArcher.Game
 
                 par.Position = SpawnPosition + (new FreezingArcher.Math.Vector3 ((float)rnd.NextDouble () * 0.2f * invert1, (float)rnd.NextDouble () * 0.2f * invert2, 
                     (float)rnd.NextDouble () * 0.2f * invert3));
-                
+
                 par.Velocity = (new FreezingArcher.Math.Vector3 ((float)rnd.NextDouble () * 0.4f * invert1, (float)rnd.NextDouble () * 0.4f * invert2, 
                     (float)rnd.NextDouble () * 0.4f * invert3));
-                
+
                 par.Life = 0.7f;
                 par.LifeTime = 1.0f * (float)rnd.NextDouble();
                 par.Size = new FreezingArcher.Math.Vector2(1.2f, 1.2f);
-                par.Color = new FreezingArcher.Math.Color4(0.6f, 1.0f , 0.6f, 0.3f);
+                par.Color = new FreezingArcher.Math.Color4(0.6f, 0.6f , 0.6f, 0.3f);
             }
         }
 
@@ -98,11 +98,11 @@ namespace FreezingArcher.Game
 
                 par.Position = (new FreezingArcher.Math.Vector3 ((float)rnd.NextDouble () * 0.8f * invert1, (float)rnd.NextDouble () * 0.8f * invert2, 
                     (float)rnd.NextDouble () * 0.8f * invert3)) + SpawnPosition;
-                
+
                 //par.Velocity = (new FreezingArcher.Math.Vector3 ((float)rnd.NextDouble () * 10.5f, (float)rnd.NextDouble () * 10.5f, (float)rnd.NextDouble () * 10.5f))*invert;
                 par.Mass = 1.0f;
                 par.Size = new FreezingArcher.Math.Vector2(1.2f, 1.2f);
-                par.Color = new FreezingArcher.Math.Color4(0.6f, 1.0f , 0.6f, 0.5f);
+                par.Color = new FreezingArcher.Math.Color4(0.6f, 0.6f , 0.6f, 0.5f);
                 par.Life = 1.2f;
                 par.LifeTime = 1.0f * (float)rnd.NextDouble();
             }
@@ -111,4 +111,4 @@ namespace FreezingArcher.Game
         #endregion
     }
 }
-
+   

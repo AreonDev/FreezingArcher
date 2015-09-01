@@ -36,7 +36,7 @@ namespace FreezingArcher.Game.Ghosts
 
         public Ghost (GameState state, AIManager aiManager, RendererContext rendererContext)
         {
-            ghostEmitter = new NiceGhostParticleEmitter ();
+            ghostEmitter = new WhiteGhostParticleEmitter ();
 
             particleGhost = new ParticleSceneObject (ghostEmitter.ParticleCount);
             particleGhost.Priority = 7002;
@@ -53,7 +53,7 @@ namespace FreezingArcher.Game.Ghosts
             var light = ghostEntity.GetComponent<LightComponent> ().Light;
             light = new FreezingArcher.Renderer.Scene.Light (FreezingArcher.Renderer.Scene.LightType.PointLight);
             light.On = true;
-            light.Color = new FreezingArcher.Math.Color4 (0.6f, 1.0f, 0.6f, 1.0f);
+            light.Color = new FreezingArcher.Math.Color4 (0.6f, 0.6f, 0.6f, 1.0f);
             light.PointLightLinearAttenuation = 0.4f;
             light.PointLightConstantAttenuation = 0.7f;
             light.PointLightExponentialAttenuation = 0.008f;
@@ -79,6 +79,6 @@ namespace FreezingArcher.Game.Ghosts
 
         readonly Entity ghostEntity;
         readonly ParticleSceneObject particleGhost;
-        readonly NiceGhostParticleEmitter ghostEmitter;
+        readonly WhiteGhostParticleEmitter ghostEmitter;
     }
 }

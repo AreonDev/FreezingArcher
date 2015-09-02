@@ -934,6 +934,8 @@ namespace FreezingArcher.Game
 
         #region IMessageConsumer implementation
 
+        bool maze_leaved = false;
+
         public void ConsumeMessage (IMessage msg)
         {
             if (msg.MessageId == (int) MessageId.WindowResize)
@@ -1063,16 +1065,21 @@ namespace FreezingArcher.Game
 
                         if (entity.Name.Contains ("exit"))
                         {
-                            GameState endstate = application.Game.GetGameState ("endscreen_state");
-                            endstate.Scene = application.Game.CurrentGameState.Scene;
+                            if (!maze_leaved)
+                            {
+                                GameState endstate = application.Game.GetGameState ("endscreen_state");
+                                endstate.Scene = application.Game.CurrentGameState.Scene;
 
-                            application.Game.SwitchToGameState ("endscreen_state");
+                                application.Game.SwitchToGameState ("endscreen_state");
 
-                            if (MessageCreated != null)
-                                MessageCreated (new GameEndedMessage ());
+                                if (MessageCreated != null)
+                                    MessageCreated (new GameEndedMessage ());
 
-                            Logger.Log.AddLogEntry(LogLevel.Info, "InventoryGUI", "Leaving maze...");
-                            return;
+                                maze_leaved = true;
+
+                                Logger.Log.AddLogEntry (LogLevel.Info, "InventoryGUI", "Leaving maze...");
+                                return;
+                            }
                         }
 
                         var mapItem = entity.GetComponent<ItemComponent>();

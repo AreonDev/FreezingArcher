@@ -138,13 +138,13 @@ namespace FreezingArcher.Game.AI
                     float distance;
                     Vector3.Distance(ref player_pos, ref ghost_pos, out distance);
                     float fac = ((AIcomp.MaximumEntityDistance - distance) / AIcomp.MaximumEntityDistance);
-                    //warpingNode.WarpFactor = fac / 10;
+                    warpingNode.WarpFactor = fac / 10;
 
-                    var playerRigidBody = player.GetComponent<PhysicsComponent>().RigidBody;
-                    if (playerRigidBody != null)
-                        playerRigidBody.Material.StaticFriction = fac;
+                    var playerPhysics = player.GetComponent<PhysicsComponent>();
+                    if (playerPhysics != null)
+                        playerPhysics.SpeedMultiplier = 1 - fac;
                     
-                    //player.GetComponent<HealthComponent>().Health -= fac * 40;
+                    player.GetComponent<HealthComponent>().Health -= fac * 40;
 
                     temp_player = player;
                 }

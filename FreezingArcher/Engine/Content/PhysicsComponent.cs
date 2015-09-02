@@ -67,6 +67,11 @@ namespace FreezingArcher.Content
         public static readonly AffectedByPhysics DefaultPhysicsApplying = AffectedByPhysics.Nothing;
 
         /// <summary>
+        /// The default speed multiplier.
+        /// </summary>
+        public static readonly float DefaultSpeedMultiplier = 1f;
+
+        /// <summary>
         /// Gets or sets the rigid body.
         /// </summary>
         /// <value>The rigid body.</value>
@@ -96,6 +101,8 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <value>The physics applying.</value>
         public AffectedByPhysics PhysicsApplying {get; set;}
+
+        public float SpeedMultiplier { get; set; }
 
         public override void Destroy()
         {

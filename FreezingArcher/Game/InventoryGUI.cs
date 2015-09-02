@@ -1034,7 +1034,7 @@ namespace FreezingArcher.Game
                                 ItemUsage.Hitable | ItemUsage.Eatable));
                         }
                     }
-                    else if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem == null)
+                    else if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem == null && gameState.Scene.CameraManager.ActiveCamera != null)
                     {
                         RigidBody rb;
                         JVector n;

@@ -138,7 +138,9 @@ namespace FreezingArcher.Game.AI
                     float distance;
                     Vector3.Distance(ref player_pos, ref ghost_pos, out distance);
                     float fov = ((AIcomp.MaximumEntityDistance - distance) / AIcomp.MaximumEntityDistance);
-                    gameState.Scene.CameraManager.ActiveCamera.Fov = MathHelper.PiOver3 + fov / 2;
+
+                    gameState.Scene.CameraManager.ActiveCamera.Fov = MathHelper.PiOver3 + (fov / 2.0f);
+
                     colorCorrectionNode.Contrast = 1 - (fov / 1.5f);
                     colorCorrectionNode.Brightness = fov / 2;
                 }

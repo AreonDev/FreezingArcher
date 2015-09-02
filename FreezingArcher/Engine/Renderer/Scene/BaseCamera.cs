@@ -192,6 +192,10 @@ namespace FreezingArcher.Renderer.Scene
             Entity = entity;
             this.orthographic = orthographic;
 
+            //Hotfix
+            WindowX = (float)Application.Instance.RendererContext.ViewportSize.X;
+            WindowY = (float) Application.Instance.RendererContext.ViewportSize.Y;
+
             if (orthographic)
             {
                 ProjectionMatrix = Matrix.CreateOrthographic (427, 240, MZNear, MZFar);
@@ -199,7 +203,7 @@ namespace FreezingArcher.Renderer.Scene
             else
             {
                 ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView (MFov,
-                    (float)Application.Instance.RendererContext.ViewportSize.X / (float)Application.Instance.RendererContext.ViewportSize.Y,
+                    WindowX / WindowY,
                     MZNear, MZFar); 
             }
             

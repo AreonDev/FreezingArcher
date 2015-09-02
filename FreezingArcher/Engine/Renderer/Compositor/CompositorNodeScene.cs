@@ -107,7 +107,7 @@ namespace FreezingArcher.Renderer.Compositor
         private int AmbientColorLocation = 0;
         private int AmbientIntensityLocation = 0;
 
-        public static readonly int MaximumLightCount = 20;
+        public static readonly int MaximumLightCount = 25;
 
         private LightLocationStruct[] LightLocations = new LightLocationStruct[MaximumLightCount];
 
@@ -196,9 +196,11 @@ namespace FreezingArcher.Renderer.Compositor
 
             List<Light> Lights = (Scene != null) ? Scene.Lights : null;
 
+            int i = 0;
+
             if (Lights != null)
             {
-                for (int i = 0; i < Lights.Count; i++)
+                for (i = 0; i < Lights.Count; i++)
                 {
                     NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].TypeLocation, (int)Lights[i].Type);
                     NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].OnLocation, Lights[i].On ? 1 : 0);
@@ -212,6 +214,9 @@ namespace FreezingArcher.Renderer.Compositor
                     NoNodeEffect.PixelProgram.SetUniform(LightLocations[i].SpotLightConeCosineLocation, Lights[i].SpotLightConeCosine);
                 }
             }
+                
+            for (; i < LightLocations.Length; i++)
+                NoNodeEffect.PixelProgram.SetUniform (LightLocations [i].OnLocation, 0);
 
             PrivateRendererContext.DrawSpriteAbsolute(spr, 1);
 

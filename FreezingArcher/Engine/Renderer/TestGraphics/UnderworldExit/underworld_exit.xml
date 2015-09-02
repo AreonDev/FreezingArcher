@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<model>
+    <object>underworld_exit.obj</object>
+
+    <material>
+        <graphics normal="normal.jpg" diffuse="diffuse.jpg"/>
+    </material>
+</model>

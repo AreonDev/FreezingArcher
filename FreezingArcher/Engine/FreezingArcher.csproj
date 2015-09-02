@@ -687,6 +687,30 @@
     <None Include="Renderer\Effects\Warping\warping.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Renderer\TestGraphics\OverworldExit\diffuse.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\OverworldExit\normal.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\OverworldExit\overworld_exit.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\OverworldExit\overworld_exit.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\UnderworldExit\diffuse.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\UnderworldExit\normal.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\UnderworldExit\underworld_exit.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\UnderworldExit\underworld_exit.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />
@@ -705,6 +729,8 @@
     <Folder Include="Renderer\Effects\ImageOverlay\" />
     <Folder Include="Renderer\Effects\ColorCorrection\" />
     <Folder Include="Renderer\Effects\Warping\" />
+    <Folder Include="Renderer\TestGraphics\OverworldExit\" />
+    <Folder Include="Renderer\TestGraphics\UnderworldExit\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

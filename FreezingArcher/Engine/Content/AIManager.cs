@@ -182,7 +182,7 @@ namespace FreezingArcher.Content
             sw.Stop();
         }
 
-        public void CalculateSpawnPositions ()
+        public void CalculateSpawnPositions (Vector3 playerSpawn)
         {
             lock (entities)
             {
@@ -192,8 +192,8 @@ namespace FreezingArcher.Content
                     if (e.HasComponent<ArtificialIntelligenceComponent>())
                     {
                         var ai_component = e.GetComponent<ArtificialIntelligenceComponent>();
-                        ai_component.ArtificialIntelligence.SetSpawnPosition (e.GetComponent<PhysicsComponent>(), Map,
-                            rand);
+                        ai_component.ArtificialIntelligence.SetSpawnPosition (playerSpawn,
+                            e.GetComponent<PhysicsComponent>(), Map, rand);
                     }
                 }
             }

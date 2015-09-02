@@ -21,8 +21,8 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
-using FreezingArcher.DataStructures.Graphs;
 using System.Collections.Generic;
+using FreezingArcher.Math;
 
 namespace FreezingArcher.Content
 {
@@ -31,6 +31,6 @@ namespace FreezingArcher.Content
         public abstract void Think (PhysicsComponent ownPhysics, HealthComponent ownHealth, object map,
             List<Entity> entitiesNearby);
 
-        public abstract void SetSpawnPosition (PhysicsComponent ownPhysics, object map, Random rand);
+        public abstract void SetSpawnPosition (Vector3 playerSpawn, PhysicsComponent ownPhysics, object map, Random rand);
     }
 }

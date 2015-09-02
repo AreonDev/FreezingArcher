@@ -69,6 +69,8 @@ namespace FreezingArcher.Game.AI
 
         Entity temp_player;
 
+        DateTime lastDamage;
+
         public override void Think (PhysicsComponent ownPhysics, HealthComponent ownHealth, object map,
             List<Entity> entitiesNearby)
         {
@@ -89,7 +91,7 @@ namespace FreezingArcher.Game.AI
                         temp_direction,
                         new Jitter.Collision.RaycastCallback((rb, n, f) => {
                             var e = rb.Tag as Entity;
-                            return f < max_distance && e != null && e.HasComponent<WallComponent>();
+                            return f < max_distance && e != null && (e.HasComponent<WallComponent>() || e.Name.Contains("exit"));
                         }),
                         out rigidBody, out normal, out fraction);
                     
@@ -145,8 +147,12 @@ namespace FreezingArcher.Game.AI
                     var playerPhysics = player.GetComponent<PhysicsComponent>();
                     if (playerPhysics != null)
                         playerPhysics.SpeedMultiplier = 1 - fac;
-                    
-                    player.GetComponent<HealthComponent>().Health -= fac * 40;
+
+                    if ((DateTime.Now - lastDamage).TotalSeconds > 0.5f)
+                    {
+                        player.GetComponent<HealthComponent>().Health -= fac * 40;
+                        lastDamage = DateTime.Now;
+                    }
 
                     var lowpass = state.AudioContext.GlobalFilter as LowpassFilter;
                     if (lowpass == null)
@@ -162,7 +168,7 @@ namespace FreezingArcher.Game.AI
                     do_reset = false;
                     warpingNode.WarpFactor = 0;
                     if (temp_player != null)
-                        temp_player.GetComponent<PhysicsComponent>().RigidBody.Material.StaticFriction = 0;
+                        temp_player.GetComponent<PhysicsComponent>().SpeedMultiplier = 1;
 
                     var lowpass = state.AudioContext.GlobalFilter as LowpassFilter;
                     if (lowpass != null)
@@ -172,21 +178,30 @@ namespace FreezingArcher.Game.AI
             }
         }
 
-        public override void SetSpawnPosition (PhysicsComponent ownPhysics, object map, Random rand)
+        public override void SetSpawnPosition (Vector3 playerSpawn, PhysicsComponent ownPhysics, object map, Random rand)
         {
             Maze.Maze maze = map as Maze.Maze;
             if (maze != null)
             {
-                int pos = rand.Next (0, maze.graph.Nodes.Count);
                 bool gotit = false;
-                for (int i = pos; i < maze.graph.Nodes.Count; i++)
+
+                while (!gotit)
                 {
-                    if (maze.graph.Nodes[i].Data.MazeCellType == MazeCellType.Ground)
+                    int pos = rand.Next (0, maze.graph.Nodes.Count);
+                    Vector3 spawn_pos;
+                    float distance;
+                    for (int i = pos; i < maze.graph.Nodes.Count; i++)
                     {
-                        gotit = true;
-                        ownPhysics.RigidBody.Position = new JVector (maze.graph.Nodes[i].Data.WorldPosition.X, height,
-                            maze.graph.Nodes[i].Data.WorldPosition.Z);
-                        break;
+                        spawn_pos = maze.graph.Nodes[i].Data.WorldPosition;
+                        Vector3.Distance(ref playerSpawn, ref spawn_pos, out distance);
+                        if (maze.graph.Nodes[i].Data.MazeCellType == MazeCellType.Ground && distance > 50 &&
+                            !maze.graph.Nodes[i].Data.IsExit)
+                        {
+                            gotit = true;
+                            ownPhysics.RigidBody.Position = new JVector (maze.graph.Nodes[i].Data.WorldPosition.X, height,
+                                maze.graph.Nodes[i].Data.WorldPosition.Z);
+                            break;
+                        }
                     }
                 }
 

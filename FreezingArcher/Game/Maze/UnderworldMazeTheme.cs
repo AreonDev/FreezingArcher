@@ -102,16 +102,46 @@ namespace FreezingArcher.Game.Maze
                 
                 state.PhysicsManager.World.AddBody (body);
 
-                /*var e2 = EntityFactory.Instance.CreateWith ("ceiling" + gridPosition.X + "." + gridPosition.Y,
-                    state.MessageProxy, systems: new[] { typeof (ModelSystem) });
+                if (cell.IsExit)
+                {
+                    var exitEntity = EntityFactory.Instance.CreateWith ("underworld_exit", state.MessageProxy,
+                        systems: systems);
 
-                var m2 = new ModelSceneObject ("lib/Renderer/TestGraphics/UnderworldCeiling/underworld_ceiling.xml");
-                e2.GetComponent<ModelComponent>().Model = m2;
-                scnobjarr_ceiling.AddObject (m2);
+                    var exitModel = new ModelSceneObject("lib/Renderer/TestGraphics/UnderworldExit/underworld_exit.xml");
+                    exitEntity.GetComponent<ModelComponent>().Model = exitModel;
+                    state.Scene.AddObject(exitModel);
 
-                var t2 = e2.GetComponent<TransformComponent>();
-                t2.Position = new Vector3 (worldPosition.X, 4 * scale.Y, worldPosition.Z);
-                t2.Scale = scale;*/
+                    var exitTransform = exitEntity.GetComponent<TransformComponent>();
+                    exitTransform.Position = new Vector3 (worldPosition.X, -.5f, worldPosition.Z);
+                    exitTransform.Scale = scale;
+
+                    if (cell.Position.Y == 0)
+                    {
+                        exitTransform.Rotation = Quaternion.FromAxisAngle (Vector3.UnitY, MathHelper.ThreePiOver2);
+                    }
+                    else if (cell.Position.X == 29)
+                    {
+                        exitTransform.Rotation = Quaternion.FromAxisAngle (Vector3.UnitY, MathHelper.Pi);
+                    }
+                    else if (cell.Position.Y == 29)
+                    {
+                        exitTransform.Rotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.PiOver2);
+                    }
+
+                    var exitBody = new RigidBody(new BoxShape (scale.X * 2, scale.Y * 4, scale.Z * 2));
+                    exitBody.Position = exitTransform.Position.ToJitterVector () + JVector.Up * (scale.Y * 2);
+                    exitBody.Orientation = JMatrix.CreateFromQuaternion(exitTransform.Rotation.ToJitterQuaternion());
+                    exitBody.Material.Restitution = -10;
+                    exitBody.IsStatic = true;
+                    exitBody.Tag = exitEntity;
+
+                    exitEntity.GetComponent<PhysicsComponent> ().RigidBody = exitBody;
+                    exitEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+                    exitEntity.GetComponent<PhysicsComponent> ().PhysicsApplying =
+                        AffectedByPhysics.Orientation | AffectedByPhysics.Position;
+
+                    state.PhysicsManager.World.AddBody(exitBody);
+                }
             }
             else if (cell.MazeCellType == MazeCellType.Wall)
             {

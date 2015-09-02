@@ -86,7 +86,7 @@ namespace FreezingArcher.Game.AI
                         temp_direction,
                         new Jitter.Collision.RaycastCallback((rb, n, f) => {
                             var e = rb.Tag as Entity;
-                            return f < max_distance && e != null && e.HasComponent<WallComponent>();
+                            return f < max_distance && e != null && (e.HasComponent<WallComponent>() || e.Name.Contains("exit"));
                         }),
                         out rigidBody, out normal, out fraction);
                     
@@ -139,7 +139,7 @@ namespace FreezingArcher.Game.AI
                     colorCorrectionNode.Saturation = -fac * MathHelper.Pi;
                     colorCorrectionNode.Lightness = -fac;
                     var player_health = player.GetComponent<HealthComponent>();
-                    player_health.Health += fac * 5;
+                    player_health.Health += fac * 2;
                 }
                 else if (do_reset)
                 {
@@ -150,21 +150,30 @@ namespace FreezingArcher.Game.AI
             }
         }
 
-        public override void SetSpawnPosition (PhysicsComponent ownPhysics, object map, Random rand)
+        public override void SetSpawnPosition (Vector3 playerSpawn, PhysicsComponent ownPhysics, object map, Random rand)
         {
             Maze.Maze maze = map as Maze.Maze;
             if (maze != null)
             {
-                int pos = rand.Next (0, maze.graph.Nodes.Count);
                 bool gotit = false;
-                for (int i = pos; i < maze.graph.Nodes.Count; i++)
+
+                while (!gotit)
                 {
-                    if (maze.graph.Nodes[i].Data.MazeCellType == MazeCellType.Ground)
+                    int pos = rand.Next (0, maze.graph.Nodes.Count);
+                    Vector3 spawn_pos;
+                    float distance;
+                    for (int i = pos; i < maze.graph.Nodes.Count; i++)
                     {
-                        gotit = true;
-                        ownPhysics.RigidBody.Position = new JVector (maze.graph.Nodes[i].Data.WorldPosition.X, height,
-                            maze.graph.Nodes[i].Data.WorldPosition.Z);
-                        break;
+                        spawn_pos = maze.graph.Nodes[i].Data.WorldPosition;
+                        Vector3.Distance(ref playerSpawn, ref spawn_pos, out distance);
+                        if (maze.graph.Nodes[i].Data.MazeCellType == MazeCellType.Ground && distance > 50 &&
+                            !maze.graph.Nodes[i].Data.IsExit)
+                        {
+                            gotit = true;
+                            ownPhysics.RigidBody.Position = new JVector (maze.graph.Nodes[i].Data.WorldPosition.X, height,
+                                maze.graph.Nodes[i].Data.WorldPosition.Z);
+                            break;
+                        }
                     }
                 }
 

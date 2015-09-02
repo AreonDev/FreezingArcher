@@ -236,7 +236,19 @@ namespace FreezingArcher.Game
             maze [1].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
             maze [1].AIManager.RegisterEntity (Player);
 
-            mazeWallMover = new MazeWallMover(maze[0], maze[1], game.GetGameState("maze_overworld"));
+            Func<int, int, bool> containsPortalFunc = (x, y) => {
+                foreach (var m in maze)
+                {
+                    var cell = m.entities [x, y].GetComponent<PhysicsComponent>().RigidBody.Tag as MazeCell;
+                    if (cell != null && cell.IsPortal)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            mazeWallMover = new MazeWallMover(maze[0], maze[1], game.GetGameState("maze_overworld"), containsPortalFunc);
 
             state.MessageProxy.StopProcessing ();
             //game.SwitchToGameState("maze_overworld");
@@ -515,9 +527,11 @@ namespace FreezingArcher.Game
                             maze [0].SpawnFeatures (null, maze [1].graph);
                         if (maze [1].IsGenerated && !maze [1].AreFeaturesPlaced)
                             maze [1].SpawnFeatures (maze [0].graph);
-                        maze[0].AIManager.CalculateSpawnPositions();
-                        maze[1].AIManager.CalculateSpawnPositions();
+                        maze[0].AIManager.CalculateSpawnPositions(maze [0].PlayerPosition);
+                        maze[1].AIManager.CalculateSpawnPositions(maze [0].PlayerPosition);
                         inventoryGui.CreateInitialFlashlight ();
+                        var healthcomp = Player.GetComponent<HealthComponent>();
+                        healthcomp.Health = healthcomp.MaximumHealth;
                     }, state);
                 }, game.GetGameState ("maze_overworld"));
             }

@@ -43,7 +43,8 @@ namespace FreezingArcher.Game.Maze
 
         #endregion
 
-        public MazeWallMover (Maze maze, Maze secondMaze, GameState state)
+        public MazeWallMover (Maze maze, Maze secondMaze, GameState state,
+            Func<int, int, bool> containsPortal)
         {
             Maze = maze;
             SecondMaze = secondMaze;
@@ -74,6 +75,8 @@ namespace FreezingArcher.Game.Maze
             GameState.MessageProxy.RegisterMessageConsumer(this);
             this.GameState.MessageProxy.AddMessageCreator (this);
         }
+        
+        readonly Func<int, int, bool> containsPortal;
 
         void Step ()
         {
@@ -93,7 +96,8 @@ namespace FreezingArcher.Game.Maze
                         {
                             var n2 = e2.FirstNode != n ? e2.FirstNode : e2.SecondNode;
                             if (e2.Weight.Direction != Direction.Diagonal &&
-                                n2.Data.MazeCellType == MazeCellType.Ground && !n2.Data.IsDeadEnd && !n2.Data.IsPortal)
+                                n2.Data.MazeCellType == MazeCellType.Ground && !n2.Data.IsDeadEnd &&
+                                !containsPortal (n2.Data.Position.X, n2.Data.Position.Y))
                             {
                                 connection = n2;
                                 break;

@@ -794,7 +794,8 @@ namespace FreezingArcher.Game
                 (int) MessageId.UpdateLocale,
                 (int) MessageId.Input,
                 (int) MessageId.Update,
-                (int) MessageId.ActiveInventoryBarItemChanged
+                (int) MessageId.ActiveInventoryBarItemChanged,
+                (int) MessageId.HealthChanged
             };
             messageProvider += this;
             Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
@@ -986,6 +987,16 @@ namespace FreezingArcher.Game
                 }
             }
 
+            if (msg.MessageId == (int) MessageId.HealthChanged)
+            {
+                var hcm = msg as HealthChangedMessage;
+
+                if (hcm.Health < 0.0001f)
+                {
+                    Logger.Log.AddLogEntry(LogLevel.Info, "InventoryGUI", "You are dead!");
+                }
+            }
+
             if (msg.MessageId == (int) MessageId.Input)
             {
                 var im = msg as InputMessage;
@@ -1060,7 +1071,13 @@ namespace FreezingArcher.Game
                         var entity = mouseCollisionBody.Tag as Entity;
                         if (entity == null)
                             return;
-                        
+
+                        if (entity.Name.Contains ("exit"))
+                        {
+                            Logger.Log.AddLogEntry(LogLevel.Info, "InventoryGUI", "Leaving maze...");
+                            return;
+                        }
+
                         var mapItem = entity.GetComponent<ItemComponent>();
                         if (mapItem != null && mapItem.Location != ItemLocation.Inventory)
                         {
@@ -1161,6 +1178,10 @@ namespace FreezingArcher.Game
                         if (entity != null && entity.HasComponent<ItemComponent>())
                         {
                             Logger.Log.AddLogEntry(LogLevel.Debug, "ItemSystem", "Raytrace: {0}", entity.Name);
+                            return true;
+                        }
+                        if (entity != null && entity.Name.Contains("exit"))
+                        {
                             return true;
                         }
                         return false;

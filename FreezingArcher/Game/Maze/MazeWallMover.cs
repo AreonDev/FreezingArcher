@@ -43,28 +43,37 @@ namespace FreezingArcher.Game.Maze
 
         #endregion
 
-        public MazeWallMover (Maze maze, Maze secondMaze, MessageProvider messageProvider, GameState state)
+        public MazeWallMover (Maze maze, Maze secondMaze, GameState state)
         {
             Maze = maze;
             SecondMaze = secondMaze;
-            this.state = state;
+            this.GameState = state;
             rand = new Random(maze.Seed);
 
-            this.messageProvider = messageProvider;
-
             ValidMessages = new[] { (int) MessageId.Update };
-            messageProvider += this;
+
+            this.GameState.MessageProxy.RegisterMessageConsumer(this);
+            this.GameState.MessageProxy.AddMessageCreator (this);
         }
 
         public Maze Maze { get; private set; }
 
         public Maze SecondMaze { get; private set; }
 
-        readonly GameState state;
-
-        readonly MessageProvider messageProvider;
+        public GameState GameState { get; private set;}
 
         readonly Random rand;
+
+        public void SwitchGameState(GameState state)
+        {
+            GameState.MessageProxy.UnregisterMessageConsumer (this);
+            GameState.MessageProxy.RemoveMessageCreator (this);
+
+            GameState = state;
+
+            GameState.MessageProxy.RegisterMessageConsumer(this);
+            this.GameState.MessageProxy.AddMessageCreator (this);
+        }
 
         void Step ()
         {
@@ -153,7 +162,7 @@ namespace FreezingArcher.Game.Maze
             wall.GetComponent<WallComponent>().IsMoving = true;
             var new_ground_position = new Vector3 (wall_transform.Position.X, 0, wall_transform.Position.Z);
 
-            var ground2 = EntityFactory.Instance.CreateWith ("ground_temp" + temp_counter++, messageProvider,
+            var ground2 = EntityFactory.Instance.CreateWith ("ground_temp" + temp_counter++, GameState.MessageProxy,
                 systems: new[] { typeof (ModelSystem), typeof (PhysicsSystem) });
 
             var ground2_model = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
@@ -167,12 +176,12 @@ namespace FreezingArcher.Game.Maze
             body.Material.Restitution = -10;
             body.IsStatic = true;
             ground2.GetComponent<PhysicsComponent>().RigidBody = body;
-            ground2.GetComponent<PhysicsComponent>().World = state.PhysicsManager.World;
+            ground2.GetComponent<PhysicsComponent>().World = GameState.PhysicsManager.World;
             ground2.GetComponent<PhysicsComponent>().PhysicsApplying =
                 AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
-            state.PhysicsManager.World.AddBody (body);
-            state.Scene.AddObject(ground2_model);
+            GameState.PhysicsManager.World.AddBody (body);
+            GameState.Scene.AddObject(ground2_model);
 
             ground1.GetComponent<TransformComponent>().Position = new_ground_position;
             ground1.GetComponent<PhysicsComponent>().RigidBody.Position = new_ground_position.ToJitterVector();
@@ -188,7 +197,7 @@ namespace FreezingArcher.Game.Maze
             tmp_wall_position = new Vector3 (tmp_wall_position.X, -0.5f, tmp_wall_position.Z);
 
             MoveEntityTo (wall, tmp_wall_position, position, () => {
-                state.Scene.RemoveObject(ground2_model);
+                GameState.Scene.RemoveObject(ground2_model);
                 wall.GetComponent<WallComponent>().IsMoving = false;
                 ground2.Destroy(); if(MessageCreated != null) MessageCreated(new EndWallMovementMessage(wall));
             });
@@ -266,7 +275,7 @@ namespace FreezingArcher.Game.Maze
 
             var transform = entity.GetComponent<TransformComponent>();
             var rigidBody = entity.GetComponent<PhysicsComponent>().RigidBody;
-            new EntityMover(messageProvider, time_steps, position_1, position_2, transform, rigidBody, finishedCallback);
+            new EntityMover(GameState.MessageProxy, time_steps, position_1, position_2, transform, rigidBody, finishedCallback);
         }
 
         IEnumerable<WeightedNode<MazeCell, MazeCellEdgeWeight>> GetDeadEndGrounds ()

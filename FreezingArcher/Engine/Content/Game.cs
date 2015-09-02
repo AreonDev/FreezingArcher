@@ -310,6 +310,20 @@ namespace FreezingArcher.Content
                 destination.Scene.AddObject(model);
             }
 
+            if (entity.HasComponent<PhysicsComponent> ())
+            {
+                var rigidBody = entity.GetComponent<PhysicsComponent> ().RigidBody;
+                source.PhysicsManager.World.RemoveBody (rigidBody);
+                destination.PhysicsManager.World.AddBody (rigidBody);
+            }
+
+            if (entity.HasComponent<LightComponent> ())
+            {
+                var light = entity.GetComponent<LightComponent> ().Light;
+                source.Scene.RemoveLight (light);
+                destination.Scene.AddLight (light);
+            }
+
             entity.SwitchMessageProvider(source.MessageProxy, destination.MessageProxy);
         }
 

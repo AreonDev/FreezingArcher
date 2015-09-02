@@ -65,6 +65,14 @@ namespace FreezingArcher.Game
             inventoryBar = new int?[barSize];
         }
 
+        public void SwitchItemsToGameState(GameState source, GameState dest, FreezingArcher.Content.Game game)
+        {
+            foreach (ItemComponent ic in items.Values)
+            {
+                game.MoveEntityToGameState (ic.Entity, source, dest);
+            }
+        }
+
         public Vector2i Size { get; private set; }
 
         readonly int?[,] storage;

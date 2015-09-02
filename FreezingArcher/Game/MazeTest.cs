@@ -35,8 +35,6 @@ using Jitter.Dynamics;
 using Jitter.Collision.Shapes;
 using System.Collections.Generic;
 using FreezingArcher.Game.Ghosts;
-using FreezingArcher.Audio.Filters;
-using System.Security.Cryptography;
 
 namespace FreezingArcher.Game
 {
@@ -111,13 +109,13 @@ namespace FreezingArcher.Game
             state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.Fuchsia;
 
-            state.Scene.DistanceFogIntensity = 0.04f;
+            state.Scene.DistanceFogIntensity = 0.03f;
 
-            state.AudioContext = new FreezingArcher.Audio.AudioContext (messageProvider);
+            state.AudioContext = new AudioContext (messageProvider);
 
 
             state.Scene.AmbientColor = Color4.White;
-            state.Scene.AmbientIntensity = 0.30f;
+            state.Scene.AmbientIntensity = 0.70f; //0.3f
 
             state.Scene.MaxRenderingDistance = 400.0f;
 
@@ -154,7 +152,7 @@ namespace FreezingArcher.Game
                 typeof(PhysicsSystem)
             });
 
-            var input = new FreezingArcher.UI.Input.FreezingArcherInput(app, state.MessageProxy);
+            var input = new FreezingArcher.UI.Input.FreezingArcherInput(app, messageProvider);
             input.Initialize (rendererContext.Canvas);
             rendererContext.Canvas.SetSize(app.Window.Size.X, app.Window.Size.Y);
             rendererContext.Canvas.ShouldDrawBackground = false;
@@ -226,8 +224,10 @@ namespace FreezingArcher.Game
             state.Scene.SceneName = "MazeUnderworld";
             state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.AliceBlue;
+            state.Scene.AmbientColor = Color4.White;
+            state.Scene.AmbientIntensity = 0.7f;
 
-            state.AudioContext = new FreezingArcher.Audio.AudioContext (messageProvider);
+            state.AudioContext = new AudioContext (messageProvider);
 
             AddAudio (state);
 
@@ -236,8 +236,7 @@ namespace FreezingArcher.Game
             maze [1].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
             maze [1].AIManager.RegisterEntity (Player);
 
-            mazeWallMover = new MazeWallMover(maze[0], maze[1], game.GetGameState("maze_overworld").MessageProxy,
-                game.GetGameState("maze_overworld"));
+            mazeWallMover = new MazeWallMover(maze[0], maze[1], game.GetGameState("maze_overworld"));
 
             state.MessageProxy.StopProcessing ();
             //game.SwitchToGameState("maze_overworld");
@@ -289,7 +288,7 @@ namespace FreezingArcher.Game
             src.Loop = false;
 
             state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.PlayerMove,
-                new FreezingArcher.Audio.SoundSourceDescription (src, FreezingArcher.Audio.SoundAction.Play, Player));
+                new SoundSourceDescription (src, SoundAction.Play, Player));
 
             //Set listener Position from PlayerPosition
             TransformComponent tfc = Player.GetComponent<TransformComponent>();
@@ -308,7 +307,7 @@ namespace FreezingArcher.Game
             src.Loop = false;
 
             state.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.ItemCollected,
-                new FreezingArcher.Audio.SoundSourceDescription(src, FreezingArcher.Audio.SoundAction.Play, Player));
+                new SoundSourceDescription(src, SoundAction.Play, Player));
 
             //Item dropped sound
             src = application.AudioManager.GetSource("item_dropped_SoundSource");
@@ -323,7 +322,7 @@ namespace FreezingArcher.Game
             src.Loop = false;
 
             state.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.ItemDropped,
-                new FreezingArcher.Audio.SoundSourceDescription(src, FreezingArcher.Audio.SoundAction.Play, Player));
+                new SoundSourceDescription(src, SoundAction.Play, Player));
 
             //Wall moving sound
             src = application.AudioManager.GetSource("moving_wall_SoundSource");
@@ -338,44 +337,56 @@ namespace FreezingArcher.Game
             src.Loop = false;
 
             state.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.BeginWallMovement,
-                new FreezingArcher.Audio.SoundSourceDescription(src, FreezingArcher.Audio.SoundAction.Play));
+                new SoundSourceDescription(src, SoundAction.Play));
 
             //Stop wall moving sound on stop
             state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.EndWallMovement,
-                new FreezingArcher.Audio.SoundSourceDescription (src, FreezingArcher.Audio.SoundAction.Stop));
+                new SoundSourceDescription (src, SoundAction.Stop));
         }
 
         void SwitchMaze ()
         {
+            game.CurrentGameState.Scene.Active = false;
+            game.CurrentGameState.AudioContext.StopAllSounds();
+
             if (currentMaze == 0)
             {
-                game.CurrentGameState.Scene.Active = false;
-
                 maze [0].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
+
                 game.MoveEntityToGameState (Player, game.GetGameState ("maze_overworld"), game.GetGameState ("maze_underworld"));
+
+                inventoryGui.SwitchGameState (game.GetGameState ("maze_overworld"), game.GetGameState ("maze_underworld"), game);
+
                 game.SwitchToGameState ("maze_underworld");
-                if (MessageCreated != null)
-                    MessageCreated (new TransformMessage (Player, maze [1].PlayerPosition, Quaternion.Identity));
-                //player.GetComponent<PhysicsComponent>().RigidBody.Position = maze[1].PlayerPosition;
+
+                //if (MessageCreated != null)
+                //    MessageCreated (new TransformMessage (Player, maze [1].PlayerPosition, Quaternion.Identity));
+
+                Player.GetComponent<PhysicsComponent> ().RigidBody.Position = maze [1].PlayerPosition.ToJitterVector () + Jitter.LinearMath.JVector.Up;
+
                 currentMaze = 1;
+            }
+            else
+            if (currentMaze == 1)
+            {
+                maze [1].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
+                game.MoveEntityToGameState (Player, game.GetGameState ("maze_underworld"), game.GetGameState ("maze_overworld"));
 
-                game.CurrentGameState.Scene.Active = true;
-            } else if (currentMaze == 1)
-                {
-                    game.CurrentGameState.Scene.Active = false;
+                inventoryGui.SwitchGameState (game.GetGameState ("maze_underworld"), game.GetGameState ("maze_overworld"), game);
 
-                    maze [1].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
-                    game.MoveEntityToGameState (Player, game.GetGameState ("maze_underworld"), game.GetGameState ("maze_overworld"));
-                    game.SwitchToGameState ("maze_overworld");
+                game.SwitchToGameState ("maze_overworld");
 
-                    if (MessageCreated != null)
-                        MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
+                //if (MessageCreated != null)
+                //    MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
 
-                    //player.GetComponent<TransformComponent>().Position = maze[0].PlayerPosition;
-                    currentMaze = 0;
-
-                    game.CurrentGameState.Scene.Active = true;
-                }
+                     
+                Player.GetComponent<PhysicsComponent> ().RigidBody.Position = maze [0].PlayerPosition.ToJitterVector () + Jitter.LinearMath.JVector.Up;
+                    
+                currentMaze = 0;
+            }
+                    
+            game.CurrentGameState.Scene.Active = true;
+            mazeWallMover.SwitchGameState (game.CurrentGameState);
         }
 
 #region IMessageConsumer implementation
@@ -458,11 +469,12 @@ namespace FreezingArcher.Game
             {
                 if (im.IsActionPressed ("frame"))
                 {
-                    //SwitchMaze();
+                    SwitchMaze();
                 }
 
                 if (im.IsActionPressed ("frame"))
                 {
+                    /*
                     if (lighting)
                     {
                         var state = game.CurrentGameState;
@@ -478,7 +490,7 @@ namespace FreezingArcher.Game
                         state.Scene.AmbientIntensity = 0.35f;
                         //light1.PointLightLinearAttenuation = 0.01f;
                         lighting = true;
-                    }
+                    }*/
                 }
 
                 if (im.IsActionPressed("damage"))

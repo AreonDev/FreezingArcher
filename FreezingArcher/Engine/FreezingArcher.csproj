@@ -98,9 +98,7 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Package>xbuild12</Package>
-    </Reference>
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -435,10 +433,10 @@
     <Compile Include="Renderer\Compositor\CompositorColorCorrectionNode.cs" />
     <Compile Include="Messaging\HealthChangedMessage.cs" />
     <Compile Include="Messaging\BeginWallMovementMessage.cs" />
-    <Compile Include="Audio\AudioContext.cs" />
     <Compile Include="Messaging\PlayerMoveMessage.cs" />
     <Compile Include="Messaging\EndWallMovementMessage.cs" />
     <Compile Include="Renderer\Compositor\CompositorWarpingNode.cs" />
+    <Compile Include="Content\AudioContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

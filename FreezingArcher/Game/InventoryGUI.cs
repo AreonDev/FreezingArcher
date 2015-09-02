@@ -134,14 +134,19 @@ namespace FreezingArcher.Game
             this.inventory = inventory;
             this.barItems = barItems;
             this.inventoryGui = inventoryGui;
-            this.messageProvider = messageProvider;
+            this.MessageProvider = messageProvider;
         }
 
         readonly int boxSize;
         readonly Inventory inventory;
         readonly List<InventoryBarButton> barItems;
-        readonly MessageProvider messageProvider;
+        public MessageProvider MessageProvider { get; private set;}
         readonly InventoryGUI inventoryGui;
+
+        public void SwitchMessageProvider(MessageProvider mpv)
+        {
+            this.MessageProvider = mpv;
+        }
 
         public override bool DragAndDrop_CanAcceptPackage (Package p)
         {
@@ -188,7 +193,7 @@ namespace FreezingArcher.Game
                     var pos = (byte) (X / boxSize);
                     if (inventory.PutInBar(inventory.GetPositionOfItem(invBarTuple.Item4), pos))
                     {
-                        var btn = new InventoryBarButton(Parent, messageProvider, barItems, inventory, inventoryGui,
+                        var btn = new InventoryBarButton(Parent, MessageProvider, barItems, inventory, inventoryGui,
                             invBarTuple.Item4, pos, boxSize);
                         barItems.Add(btn);
                         btn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = pos == inventory.ActiveBarPosition;
@@ -227,7 +232,20 @@ namespace FreezingArcher.Game
             UpdateSize();
             DragAndDrop_SetPackage (true, "item_drag");
 
+            MessageProvider = messageProvider;
+
             messageProvider += this;
+        }
+
+        public MessageProvider MessageProvider { get; private set;}
+
+        public void SwitchMessageProvider(MessageProvider mpv)
+        {
+            MessageProvider.UnregisterMessageConsumer (this);
+
+            this.MessageProvider = mpv;
+
+            MessageProvider.RegisterMessageConsumer (this);
         }
 
         readonly Inventory inventory;
@@ -371,7 +389,7 @@ namespace FreezingArcher.Game
             DragAndDrop_SetPackage (true, "bar_drag");
 
             messageProvider += this;
-            this.messageProvider = messageProvider;
+            this.MessageProvider = messageProvider;
         }
 
         readonly ItemComponent item;
@@ -379,8 +397,21 @@ namespace FreezingArcher.Game
         readonly Inventory inventory;
         readonly List<InventoryBarButton> barItems;
         readonly ProgressBar usageProgress;
-        readonly MessageProvider messageProvider;
+        public MessageProvider MessageProvider { get; private set;}
         readonly InventoryGUI inventoryGui;
+
+        public void SwitchMessageProvider(MessageProvider mpv)
+        {
+            MessageProvider.UnregisterMessageConsumer (this);
+
+            this.MessageProvider = mpv;
+
+            MessageProvider.RegisterMessageConsumer (this);
+
+            //Go through fucking shitty list
+            foreach (InventoryBarButton ibb in barItems)
+                ibb.SwitchMessageProvider (mpv);
+        }
 
         public ItemComponent Item
         {
@@ -447,7 +478,7 @@ namespace FreezingArcher.Game
                     Parent.RemoveChild(this, true);
                     if (inventory.PutInBar(inventory.GetPositionOfItem(invBarTuple.Item4), pos))
                     {
-                        var btn = new InventoryBarButton(Parent, messageProvider, barItems, inventory, inventoryGui,
+                        var btn = new InventoryBarButton(Parent, MessageProvider, barItems, inventory, inventoryGui,
                             invBarTuple.Item4, pos, boxSize);
                         barItems.Add(btn);
                         btn.Item.Entity.GetComponent<ModelComponent>().Model.Enabled = pos == inventory.ActiveBarPosition;
@@ -614,7 +645,7 @@ namespace FreezingArcher.Game
                 if (toggledBtn != null)
                 {
                     if (MessageCreated != null)
-                        MessageCreated(new ItemUseMessage(player, gameState.Scene, toggledBtn.Item, ItemUsage.Eatable));
+                        MessageCreated(new ItemUseMessage(player, GameState.Scene, toggledBtn.Item, ItemUsage.Eatable));
                 }
             };
 
@@ -660,7 +691,7 @@ namespace FreezingArcher.Game
             barSpaces = new InventoryBarSpace[inventory.InventoryBar.Length];
             for (int i = 0; i < inventory.InventoryBar.Length; i++)
             {
-                barSpaces[i] = new InventoryBarSpace(inventoryBar, messageProvider, inventory, this, barItems, barBoxSize);
+                barSpaces[i] = new InventoryBarSpace(inventoryBar, MessageProvider, inventory, this, barItems, barBoxSize);
                 barSpaces[i].X = i * barBoxSize;
                 barSpaces[i].Y = 1;
                 barSpaces[i].Width = barBoxSize + 1;
@@ -711,7 +742,7 @@ namespace FreezingArcher.Game
 
         public void CreateInitialFlashlight ()
         {
-            var flashlight = Inventory.CreateNewItem (gameState.MessageProxy, gameState,
+            var flashlight = Inventory.CreateNewItem (GameState.MessageProxy, GameState,
                 "flashlight_initial",
                 MazeGenerator.ItemTemplates[1].ImageLocation,
                 MazeGenerator.ItemTemplates[1].Description,
@@ -747,7 +778,7 @@ namespace FreezingArcher.Game
 
             flashlight.Entity.GetComponent<LightComponent> ().Light = light;
 
-            gameState.Scene.AddLight (light);
+            GameState.Scene.AddLight (light);
 
             AddItem (flashlight);
         }
@@ -756,8 +787,8 @@ namespace FreezingArcher.Game
         {
             this.application = application;
             this.player = player;
-            this.messageProvider = messageProvider;
-            this.gameState = state;
+            this.MessageProvider = messageProvider;
+            this.GameState = state;
             ValidMessages = new[] {
                 (int) MessageId.WindowResize,
                 (int) MessageId.UpdateLocale,
@@ -776,7 +807,7 @@ namespace FreezingArcher.Game
 
             item.Player = player;
 
-            var btn = new InventoryButton(itemGridFrame, messageProvider, inventory, item, this, position, BoxSize);
+            var btn = new InventoryButton(itemGridFrame, MessageProvider, inventory, item, this, position, BoxSize);
 
             btn.ToggledOn += (sender, arguments) => {
                 if (toggledBtn != null && !toggledBtn.IsDisposed)
@@ -882,8 +913,24 @@ namespace FreezingArcher.Game
         InventoryBarSpace[] barSpaces;
         Application application;
         Entity player;
-        GameState gameState;
-        MessageProvider messageProvider;
+        public GameState GameState { get; private set;}
+        public MessageProvider MessageProvider { get; private set;}
+
+        public void SwitchMessageProvider(MessageProvider mpv)
+        {
+            MessageProvider.UnregisterMessageConsumer (this);
+
+            this.MessageProvider = mpv;
+
+            MessageProvider.RegisterMessageConsumer (this);
+        }
+
+        public void SwitchGameState(GameState source, GameState dest, FreezingArcher.Content.Game game)
+        {
+            GameState = dest;
+
+            inventory.SwitchItemsToGameState (source, dest, game);
+        }
 
         #region IMessageConsumer implementation
 
@@ -1030,18 +1077,18 @@ namespace FreezingArcher.Game
                         }
                         else
                         {
-                            MessageCreated(new ItemUseMessage(player, gameState.Scene, inventory.ActiveBarItem,
+                            MessageCreated(new ItemUseMessage(player, GameState.Scene, inventory.ActiveBarItem,
                                 ItemUsage.Hitable | ItemUsage.Eatable));
                         }
                     }
-                    else if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem == null && gameState.Scene.CameraManager.ActiveCamera != null)
+                    else if (application.Window.IsMouseCaptured() && inventory.ActiveBarItem == null && GameState.Scene.CameraManager.ActiveCamera != null)
                     {
                         RigidBody rb;
                         JVector n;
                         float f;
-                        gameState.PhysicsManager.World.CollisionSystem.Raycast(
+                        GameState.PhysicsManager.World.CollisionSystem.Raycast(
                             player.GetComponent<TransformComponent>().Position.ToJitterVector(),
-                            Vector3.Transform(Vector3.UnitZ, gameState.Scene.CameraManager.ActiveCamera.Rotation).ToJitterVector() * 20,
+                            Vector3.Transform(Vector3.UnitZ, GameState.Scene.CameraManager.ActiveCamera.Rotation).ToJitterVector() * 20,
                             new Jitter.Collision.RaycastCallback((body, normal, fraction) => {
                                 var entity = body.Tag as Entity;
                                 return entity != null && entity.Name.Contains ("wall") && fraction < 1 && !entity.GetComponent<WallComponent> ().IsEdge;
@@ -1081,7 +1128,7 @@ namespace FreezingArcher.Game
                         if (btn != null)
                         {
                             dropItem(invBtn, btn.Item, inventory);
-                            MessageCreated(new ItemUseMessage(player, gameState.Scene, btn.Item,
+                            MessageCreated(new ItemUseMessage(player, GameState.Scene, btn.Item,
                                 ItemUsage.Throwable));
                         }
                     }
@@ -1099,9 +1146,9 @@ namespace FreezingArcher.Game
 
             if (msg.MessageId == (int) MessageId.Update)
             {
-                var physics = gameState.PhysicsManager;
+                var physics = GameState.PhysicsManager;
                 var transform = player.GetComponent<TransformComponent>();
-                var camera = gameState.Scene.CameraManager.ActiveCamera;
+                var camera = GameState.Scene.CameraManager.ActiveCamera;
 
                 if (camera == null)
                     return;

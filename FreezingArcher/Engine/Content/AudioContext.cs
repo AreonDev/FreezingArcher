@@ -28,7 +28,7 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Content;
 
-namespace FreezingArcher.Audio
+namespace FreezingArcher.Content
 {
     public enum SoundAction
     {
@@ -67,7 +67,49 @@ namespace FreezingArcher.Audio
             MessageProvider += this;
         }
 
-        public Filter GlobalFilter { get; set; }
+        private Filter _GlobalFilter;
+
+        public Filter GlobalFilter 
+        { 
+            get
+            {
+                return _GlobalFilter;
+            }
+
+            set
+            {
+                _GlobalFilter = value;
+
+                foreach (List<SoundSourceDescription> ssds in SoundDictionary.Values)
+                {
+                    ssds.ForEach (x => x.SoundSource.Filter = _GlobalFilter);
+                }
+            }
+        }
+
+        public void StopAllSounds()
+        {
+            foreach (List<SoundSourceDescription> ssds in SoundDictionary.Values)
+            {
+                ssds.ForEach (x => x.SoundSource.Stop ());
+            }
+        }
+
+        public void PauseAllSounds()
+        {
+            foreach (List<SoundSourceDescription> ssds in SoundDictionary.Values)
+            {
+                ssds.ForEach (x => x.SoundSource.Pause ());
+            }
+        }
+
+        public void ReplayAllPausedSounds()
+        {
+            foreach (List<SoundSourceDescription> ssds in SoundDictionary.Values)
+            {
+                ssds.ForEach (x => {if(x.SoundSource.GetState() == SourceState.Paused) x.SoundSource.Play ();});
+            }
+        }
 
         #region IMessageConsumer implementation
 

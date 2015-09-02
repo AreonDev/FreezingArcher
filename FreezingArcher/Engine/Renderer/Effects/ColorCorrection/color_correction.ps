@@ -132,7 +132,24 @@ vec4 hueSatLig (vec4 color, float h, float s, float l)
 
 vec4 brightnessContrast(vec4 color, float b, float c)
 {
-        return vec4((color.rgb - 0.5) * c + 0.5 + b, color.a);
+        vec4 new_color = vec4((color.rgb - 0.5) * c + 0.5 + b, color.a);
+
+        if (new_color.r < 0)
+                new_color.r = 0;
+        else if (new_color.r > 1)
+                new_color.r = 1;
+        
+        if (new_color.g < 0)
+                new_color.g = 0;
+        else if (new_color.g > 1)
+                new_color.g = 1;
+
+        if (new_color.b < 0)
+                new_color.b = 0;
+        else if (new_color.b > 1)
+                new_color.b = 1;
+        
+        return new_color;
 }
 
 vec4 addGamma(vec4 color, float g)

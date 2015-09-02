@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Linq;
 using FreezingArcher.Content;
 using System.Collections.Generic;
 using FreezingArcher.Math;
@@ -29,11 +30,20 @@ using FreezingArcher.Output;
 using Jitter.Dynamics;
 using FreezingArcher.Core;
 using Jitter.LinearMath;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game.AI
 {
     public sealed class PassusAI : ArtificialIntelligence
     {
+        public PassusAI (Entity entity, GameState state, CompositorColorCorrectionNode colorCorrectionNode)
+        {
+            this.entity = entity;
+            this.state = state;
+            this.colorCorrectionNode = colorCorrectionNode;
+            AIcomp = entity.GetComponent<ArtificialIntelligenceComponent>();
+        }
+
         const float acceleration = 0.1f;
 
         const float speed = 4f;
@@ -47,6 +57,13 @@ namespace FreezingArcher.Game.AI
         JVector direction;
 
         JVector fallback;
+
+        readonly GameState state;
+        readonly Entity entity;
+        readonly CompositorColorCorrectionNode colorCorrectionNode;
+        readonly ArtificialIntelligenceComponent AIcomp;
+
+        bool do_reset = false;
 
         public override void Think (PhysicsComponent ownPhysics, HealthComponent ownHealth, object map,
             List<Entity> entitiesNearby)
@@ -83,6 +100,25 @@ namespace FreezingArcher.Game.AI
                     {
                         direction += temp_direction * max_distance;
                     }
+                }
+
+                var player = entitiesNearby.FirstOrDefault (e => e.Name == "player");
+                if (player != null)
+                {
+                    do_reset = true;
+                    var player_pos = player.GetComponent<TransformComponent>().Position;
+                    var ghost_pos = ownPhysics.RigidBody.Position.ToFreezingArcherVector();
+                    float distance;
+                    Vector3.Distance(ref player_pos, ref ghost_pos, out distance);
+                    float fac = ((AIcomp.MaximumEntityDistance - distance) / AIcomp.MaximumEntityDistance);
+                    colorCorrectionNode.Brightness = -fac / 4;
+
+                    direction += (player_pos - ghost_pos).ToJitterVector ();
+                }
+                else if (do_reset)
+                {
+                    do_reset = false;
+                    colorCorrectionNode.Brightness = 0;
                 }
 
                 if (direction.Length() > 0.1)

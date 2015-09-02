@@ -1,0 +1,25 @@
+﻿#version 410
+
+layout(location = 1) in vec2 InTexCoord;
+
+layout(location = 0) out vec4 frag_color;
+
+uniform sampler2D input;
+uniform sampler2D warpTexture;
+uniform float warpFactor;
+uniform float timer;
+ 
+void main() {
+        vec3 warpVector;
+        vec2 displacement;
+
+        displacement = InTexCoord.st;
+
+        displacement.x += timer;
+        displacement.y -= timer;
+
+        warpVector = normalize(texture2D(warpTexture, displacement.xy).xyz);
+        warpVector = (warpVector * 2.0 - 1.0) * warpFactor;
+        
+        frag_color = texture2D(input, InTexCoord.st + warpVector.xy);
+}

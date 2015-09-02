@@ -362,8 +362,21 @@ namespace FreezingArcher.Audio
         /// Gets or sets the filter.
         /// </summary>
         /// <value>The filter.</value>
-        public Filter Filter { get; set;}
+        public Filter Filter
+        {
+            get
+            {
+                return this.filter;
+            }
+            set
+            {
+                this.filter = value;
+                AL.Source(this.AlSourceId, ALSourcei.EfxDirectFilter, Filter == null ? 0 : (int)Filter.ALID);
+            }
+        }
 
+
+        private Filter filter;
         /// <summary>
         /// Gets or sets a value indicating whether the position, velocity, cone and direction of this
         /// <see cref="FreezingArcher.Audio.Source"/> are to be interpreted relative to the listener position.

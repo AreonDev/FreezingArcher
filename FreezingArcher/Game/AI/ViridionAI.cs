@@ -31,6 +31,7 @@ using Jitter.Dynamics;
 using FreezingArcher.Core;
 using Jitter.LinearMath;
 using FreezingArcher.Renderer.Compositor;
+using FreezingArcher.Game.Ghosts;
 
 namespace FreezingArcher.Game.AI
 {
@@ -143,9 +144,8 @@ namespace FreezingArcher.Game.AI
                 else if (do_reset)
                 {
                     do_reset = false;
-                    colorCorrectionNode.Contrast = 1;
-                    colorCorrectionNode.Brightness = 0;
-                    gameState.Scene.CameraManager.ActiveCamera.Fov = MathHelper.PiOver3;
+                    colorCorrectionNode.Saturation = 0;
+                    colorCorrectionNode.Lightness = 0;
                 }
             }
         }

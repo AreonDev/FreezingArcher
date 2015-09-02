@@ -70,8 +70,10 @@ namespace FreezingArcher.Game.Ghosts
 
             state.PhysicsManager.World.AddBody (scobisBody);
 
-            scobisEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
-            scobisEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence = new ScobisAI ();
+            var AIcomp = scobisEntity.GetComponent<ArtificialIntelligenceComponent>();
+            AIcomp.AIManager = aiManager;
+            AIcomp.ArtificialIntelligence = new ScobisAI (paremitter.Smoke, scobisEntity, state);
+            AIcomp.MaximumEntityDistance = 30;
             aiManager.RegisterEntity (scobisEntity);
         }
 

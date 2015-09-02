@@ -142,8 +142,8 @@ namespace FreezingArcher.Content
             JVector vec = pc.RigidBody.LinearVelocity;
             vec.Y = 0.0f;
 
-                if (vec.Length() > speed)
-                    vec *= (1.0f / vec.Length()) * (speed);
+            if (vec.Length() > speed)
+                vec *= (1.0f / vec.Length()) * (speed);
 
             pc.RigidBody.LinearVelocity = new JVector(vec.X, pc.RigidBody.LinearVelocity.Y, vec.Z);
 

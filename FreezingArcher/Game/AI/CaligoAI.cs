@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Linq;
 using FreezingArcher.Content;
 using System.Collections.Generic;
 using FreezingArcher.Math;
@@ -29,11 +30,20 @@ using FreezingArcher.Output;
 using Jitter.Dynamics;
 using FreezingArcher.Core;
 using Jitter.LinearMath;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game.AI
 {
     public sealed class CaligoAI : ArtificialIntelligence
     {
+        public CaligoAI (Entity entity, GameState state, CompositorWarpingNode warpingNode)
+        {
+            this.entity = entity;
+            this.state = state;
+            this.warpingNode = warpingNode;
+            this.AIcomp = entity.GetComponent<ArtificialIntelligenceComponent>();
+        }
+
         const float acceleration = 0.2f;
 
         const float speed = 5f;
@@ -47,6 +57,15 @@ namespace FreezingArcher.Game.AI
         JVector direction;
 
         JVector fallback;
+
+        readonly Entity entity;
+        readonly GameState state;
+        readonly ArtificialIntelligenceComponent AIcomp;
+        readonly CompositorWarpingNode warpingNode;
+
+        bool do_reset= false;
+
+        Entity temp_player;
 
         public override void Think (PhysicsComponent ownPhysics, HealthComponent ownHealth, object map,
             List<Entity> entitiesNearby)
@@ -108,6 +127,34 @@ namespace FreezingArcher.Game.AI
 
                 ownPhysics.RigidBody.Position = new JVector (ownPhysics.RigidBody.Position.X, height,
                     ownPhysics.RigidBody.Position.Z);
+
+                var player = entitiesNearby.FirstOrDefault (e => e.Name == "player");
+
+                if (player != null)
+                {
+                    do_reset = true;
+                    var player_pos = player.GetComponent<TransformComponent>().Position;
+                    var ghost_pos = ownPhysics.RigidBody.Position.ToFreezingArcherVector();
+                    float distance;
+                    Vector3.Distance(ref player_pos, ref ghost_pos, out distance);
+                    float fac = ((AIcomp.MaximumEntityDistance - distance) / AIcomp.MaximumEntityDistance);
+                    //warpingNode.WarpFactor = fac / 10;
+
+                    var playerRigidBody = player.GetComponent<PhysicsComponent>().RigidBody;
+                    if (playerRigidBody != null)
+                        playerRigidBody.Material.StaticFriction = fac;
+                    
+                    //player.GetComponent<HealthComponent>().Health -= fac * 40;
+
+                    temp_player = player;
+                }
+                else if (do_reset)
+                {
+                    do_reset = false;
+                    warpingNode.WarpFactor = 0;
+                    if (temp_player != null)
+                        temp_player.GetComponent<PhysicsComponent>().RigidBody.Material.StaticFriction = 0;
+                }
             }
         }
 

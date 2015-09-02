@@ -130,7 +130,7 @@ namespace FreezingArcher.Game.AI
                     ownPhysics.RigidBody.Position.Z);
 
                 var player = entitiesNearby.FirstOrDefault (e => e.Name == "player");
-                if (player != null)
+                if (player != null && gameState.Scene.CameraManager.ActiveCamera != null)
                 {
                     do_reset = true;
                     var player_pos = player.GetComponent<TransformComponent>().Position;

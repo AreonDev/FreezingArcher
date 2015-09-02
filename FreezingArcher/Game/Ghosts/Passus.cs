@@ -27,6 +27,7 @@ using Jitter.Dynamics;
 using Jitter.Collision.Shapes;
 using FreezingArcher.Renderer;
 using FreezingArcher.Game.AI;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game.Ghosts
 {
@@ -34,39 +35,41 @@ namespace FreezingArcher.Game.Ghosts
     {
         public static int InstanceCount = 0;
 
-        public Passus (GameState state, AIManager aiManager, RendererContext rendererContext)
+        public Passus (CompositorColorCorrectionNode colorCorrectionNode,
+            GameState state, AIManager aiManager, RendererContext rendererContext)
         {
-            ghostEmitter = new PassusGhostParticleEmitter ();
+            passusEmitter = new PassusGhostParticleEmitter ();
 
-            particleGhost = new ParticleSceneObject (ghostEmitter.ParticleCount);
-            particleGhost.Priority = 7001;
-            state.Scene.AddObject (particleGhost);
-            ghostEmitter.Init (particleGhost, rendererContext);
+            particlePassus = new ParticleSceneObject (passusEmitter.ParticleCount);
+            particlePassus.Priority = 7001;
+            state.Scene.AddObject (particlePassus);
+            passusEmitter.Init (particlePassus, rendererContext);
 
-            ghostEntity = EntityFactory.Instance.CreateWith ("Passus." + InstanceCount++, state.MessageProxy,
+            passusEntity = EntityFactory.Instance.CreateWith ("Passus." + InstanceCount++, state.MessageProxy,
                 new[] { typeof (ArtificialIntelligenceComponent) },
                 new[] { typeof (ParticleSystem), typeof (PhysicsSystem) });
 
-            ghostEntity.GetComponent<ParticleComponent> ().Emitter = ghostEmitter;
-            ghostEntity.GetComponent<ParticleComponent> ().Particle = particleGhost;
+            passusEntity.GetComponent<ParticleComponent> ().Emitter = passusEmitter;
+            passusEntity.GetComponent<ParticleComponent> ().Particle = particlePassus;
 
             RigidBody passusBody = new RigidBody (new SphereShape (1.2f));
             passusBody.AffectedByGravity = false;
             passusBody.AllowDeactivation = false;
             passusBody.Mass = 20;
-            ghostEntity.GetComponent<PhysicsComponent> ().RigidBody = passusBody;
-            ghostEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-            ghostEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
+            passusEntity.GetComponent<PhysicsComponent> ().RigidBody = passusBody;
+            passusEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+            passusEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (passusBody);
 
-            ghostEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
-            ghostEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence = new PassusAI ();
-            aiManager.RegisterEntity (ghostEntity);
+            var AIcomp = passusEntity.GetComponent<ArtificialIntelligenceComponent>();
+            AIcomp.AIManager = aiManager;
+            AIcomp.ArtificialIntelligence = new PassusAI (passusEntity, state, colorCorrectionNode);
+            aiManager.RegisterEntity (passusEntity);
         }
 
-        readonly Entity ghostEntity;
-        readonly ParticleSceneObject particleGhost;
-        readonly PassusGhostParticleEmitter ghostEmitter;
+        readonly Entity passusEntity;
+        readonly ParticleSceneObject particlePassus;
+        readonly PassusGhostParticleEmitter passusEmitter;
     }
 }

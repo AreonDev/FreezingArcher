@@ -27,6 +27,7 @@ using Jitter.Dynamics;
 using Jitter.Collision.Shapes;
 using FreezingArcher.Game.AI;
 using FreezingArcher.Renderer;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game.Ghosts
 {
@@ -34,7 +35,8 @@ namespace FreezingArcher.Game.Ghosts
     {
         public static int InstanceCount = 0;
 
-        public Caligo (GameState state, AIManager aiManager, RendererContext rendererContext)
+        public Caligo (GameState state, AIManager aiManager, RendererContext rendererContext,
+            CompositorWarpingNode warpingNode)
         {
             caligoEmitter = new CaligoParticleEmitter ();
             particleCaligo = new ParticleSceneObject (caligoEmitter.ParticleCount);
@@ -59,8 +61,9 @@ namespace FreezingArcher.Game.Ghosts
 
             state.PhysicsManager.World.AddBody (caligoBody);
 
-            caligoEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
-            caligoEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence = new CaligoAI ();
+            var AIcomp = caligoEntity.GetComponent<ArtificialIntelligenceComponent>();
+            AIcomp.AIManager = aiManager;
+            AIcomp.ArtificialIntelligence = new CaligoAI (caligoEntity, state, warpingNode);
             aiManager.RegisterEntity (caligoEntity);
         }
 

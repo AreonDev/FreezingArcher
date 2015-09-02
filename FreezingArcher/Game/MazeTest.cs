@@ -60,6 +60,7 @@ namespace FreezingArcher.Game
         CompositorImageOverlayNode HealthOverlayNode;
         CompositorColorCorrectionNode ColorCorrectionNode;
         CompositorNodeOutput OutputNode;
+        CompositorWarpingNode warpingNode;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
@@ -96,6 +97,8 @@ namespace FreezingArcher.Game
             HealthOverlayNode.OverlayTexture = rendererContext.CreateTexture2D ("bloodsplatter", true, "Content/bloodsplatter.png");
             HealthOverlayNode.Factor = 0;
             HealthOverlayNode.Blending = OverlayBlendMode.Multiply;
+            warpingNode = new CompositorWarpingNode (rendererContext, messageProvider);
+            warpingNode.WarpTexture = rendererContext.CreateTexture2D("warp", true, "Content/warp.jpg");
 
             game.MazeSceneNode = MazeSceneNode;
 
@@ -130,10 +133,12 @@ namespace FreezingArcher.Game
             Compositor.AddNode (OutputNode);
             Compositor.AddNode (HealthOverlayNode);
             Compositor.AddNode (ColorCorrectionNode);
+            Compositor.AddNode (warpingNode);
 
             Compositor.AddConnection (MazeSceneNode, HealthOverlayNode, 0, 0);
             Compositor.AddConnection (HealthOverlayNode, ColorCorrectionNode, 0, 0);
-            Compositor.AddConnection (ColorCorrectionNode, OutputNode, 0, 0);
+            Compositor.AddConnection (ColorCorrectionNode, warpingNode, 0, 0);
+            Compositor.AddConnection (warpingNode, OutputNode, 0, 0);
 
             rendererContext.Compositor = Compositor;
 
@@ -198,7 +203,7 @@ namespace FreezingArcher.Game
 
             for (int i = 0; i < CaligoCount; i++)
             {
-                CaligoInstances.Add (new Caligo (state, maze[0].AIManager, rendererContext));
+                CaligoInstances.Add (new Caligo (state, maze[0].AIManager, rendererContext, warpingNode));
             }
 
             for (int i = 0; i < ViridionCount; i++)
@@ -237,12 +242,12 @@ namespace FreezingArcher.Game
 
             for (int i = 0; i < CaligoCount; i++)
             {
-                CaligoInstances.Add (new Caligo (state, maze[1].AIManager, rendererContext));
+                CaligoInstances.Add (new Caligo (state, maze[1].AIManager, rendererContext, warpingNode));
             }
 
             for (int i = 0; i < PassusCount; i++)
             {
-                PassusInstances.Add (new Passus (state, maze[1].AIManager, rendererContext));
+                PassusInstances.Add (new Passus (ColorCorrectionNode, state, maze[1].AIManager, rendererContext));
             }
         }
 

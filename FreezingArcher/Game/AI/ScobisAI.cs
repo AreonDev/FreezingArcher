@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using System;
+using System.Linq;
 using FreezingArcher.Content;
 using System.Collections.Generic;
 using FreezingArcher.Math;
@@ -29,11 +30,20 @@ using FreezingArcher.Output;
 using Jitter.Dynamics;
 using FreezingArcher.Core;
 using Jitter.LinearMath;
+using System.Net.NetworkInformation;
 
 namespace FreezingArcher.Game.AI
 {
     public sealed class ScobisAI : ArtificialIntelligence
     {
+        public ScobisAI (ScobisSmokeParticleEmitter smokeParticleEmitter, Entity entity, GameState state)
+        {
+            this.smokeParticleEmitter = smokeParticleEmitter;
+            this.entity = entity;
+            this.state = state;
+            AIcomp = entity.GetComponent<ArtificialIntelligenceComponent>();
+        }
+
         const float acceleration = 0.1f;
 
         const float speed = 3f;
@@ -47,6 +57,17 @@ namespace FreezingArcher.Game.AI
         JVector direction;
 
         JVector fallback;
+
+        readonly ScobisSmokeParticleEmitter smokeParticleEmitter;
+        readonly Entity entity;
+        readonly GameState state;
+        readonly ArtificialIntelligenceComponent AIcomp;
+
+        bool do_reset = false;
+
+        DateTime lastDamage;
+
+        const float degInRad = 15 * MathHelper.Pi / 180;
 
         public override void Think (PhysicsComponent ownPhysics, HealthComponent ownHealth, object map,
             List<Entity> entitiesNearby)
@@ -85,6 +106,18 @@ namespace FreezingArcher.Game.AI
                     }
                 }
 
+                foreach (var light in state.Scene.Lights)
+                {
+                    var temp = ownPhysics.RigidBody.Position.ToFreezingArcherVector () - light.PointLightPosition;
+                    if (temp.LengthSquared < 400 && light.On)
+                    {
+                        if (Vector3.CalculateAngle (temp, light.DirectionalLightDirection) < degInRad)
+                        {
+                            direction += new JVector (temp.X * 20, 0, temp.Z * 20);
+                        }
+                    }
+                }
+
                 if (direction.Length() > 0.1)
                     direction.Normalize();
                 else
@@ -108,6 +141,39 @@ namespace FreezingArcher.Game.AI
 
                 ownPhysics.RigidBody.Position = new JVector (ownPhysics.RigidBody.Position.X, height,
                     ownPhysics.RigidBody.Position.Z);
+
+                var player = entitiesNearby.FirstOrDefault (e => e.Name == "player");
+                if (player != null)
+                {
+                    do_reset = true;
+                    var player_pos = player.GetComponent<TransformComponent>().Position;
+
+                    bool damage = false;
+                    foreach (var particle in smokeParticleEmitter.Particles)
+                    {
+                        if ((player_pos - particle.Position).LengthSquared < 4)
+                        {
+                            damage = true;
+                            break;
+                        }
+                    }
+
+                    if (damage && (DateTime.Now - lastDamage).TotalSeconds > 2)
+                    {
+                        var ghost_pos = ownPhysics.RigidBody.Position.ToFreezingArcherVector();
+                        float distance;
+                        Vector3.Distance(ref player_pos, ref ghost_pos, out distance);
+
+                        float fac = ((AIcomp.MaximumEntityDistance - distance) / AIcomp.MaximumEntityDistance);
+                        var player_health = player.GetComponent<HealthComponent>();
+                        player_health.Health -= fac * 20;
+                        lastDamage = DateTime.Now;
+                    }
+                }
+                else if (do_reset)
+                {
+                    do_reset = false;
+                }
             }
         }
 

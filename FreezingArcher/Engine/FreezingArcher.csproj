@@ -98,7 +98,9 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Package>xbuild12</Package>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -436,6 +438,7 @@
     <Compile Include="Audio\AudioContext.cs" />
     <Compile Include="Messaging\PlayerMoveMessage.cs" />
     <Compile Include="Messaging\EndWallMovementMessage.cs" />
+    <Compile Include="Renderer\Compositor\CompositorWarpingNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">
@@ -677,10 +680,13 @@
     <None Include="Renderer\TestGraphics\UnderworldCeiling\underworld_ceiling.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Renderer\Effects\ColorCorrection\color_correction.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Renderer\Effects\ImageOverlay\overlay.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Renderer\Effects\ColorCorrection\color_correction.ps">
+    <None Include="Renderer\Effects\Warping\warping.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -700,6 +706,7 @@
     <Folder Include="Renderer\TestGraphics\UnderworldCeiling\" />
     <Folder Include="Renderer\Effects\ImageOverlay\" />
     <Folder Include="Renderer\Effects\ColorCorrection\" />
+    <Folder Include="Renderer\Effects\Warping\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

@@ -6,6 +6,9 @@
     <string name="drop">Drop</string>
     <string name="use">Use</string>
     <string name="rotate">Rotate</string>
+    <string name="pause">Pause</string>
+    <string name="back_to_game">Back to game</string>
+    <string name="quit_game">Quit game</string>
     <string name="flashlight_description">
         Use the flashlight to shed some light into the dark.
         Some creatures may not like the light. Take care

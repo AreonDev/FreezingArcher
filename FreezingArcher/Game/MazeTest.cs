@@ -481,12 +481,11 @@ namespace FreezingArcher.Game
             {
                 if (im.IsActionPressed ("frame"))
                 {
-                    SwitchMaze();
+                    //SwitchMaze();
                 }
 
                 if (im.IsActionPressed ("frame"))
                 {
-                    /*
                     if (lighting)
                     {
                         var state = game.CurrentGameState;
@@ -502,7 +501,7 @@ namespace FreezingArcher.Game
                         state.Scene.AmbientIntensity = 0.35f;
                         //light1.PointLightLinearAttenuation = 0.01f;
                         lighting = true;
-                    }*/
+                    }
                 }
 
                 if (im.IsActionPressed("damage"))

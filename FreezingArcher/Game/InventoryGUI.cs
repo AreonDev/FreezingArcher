@@ -1058,7 +1058,7 @@ namespace FreezingArcher.Game
                     inventory.SetActiveBarItem(8);
                 }
 
-                if (im.IsActionPressed("close") && window.IsVisible)
+                if (im.IsActionPressed("pause") && window.IsVisible)
                 {
                     window.Hide();
                     application.Window.CaptureMouse();

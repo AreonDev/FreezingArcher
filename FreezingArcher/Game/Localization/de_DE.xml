@@ -6,6 +6,9 @@
     <string name="drop">Wegwerfen</string>
     <string name="use">Benutzen</string>
     <string name="rotate">Drehen</string>
+    <string name="pause">Pause</string>
+    <string name="back_to_game">Zurück zum Spiel</string>
+    <string name="quit_game">Spiel beenden</string>
     <string name="flashlight_description">
         Nutze die Taschenlampe um etwas Licht in die
         Dunkelheit zu bringen. Einige Kreaturen werden

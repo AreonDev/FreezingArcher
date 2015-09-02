@@ -59,7 +59,7 @@ namespace FreezingArcher.Input
             Keys.Add ("frame", Key.F); 
             Keys.Add ("sneek", Key.LeftShift);
             Keys.Add ("run", Key.LeftControl);
-            Keys.Add ("close", Key.Escape);
+            Keys.Add ("pause", Key.Escape);
             Keys.Add ("jump", Key.Space);
             Keys.Add ("camera", Key.C);
             Keys.Add ("fullscreen", Key.F11);

@@ -50,6 +50,7 @@ namespace FreezingArcher.Game.Maze
             SecondMaze = secondMaze;
             this.GameState = state;
             rand = new Random(maze.Seed);
+            this.containsPortal = containsPortal;
 
             ValidMessages = new[] { (int) MessageId.Update };
 

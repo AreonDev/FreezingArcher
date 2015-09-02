@@ -45,6 +45,8 @@ namespace FreezingArcher.Renderer
     {
         public Gwen.Renderer.Base GwenRenderer { get; private set;}
         public Gwen.Skin.TexturedBase Skin { get; private set;}
+
+        public Gwen.Control.Canvas _PrivateCanvas;
         public Gwen.Control.Canvas Canvas{ get; private set;}
 
         private class RCActionInitSceneObject : RCAction
@@ -112,8 +114,30 @@ namespace FreezingArcher.Renderer
             GwenRenderer = new Gwen.Renderer.FreezingArcherGwenRenderer(this);
             Skin = new Gwen.Skin.TexturedBase(GwenRenderer, "lib/UI/Skins/NoWayOutSkin.png");
             Canvas = new Gwen.Control.Canvas(Skin);
+            _PrivateCanvas = Canvas;
 
             return true;
+        }
+
+        public Canvas CreateCanvas()
+        {
+            return new Canvas (Skin);
+        }
+
+        public void DestroyCanvas(Canvas canvas)
+        {
+            if (Canvas == canvas)
+                SetCanvas (null);
+
+            canvas.Dispose ();
+        }
+
+        public void SetCanvas(Canvas canvas)
+        {
+            if (canvas == null)
+                Canvas = _PrivateCanvas;
+            else
+                Canvas = canvas;
         }
 
         public Model LoadModel(string path)

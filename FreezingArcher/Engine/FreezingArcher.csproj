@@ -437,6 +437,8 @@
     <Compile Include="Messaging\EndWallMovementMessage.cs" />
     <Compile Include="Renderer\Compositor\CompositorWarpingNode.cs" />
     <Compile Include="Content\AudioContext.cs" />
+    <Compile Include="Messaging\GameEndedMessage.cs" />
+    <Compile Include="Messaging\GameEndedDiedMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

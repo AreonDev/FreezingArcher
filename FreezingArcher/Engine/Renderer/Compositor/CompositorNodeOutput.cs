@@ -33,6 +33,8 @@ namespace FreezingArcher.Renderer.Compositor
 
         public bool EnableUI{ get; set;}
 
+        public Texture2D OutputTexture { get; private set;}
+
         #region implemented abstract members of CompositorNode
 
         public override void ConfigureSlots()
@@ -61,6 +63,8 @@ namespace FreezingArcher.Renderer.Compositor
                 spr.CustomEffect = false;
 
                 PrivateRendererContext.DrawSpriteAbsolute(spr);
+
+                OutputTexture = InputSlots [0].SlotTexture;
             }
 
             PrivateRendererContext.EnableDepthTest(true);

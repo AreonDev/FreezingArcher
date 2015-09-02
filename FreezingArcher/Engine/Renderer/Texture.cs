@@ -104,6 +104,34 @@ namespace FreezingArcher.Renderer
             Height = height;
         }
 
+        public Texture2D Copy()
+        {
+            Texture2D tex = Renderer.CreateTexture2D (this.Name + "_Copy", this.Width, this.Height, false, IntPtr.Zero);
+
+            FrameBuffer framebuffer = Renderer.CreateFrameBuffer ("bla_temp_fb");
+            framebuffer.AddTexture (tex, FrameBuffer.AttachmentUsage.Color0);
+
+            framebuffer.UseAttachments (new FrameBuffer.AttachmentUsage[]{ FrameBuffer.AttachmentUsage.Color0 });
+            framebuffer.Bind (FrameBuffer.FrameBufferTarget.Both);
+
+            framebuffer.Unbind ();
+
+            Sprite spr = new Sprite ();
+            spr.Init (this);
+
+            spr.RelativePosition = new FreezingArcher.Math.Vector2 (0.0f, 0.0f);
+
+            Renderer.DrawSpriteRelative (spr);
+
+            spr.Destroy ();
+
+            framebuffer.Unbind ();
+
+            Renderer.DeleteGraphicsResourceAsync (framebuffer);
+
+            return tex;
+        }
+
         public FreezingArcher.Math.Color4 GetPixelColor(int x, int y)
         {
             FreezingArcher.Math.Color4 col;

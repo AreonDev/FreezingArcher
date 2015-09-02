@@ -49,6 +49,7 @@ namespace FreezingArcher.Game
         const int ViridionCount = 2;
         const int GhostCount = 3;
 
+        EndScreen     endScreen;
         LoadingScreen loadingScreen;
         Gwen.ControlInternal.Text FPS_Text;
 
@@ -122,6 +123,12 @@ namespace FreezingArcher.Game
             loadingScreen = new LoadingScreen (application, messageProvider, "loading.png",
                 "MazeLoadingScreen",
                 to: new[] { new Tuple<string, GameStateTransition> (state.Name, new GameStateTransition (0)) });
+
+            endScreen = new EndScreen (application, rendererContext, new Tuple<string, GameStateTransition>[]
+            {
+                new Tuple<string, GameStateTransition>("maze_overworld", GameStateTransition.DefaultTransition),
+                new Tuple<string, GameStateTransition>("maze_underworld", GameStateTransition.DefaultTransition)
+            });
 
             game.SwitchToGameState ("MazeLoadingScreen");
 
@@ -506,8 +513,12 @@ namespace FreezingArcher.Game
 
                 if (im.IsActionPressed("damage"))
                 {
-                    var healthComponent = Player.GetComponent<HealthComponent>();
-                    healthComponent.Health -= 10;
+                    endScreen.State.Scene = game.CurrentGameState.Scene;
+
+                    game.SwitchToGameState ("endscreen_state");
+
+                    if (MessageCreated != null)
+                        MessageCreated (new GameEndedMessage ());
                 }
             }
 

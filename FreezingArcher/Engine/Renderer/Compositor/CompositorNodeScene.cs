@@ -160,6 +160,8 @@ namespace FreezingArcher.Renderer.Compositor
                     DrawPostSceneObjects();
 
                     PrivateRendererContext.EnableDepthMaskWriting(true);
+
+                    Scene.DoPostSceneRendering ();
                 }
             }
         }
@@ -283,8 +285,13 @@ namespace FreezingArcher.Renderer.Compositor
                     //Find name for SceneObjectArray....
                     bool array = (obj.GetName() == "SceneObjectArray");
 
-                    Vector3 dir = obj.Position - Scene.CameraManager.ActiveCamera.Position;
-                    float length = dir.Length;
+                    float length = 0.0f;
+
+                    if (Scene.CameraManager.ActiveCamera != null)
+                    {
+                        Vector3 dir = obj.Position - Scene.CameraManager.ActiveCamera.Position;
+                        length = dir.Length;
+                    }
 
                     if (obj.Priority <= 5000)
                         obj.Update();

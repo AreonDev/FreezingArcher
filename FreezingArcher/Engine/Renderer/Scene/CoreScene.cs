@@ -92,6 +92,8 @@ namespace FreezingArcher.Renderer.Scene
         private List<SceneObject> Objects;
         public List<CoreScene> SubScenes;
 
+        public event Action PostSceneRendering;
+
         private RendererContext PrivateRendererContext;
         public bool IsInitialized { get; private set;}
 
@@ -251,6 +253,8 @@ namespace FreezingArcher.Renderer.Scene
 
             Active = true;
 
+            PostSceneRendering = null;
+
             DistanceFogIntensity = 0.08f;
             DistanceFogColor = FreezingArcher.Math.Color4.Black;
 
@@ -305,6 +309,12 @@ namespace FreezingArcher.Renderer.Scene
             while (!IsInitialized) System.Threading.Thread.Sleep(1);
 
             return true;
+        }
+
+        public void DoPostSceneRendering()
+        {
+            if (PostSceneRendering != null)
+                PostSceneRendering ();
         }
 
         #region IMessageConsumer implementation

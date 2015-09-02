@@ -512,6 +512,34 @@ namespace FreezingArcher.Renderer
             }
         }
 
+        public class RCActionCopyTexture : RCAction
+        {
+            public Texture2D Texture;
+
+            public Texture2D OutputTexture;
+            public bool OutputReady;
+
+            public RCActionCopyTexture(Texture2D tex)
+            {
+                Texture = tex;
+
+                OutputReady = false;
+                OutputTexture = null;
+            }
+
+            public RCActionDelegate Action
+            {
+                get
+                {
+                    return () =>
+                    {
+                        OutputTexture = Texture.Copy();
+                        OutputReady = true;
+                    };
+                }
+            }
+        }
+
 	private class RCActionCreateTexture2D : RCAction
         {
             private enum CreationParam

@@ -169,6 +169,10 @@ namespace FreezingArcher.Messaging
         PlayerSprint,
         PlayerMove,
         PlayerJump,
-        PlayerSneak
+        PlayerSneak,
+
+
+        GameEnded,
+        GameEndedDied
     }
 }

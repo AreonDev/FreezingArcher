@@ -78,7 +78,9 @@ namespace FreezingArcher.Game.Maze
                     state.MessageProxy, systems: systems);
                 var model = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/ground.xml");
                 entity.GetComponent<ModelComponent>().Model = model;
+
                 scnobjarr_ground.AddObject (model);
+                //state.Scene.AddObject(model);
 
                 var transform = entity.GetComponent<TransformComponent>();
                 transform.Position = worldPosition;
@@ -103,7 +105,9 @@ namespace FreezingArcher.Game.Maze
                     state.MessageProxy, new[] { typeof (HealthComponent), typeof(WallComponent) }, systems);
                 var model = new ModelSceneObject ("lib/Renderer/TestGraphics/Wall/wall.xml");
                 entity.GetComponent<ModelComponent>().Model = model;
+
                 scnobjarr_wall.AddObject (model);
+                //state.Scene.AddObject(model);
 
                 var transform = entity.GetComponent<TransformComponent>();
                 transform.Position = new Vector3 (worldPosition.X, -0.5f, worldPosition.Z);

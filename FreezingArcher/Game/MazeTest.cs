@@ -52,8 +52,6 @@ namespace FreezingArcher.Game
         LoadingScreen loadingScreen;
         Gwen.ControlInternal.Text FPS_Text;
 
-        public CoreScene Scene { get; private set; }
-
         BasicCompositor Compositor;
 
         CompositorNodeScene MazeSceneNode;
@@ -92,6 +90,7 @@ namespace FreezingArcher.Game
 
             MazeSceneNode = new CompositorNodeScene (rendererContext, messageProvider);
             OutputNode = new CompositorNodeOutput (rendererContext, messageProvider);
+            //OutputNode.EnableUI = false;
             ColorCorrectionNode = new CompositorColorCorrectionNode (rendererContext, messageProvider);
             HealthOverlayNode = new CompositorImageOverlayNode (rendererContext, messageProvider);
             HealthOverlayNode.OverlayTexture = rendererContext.CreateTexture2D ("bloodsplatter", true, "Content/bloodsplatter.png");
@@ -108,16 +107,15 @@ namespace FreezingArcher.Game
             state.Scene.SceneName = "MazeOverworld";
             state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.Fuchsia;
+            state.Scene.DistanceFogIntensity = 0.07f;
+            state.Scene.AmbientColor = Color4.White;
+            state.Scene.AmbientIntensity = 0.3f;
+            state.Scene.MaxRenderingDistance = 200.0f;
 
-            state.Scene.DistanceFogIntensity = 0.03f;
+
 
             state.AudioContext = new AudioContext (messageProvider);
 
-
-            state.Scene.AmbientColor = Color4.White;
-            state.Scene.AmbientIntensity = 0.70f; //0.3f
-
-            state.Scene.MaxRenderingDistance = 400.0f;
 
             state.MessageProxy.StartProcessing ();
 
@@ -224,8 +222,10 @@ namespace FreezingArcher.Game
             state.Scene.SceneName = "MazeUnderworld";
             state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.AliceBlue;
+            state.Scene.DistanceFogIntensity = 0.07f;
             state.Scene.AmbientColor = Color4.White;
-            state.Scene.AmbientIntensity = 0.7f;
+            state.Scene.AmbientIntensity = 0.3f;
+            state.Scene.MaxRenderingDistance = 200.0f;
 
             state.AudioContext = new AudioContext (messageProvider);
 
@@ -431,10 +431,10 @@ namespace FreezingArcher.Game
                     game.CurrentGameState.PhysicsManager.Update (um.TimeStamp);
 
                 if (application.FPSCounter >= 50)
-                    FPS_Text.TextColor = System.Drawing.Color.Green;
+                   FPS_Text.TextColor = System.Drawing.Color.Green;
                 else if (application.FPSCounter < 50 && application.FPSCounter > 30)
                     FPS_Text.TextColor = System.Drawing.Color.Yellow;
-                else
+               else
                     FPS_Text.TextColor = System.Drawing.Color.Red;
 
                 FPS_Text.String = application.FPSCounter + " FPS";

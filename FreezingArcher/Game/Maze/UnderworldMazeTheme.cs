@@ -61,11 +61,11 @@ namespace FreezingArcher.Game.Maze
 
             scnobjarr_ceiling = new SceneObjectArray ("ModelSceneObject_lib/Renderer/TestGraphics/UnderworldCeiling/underworld_ceiling.xml");
             scnobjarr_ceiling.LayoutLocationOffset = 10;
-            state.Scene.AddObject (scnobjarr_ceiling);
+            //state.Scene.AddObject (scnobjarr_ceiling);
 
             scnobjarr_wall.BeginPrepare ();
             scnobjarr_ground.BeginPrepare ();
-            scnobjarr_ceiling.BeginPrepare ();
+            //scnobjarr_ceiling.BeginPrepare ();
 
             systems = new[] { typeof (ModelSystem), typeof (PhysicsSystem) };
 
@@ -81,7 +81,9 @@ namespace FreezingArcher.Game.Maze
                     state.MessageProxy, systems: systems);
                 var model = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/underworld_ground.xml");
                 entity.GetComponent<ModelComponent>().Model = model;
+
                 scnobjarr_ground.AddObject (model);
+                //state.Scene.AddObject(model);
 
                 var transform = entity.GetComponent<TransformComponent>();
                 transform.Position = worldPosition;
@@ -117,7 +119,9 @@ namespace FreezingArcher.Game.Maze
                     state.MessageProxy, new[] { typeof (HealthComponent), typeof(WallComponent) }, systems);
                 var model = new ModelSceneObject ("lib/Renderer/TestGraphics/UnderworldWall/underworld_wall.xml");
                 entity.GetComponent<ModelComponent>().Model = model;
+
                 scnobjarr_wall.AddObject (model);
+                //state.Scene.AddObject(model);
 
                 var transform = entity.GetComponent<TransformComponent>();
                 transform.Position = new Vector3 (worldPosition.X, -0.5f, worldPosition.Z);
@@ -147,7 +151,7 @@ namespace FreezingArcher.Game.Maze
         {
             scnobjarr_wall.EndPrepare ();
             scnobjarr_ground.EndPrepare ();
-            scnobjarr_ceiling.EndPrepare ();
+            //scnobjarr_ceiling.EndPrepare ();
         }
 
         #endregion

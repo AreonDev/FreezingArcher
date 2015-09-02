@@ -780,7 +780,7 @@ namespace FreezingArcher.Game
 
             GameState.Scene.AddLight (light);
 
-            AddItem (flashlight, true);
+            AddItem (flashlight);
         }
 
         public InventoryGUI (Application application, GameState state, Entity player, MessageProvider messageProvider)

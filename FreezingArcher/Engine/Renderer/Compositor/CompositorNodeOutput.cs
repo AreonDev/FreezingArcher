@@ -31,7 +31,7 @@ namespace FreezingArcher.Renderer.Compositor
             EnableUI = true;
         }
 
-        bool EnableUI{ get; set;}
+        public bool EnableUI{ get; set;}
 
         #region implemented abstract members of CompositorNode
 

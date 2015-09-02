@@ -480,6 +480,16 @@ namespace FreezingArcher.Game
                     var healthComponent = Player.GetComponent<HealthComponent>();
                     var health = healthComponent.Health > 0 ? healthComponent.Health : 0;
                     ColorCorrectionNode.Saturation = -((healthComponent.MaximumHealth - health) / (healthComponent.MaximumHealth)) / 4;
+
+                    if (hcm.Health <= 0.0f)
+                    {
+                        endScreen.State.Scene = game.CurrentGameState.Scene;
+
+                        game.SwitchToGameState ("endscreen_state");
+
+                        if (MessageCreated != null)
+                            MessageCreated (new GameEndedDiedMessage ());
+                    }
                 }
             }
 
@@ -513,12 +523,7 @@ namespace FreezingArcher.Game
 
                 if (im.IsActionPressed("damage"))
                 {
-                    endScreen.State.Scene = game.CurrentGameState.Scene;
 
-                    game.SwitchToGameState ("endscreen_state");
-
-                    if (MessageCreated != null)
-                        MessageCreated (new GameEndedMessage ());
                 }
             }
 

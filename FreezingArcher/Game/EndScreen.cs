@@ -84,6 +84,8 @@ namespace FreezingArcher.Game
         {
             if (msg.MessageId == (int) MessageId.GameEnded || msg.MessageId == (int)MessageId.GameEndedDied)
             {
+                Application.Window.ReleaseMouse ();
+
                 Renderer.SetCanvas (Canvas);
                
 

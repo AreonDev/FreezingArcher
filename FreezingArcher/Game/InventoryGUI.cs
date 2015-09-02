@@ -794,8 +794,7 @@ namespace FreezingArcher.Game
                 (int) MessageId.UpdateLocale,
                 (int) MessageId.Input,
                 (int) MessageId.Update,
-                (int) MessageId.ActiveInventoryBarItemChanged,
-                (int) MessageId.HealthChanged
+                (int) MessageId.ActiveInventoryBarItemChanged
             };
             messageProvider += this;
             Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
@@ -987,16 +986,6 @@ namespace FreezingArcher.Game
                 }
             }
 
-            if (msg.MessageId == (int) MessageId.HealthChanged)
-            {
-                var hcm = msg as HealthChangedMessage;
-
-                if (hcm.Health < 0.0001f)
-                {
-                    Logger.Log.AddLogEntry(LogLevel.Info, "InventoryGUI", "You are dead!");
-                }
-            }
-
             if (msg.MessageId == (int) MessageId.Input)
             {
                 var im = msg as InputMessage;
@@ -1074,6 +1063,14 @@ namespace FreezingArcher.Game
 
                         if (entity.Name.Contains ("exit"))
                         {
+                            GameState endstate = application.Game.GetGameState ("endscreen_state");
+                            endstate.Scene = application.Game.CurrentGameState.Scene;
+
+                            application.Game.SwitchToGameState ("endscreen_state");
+
+                            if (MessageCreated != null)
+                                MessageCreated (new GameEndedMessage ());
+
                             Logger.Log.AddLogEntry(LogLevel.Info, "InventoryGUI", "Leaving maze...");
                             return;
                         }

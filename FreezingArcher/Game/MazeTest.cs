@@ -35,6 +35,8 @@ using Jitter.Dynamics;
 using Jitter.Collision.Shapes;
 using System.Collections.Generic;
 using FreezingArcher.Game.Ghosts;
+using FreezingArcher.Audio.Filters;
+using System.Security.Cryptography;
 
 namespace FreezingArcher.Game
 {

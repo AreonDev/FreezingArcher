@@ -32,6 +32,7 @@ using FreezingArcher.Core;
 using Jitter.LinearMath;
 using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Audio;
+using FreezingArcher.Audio.Filters;
 
 namespace FreezingArcher.Game.AI
 {
@@ -147,6 +148,13 @@ namespace FreezingArcher.Game.AI
                     
                     player.GetComponent<HealthComponent>().Health -= fac * 40;
 
+                    var lowpass = state.AudioContext.GlobalFilter as LowpassFilter;
+                    if (lowpass == null)
+                    {
+                        lowpass = new LowpassFilter ();
+                        state.AudioContext.GlobalFilter = lowpass;
+                    }
+                    lowpass.GainHF = (1 - fac) / 10;
                     temp_player = player;
                 }
                 else if (do_reset)
@@ -155,6 +163,11 @@ namespace FreezingArcher.Game.AI
                     warpingNode.WarpFactor = 0;
                     if (temp_player != null)
                         temp_player.GetComponent<PhysicsComponent>().RigidBody.Material.StaticFriction = 0;
+
+                    var lowpass = state.AudioContext.GlobalFilter as LowpassFilter;
+                    if (lowpass != null)
+                        lowpass.GainHF = 1;
+                    state.AudioContext.GlobalFilter = null;
                 }
             }
         }

@@ -67,6 +67,8 @@ namespace FreezingArcher.Audio
             MessageProvider += this;
         }
 
+        public Filter GlobalFilter { get; set; }
+
         #region IMessageConsumer implementation
 
         public void ConsumeMessage (IMessage msg)

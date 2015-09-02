@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Messaging;
+using FreezingArcher.Output;
 
 namespace FreezingArcher.Content
 {
@@ -43,6 +44,12 @@ namespace FreezingArcher.Content
 
         #endregion
 
+        /// <summary>
+        /// Gets or sets the maximum health.
+        /// </summary>
+        /// <value>The maximum health.</value>
+        public float MaximumHealth { get; set; }
+
         float health;
 
         /// <summary>
@@ -64,11 +71,5 @@ namespace FreezingArcher.Content
                 CreateMessage(new HealthChangedMessage (value, delta, Entity));
             }
         }
-
-        /// <summary>
-        /// Gets or sets the maximum health.
-        /// </summary>
-        /// <value>The maximum health.</value>
-        public float MaximumHealth { get; set; }
     }
 }

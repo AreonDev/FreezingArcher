@@ -780,7 +780,7 @@ namespace FreezingArcher.Game
 
             GameState.Scene.AddLight (light);
 
-            AddItem (flashlight);
+            AddItem (flashlight, true);
         }
 
         public InventoryGUI (Application application, GameState state, Entity player, MessageProvider messageProvider)
@@ -800,7 +800,7 @@ namespace FreezingArcher.Game
             Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
         }
 
-        public void AddItem (ItemComponent item, Vector2i position, bool insert = false)
+        public void AddItem (ItemComponent item, Vector2i position, bool insert = false, bool no_message = false)
         {
             if (insert)
                 inventory.Insert(item, position);
@@ -847,18 +847,18 @@ namespace FreezingArcher.Game
 
             item.Location = ItemLocation.Inventory;
 
-            if (MessageCreated != null)
+            if (MessageCreated != null && !no_message)
                 MessageCreated (new ItemCollectedMessage(item.Player, item, position));
 
             items.Add(btn);
         }
 
-        public void AddItem (ItemComponent item)
+        public void AddItem (ItemComponent item, bool no_message = false)
         {
             if (inventory.Insert(item))
             {
                 var pos = inventory.GetPositionOfItem(item);
-                AddItem(item, pos);
+                AddItem(item, pos, no_message: no_message);
             }
         }
 

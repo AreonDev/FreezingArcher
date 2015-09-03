@@ -104,8 +104,7 @@ namespace FreezingArcher.Input
         {
             string s;
 
-            var temp = new List<KeyboardInput>(keys);
-            foreach (KeyboardInput i in temp)
+            foreach (KeyboardInput i in keys)
             {
                 if (i == null)
                     continue;

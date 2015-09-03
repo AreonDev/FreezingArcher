@@ -1068,7 +1068,7 @@ namespace FreezingArcher.Game
                         if (entity == null)
                             return;
 
-                        if (entity.Name.Contains ("exit"))
+                        if (entity.Name.Contains ("exit") && mouseCollisionBodyFraction < 1)
                         {
                             if (!maze_leaved)
                             {
@@ -1089,7 +1089,7 @@ namespace FreezingArcher.Game
                         }
 
                         var mapItem = entity.GetComponent<ItemComponent>();
-                        if (mapItem != null && mapItem.Location != ItemLocation.Inventory)
+                        if (mapItem != null && mapItem.Location != ItemLocation.Inventory && mouseCollisionBodyFraction < 5)
                         {
                             AddItem(mapItem);
                             return;

@@ -566,7 +566,7 @@ namespace FreezingArcher.Game
                     {
                         //ColorCorrectionNode.Brightness += (float) um.TimeStamp.TotalSeconds * 0.8f;
                         ColorCorrectionNode.Contrast -= (float) um.TimeStamp.TotalSeconds * 0.3f;
-                        warpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 7.0f;
+                        WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 7.0f;
                     }
                     else
                         if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
@@ -579,13 +579,13 @@ namespace FreezingArcher.Game
                     {
                                 //ColorCorrectionNode.Brightness -= (float) um.TimeStamp.TotalSeconds * 0.8f;
                                 ColorCorrectionNode.Contrast += (float) um.TimeStamp.TotalSeconds * 0.3f;
-                                warpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 7.0f;
+                                WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 7.0f;
                     }
                     else
                     {
                         switch_maze = false;
-                        warpingNode.WarpTexture = DefaultWarpingTexture;
-                        warpingNode.WarpFactor = 0.0f;
+                        WarpingNode.WarpTexture = DefaultWarpingTexture;
+                        WarpingNode.WarpFactor = 0.0f;
                     }
                 }
             }

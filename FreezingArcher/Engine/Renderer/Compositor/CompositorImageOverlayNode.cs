@@ -73,7 +73,8 @@ namespace FreezingArcher.Renderer.Compositor
 
             spr.CustomEffect = true;
 
-            OverlayTexture.Bind (1);
+            if (OverlayTexture != null)
+                OverlayTexture.Bind (1);
 
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("input"), 0);
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("overlayTexture"), 1);

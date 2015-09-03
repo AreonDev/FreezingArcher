@@ -38,6 +38,7 @@ using System.Collections.Generic;
 using FreezingArcher.Game.Ghosts;
 using FreezingArcher.Game.Particles;
 using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.UI.Input;
 
 namespace FreezingArcher.Game
 {
@@ -70,6 +71,7 @@ namespace FreezingArcher.Game
         CompositorColorCorrectionNode ColorCorrectionNode;
         CompositorNodeOutput OutputNode;
         CompositorWarpingNode WarpingNode;
+        FreezingArcherInput input;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
@@ -130,6 +132,13 @@ namespace FreezingArcher.Game
 
             state.MessageProxy.StartProcessing ();
 
+            application.RendererContext.SetCanvas(null);
+            input = new FreezingArcherInput(application, messageProvider);
+            input.Initialize (application.RendererContext.Canvas);
+
+            application.RendererContext.Canvas.SetSize(application.Window.Size.X, application.Window.Size.Y);
+            application.RendererContext.Canvas.ShouldDrawBackground = false;
+
             loadingScreen = new LoadingScreen (application, messageProvider, "loading.png",
                 "MazeLoadingScreen",
                 new[] { new Tuple<string, GameStateTransition>("main_menu", GameStateTransition.DefaultTransition)},
@@ -153,18 +162,13 @@ namespace FreezingArcher.Game
                 typeof(PhysicsSystem)
             });
 
-            var input = new FreezingArcher.UI.Input.FreezingArcherInput(app, messageProvider);
-            input.Initialize (rendererContext.Canvas);
-            rendererContext.Canvas.SetSize(app.Window.Size.X, app.Window.Size.Y);
-            rendererContext.Canvas.ShouldDrawBackground = false;
-
             inventoryGui = new InventoryGUI(app, state, Player, messageProvider, warpingNode);
             var inventory = new Inventory(messageProvider, state, Player, new Vector2i(5, 7), 9);
             inventoryGui.Init(rendererContext.Canvas, inventory);
 
             PauseMenu = new PauseMenu (application, ColorCorrectionNode, rendererContext.Canvas,
                 () => maze[currentMaze].AIManager.StartThinking(), () => maze[currentMaze].AIManager.StopThinking());
-
+            
             AddAudio (state);
 
             // embed new maze into game state logic and create a MoveEntityToScene
@@ -273,6 +277,31 @@ namespace FreezingArcher.Game
             //Load SwitchMaze sound
             application.AudioManager.LoadSound("portal_Sound", "Content/Audio/portal.wav");
             switchMazeSound = application.AudioManager.CreateSource ("portal_SoundSource", "portal_Sound");
+        }
+
+        public void Generate ()
+        {
+            Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Generating mazes....");
+
+            maze [0].Generate (() =>
+            {
+                if (MessageCreated != null)
+                    MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
+                var _state = game.GetGameState ("maze_underworld");
+                maze [1].Generate (() =>
+                {
+                    if (maze [0].IsGenerated && !maze [0].AreFeaturesPlaced)
+                        maze [0].SpawnFeatures (null, maze [1].graph);
+                    if (maze [1].IsGenerated && !maze [1].AreFeaturesPlaced)
+                        maze [1].SpawnFeatures (maze [0].graph);
+                    maze[0].AIManager.CalculateSpawnPositions(maze [0].PlayerPosition);
+                    maze[1].AIManager.CalculateSpawnPositions(maze [0].PlayerPosition);
+                    inventoryGui.CreateInitialFlashlight ();
+                    var healthcomp = Player.GetComponent<HealthComponent>();
+                    healthcomp.Health = healthcomp.MaximumHealth;
+                    StartTime = DateTime.Now;
+                }, _state);
+            }, game.GetGameState ("maze_overworld"));            
         }
 
         readonly MazeWallMover mazeWallMover;
@@ -509,8 +538,6 @@ namespace FreezingArcher.Game
                         game.CurrentGameState.Scene.Active = true;
                     }
                 }
-                else if (!finishedLoading)
-                    loadingScreen.BringToFront ();
 
                 if (game.CurrentGameState == game.GetGameState ("maze_overworld") && maze [0].HasFinished)
                     game.CurrentGameState.PhysicsManager.Update (um.TimeStamp);
@@ -682,30 +709,6 @@ namespace FreezingArcher.Game
                 }
             }
 
-            if (msg.MessageId == (int)MessageId.Running)
-            {
-                Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Generating mazes....");
-
-                maze [0].Generate (() =>
-                {
-                    if (MessageCreated != null)
-                        MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
-                    var state = game.GetGameState ("maze_underworld");
-                    maze [1].Generate (() =>
-                    {
-                        if (maze [0].IsGenerated && !maze [0].AreFeaturesPlaced)
-                            maze [0].SpawnFeatures (null, maze [1].graph);
-                        if (maze [1].IsGenerated && !maze [1].AreFeaturesPlaced)
-                            maze [1].SpawnFeatures (maze [0].graph);
-                        maze[0].AIManager.CalculateSpawnPositions(maze [0].PlayerPosition);
-                        maze[1].AIManager.CalculateSpawnPositions(maze [0].PlayerPosition);
-                        var healthcomp = Player.GetComponent<HealthComponent>();
-                        healthcomp.Health = healthcomp.MaximumHealth;
-                        StartTime = DateTime.Now;
-                        inventoryGui.CreateInitialFlashlight ();
-                    }, state);
-                }, game.GetGameState ("maze_overworld"));
-            }
         }
 
         /// <summary>

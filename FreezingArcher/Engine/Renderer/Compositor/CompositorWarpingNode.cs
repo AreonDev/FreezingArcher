@@ -68,7 +68,8 @@ namespace FreezingArcher.Renderer.Compositor
 
             spr.CustomEffect = true;
 
-            WarpTexture.Bind (1);
+            if (WarpTexture != null)
+                WarpTexture.Bind (1);
 
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("input"), 0);
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("warpFactor"), WarpFactor);

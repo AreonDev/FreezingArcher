@@ -26,11 +26,8 @@ using System.Collections.Generic;
 using FreezingArcher.Output;
 using FreezingArcher.Messaging;
 using FreezingArcher.Messaging.Interfaces;
-using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Core;
 using Gwen.Control;
-using FreezingArcher.Renderer.Scene;
-using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game
 {
@@ -52,28 +49,15 @@ namespace FreezingArcher.Game
             ValidMessages = new[] { (int) MessageId.WindowResize };
             messageProvider += this;
 
-            var input = new FreezingArcher.UI.Input.FreezingArcherInput(application, LoadingState.MessageProxy);
-            input.Initialize (application.RendererContext.Canvas);
-
-            application.RendererContext.Canvas.SetSize(application.Window.Size.X, application.Window.Size.Y);
-            application.RendererContext.Canvas.ShouldDrawBackground = false;
-
-
             image = new ImagePanel(application.RendererContext.Canvas);
             image.ImageName = backgroundPath;
             image.Width = application.Window.Size.X;
             image.Height = application.Window.Size.Y;
-            image.BringToFront ();
         }
 
         public void Ready()
         {
             image.Parent.RemoveChild (image, true);
-        }
-
-        public void BringToFront()
-        {
-            image.BringToFront ();
         }
 
         public GameState LoadingState { get; private set; }

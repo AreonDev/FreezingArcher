@@ -70,7 +70,7 @@ namespace FreezingArcher.Game
             MessageProvider += this;
 
             var input = new FreezingArcher.UI.Input.FreezingArcherInput(application, application.MessageManager);
-            input.Initialize (application.RendererContext.Canvas);
+            input.Initialize (Canvas);
 
             Canvas.SetSize(application.Window.Size.X, application.Window.Size.Y);
             Canvas.ShouldDrawBackground = false;
@@ -155,9 +155,6 @@ namespace FreezingArcher.Game
                 labelLoose.X = (Canvas.Width - labelLoose.Width) / 2;
                 labelLoose_de.X = (Canvas.Width - labelLoose_de.Width) / 2;
                
-                var input = new FreezingArcher.UI.Input.FreezingArcherInput(Application, Application.MessageManager);
-                input.Initialize (Application.RendererContext.Canvas);
-
                 if (msg.MessageId == (int) MessageId.GameEndedDied)
                 {
                     if (Localizer.Instance.CurrentLocale == LocaleEnum.de_DE)

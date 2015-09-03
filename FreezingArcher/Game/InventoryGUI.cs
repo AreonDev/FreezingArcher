@@ -800,7 +800,6 @@ namespace FreezingArcher.Game
                 (int) MessageId.ActiveInventoryBarItemChanged
             };
             messageProvider += this;
-            Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
         }
 
         CompositorWarpingNode warpingNode;

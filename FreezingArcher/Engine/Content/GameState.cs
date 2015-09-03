@@ -37,7 +37,7 @@ namespace FreezingArcher.Content
     /// <summary>
     /// Game state class. This class represents a single game state such as a level or a menu.
     /// </summary>
-    public sealed class GameState : IManageable, IMessageConsumer
+    public sealed class GameState : IManageable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Content.GameState"/> class.
@@ -49,7 +49,6 @@ namespace FreezingArcher.Content
         {
             Name = name;
             Environment = env;
-            ValidMessages = new[] { (int) MessageId.Update };
             MessageProxy = new MessageProxy(messageProvider);
             PhysicsManager = new PhysicsManager(messageProvider);
         }
@@ -89,30 +88,6 @@ namespace FreezingArcher.Content
         /// </summary>
         /// <value>The name.</value>
         public string Name { get; set; }
-
-        #endregion
-
-        #region IMessageConsumer implementation
-
-        /// <summary>
-        /// Processes the incoming message
-        /// </summary>
-        /// <param name="msg">Message to process</param>
-        public void ConsumeMessage(IMessage msg)
-        {
-            UpdateMessage um = msg as UpdateMessage;
-
-            if (um != null)
-            {
-                PhysicsManager.Update(um.TimeStamp);
-            }
-        }
-
-        /// <summary>
-        /// Gets the valid messages which can be used in the ConsumeMessage method
-        /// </summary>
-        /// <value>The valid messages</value>
-        public int[] ValidMessages { get; private set; }
 
         #endregion
 

@@ -121,8 +121,18 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
 
         public void WaitTillInitialized()
         {
-            while (!IsInitialized)
-                System.Threading.Thread.Sleep(1);
+            WaitTillInitialized (float.MaxValue);
+        }
+
+        public void WaitTillInitialized(float time_out)
+        {
+            int counter = 0;
+
+            while (!IsInitialized && counter < time_out)
+            {
+                System.Threading.Thread.Sleep (1);
+                counter++;
+            }
         }
 
         public virtual void Update(){}

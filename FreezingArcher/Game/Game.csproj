@@ -95,6 +95,7 @@
     <Compile Include="Ghosts\Viridion.cs" />
     <Compile Include="PauseMenu.cs" />
     <Compile Include="EndScreen.cs" />
+    <Compile Include="Particles\PortalParticlesEmitter.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -313,6 +314,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\YouEscapedTheMaze_de.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\portal.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\warp_portal.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

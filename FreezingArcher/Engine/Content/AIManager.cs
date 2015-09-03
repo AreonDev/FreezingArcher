@@ -49,7 +49,7 @@ namespace FreezingArcher.Content
         readonly Random rand;
 
         #if DEBUG
-        public bool CollectAIDebugInformation = true;
+        public bool CollectAIDebugInformation = false;
         #endif
 
         public List<Entity> CollectEntitiesNearby (Vector3 position, float maximumEntityDistance)

@@ -224,10 +224,10 @@ namespace FreezingArcher.Game.Maze
                 InitializeMaze, CreateMaze, AddMazeToGameState, CalculatePathToExit, SpawnPortals, turbulence,
                 maximumContinuousPathLength, portalSpawnFactor);
             maze.Offset = Offset;
-            var offs = Offset;
-            offs.X += (int) (sizeX * scale);
+            //var offs = Offset;
+            //offs.X += (int) (sizeX * scale);
             //offs.Y += sizeY;
-            Offset = offs;
+            //Offset = offs;
             maze.Init();
 
             return maze;

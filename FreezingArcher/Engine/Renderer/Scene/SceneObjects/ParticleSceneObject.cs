@@ -181,6 +181,8 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
             else
                 rc.AddRCActionJob(iso);
 
+            IsInitialized = true;
+
             return true;
         }
 

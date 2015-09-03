@@ -713,6 +713,8 @@ namespace Jitter
 
         private void UpdateContacts()
         {
+            try
+            {
             foreach (Arbiter arbiter in arbiterMap.Arbiters)
             {
                 UpdateArbiterContacts(arbiter);
@@ -727,7 +729,9 @@ namespace Jitter
                 removedArbiterQueue.Enqueue(arbiter);
                 events.RaiseBodiesEndCollide(arbiter.body1, arbiter.body2);
             }
-
+            }catch {
+                //Do nothing
+            }
         }
 
         #region private void ArbiterCallback(object obj)

@@ -31,6 +31,7 @@ using Jitter.Dynamics;
 using Jitter.Collision.Shapes;
 using Jitter.LinearMath;
 using FreezingArcher.Output;
+using FreezingArcher.Game.Particles;
 
 namespace FreezingArcher.Game.Maze
 {
@@ -103,13 +104,13 @@ namespace FreezingArcher.Game.Maze
                 if (cell.IsExit)
                 {
                     var exitEntity = EntityFactory.Instance.CreateWith ("overworld_exit", state.MessageProxy,
-                        systems: systems);
+                                         systems: systems);
 
-                    var exitModel = new ModelSceneObject("lib/Renderer/TestGraphics/OverworldExit/overworld_exit.xml");
-                    exitEntity.GetComponent<ModelComponent>().Model = exitModel;
-                    state.Scene.AddObject(exitModel);
+                    var exitModel = new ModelSceneObject ("lib/Renderer/TestGraphics/OverworldExit/overworld_exit.xml");
+                    exitEntity.GetComponent<ModelComponent> ().Model = exitModel;
+                    state.Scene.AddObject (exitModel);
 
-                    var exitTransform = exitEntity.GetComponent<TransformComponent>();
+                    var exitTransform = exitEntity.GetComponent<TransformComponent> ();
                     exitTransform.Position = new Vector3 (worldPosition.X, -.5f, worldPosition.Z);
                     exitTransform.Scale = scale;
 
@@ -117,18 +118,20 @@ namespace FreezingArcher.Game.Maze
                     {
                         exitTransform.Rotation = Quaternion.FromAxisAngle (Vector3.UnitY, MathHelper.ThreePiOver2);
                     }
-                    else if (cell.Position.X == 29)
+                    else
+                    if (cell.Position.X == 29)
                     {
                         exitTransform.Rotation = Quaternion.FromAxisAngle (Vector3.UnitY, MathHelper.Pi);
                     }
-                    else if (cell.Position.Y == 29)
+                    else
+                    if (cell.Position.Y == 29)
                     {
-                        exitTransform.Rotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathHelper.PiOver2);
+                        exitTransform.Rotation = Quaternion.FromAxisAngle (Vector3.UnitY, MathHelper.PiOver2);
                     }
 
-                    var exitBody = new RigidBody(new BoxShape (scale.X * 2, scale.Y * 4, scale.Z * 2));
+                    var exitBody = new RigidBody (new BoxShape (scale.X * 2, scale.Y * 4, scale.Z * 2));
                     exitBody.Position = exitTransform.Position.ToJitterVector () + JVector.Up * (scale.Y * 2);
-                    exitBody.Orientation = JMatrix.CreateFromQuaternion(exitTransform.Rotation.ToJitterQuaternion());
+                    exitBody.Orientation = JMatrix.CreateFromQuaternion (exitTransform.Rotation.ToJitterQuaternion ());
                     exitBody.Material.Restitution = -10;
                     exitBody.IsStatic = true;
                     exitBody.Tag = exitEntity;
@@ -138,7 +141,7 @@ namespace FreezingArcher.Game.Maze
                     exitEntity.GetComponent<PhysicsComponent> ().PhysicsApplying =
                         AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
-                    state.PhysicsManager.World.AddBody(exitBody);
+                    state.PhysicsManager.World.AddBody (exitBody);
                 }
             }
             else if (cell.MazeCellType == MazeCellType.Wall)

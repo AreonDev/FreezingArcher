@@ -25,6 +25,7 @@ using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
 using FreezingArcher.Game.Maze;
 using FreezingArcher.Core;
+using FreezingArcher.Audio;
 using FreezingArcher.Output;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
@@ -35,6 +36,8 @@ using Jitter.Dynamics;
 using Jitter.Collision.Shapes;
 using System.Collections.Generic;
 using FreezingArcher.Game.Ghosts;
+using FreezingArcher.Game.Particles;
+using FreezingArcher.Renderer.Scene.SceneObjects;
 
 namespace FreezingArcher.Game
 {
@@ -48,6 +51,11 @@ namespace FreezingArcher.Game
         const int PassusCount = 2;
         const int ViridionCount = 2;
         const int GhostCount = 3;
+
+        Source switchMazeSound;
+
+        Texture2D PortalWarpTexture;
+        Texture2D DefaultWarpingTexture;
 
         EndScreen     endScreen;
         LoadingScreen loadingScreen;
@@ -116,7 +124,7 @@ namespace FreezingArcher.Game
             state.Scene.DistanceFogIntensity = 0.07f;
             state.Scene.AmbientColor = Color4.White;
             state.Scene.AmbientIntensity = 0.3f;
-            state.Scene.MaxRenderingDistance = 200.0f;
+            state.Scene.MaxRenderingDistance = 500.0f;
 
             state.AudioContext = new AudioContext (messageProvider);
 
@@ -214,7 +222,8 @@ namespace FreezingArcher.Game
 
             game.AddGameState("maze_underworld", Content.Environment.Default,
                 new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
-                new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) });
+                new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)),
+                        new Tuple<string, GameStateTransition>("endscreen_state", new GameStateTransition(0))});
             state = game.GetGameState("maze_underworld");
             state.Scene = new CoreScene(rendererContext, messageProvider);
             state.Scene.SceneName = "MazeUnderworld";
@@ -223,7 +232,7 @@ namespace FreezingArcher.Game
             state.Scene.DistanceFogIntensity = 0.07f;
             state.Scene.AmbientColor = Color4.White;
             state.Scene.AmbientIntensity = 0.3f;
-            state.Scene.MaxRenderingDistance = 200.0f;
+            state.Scene.MaxRenderingDistance = 500.0f;
 
             state.AudioContext = new AudioContext (messageProvider);
 
@@ -260,6 +269,10 @@ namespace FreezingArcher.Game
             {
                 PassusInstances.Add (new Passus (ColorCorrectionNode, state, maze[1].AIManager, rendererContext));
             }
+
+            //Load SwitchMaze sound
+            application.AudioManager.LoadSound("portal_Sound", "Content/Audio/portal.wav");
+            switchMazeSound = application.AudioManager.CreateSource ("portal_SoundSource", "portal_Sound");
         }
 
         readonly MazeWallMover mazeWallMover;
@@ -269,6 +282,8 @@ namespace FreezingArcher.Game
         readonly Maze.Maze[] maze = new Maze.Maze[2];
 
         public Entity Player { get; private set; }
+
+        public List<Entity> Portals;
 
         List<Scobis> ScobisInstances = new List<Scobis>();
         List<Caligo> CaligoInstances = new List<Caligo>();
@@ -364,6 +379,7 @@ namespace FreezingArcher.Game
             if (currentMaze == 0)
             {
                 maze [0].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
+                maze [1].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
 
                 game.MoveEntityToGameState (Player, game.GetGameState ("maze_overworld"), game.GetGameState ("maze_underworld"));
 
@@ -374,14 +390,19 @@ namespace FreezingArcher.Game
                 //if (MessageCreated != null)
                 //    MessageCreated (new TransformMessage (Player, maze [1].PlayerPosition, Quaternion.Identity));
 
-                Player.GetComponent<PhysicsComponent> ().RigidBody.Position = maze [1].PlayerPosition.ToJitterVector () + Jitter.LinearMath.JVector.Up;
+                Player.GetComponent<PhysicsComponent> ().RigidBody.Position = maze [1].PlayerPosition.ToJitterVector () + Jitter.LinearMath.JVector.Up*2.0f;
 
                 currentMaze = 1;
+
+                maze [0].AIManager.StopThinking ();
+                maze [1].AIManager.StartThinking ();
             }
             else
             if (currentMaze == 1)
             {
                 maze [1].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
+                maze [0].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
+
                 game.MoveEntityToGameState (Player, game.GetGameState ("maze_underworld"), game.GetGameState ("maze_overworld"));
 
                 inventoryGui.SwitchGameState (game.GetGameState ("maze_underworld"), game.GetGameState ("maze_overworld"), game);
@@ -390,11 +411,13 @@ namespace FreezingArcher.Game
 
                 //if (MessageCreated != null)
                 //    MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
-
                      
-                Player.GetComponent<PhysicsComponent> ().RigidBody.Position = maze [0].PlayerPosition.ToJitterVector () + Jitter.LinearMath.JVector.Up;
+                Player.GetComponent<PhysicsComponent> ().RigidBody.Position = maze [0].PlayerPosition.ToJitterVector () + Jitter.LinearMath.JVector.Up*2.0f;
                     
                 currentMaze = 0;
+
+                    maze [1].AIManager.StopThinking ();
+                maze [0].AIManager.StartThinking ();
             }
                     
             game.CurrentGameState.Scene.Active = true;
@@ -406,6 +429,9 @@ namespace FreezingArcher.Game
         bool finishedLoading = false;
         bool lighting = true;
         int count = 0;
+
+        bool switch_maze = false;
+        bool entered_portal = false;
 
         /// <summary>
         /// Processes the incoming message
@@ -421,6 +447,56 @@ namespace FreezingArcher.Game
                 {
                     maze [0].ExportAsImage ("overworld.png");
                     maze [1].ExportAsImage ("underworld.png");
+
+
+                    //Add Portals
+                    Portals = new List<Entity>();
+
+                    foreach (var node in maze[0].graph.Nodes)
+                    {
+                        if (node.Data.IsPortal)
+                        {
+                            var portalEmitter = new PortalParticles ();
+                            var particleSceneObject = new ParticleSceneObject (portalEmitter.ParticleCount);
+                            particleSceneObject.Priority = 7000;
+                            game.GetGameState ("maze_overworld").Scene.AddObject (particleSceneObject); 
+
+                            portalEmitter.Init (particleSceneObject, Application.Instance.RendererContext);
+
+                            var portalEntity = EntityFactory.Instance.CreateWith ("PortalEmitter " + DateTime.Now.Ticks, 
+                                game.GetGameState ("maze_overworld").MessageProxy, systems: new[] { typeof(ParticleSystem) });
+
+                            portalEntity.GetComponent<ParticleComponent> ().Emitter = portalEmitter;
+                            portalEntity.GetComponent<ParticleComponent> ().Particle = particleSceneObject;
+
+                            portalEntity.GetComponent<TransformComponent> ().Position = node.Data.WorldPosition;
+
+                            Portals.Add(portalEntity);
+                        }
+                    }
+
+                    foreach (var node in maze[1].graph.Nodes)
+                    {
+                        if (node.Data.IsPortal)
+                        {
+                            var portalEmitter = new PortalParticles ();
+                            var particleSceneObject = new ParticleSceneObject (portalEmitter.ParticleCount);
+                            particleSceneObject.Priority = 7000;
+                            game.GetGameState ("maze_underworld").Scene.AddObject (particleSceneObject); 
+
+                            portalEmitter.Init (particleSceneObject, Application.Instance.RendererContext);
+
+                            var portalEntity = EntityFactory.Instance.CreateWith ("PortalEmitter " + DateTime.Now.Ticks, 
+                                game.GetGameState ("maze_underworld").MessageProxy, systems: new[] { typeof(ParticleSystem) });
+
+                            portalEntity.GetComponent<ParticleComponent> ().Emitter = portalEmitter;
+                            portalEntity.GetComponent<ParticleComponent> ().Particle = particleSceneObject;
+
+                            portalEntity.GetComponent<TransformComponent> ().Position = node.Data.WorldPosition;
+
+                            Portals.Add(portalEntity);
+                        }
+                    }
 
                     finishedLoading = true;
 
@@ -456,6 +532,35 @@ namespace FreezingArcher.Game
                     var factor = HealthOverlayNode.Factor - 0.01f;
                     HealthOverlayNode.Factor = factor < 0 ? 0 : factor;
                 }
+
+                if (switch_maze)
+                {
+                    if (entered_portal && ColorCorrectionNode.Contrast > 0.0f)
+                    {
+                        //ColorCorrectionNode.Brightness += (float) um.TimeStamp.TotalSeconds * 0.8f;
+                        ColorCorrectionNode.Contrast -= (float) um.TimeStamp.TotalSeconds * 0.3f;
+                        warpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 7.0f;
+                    }
+                    else
+                        if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
+                    {
+                        SwitchMaze ();
+                        entered_portal = false;
+                    }
+                    else
+                            if (!entered_portal && ColorCorrectionNode.Contrast < 1.0f)
+                    {
+                                //ColorCorrectionNode.Brightness -= (float) um.TimeStamp.TotalSeconds * 0.8f;
+                                ColorCorrectionNode.Contrast += (float) um.TimeStamp.TotalSeconds * 0.3f;
+                                warpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 7.0f;
+                    }
+                    else
+                    {
+                        switch_maze = false;
+                        warpingNode.WarpTexture = DefaultWarpingTexture;
+                        warpingNode.WarpFactor = 0.0f;
+                    }
+                }
             }
 
             if (msg.MessageId == (int) MessageId.CollisionDetected)
@@ -473,7 +578,13 @@ namespace FreezingArcher.Game
 
                     if (mc.IsPortal)
                     {
-                        SwitchMaze ();
+                        if (!switch_maze)
+                        {
+                            entered_portal = true;
+                            switch_maze = true;
+
+                            switchMazeSound.Play ();
+                        }
                     }
                 }
                 else
@@ -488,7 +599,13 @@ namespace FreezingArcher.Game
 
                     if (mc.IsPortal)
                     {
-                        SwitchMaze ();
+                        if (!switch_maze)
+                        {
+                            entered_portal = true;
+                            switch_maze = true;
+
+                            switchMazeSound.Play ();
+                        }
                     }
                 }
             }
@@ -509,7 +626,7 @@ namespace FreezingArcher.Game
                     var health = healthComponent.Health > 0 ? healthComponent.Health : 0;
                     ColorCorrectionNode.Saturation = -((healthComponent.MaximumHealth - health) / (healthComponent.MaximumHealth)) / 4;
 
-                    if (hcm.Health <= 0.0f)
+                    if (hcm.Health <= 0.0f && game.CurrentGameState.Name !=  "MazeLoadingScreen")
                     {
                         WarpingNode.Stop();
                         endScreen.State.Scene = game.CurrentGameState.Scene;
@@ -527,7 +644,16 @@ namespace FreezingArcher.Game
             {
                 if (im.IsActionPressed ("frame"))
                 {
-                    //SwitchMaze();
+                    /*
+                    if (!switch_maze)
+                    {
+                        entered_portal = true;
+                        switch_maze = true;
+
+                        warpingNode.WarpTexture = PortalWarpTexture;
+
+                        switchMazeSound.Play ();
+                    }*/
                 }
 
                 if (im.IsActionPressed ("frame"))
@@ -573,10 +699,10 @@ namespace FreezingArcher.Game
                             maze [1].SpawnFeatures (maze [0].graph);
                         maze[0].AIManager.CalculateSpawnPositions(maze [0].PlayerPosition);
                         maze[1].AIManager.CalculateSpawnPositions(maze [0].PlayerPosition);
-                        inventoryGui.CreateInitialFlashlight ();
                         var healthcomp = Player.GetComponent<HealthComponent>();
                         healthcomp.Health = healthcomp.MaximumHealth;
                         StartTime = DateTime.Now;
+                        inventoryGui.CreateInitialFlashlight ();
                     }, state);
                 }, game.GetGameState ("maze_overworld"));
             }

@@ -21,6 +21,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 using FreezingArcher.Core;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game
 {
@@ -47,7 +48,29 @@ namespace FreezingArcher.Game
                 var messageManager = Application.Instance.MessageManager;
                 var objmnr = Application.Instance.ObjectManager;
 
-                maze = new MazeTest(messageManager, objmnr, rc, game, Application.Instance);
+                var compositor = new BasicCompositor (objmnr, rc);
+
+                var sceneNode = new CompositorNodeScene (rc, messageManager);
+                var outputNode = new CompositorNodeOutput (rc, messageManager);
+                var colorCorrectionNode = new CompositorColorCorrectionNode (rc, messageManager);
+                var healthOverlayNode = new CompositorImageOverlayNode (rc, messageManager);
+                var warpingNode = new CompositorWarpingNode (rc, messageManager);
+
+                compositor.AddNode (sceneNode);
+                compositor.AddNode (outputNode);
+                compositor.AddNode (healthOverlayNode);
+                compositor.AddNode (colorCorrectionNode);
+                compositor.AddNode (warpingNode);
+
+                compositor.AddConnection (sceneNode, healthOverlayNode, 0, 0);
+                compositor.AddConnection (healthOverlayNode, colorCorrectionNode, 0, 0);
+                compositor.AddConnection (colorCorrectionNode, warpingNode, 0, 0);
+                compositor.AddConnection (warpingNode, outputNode, 0, 0);
+
+                rc.Compositor = compositor;
+
+                maze = new MazeTest(messageManager, objmnr, rc, game, Application.Instance, sceneNode,
+                    healthOverlayNode, colorCorrectionNode, outputNode, warpingNode);
             }
 
             Application.Instance.Run ();

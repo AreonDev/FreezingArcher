@@ -61,7 +61,7 @@ namespace FreezingArcher.Game
         CompositorImageOverlayNode HealthOverlayNode;
         CompositorColorCorrectionNode ColorCorrectionNode;
         CompositorNodeOutput OutputNode;
-        CompositorWarpingNode warpingNode;
+        CompositorWarpingNode WarpingNode;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
@@ -71,7 +71,9 @@ namespace FreezingArcher.Game
         /// <param name="rendererContext">The renderer context for the maze scenes.</param>
         /// <param name="game">The game the maze should be generated in.</param>
         public MazeTest (MessageProvider messageProvider, ObjectManager objmnr, RendererContext rendererContext,
-                         Content.Game game, Application app)
+            Content.Game game, Application app, CompositorNodeScene sceneNode,
+            CompositorImageOverlayNode healthOverlayNode, CompositorColorCorrectionNode colorCorrectionNode,
+            CompositorNodeOutput outputNode, CompositorWarpingNode warpingNode)
         {
             ValidMessages = new[] {
                 (int)MessageId.Input,
@@ -83,6 +85,11 @@ namespace FreezingArcher.Game
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
 
+            MazeSceneNode = sceneNode;
+            HealthOverlayNode = healthOverlayNode;
+            ColorCorrectionNode = colorCorrectionNode;
+            OutputNode = outputNode;
+            WarpingNode = warpingNode;
             this.game = game;
             application = app;
 
@@ -92,15 +99,9 @@ namespace FreezingArcher.Game
             FPS_Text.SetPosition (5, 5);
             FPS_Text.Font.Size = 15;
 
-            MazeSceneNode = new CompositorNodeScene (rendererContext, messageProvider);
-            OutputNode = new CompositorNodeOutput (rendererContext, messageProvider);
-            //OutputNode.EnableUI = false;
-            ColorCorrectionNode = new CompositorColorCorrectionNode (rendererContext, messageProvider);
-            HealthOverlayNode = new CompositorImageOverlayNode (rendererContext, messageProvider);
             HealthOverlayNode.OverlayTexture = rendererContext.CreateTexture2D ("bloodsplatter", true, "Content/bloodsplatter.png");
             HealthOverlayNode.Factor = 0;
             HealthOverlayNode.Blending = OverlayBlendMode.Multiply;
-            warpingNode = new CompositorWarpingNode (rendererContext, messageProvider);
             warpingNode.WarpTexture = rendererContext.CreateTexture2D("warp", true, "Content/warp.jpg");
 
             game.MazeSceneNode = MazeSceneNode;
@@ -117,15 +118,14 @@ namespace FreezingArcher.Game
             state.Scene.AmbientIntensity = 0.3f;
             state.Scene.MaxRenderingDistance = 200.0f;
 
-
-
             state.AudioContext = new AudioContext (messageProvider);
 
             state.MessageProxy.StartProcessing ();
 
             loadingScreen = new LoadingScreen (application, messageProvider, "loading.png",
                 "MazeLoadingScreen",
-                to: new[] { new Tuple<string, GameStateTransition> (state.Name, new GameStateTransition (0)) });
+                new[] { new Tuple<string, GameStateTransition>("main_menu", GameStateTransition.DefaultTransition)},
+                new[] { new Tuple<string, GameStateTransition> (state.Name, new GameStateTransition (0)) });
 
             endScreen = new EndScreen (application, rendererContext, new Tuple<string, GameStateTransition>[]
             {
@@ -134,21 +134,6 @@ namespace FreezingArcher.Game
             });
 
             game.SwitchToGameState ("MazeLoadingScreen");
-
-            Compositor = new BasicCompositor (objmnr, rendererContext);
-
-            Compositor.AddNode (MazeSceneNode);
-            Compositor.AddNode (OutputNode);
-            Compositor.AddNode (HealthOverlayNode);
-            Compositor.AddNode (ColorCorrectionNode);
-            Compositor.AddNode (warpingNode);
-
-            Compositor.AddConnection (MazeSceneNode, HealthOverlayNode, 0, 0);
-            Compositor.AddConnection (HealthOverlayNode, ColorCorrectionNode, 0, 0);
-            Compositor.AddConnection (ColorCorrectionNode, warpingNode, 0, 0);
-            Compositor.AddConnection (warpingNode, OutputNode, 0, 0);
-
-            rendererContext.Compositor = Compositor;
 
             Player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, new[] {
                 typeof(HealthComponent),
@@ -526,7 +511,7 @@ namespace FreezingArcher.Game
 
                     if (hcm.Health <= 0.0f)
                     {
-                        warpingNode.Stop();
+                        WarpingNode.Stop();
                         endScreen.State.Scene = game.CurrentGameState.Scene;
 
                         game.SwitchToGameState ("endscreen_state");

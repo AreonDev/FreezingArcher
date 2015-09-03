@@ -173,6 +173,8 @@ namespace FreezingArcher.Messaging
 
 
         GameEnded,
-        GameEndedDied
+        GameEndedDied,
+
+        CollisionDetected
     }
 }

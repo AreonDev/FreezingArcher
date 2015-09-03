@@ -77,7 +77,8 @@ namespace FreezingArcher.Game
                 (int)MessageId.Input,
                 (int)MessageId.Update,
                 (int)MessageId.Running,
-                (int)MessageId.HealthChanged
+                (int)MessageId.HealthChanged,
+                (int)MessageId.CollisionDetected
             };
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
@@ -106,6 +107,7 @@ namespace FreezingArcher.Game
 
             game.AddGameState ("maze_overworld", Content.Environment.Default, null);
             var state = game.GetGameState ("maze_overworld");
+
             state.Scene = new CoreScene (rendererContext, messageProvider);
             state.Scene.SceneName = "MazeOverworld";
             state.Scene.Active = false;
@@ -118,7 +120,6 @@ namespace FreezingArcher.Game
 
 
             state.AudioContext = new AudioContext (messageProvider);
-
 
             state.MessageProxy.StartProcessing ();
 
@@ -467,6 +468,41 @@ namespace FreezingArcher.Game
                 {
                     var factor = HealthOverlayNode.Factor - 0.01f;
                     HealthOverlayNode.Factor = factor < 0 ? 0 : factor;
+                }
+            }
+
+            if (msg.MessageId == (int) MessageId.CollisionDetected)
+            {
+                CollisionDetectedMessage cdm = msg as CollisionDetectedMessage;
+
+                if (cdm.Body1.Tag == null)
+                {
+                    if (cdm.Body2.Tag == null)
+                        return;
+
+                    MazeCell mc = cdm.Body2.Tag as MazeCell;
+                    if (mc == null)
+                        return;
+
+                    if (mc.IsPortal)
+                    {
+                        SwitchMaze ();
+                    }
+                }
+                else
+                if (cdm.Body2.Tag == null)
+                {
+                    if (cdm.Body1.Tag == null)
+                        return;
+
+                    MazeCell mc = cdm.Body1.Tag as MazeCell;
+                    if (mc == null)
+                        return;
+
+                    if (mc.IsPortal)
+                    {
+                        SwitchMaze ();
+                    }
                 }
             }
 

@@ -49,9 +49,9 @@ namespace FreezingArcher.Content
         {
             Name = name;
             Environment = env;
-            PhysicsManager = new PhysicsManager();
             ValidMessages = new[] { (int) MessageId.Update };
             MessageProxy = new MessageProxy(messageProvider);
+            PhysicsManager = new PhysicsManager(messageProvider);
         }
 
         /// <summary>

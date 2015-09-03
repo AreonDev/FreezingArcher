@@ -25,6 +25,8 @@ using Jitter;
 using Jitter.Collision;
 using System.Threading;
 using FreezingArcher.Output;
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Core
 {
@@ -50,15 +52,19 @@ namespace FreezingArcher.Core
     /// <summary>
     /// This class manages a physics instance of one scene.
     /// </summary>
-    public sealed class PhysicsManager
+    public sealed class PhysicsManager : IMessageCreator
     {
+        readonly MessageProvider MessageProvider;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Core.PhysicsManager"/> class.
         /// </summary>
         /// <param name="collisionSystem">Collision system.</param>
-        public PhysicsManager(CollisionSystem collisionSystem = CollisionSystem.SweepAndPrune)
+        public PhysicsManager(MessageProvider prov, CollisionSystem collisionSystem = CollisionSystem.SweepAndPrune)
         {
             this.collisionSystem = collisionSystem;
+
+            MessageProvider = prov;
 
             Jitter.Collision.CollisionSystem system;
             switch (collisionSystem)
@@ -74,7 +80,17 @@ namespace FreezingArcher.Core
                     break;
             }
 
+            MessageProvider += this;
+
             World = new World(system);
+
+            World.CollisionSystem.CollisionDetected += (Jitter.Dynamics.RigidBody body1, Jitter.Dynamics.RigidBody body2,
+                Jitter.LinearMath.JVector point1, Jitter.LinearMath.JVector point2, Jitter.LinearMath.JVector normal, float penetration) => 
+            {
+                if(MessageCreated != null)
+                    MessageCreated(new CollisionDetectedMessage(body1, body2));
+            };
+
             Start();
         }
 
@@ -184,5 +200,11 @@ namespace FreezingArcher.Core
             updateEvent.Dispose();
             physicsThread.Abort();
         }
+
+        #region IMessageCreator implementation
+
+        public event MessageEvent MessageCreated;
+
+        #endregion
     }
 }

@@ -439,6 +439,7 @@
     <Compile Include="Content\AudioContext.cs" />
     <Compile Include="Messaging\GameEndedMessage.cs" />
     <Compile Include="Messaging\GameEndedDiedMessage.cs" />
+    <Compile Include="Messaging\CollisionDetectedMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

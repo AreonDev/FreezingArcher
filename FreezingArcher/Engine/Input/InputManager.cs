@@ -110,7 +110,8 @@ namespace FreezingArcher.Input
         internal void HandleKeyboardInput (GlfwWindowPtr window, Key key, int scancode,
                                          KeyAction action, KeyModifiers modifier)
         {
-            Keys.Add (new KeyboardInput (key, scancode, action, modifier));
+            lock (Keys)
+                Keys.Add (new KeyboardInput (key, scancode, action, modifier));
         }
 
         /// <summary>
@@ -121,7 +122,8 @@ namespace FreezingArcher.Input
         /// <param name="action">Action.</param>
         internal void HandleMouseButton (GlfwWindowPtr window, MouseButton button, KeyAction action)
         {
-            Mouse.Add (new MouseInput (button, action));
+            lock (Mouse)
+                Mouse.Add (new MouseInput (button, action));
         }
 
         /// <summary>

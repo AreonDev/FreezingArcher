@@ -40,7 +40,6 @@ namespace FreezingArcher.Content
         {
             Map = map;
             this.rand = rand;
-            workerThread = new Thread (run);
         }
 
         readonly List<Entity> entities = new List<Entity>();
@@ -107,6 +106,7 @@ namespace FreezingArcher.Content
         public void StartThinking ()
         {
             running = true;
+            workerThread = new Thread (run);
             workerThread.Start ();
         }
 

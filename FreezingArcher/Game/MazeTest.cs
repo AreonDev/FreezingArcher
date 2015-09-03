@@ -55,6 +55,8 @@ namespace FreezingArcher.Game
 
         BasicCompositor Compositor;
 
+        PauseMenu PauseMenu;
+
         CompositorNodeScene MazeSceneNode;
         CompositorImageOverlayNode HealthOverlayNode;
         CompositorColorCorrectionNode ColorCorrectionNode;
@@ -165,6 +167,9 @@ namespace FreezingArcher.Game
             inventoryGui = new InventoryGUI(app, state, Player, messageProvider);
             var inventory = new Inventory(messageProvider, state, Player, new Vector2i(5, 7), 9);
             inventoryGui.Init(rendererContext.Canvas, inventory);
+
+            PauseMenu = new PauseMenu (application, ColorCorrectionNode, rendererContext.Canvas,
+                () => maze[currentMaze].AIManager.StartThinking(), () => maze[currentMaze].AIManager.StopThinking());
 
             AddAudio (state);
 

@@ -154,9 +154,9 @@ vec4 brightnessContrast(vec4 color, float b, float c)
 
 vec4 addGamma(vec4 color, float g)
 {
-        return vec4(pow(abs(color.r), g),
-                    pow(abs(color.g), g),
-                    pow(abs(color.b), g), color.a);
+        return vec4(pow(abs(color.r), 1 / g),
+                    pow(abs(color.g), 1 / g),
+                    pow(abs(color.b), 1 / g), color.a);
 }
 
 void main() {

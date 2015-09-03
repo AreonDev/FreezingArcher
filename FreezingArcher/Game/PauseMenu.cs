@@ -26,6 +26,7 @@ using FreezingArcher.Localization;
 using FreezingArcher.Core;
 using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Messaging;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game
 {
@@ -33,9 +34,12 @@ namespace FreezingArcher.Game
     {
         const int BUTTON_WIDTH = 300;
 
-        public PauseMenu (Application app, Base parent, Action onContinuePressed)
+        public PauseMenu (Application app, CompositorColorCorrectionNode colorCorrectionNode, Base parent,
+            Action onContinue, Action onPause)
         {
-            this.onContinuePressed = onContinuePressed;
+            this.onContinue = onContinue;
+            this.onPause = onPause;
+            this.colorCorrectionNode = colorCorrectionNode;
             this.application = app;
             this.parent = parent;
 
@@ -60,30 +64,58 @@ namespace FreezingArcher.Game
             exitButton.Y = 10 + continueButton.Y + continueButton.Height;
             exitButton.Clicked += (sender, arguments) => application.Window.Close ();
 
-            window.Height = exitButton.Y + exitButton.Height + 10;
+            gammaSlider = new HorizontalSlider (window);
+            gammaSlider.SnapToNotches = false;
+            gammaSlider.Min = 0;
+            gammaSlider.Max = 2;
+            gammaSlider.Value = 1;
+            gammaSlider.ValueChanged += (sender, arguments) => {
+                var slider = sender as HorizontalSlider;
+                if (slider != null)
+                    this.colorCorrectionNode.Gamma = slider.Value;
+            };
+            gammaSlider.Width = BUTTON_WIDTH;
+            gammaSlider.Height = 20;
+            gammaSlider.X = 10;
+            gammaSlider.Y = 10 + exitButton.Y + exitButton.Height;
+
+            window.Height += gammaSlider.Y + gammaSlider.Height + 10;
             window.X = (parent.Width - window.Width) / 2;
             window.Y = (parent.Height - window.Height) / 2;
 
-            ValidMessages = new int[] { (int) MessageId.WindowResize, (int) MessageId.UpdateLocale, (int) MessageId.Input };
+            ValidMessages = new int[] { (int) MessageId.WindowResize, (int) MessageId.UpdateLocale,
+                (int) MessageId.Input };
+
+            app.MessageManager += this;
         }
 
-        readonly Action onContinuePressed;
+        readonly Action onContinue;
+        readonly Action onPause;
         readonly Application application;
+        readonly CompositorColorCorrectionNode colorCorrectionNode;
 
         readonly Base parent;
         readonly WindowControl window;
         readonly Button continueButton;
         readonly Button exitButton;
+        readonly HorizontalSlider gammaSlider;
 
         public void Show ()
         {
             window.Show();
+            onPause();
+            application.Window.ReleaseMouse();
+            application.Game.CurrentGameState.MessageProxy.StopProcessing();
+            application.Game.CurrentGameState.PhysicsManager.Stop();
         }
 
         public void Hide ()
         {
-            onContinuePressed();
+            onContinue();
             window.Hide();
+            application.Window.CaptureMouse();
+            application.Game.CurrentGameState.MessageProxy.StartProcessing();
+            application.Game.CurrentGameState.PhysicsManager.Start();
         }
 
         #region IMessageConsumer implementation
@@ -105,7 +137,19 @@ namespace FreezingArcher.Game
 
             if (msg.MessageId == (int) MessageId.Input)
             {
-                
+                var im = msg as InputMessage;
+
+                if (im.IsActionPressed("pause"))
+                {
+                    if (application.Window.IsMouseCaptured())
+                    {
+                        Show();
+                    }
+                    else if (window.IsVisible)
+                    {
+                        Hide();
+                    }
+                }
             }
         }
 

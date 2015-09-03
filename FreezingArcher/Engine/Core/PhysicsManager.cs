@@ -58,7 +58,6 @@ namespace FreezingArcher.Core
         /// <param name="collisionSystem">Collision system.</param>
         public PhysicsManager(CollisionSystem collisionSystem = CollisionSystem.SweepAndPrune)
         {
-            physicsThread = new Thread(run);
             this.collisionSystem = collisionSystem;
 
             Jitter.Collision.CollisionSystem system;
@@ -76,7 +75,7 @@ namespace FreezingArcher.Core
             }
 
             World = new World(system);
-            physicsThread.Start();
+            Start();
         }
 
         CollisionSystem collisionSystem;
@@ -111,7 +110,7 @@ namespace FreezingArcher.Core
             }
         }
 
-        readonly Thread physicsThread;
+        Thread physicsThread;
         readonly AutoResetEvent updateEvent = new AutoResetEvent(false);
         TimeSpan timeStamp;
         bool running;
@@ -127,6 +126,17 @@ namespace FreezingArcher.Core
                 World.Step((float) timeStamp.TotalSeconds, true);
                 physicsUpdateRunning = false;
             }
+        }
+
+        public void Start()
+        {
+            physicsThread = new Thread(run);
+            physicsThread.Start();
+        }
+
+        public void Stop ()
+        {
+            running = false;
         }
 
         /// <summary>

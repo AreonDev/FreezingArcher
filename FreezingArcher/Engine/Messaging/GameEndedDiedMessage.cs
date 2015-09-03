@@ -27,7 +27,7 @@ namespace FreezingArcher.Messaging
     {
         public GameEndedDiedMessage ()
         {
-            MessageId = (int) FreezingArcher.Messaging.MessageId.GameEnded;
+            MessageId = (int) FreezingArcher.Messaging.MessageId.GameEndedDied;
         }
 
 

@@ -9,6 +9,8 @@
     <string name="pause">Pause</string>
     <string name="back_to_game">Zurück zum Spiel</string>
     <string name="quit_game">Spiel beenden</string>
+    <string name="you_survived">Du hast</string>
+    <string name="minutes">Minuten überlebt!</string>
     <string name="flashlight_description">
         Nutze die Taschenlampe um etwas Licht in die
         Dunkelheit zu bringen. Einige Kreaturen werden

@@ -61,7 +61,6 @@
     <Compile Include="Maze\Maze.cs" />
     <Compile Include="MazeTest.cs" />
     <Compile Include="ECSTest.cs" />
-    <Compile Include="UITest.cs" />
     <Compile Include="MessagingTest.cs" />
     <Compile Include="InventoryGUI.cs" />
     <Compile Include="JitterTest.cs" />
@@ -302,6 +301,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\warp.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\YouAreDead.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\YouAreDead_de.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\YouEscapedTheMaze.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\YouEscapedTheMaze_de.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

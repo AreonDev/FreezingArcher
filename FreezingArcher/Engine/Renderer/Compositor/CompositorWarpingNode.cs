@@ -23,17 +23,21 @@
 using System;
 using FreezingArcher.Renderer;
 using FreezingArcher.Renderer.Compositor;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Renderer.Compositor
 {
-    public sealed class CompositorWarpingNode : CompositorNode
+    public sealed class CompositorWarpingNode : CompositorNode, IMessageConsumer
     {
         private Texture2D OutputTexture;
 
-        public CompositorWarpingNode (RendererContext rc, Messaging.MessageProvider mp)
+        public CompositorWarpingNode (RendererContext rc, MessageProvider mp)
             : base ("NodeWarping", rc, mp)
         {
             WarpFactor = 0;
+            ValidMessages = new [] { (int) MessageId.Update };
+            mp += this;
         }
 
         public override void InitOtherStuff ()
@@ -69,7 +73,7 @@ namespace FreezingArcher.Renderer.Compositor
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("input"), 0);
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("warpFactor"), WarpFactor);
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("timer"),
-                (float) DateTime.Now.TimeOfDay.TotalMilliseconds / 10000);
+                timer / 10000);
             NodeEffect.PixelProgram.SetUniform(NodeEffect.PixelProgram.GetUniformLocation("warpTexture"), 1);
 
             PrivateRendererContext.DrawSpriteAbsolute (spr);
@@ -101,11 +105,40 @@ namespace FreezingArcher.Renderer.Compositor
             NodeEffect.VertexProgram = PrivateRendererContext.RC2DEffect.VertexProgram;
         }
 
+        float timer = 0;
+
         #endregion
 
         public float WarpFactor { get; set; }
 
         public Texture2D WarpTexture { get; set; }
+
+        #region IMessageConsumer implementation
+
+        public void ConsumeMessage (IMessage msg)
+        {
+            if (msg.MessageId == (int) MessageId.Update && running)
+            {
+                var um = msg as UpdateMessage;
+                timer += (float) um.TimeStamp.TotalMilliseconds;
+            }
+        }
+
+        public int[] ValidMessages { get; private set; }
+
+        #endregion
+
+        bool running = true;
+
+        public void Stop ()
+        {
+            running = false;
+        }
+
+        public void Start ()
+        {
+            running = true;
+        }
     }
 }
 

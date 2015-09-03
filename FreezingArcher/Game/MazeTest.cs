@@ -165,7 +165,7 @@ namespace FreezingArcher.Game
             rendererContext.Canvas.SetSize(app.Window.Size.X, app.Window.Size.Y);
             rendererContext.Canvas.ShouldDrawBackground = false;
 
-            inventoryGui = new InventoryGUI(app, state, Player, messageProvider);
+            inventoryGui = new InventoryGUI(app, state, Player, messageProvider, warpingNode);
             var inventory = new Inventory(messageProvider, state, Player, new Vector2i(5, 7), 9);
             inventoryGui.Init(rendererContext.Canvas, inventory);
 
@@ -297,6 +297,8 @@ namespace FreezingArcher.Game
         readonly Application application;
 
         int currentMaze;
+
+        public static DateTime StartTime;
 
         void AddAudio(GameState state)
         {
@@ -524,6 +526,7 @@ namespace FreezingArcher.Game
 
                     if (hcm.Health <= 0.0f)
                     {
+                        warpingNode.Stop();
                         endScreen.State.Scene = game.CurrentGameState.Scene;
 
                         game.SwitchToGameState ("endscreen_state");
@@ -588,6 +591,7 @@ namespace FreezingArcher.Game
                         inventoryGui.CreateInitialFlashlight ();
                         var healthcomp = Player.GetComponent<HealthComponent>();
                         healthcomp.Health = healthcomp.MaximumHealth;
+                        StartTime = DateTime.Now;
                     }, state);
                 }, game.GetGameState ("maze_overworld"));
             }

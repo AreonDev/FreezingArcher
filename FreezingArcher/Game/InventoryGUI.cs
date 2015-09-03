@@ -42,6 +42,7 @@ using Jitter.Collision.Shapes;
 using FreezingArcher.Renderer.Scene.SceneObjects;
 using FreezingArcher.Game.Maze;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game
 {
@@ -783,12 +784,14 @@ namespace FreezingArcher.Game
             AddItem (flashlight);
         }
 
-        public InventoryGUI (Application application, GameState state, Entity player, MessageProvider messageProvider)
+        public InventoryGUI (Application application, GameState state, Entity player, MessageProvider messageProvider,
+            CompositorWarpingNode warpingNode)
         {
             this.application = application;
             this.player = player;
             this.MessageProvider = messageProvider;
             this.GameState = state;
+            this.warpingNode = warpingNode;
             ValidMessages = new[] {
                 (int) MessageId.WindowResize,
                 (int) MessageId.UpdateLocale,
@@ -799,6 +802,8 @@ namespace FreezingArcher.Game
             messageProvider += this;
             Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
         }
+
+        CompositorWarpingNode warpingNode;
 
         public void AddItem (ItemComponent item, Vector2i position, bool insert = false, bool no_message = false)
         {
@@ -1067,6 +1072,7 @@ namespace FreezingArcher.Game
                         {
                             if (!maze_leaved)
                             {
+                                warpingNode.Stop();
                                 GameState endstate = application.Game.GetGameState ("endscreen_state");
                                 endstate.Scene = application.Game.CurrentGameState.Scene;
 

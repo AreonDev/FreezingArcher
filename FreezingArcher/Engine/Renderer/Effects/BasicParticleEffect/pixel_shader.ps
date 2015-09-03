@@ -2,7 +2,8 @@
 
 layout(location = 1) in vec2 TexCoords;
 layout(location = 2) in vec4 Color;
-layout(location = 6) in vec4 View_Position;
+layout(location = 4) in vec3 Position;
+layout(location = 6) in vec3 View_Position;
 
 layout(location = 0) out vec4 FragColor;
 layout(location = 3) out vec4 normal_color;
@@ -14,7 +15,12 @@ uniform sampler2D BillboardTexture;
 
 void main()
 {
-        FragColor = texture2D(BillboardTexture, TexCoords) * Color;
+        vec4 color = texture2D(BillboardTexture, TexCoords) * Color;
+        float dist = distance(View_Position, Position);
+        dist = 2 / dist;
+        if (dist > 1)
+                dist = 1;
+        FragColor = vec4(dist * color.rgb, color.a);
         diffuse_color = vec4(0.0, 0.0, 0.0, 0.0);
         normal_color = vec4(0.0, 0.0, 0.0, 0.0);
         specular_color = vec4(0.0, 0.0, 0.0, 0.0);

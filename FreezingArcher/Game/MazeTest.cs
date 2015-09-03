@@ -71,7 +71,6 @@ namespace FreezingArcher.Game
         CompositorColorCorrectionNode ColorCorrectionNode;
         CompositorNodeOutput OutputNode;
         CompositorWarpingNode WarpingNode;
-        FreezingArcherInput input;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FreezingArcher.Game.MazeTest"/> class.
@@ -131,13 +130,6 @@ namespace FreezingArcher.Game
             state.AudioContext = new AudioContext (messageProvider);
 
             state.MessageProxy.StartProcessing ();
-
-            application.RendererContext.SetCanvas(null);
-            input = new FreezingArcherInput(application, messageProvider);
-            input.Initialize (application.RendererContext.Canvas);
-
-            application.RendererContext.Canvas.SetSize(application.Window.Size.X, application.Window.Size.Y);
-            application.RendererContext.Canvas.ShouldDrawBackground = false;
 
             loadingScreen = new LoadingScreen (application, messageProvider, "loading.png",
                 "MazeLoadingScreen",
@@ -477,7 +469,6 @@ namespace FreezingArcher.Game
                     maze [0].ExportAsImage ("overworld.png");
                     maze [1].ExportAsImage ("underworld.png");
 
-
                     //Add Portals
                     Portals = new List<Entity>();
 
@@ -539,6 +530,9 @@ namespace FreezingArcher.Game
                     }
                 }
 
+                if (!finishedLoading)
+                    loadingScreen.BringToFront();
+
                 if (game.CurrentGameState == game.GetGameState ("maze_overworld") && maze [0].HasFinished)
                     game.CurrentGameState.PhysicsManager.Update (um.TimeStamp);
 
@@ -566,20 +560,18 @@ namespace FreezingArcher.Game
                     {
                         //ColorCorrectionNode.Brightness += (float) um.TimeStamp.TotalSeconds * 0.8f;
                         ColorCorrectionNode.Contrast -= (float) um.TimeStamp.TotalSeconds * 0.3f;
-                        WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 7.0f;
+                        WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 4.0f;
                     }
-                    else
-                        if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
+                    else if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
                     {
                         SwitchMaze ();
                         entered_portal = false;
                     }
-                    else
-                            if (!entered_portal && ColorCorrectionNode.Contrast < 1.0f)
+                    else if (!entered_portal && ColorCorrectionNode.Contrast < 1.0f)
                     {
                                 //ColorCorrectionNode.Brightness -= (float) um.TimeStamp.TotalSeconds * 0.8f;
                                 ColorCorrectionNode.Contrast += (float) um.TimeStamp.TotalSeconds * 0.3f;
-                                WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 7.0f;
+                                WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 4.0f;
                     }
                     else
                     {

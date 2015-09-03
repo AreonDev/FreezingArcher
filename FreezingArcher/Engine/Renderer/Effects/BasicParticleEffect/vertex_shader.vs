@@ -8,6 +8,8 @@ layout(location = 3) in float InLife;
 layout(location = 1) out vec4 OutColor;
 layout(location = 2) out vec2 OutSize;
 layout(location = 3) out float OutLife;
+layout(location = 4) out vec3 OutPosition;
+
 
 out gl_PerVertex
 {
@@ -23,4 +25,5 @@ void main()
         OutColor = InColor;
         OutSize = InSize;
         OutLife = InLife;
+        OutPosition = InPosition;
 }

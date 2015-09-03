@@ -26,6 +26,7 @@ using FreezingArcher.Core;
 using FreezingArcher.Messaging;
 using Gwen.Control;
 using FreezingArcher.Localization;
+using FreezingArcher.UI.Input;
 
 namespace FreezingArcher.Game
 {
@@ -41,13 +42,12 @@ namespace FreezingArcher.Game
             ValidMessages = new[] { (int) MessageId.WindowResize, (int) MessageId.UpdateLocale };
             application.MessageManager += this;
 
-            canvas = application.RendererContext.CreateCanvas();
-            var input = new FreezingArcher.UI.Input.FreezingArcherInput(application, application.MessageManager);
+            canvas = application.RendererContext.Canvas;
+            var input = new FreezingArcherInput(application, application.MessageManager);
             input.Initialize (canvas);
 
             canvas.SetSize(application.Window.Size.X, application.Window.Size.Y);
             canvas.ShouldDrawBackground = false;
-            application.RendererContext.SetCanvas(canvas);
 
             background = new ImagePanel (canvas);
             background.ImageName = "Content/MainMenu.jpg";

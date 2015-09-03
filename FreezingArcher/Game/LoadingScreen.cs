@@ -53,11 +53,17 @@ namespace FreezingArcher.Game
             image.ImageName = backgroundPath;
             image.Width = application.Window.Size.X;
             image.Height = application.Window.Size.Y;
+            image.BringToFront();
         }
 
         public void Ready()
         {
             image.Parent.RemoveChild (image, true);
+        }
+
+        public void BringToFront ()
+        {
+            image.BringToFront();
         }
 
         public GameState LoadingState { get; private set; }

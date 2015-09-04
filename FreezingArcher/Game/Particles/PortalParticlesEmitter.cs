@@ -23,12 +23,13 @@
 using System;
 using FreezingArcher.Math;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Game.Particles
 {
     public class PortalParticles : ParticleEmitter
     {
-        Random rnd = new Random();
+        FastRandom rnd = new FastRandom();
 
         public PortalParticles () : base(40)
         {

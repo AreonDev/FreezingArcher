@@ -36,7 +36,7 @@ namespace FreezingArcher.Content
     {
         public static readonly int MaxThinkTime = 64;
 
-        public AIManager (object map, Random rand)
+        public AIManager (object map, FastRandom rand)
         {
             Map = map;
             this.rand = rand;
@@ -46,7 +46,7 @@ namespace FreezingArcher.Content
 
         public object Map { get; private set; }
 
-        readonly Random rand;
+        readonly FastRandom rand;
 
         #if DEBUG
         public bool CollectAIDebugInformation = false;

@@ -26,12 +26,13 @@ using FreezingArcher.Math;
 
 using FreezingArcher.Renderer;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Game
 {
     public class RedEyeParticleEmitter : ParticleEmitter
     {
-        Random rnd = new Random();
+        FastRandom rnd = new FastRandom();
 
         Vector3 cachedSpawnPoint;
 

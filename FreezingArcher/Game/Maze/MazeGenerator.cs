@@ -237,7 +237,7 @@ namespace FreezingArcher.Game.Maze
 
         #region delegates
 
-        static void CreateMaze (ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref Random rand,
+        static void CreateMaze (ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref FastRandom rand,
             int maximumContinuousPathLength, double turbulence)
         {
             WeightedNode<MazeCell, MazeCellEdgeWeight> node = null;
@@ -389,7 +389,7 @@ namespace FreezingArcher.Game.Maze
 
         static void InitializeMaze (ref ObjectManager objectManager,
             ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref Entity[,] entities,
-            ref Random rand, uint x, uint y)
+            ref FastRandom rand, uint x, uint y)
         {
             entities = new Entity[x, y];
             graph = objectManager.CreateOrRecycle<WeightedGraph<MazeCell, MazeCellEdgeWeight>> ();
@@ -454,7 +454,7 @@ namespace FreezingArcher.Game.Maze
 
         static void AddMazeToGameState (AudioManager am, WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
             MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
-            Random rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs)
+            FastRandom rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs)
         {
             int x = 0, y = 0;
 
@@ -656,7 +656,7 @@ namespace FreezingArcher.Game.Maze
 
         static void SpawnPortals(WeightedGraph<MazeCell, MazeCellEdgeWeight> previous,
             WeightedGraph<MazeCell, MazeCellEdgeWeight> current,
-            WeightedGraph<MazeCell, MazeCellEdgeWeight> next, Random rand, uint portalSpawnFactor)
+            WeightedGraph<MazeCell, MazeCellEdgeWeight> next, FastRandom rand, uint portalSpawnFactor)
         {
             if (previous == null)
             {

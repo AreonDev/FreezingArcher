@@ -26,6 +26,7 @@ using FreezingArcher.Math;
 using FreezingArcher.Renderer;
 using FreezingArcher.Renderer.Scene;
 using FreezingArcher.Renderer.Scene.SceneObjects;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Game
 {
@@ -79,7 +80,7 @@ namespace FreezingArcher.Game
             Smoke.Update (time);
         }
 
-        Random rnd = new Random ();
+        FastRandom rnd = new FastRandom ();
 
         Vector3 cachedSpawnPoint;
 

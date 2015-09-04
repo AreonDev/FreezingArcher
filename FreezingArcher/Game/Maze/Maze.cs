@@ -37,12 +37,12 @@ namespace FreezingArcher.Game.Maze
     /// Initialize maze delegate.
     /// </summary>
     delegate void InitializeMazeDelegate(ref ObjectManager objectManager,
-        ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref Entity[,] entities, ref Random rand, uint x, uint y);
+        ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref Entity[,] entities, ref FastRandom rand, uint x, uint y);
 
     /// <summary>
     /// Generate maze delegate.
     /// </summary>
-    delegate void GenerateMazeDelegate(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref Random rand,
+    delegate void GenerateMazeDelegate(ref WeightedGraph<MazeCell, MazeCellEdgeWeight> graph, ref FastRandom rand,
         int maximumContinuousPathLength, double turbulence);
 
     /// <summary>
@@ -50,7 +50,7 @@ namespace FreezingArcher.Game.Maze
     /// </summary>
     delegate void AddMazeToGameStateDelegate(AudioManager am, WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
         MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
-        Random rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs);
+        FastRandom rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs);
 
     /// <summary>
     /// Calculate path to exit delegate.
@@ -62,7 +62,7 @@ namespace FreezingArcher.Game.Maze
     /// </summary>
     delegate void PlaceFeaturesDelegate(WeightedGraph<MazeCell, MazeCellEdgeWeight> previous,
         WeightedGraph<MazeCell, MazeCellEdgeWeight> current, WeightedGraph<MazeCell, MazeCellEdgeWeight> next,
-        Random rand, uint portalSpawnFactor);
+        FastRandom rand, uint portalSpawnFactor);
 
     /// <summary>
     /// Maze.
@@ -99,7 +99,7 @@ namespace FreezingArcher.Game.Maze
             Turbulence = turbulence;
             PortalSpawnFactor = portalSpawnFactor;
             MaximumContinuousPathLength = maximumContinuousPathLength;
-            rand = new Random (seed);
+            rand = new FastRandom (seed);
             initMazeDelegate = initFunc;
             generateMazeDelegate = generateFunc;
             addMazeToGameStateDelegate = addToSceneDelegate;
@@ -114,7 +114,7 @@ namespace FreezingArcher.Game.Maze
 
         internal WeightedGraph<MazeCell, MazeCellEdgeWeight> graph;
 
-        Random rand;
+        FastRandom rand;
 
         IMazeTheme theme;
 

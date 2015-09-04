@@ -189,8 +189,8 @@ namespace FreezingArcher.Game
 
             state.PhysicsManager.World.AddBody (playerBody);
 
-            int seed = new Random().Next();
-            var rand = new Random(seed);
+            int seed = new FastRandom().Next();
+            var rand = new FastRandom(seed);
             Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
 
             maze[0] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next(), state.MessageProxy, state.PhysicsManager, app.AudioManager, 30, 30);

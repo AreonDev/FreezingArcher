@@ -22,6 +22,7 @@
 //
 using System;
 using FreezingArcher.Renderer.Scene;
+using FreezingArcher.Core;
 
 namespace FreezingArcher.Game
 {
@@ -31,7 +32,7 @@ namespace FreezingArcher.Game
         {
         }
 
-        Random rnd = new Random();
+        FastRandom rnd = new FastRandom();
 
         #region implemented abstract members of ParticleEmitter
 

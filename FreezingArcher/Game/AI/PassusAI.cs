@@ -147,7 +147,7 @@ namespace FreezingArcher.Game.AI
             }
         }
 
-        public override void SetSpawnPosition (Vector3 playerSpawn, PhysicsComponent ownPhysics, object map, Random rand)
+        public override void SetSpawnPosition (Vector3 playerSpawn, PhysicsComponent ownPhysics, object map, FastRandom rand)
         {
             Maze.Maze maze = map as Maze.Maze;
             if (maze != null)

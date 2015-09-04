@@ -49,7 +49,7 @@ namespace FreezingArcher.Game.Maze
             Maze = maze;
             SecondMaze = secondMaze;
             this.GameState = state;
-            rand = new Random(maze.Seed);
+            rand = new FastRandom(maze.Seed);
             this.containsPortal = containsPortal;
 
             ValidMessages = new[] { (int) MessageId.Update };
@@ -64,7 +64,7 @@ namespace FreezingArcher.Game.Maze
 
         public GameState GameState { get; private set;}
 
-        readonly Random rand;
+        readonly FastRandom rand;
 
         public void SwitchGameState(GameState state)
         {

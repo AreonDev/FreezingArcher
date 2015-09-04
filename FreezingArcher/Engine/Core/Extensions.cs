@@ -599,7 +599,7 @@ namespace FreezingArcher.Core
             return new Quaternion(quat.X, quat.Y, quat.Z, quat.W);
         }
 
-        static readonly Random rng = new Random();  
+        static readonly FastRandom rng = new FastRandom();  
 
         public static void Shuffle<T>(this IList<T> list)  
         {  

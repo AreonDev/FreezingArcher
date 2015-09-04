@@ -58,6 +58,9 @@ namespace FreezingArcher.Game
         Source switchMazeSound;
         Source playerDamagedSound;
         Source playerDiedSound;
+        Source playerNoStamina;
+        Source playerDrinked;
+        Source playerEaten;
 
         Texture2D PortalWarpTexture;
         Texture2D DefaultWarpingTexture;
@@ -89,11 +92,13 @@ namespace FreezingArcher.Game
             CompositorNodeOutput outputNode, CompositorWarpingNode warpingNode)
         {
             ValidMessages = new[] {
-                (int)MessageId.Input,
-                (int)MessageId.Update,
-                (int)MessageId.Running,
-                (int)MessageId.HealthChanged,
-                (int)MessageId.CollisionDetected
+                (int) MessageId.Input,
+                (int) MessageId.Update,
+                (int) MessageId.Running,
+                (int) MessageId.HealthChanged,
+                (int) MessageId.CollisionDetected,
+                (int) MessageId.StaminaChanged,
+                (int) MessageId.ItemUse
             };
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
@@ -115,7 +120,7 @@ namespace FreezingArcher.Game
             HealthOverlayNode.OverlayTexture = rendererContext.CreateTexture2D ("bloodsplatter", true, "Content/bloodsplatter.png");
             HealthOverlayNode.Factor = 0;
             HealthOverlayNode.Blending = OverlayBlendMode.Multiply;
-            warpingNode.WarpTexture = rendererContext.CreateTexture2D("warp", true, "Content/warp.jpg");
+            warpingNode.WarpTexture = rendererContext.CreateTexture2D ("warp", true, "Content/warp.jpg");
 
             game.MazeSceneNode = MazeSceneNode;
 
@@ -137,13 +142,12 @@ namespace FreezingArcher.Game
 
             loadingScreen = new LoadingScreen (application, messageProvider, "loading.png",
                 "MazeLoadingScreen",
-                new[] { new Tuple<string, GameStateTransition>("main_menu", GameStateTransition.DefaultTransition)},
+                new[] { new Tuple<string, GameStateTransition> ("main_menu", GameStateTransition.DefaultTransition) },
                 new[] { new Tuple<string, GameStateTransition> (state.Name, new GameStateTransition (0)) });
 
-            endScreen = new EndScreen (application, rendererContext, new Tuple<string, GameStateTransition>[]
-            {
-                new Tuple<string, GameStateTransition>("maze_overworld", GameStateTransition.DefaultTransition),
-                new Tuple<string, GameStateTransition>("maze_underworld", GameStateTransition.DefaultTransition)
+            endScreen = new EndScreen (application, rendererContext, new Tuple<string, GameStateTransition>[] {
+                new Tuple<string, GameStateTransition> ("maze_overworld", GameStateTransition.DefaultTransition),
+                new Tuple<string, GameStateTransition> ("maze_underworld", GameStateTransition.DefaultTransition)
             });
 
             game.SwitchToGameState ("MazeLoadingScreen");
@@ -159,20 +163,20 @@ namespace FreezingArcher.Game
                 typeof(PhysicsSystem)
             });
 
-            inventoryGui = new InventoryGUI(app, state, Player, messageProvider, warpingNode);
-            var inventory = new Inventory(messageProvider, state, Player, new Vector2i(5, 7), 9);
-            inventoryGui.Init(rendererContext.Canvas, inventory);
+            inventoryGui = new InventoryGUI (app, state, Player, messageProvider, warpingNode);
+            var inventory = new Inventory (messageProvider, state, Player, new Vector2i (5, 7), 9);
+            inventoryGui.Init (rendererContext.Canvas, inventory);
 
             PauseMenu = new PauseMenu (application, ColorCorrectionNode, rendererContext.Canvas,
-                () => maze[currentMaze].AIManager.StartThinking(), () => maze[currentMaze].AIManager.StopThinking());
+                () => maze [currentMaze].AIManager.StartThinking (), () => maze [currentMaze].AIManager.StopThinking ());
             
             AddAudio (state);
 
             // embed new maze into game state logic and create a MoveEntityToScene
             SkyboxSystem.CreateSkybox (state.Scene, Player);
             Player.GetComponent<TransformComponent> ().Position = new Vector3 (0, 1.85f, 0);
-            var maze_cam_entity = EntityFactory.Instance.CreateWith ("maze_cam_transform", state.MessageProxy, new[] {typeof (TransformComponent)});
-            var maze_cam_transform = maze_cam_entity.GetComponent<TransformComponent>();
+            var maze_cam_entity = EntityFactory.Instance.CreateWith ("maze_cam_transform", state.MessageProxy, new[] { typeof(TransformComponent) });
+            var maze_cam_transform = maze_cam_entity.GetComponent<TransformComponent> ();
             var maze_cam = new BaseCamera (maze_cam_entity, state.MessageProxy, orthographic: true);
             state.Scene.CameraManager.AddCamera (maze_cam, "maze");
             maze_cam_transform.Position = new Vector3 (115, 240, 110);
@@ -193,40 +197,41 @@ namespace FreezingArcher.Game
 
             state.PhysicsManager.World.AddBody (playerBody);
 
-            int seed = new FastRandom().Next();
-            var rand = new FastRandom(seed);
-            Logger.Log.AddLogEntry(LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
+            int seed = new FastRandom ().Next ();
+            var rand = new FastRandom (seed);
+            Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
 
-            maze[0] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next(), state.MessageProxy, state.PhysicsManager, app.AudioManager, 30, 30);
-            maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
-            maze[0].AIManager.RegisterEntity (Player);
+            maze [0] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next (), state.MessageProxy, state.PhysicsManager, app.AudioManager, 30, 30);
+            maze [0].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
+            maze [0].AIManager.RegisterEntity (Player);
 
             for (int i = 0; i < OverworldScobisCount; i++)
             {
-                ScobisInstances.Add (new Scobis (state, maze[0].AIManager, rendererContext));
+                ScobisInstances.Add (new Scobis (state, maze [0].AIManager, rendererContext));
             }
 
             for (int i = 0; i < OverworldCaligoCount; i++)
             {
-                CaligoInstances.Add (new Caligo (state, maze[0].AIManager, rendererContext, warpingNode));
+                CaligoInstances.Add (new Caligo (state, maze [0].AIManager, rendererContext, warpingNode));
             }
 
             for (int i = 0; i < OverworldViridionCount; i++)
             {
-                ViridionInstances.Add (new Viridion (state, maze[0].AIManager, rendererContext, ColorCorrectionNode)); 
+                ViridionInstances.Add (new Viridion (state, maze [0].AIManager, rendererContext, ColorCorrectionNode)); 
             }
 
             for (int i = 0; i < OverworldGhostCount; i++)
             {
-                GhostInstances.Add (new Ghost (state, maze[0].AIManager, rendererContext, ColorCorrectionNode));
+                GhostInstances.Add (new Ghost (state, maze [0].AIManager, rendererContext, ColorCorrectionNode));
             }
 
-            game.AddGameState("maze_underworld", Content.Environment.Default,
-                new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)) },
-                new[] { new Tuple<string, GameStateTransition>("maze_overworld", new GameStateTransition(0)),
-                        new Tuple<string, GameStateTransition>("endscreen_state", new GameStateTransition(0))});
-            state = game.GetGameState("maze_underworld");
-            state.Scene = new CoreScene(rendererContext, messageProvider);
+            game.AddGameState ("maze_underworld", Content.Environment.Default,
+                new[] { new Tuple<string, GameStateTransition> ("maze_overworld", new GameStateTransition (0)) },
+                new[] { new Tuple<string, GameStateTransition> ("maze_overworld", new GameStateTransition (0)),
+                    new Tuple<string, GameStateTransition> ("endscreen_state", new GameStateTransition (0))
+                });
+            state = game.GetGameState ("maze_underworld");
+            state.Scene = new CoreScene (rendererContext, messageProvider);
             state.Scene.SceneName = "MazeUnderworld";
             state.Scene.Active = false;
             state.Scene.BackgroundColor = Color4.AliceBlue;
@@ -244,10 +249,11 @@ namespace FreezingArcher.Game
             maze [1].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
             maze [1].AIManager.RegisterEntity (Player);
 
-            Func<int, int, bool> containsPortalFunc = (x, y) => {
+            Func<int, int, bool> containsPortalFunc = (x, y) =>
+            {
                 foreach (var m in maze)
                 {
-                    var cell = m.entities [x, y].GetComponent<PhysicsComponent>().RigidBody.Tag as MazeCell;
+                    var cell = m.entities [x, y].GetComponent<PhysicsComponent> ().RigidBody.Tag as MazeCell;
                     if (cell != null && cell.IsPortal)
                     {
                         return true;
@@ -256,25 +262,25 @@ namespace FreezingArcher.Game
                 return false;
             };
 
-            mazeWallMover = new MazeWallMover(maze[0], maze[1], game.GetGameState("maze_overworld"), containsPortalFunc);
+            mazeWallMover = new MazeWallMover (maze [0], maze [1], game.GetGameState ("maze_overworld"), containsPortalFunc);
 
             state.MessageProxy.StopProcessing ();
             //game.SwitchToGameState("maze_overworld");
 
             for (int i = 0; i < UnderworldCaligoCount; i++)
             {
-                CaligoInstances.Add (new Caligo (state, maze[1].AIManager, rendererContext, warpingNode));
+                CaligoInstances.Add (new Caligo (state, maze [1].AIManager, rendererContext, warpingNode));
             }
 
             for (int i = 0; i < UnderworldPassusCount; i++)
             {
-                PassusInstances.Add (new Passus (ColorCorrectionNode, state, maze[1].AIManager, rendererContext));
+                PassusInstances.Add (new Passus (ColorCorrectionNode, state, maze [1].AIManager, rendererContext));
             }
 
             AddAudioToGhosts ();
 
             //Load SwitchMaze sound
-            application.AudioManager.LoadSound("portal_Sound", "Content/Audio/portal.wav");
+            application.AudioManager.LoadSound ("portal_Sound", "Content/Audio/portal.wav");
             switchMazeSound = application.AudioManager.CreateSource ("portal_SoundSource", "portal_Sound");
 
             //Load some player sounds
@@ -284,6 +290,17 @@ namespace FreezingArcher.Game
 
             application.AudioManager.LoadSound ("player_died_Sound", "Content/Audio/player_died.wav");
             playerDiedSound = application.AudioManager.CreateSource ("player_died_SoundSource", "player_died_Sound");
+
+            application.AudioManager.LoadSound ("player_no_stamina_Sound", "Content/Audio/player_no_stamina.wav");
+            playerNoStamina = application.AudioManager.CreateSource ("player_no_stamina_SoundSource", "player_no_stamina_Sound");
+
+            playerNoStamina.Gain = 0.2f;
+
+            application.AudioManager.LoadSound ("player_drinked_Sound", "Content/Audio/player_drinked.wav");
+            playerDrinked = application.AudioManager.CreateSource ("player_drinked_SoundSource", "player_drinked_Sound");
+
+            application.AudioManager.LoadSound ("player_eaten_Sound", "Content/Audio/player_eaten.wav");
+            playerEaten = application.AudioManager.CreateSource ("player_eaten_SoundSource", "player_eaten_Sound");
         }
 
         public void Generate ()
@@ -391,14 +408,32 @@ namespace FreezingArcher.Game
             //Wall moving sound
             src = application.AudioManager.GetSource("moving_wall_SoundSource");
 
-            if (src == null)
+            if (state.Name != "maze_underworld")
             {
-                application.AudioManager.LoadSound ("moving_wall_Sound", "Content/Audio/moving_wall.wav");
-                src = application.AudioManager.CreateSource ("moving_wall_SoundSource", "moving_wall_Sound");
-            }
+                if (src == null)
+                {
+                    application.AudioManager.LoadSound ("moving_wall_Sound", "Content/Audio/moving_wall.wav");
+                    src = application.AudioManager.CreateSource ("moving_wall_SoundSource", "moving_wall_Sound");
+                }
 
-            src.Gain = 0.7f;
-            src.Loop = false;
+                src.Gain = 0.7f;
+                src.Loop = false;
+            }
+            else
+            {
+                src = application.AudioManager.GetSource ("moving_wall_wood_SoundSource");
+
+                if (src == null)
+                {
+                    //application.AudioManager.LoadSound ("moving_wall_Sound", "Content/Audio/moving_wall.wav");
+                    application.AudioManager.LoadSound ("moving_wall_wood_Sound", "Content/Audio/moving_wall_wood.wav");
+
+                    src = application.AudioManager.CreateSource ("moving_wall_wood_SoundSource", "moving_wall_wood_Sound");
+                }
+
+                src.Gain = 0.7f;
+                src.Loop = false;
+            }
 
             state.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.BeginWallMovement,
                 new SoundSourceDescription(src, SoundAction.Play));
@@ -527,7 +562,7 @@ namespace FreezingArcher.Game
         /// <param name="msg">Message to process</param>
         public void ConsumeMessage (IMessage msg)
         {
-            if (msg.MessageId == (int)MessageId.Update)
+            if (msg.MessageId == (int) MessageId.Update)
             {
                 var um = msg as UpdateMessage;
 
@@ -537,7 +572,7 @@ namespace FreezingArcher.Game
                     maze [1].ExportAsImage ("underworld.png");
 
                     //Add Portals
-                    Portals = new List<Entity>();
+                    Portals = new List<Entity> ();
 
                     foreach (var node in maze[0].graph.Nodes)
                     {
@@ -551,14 +586,14 @@ namespace FreezingArcher.Game
                             portalEmitter.Init (particleSceneObject, Application.Instance.RendererContext);
 
                             var portalEntity = EntityFactory.Instance.CreateWith ("PortalEmitter " + DateTime.Now.Ticks, 
-                                game.GetGameState ("maze_overworld").MessageProxy, systems: new[] { typeof(ParticleSystem) });
+                                                   game.GetGameState ("maze_overworld").MessageProxy, systems: new[] { typeof(ParticleSystem) });
 
                             portalEntity.GetComponent<ParticleComponent> ().Emitter = portalEmitter;
                             portalEntity.GetComponent<ParticleComponent> ().Particle = particleSceneObject;
 
                             portalEntity.GetComponent<TransformComponent> ().Position = node.Data.WorldPosition;
 
-                            Portals.Add(portalEntity);
+                            Portals.Add (portalEntity);
                         }
                     }
 
@@ -574,20 +609,20 @@ namespace FreezingArcher.Game
                             portalEmitter.Init (particleSceneObject, Application.Instance.RendererContext);
 
                             var portalEntity = EntityFactory.Instance.CreateWith ("PortalEmitter " + DateTime.Now.Ticks, 
-                                game.GetGameState ("maze_underworld").MessageProxy, systems: new[] { typeof(ParticleSystem) });
+                                                   game.GetGameState ("maze_underworld").MessageProxy, systems: new[] { typeof(ParticleSystem) });
 
                             portalEntity.GetComponent<ParticleComponent> ().Emitter = portalEmitter;
                             portalEntity.GetComponent<ParticleComponent> ().Particle = particleSceneObject;
 
                             portalEntity.GetComponent<TransformComponent> ().Position = node.Data.WorldPosition;
 
-                            Portals.Add(portalEntity);
+                            Portals.Add (portalEntity);
                         }
                     }
 
                     finishedLoading = true;
 
-                    application.Window.CaptureMouse();
+                    application.Window.CaptureMouse ();
 
                     loadingScreen.Ready ();
 
@@ -600,7 +635,7 @@ namespace FreezingArcher.Game
                 }
 
                 if (!finishedLoading)
-                    loadingScreen.BringToFront();
+                    loadingScreen.BringToFront ();
 
                 if (game.CurrentGameState == game.GetGameState ("maze_overworld") && maze [0].HasFinished)
                     game.CurrentGameState.PhysicsManager.Update (um.TimeStamp);
@@ -609,10 +644,11 @@ namespace FreezingArcher.Game
                     game.CurrentGameState.PhysicsManager.Update (um.TimeStamp);
 
                 if (application.FPSCounter >= 50)
-                   FPS_Text.TextColor = System.Drawing.Color.Green;
-                else if (application.FPSCounter < 50 && application.FPSCounter > 30)
+                    FPS_Text.TextColor = System.Drawing.Color.Green;
+                else
+                if (application.FPSCounter < 50 && application.FPSCounter > 30)
                     FPS_Text.TextColor = System.Drawing.Color.Yellow;
-               else
+                else
                     FPS_Text.TextColor = System.Drawing.Color.Red;
 
                 FPS_Text.String = application.FPSCounter + " FPS";
@@ -631,16 +667,18 @@ namespace FreezingArcher.Game
                         ColorCorrectionNode.Contrast -= (float) um.TimeStamp.TotalSeconds * 0.3f;
                         WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 0.5f;
                     }
-                    else if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
+                    else
+                    if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
                     {
                         SwitchMaze ();
                         entered_portal = false;
                     }
-                    else if (!entered_portal && ColorCorrectionNode.Contrast < 1.0f)
+                    else
+                    if (!entered_portal && ColorCorrectionNode.Contrast < 1.0f)
                     {
-                                //ColorCorrectionNode.Brightness -= (float) um.TimeStamp.TotalSeconds * 0.8f;
-                                ColorCorrectionNode.Contrast += (float) um.TimeStamp.TotalSeconds * 0.3f;
-                                WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 0.5f;
+                        //ColorCorrectionNode.Brightness -= (float) um.TimeStamp.TotalSeconds * 0.8f;
+                        ColorCorrectionNode.Contrast += (float) um.TimeStamp.TotalSeconds * 0.3f;
+                        WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 0.5f;
                     }
                     else
                     {
@@ -715,13 +753,13 @@ namespace FreezingArcher.Game
                             playerDamagedSound.Play ();
                     }
 
-                    var healthComponent = Player.GetComponent<HealthComponent>();
+                    var healthComponent = Player.GetComponent<HealthComponent> ();
                     var health = healthComponent.Health > 0 ? healthComponent.Health : 0;
                     ColorCorrectionNode.Saturation = -((healthComponent.MaximumHealth - health) / (healthComponent.MaximumHealth)) / 4;
 
-                    if (hcm.Health <= 0.0f && game.CurrentGameState.Name !=  "MazeLoadingScreen")
+                    if (hcm.Health <= 0.0f && game.CurrentGameState.Name != "MazeLoadingScreen")
                     {
-                        WarpingNode.Stop();
+                        WarpingNode.Stop ();
                         endScreen.State.Scene = game.CurrentGameState.Scene;
 
                         game.SwitchToGameState ("endscreen_state");
@@ -772,12 +810,42 @@ namespace FreezingArcher.Game
                     }
                 }
 
-                if (im.IsActionPressed("damage"))
+                if (im.IsActionPressed ("damage"))
                 {
                     SwitchMaze ();
                 }
             }
+           
+            if (msg.MessageId == (int) MessageId.StaminaChanged && finishedLoading)
+            {
+                StaminaChangedMessage scm = msg as StaminaChangedMessage;
 
+                if (scm.Stamina <= 0.1f)
+                {
+                    if (playerNoStamina.GetState () != SourceState.Playing)
+                        playerNoStamina.Play ();
+                }
+            }
+
+            if (msg.MessageId == (int) MessageId.ItemUse)
+            {
+                ItemUseMessage ium = msg as ItemUseMessage;
+                if (ium.Usage.HasFlag (ItemUsage.Eatable) && ium.Item.ItemUsages.HasFlag (ItemUsage.Eatable))
+                {
+                    if (ium.Item.Entity.Name.Contains ("choco_milk") || ium.Item.Entity.Name.Contains ("soda_can") ||
+                                           ium.Item.Entity.Name.Contains ("mate"))
+                    {
+                        if (playerDrinked.GetState () != SourceState.Playing)
+                            playerDrinked.Play ();
+                    }
+                    else
+                    if (ium.Item.Entity.Name.Contains ("apple") || ium.Item.Entity.Name.Contains ("toast"))
+                    {
+                        if (playerEaten.GetState () != SourceState.Playing)
+                            playerEaten.Play ();
+                    }
+                }
+            }
         }
 
         /// <summary>

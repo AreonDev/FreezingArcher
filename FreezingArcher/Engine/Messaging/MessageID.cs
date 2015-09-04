@@ -137,6 +137,10 @@ namespace FreezingArcher.Messaging
         /// </summary>
         HealthChanged,
         /// <summary>
+        /// Occurs when the stamina of an entity changes.
+        /// </summary>
+        StaminaChanged,
+        /// <summary>
         /// Occurs when an item is removed from the inventory.
         /// </summary>
         RemoveItemFromInventory,

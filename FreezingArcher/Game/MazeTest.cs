@@ -146,6 +146,7 @@ namespace FreezingArcher.Game
 
             Player = EntityFactory.Instance.CreateWith ("player", state.MessageProxy, new[] {
                 typeof(HealthComponent),
+                typeof(StaminaComponent)
             }, new[] {
                 typeof(MovementSystem),
                 typeof(KeyboardControllerSystem),

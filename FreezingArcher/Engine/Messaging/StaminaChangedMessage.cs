@@ -1,5 +1,5 @@
 ﻿//
-//  HealthChangedMessage.cs
+//  StaminaChangedMessage.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -26,16 +26,16 @@ using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Messaging
 {
-    public sealed class HealthChangedMessage : IMessage
+    public sealed class StaminaChangedMessage : IMessage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.HealthChangedMessage"/> class.
+        /// Initializes a new instance of the <see cref="FreezingArcher.Messaging.StaminaChangedMessage"/> class.
         /// </summary>
-        /// <param name="health">Health.</param>
-        public HealthChangedMessage(float health, float health_delta, Entity entity)
+        /// <param name="stamina">Stamina.</param>
+        public StaminaChangedMessage(float stamina, float stamina_delta, Entity entity)
         {
-            Health = health;
-            HealthDelta = health_delta;
+            Stamina = stamina;
+            StaminaDelta = stamina_delta;
             Entity = entity;
         }
 
@@ -43,13 +43,13 @@ namespace FreezingArcher.Messaging
         /// Gets the health.
         /// </summary>
         /// <value>The health.</value>
-        public float Health { get; private set; }
+        public float Stamina { get; private set; }
 
         /// <summary>
         /// Gets the health delta.
         /// </summary>
         /// <value>The health delta.</value>
-        public float HealthDelta { get; private set; }
+        public float StaminaDelta { get; private set; }
 
         /// <summary>
         /// Gets the entity.
@@ -79,7 +79,7 @@ namespace FreezingArcher.Messaging
         {
             get
             {
-                return (int) Messaging.MessageId.HealthChanged;
+                return (int) Messaging.MessageId.StaminaChanged;
             }
         }
 

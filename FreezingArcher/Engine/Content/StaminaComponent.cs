@@ -1,5 +1,5 @@
 ﻿//
-//  HealthComponent.cs
+//  StaminaComponent.cs
 //
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
@@ -28,47 +28,51 @@ namespace FreezingArcher.Content
     /// <summary>
     /// Player component.
     /// </summary>
-    public sealed class HealthComponent : EntityComponent
+    public sealed class StaminaComponent : EntityComponent
     {
         #region defaults
 
         /// <summary>
-        /// The default health.
+        /// The default stamina.
         /// </summary>
-        public static readonly float DefaultHealth = 100f;
+        public static readonly float DefaultStamina = 100f;
 
         /// <summary>
-        /// The default maximum health.
+        /// The default maximum stamina.
         /// </summary>
-        public static readonly float DefaultMaximumHealth = 100f;
+        public static readonly float DefaultMaximumStamina = 100f;
+
+        public static readonly float DefaultStaminaDeltaPerUpdate = 0.5f;
 
         #endregion
 
         /// <summary>
-        /// Gets or sets the maximum health.
+        /// Gets or sets the maximum stamina.
         /// </summary>
-        /// <value>The maximum health.</value>
-        public float MaximumHealth { get; set; }
+        /// <value>The maximum stamina.</value>
+        public float MaximumStamina { get; set; }
 
-        float health;
+        public float StaminaDeltaPerUpdate { get; set; }
+
+        float stamina;
 
         /// <summary>
-        /// Gets or sets the health.
+        /// Gets or sets the stamina.
         /// </summary>
-        /// <value>The health.</value>
-        public float Health
+        /// <value>The stamina.</value>
+        public float Stamina
         {
             get
             {
-                return health;
+                return stamina;
             }
             set
             {
-                float new_health = value;
-                new_health = new_health > MaximumHealth ? MaximumHealth : new_health;
-                var delta = new_health - health;
-                health = new_health;
-                CreateMessage(new HealthChangedMessage (value, delta, Entity));
+                float new_stamina = value;
+                new_stamina = new_stamina > MaximumStamina ? MaximumStamina : new_stamina;
+                var delta = new_stamina - stamina;
+                stamina = new_stamina;
+                CreateMessage(new StaminaChangedMessage (value, delta, Entity));
             }
         }
     }

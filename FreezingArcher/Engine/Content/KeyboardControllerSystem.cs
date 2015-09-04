@@ -40,9 +40,11 @@ namespace FreezingArcher.Content
         {
             base.Init(messageProvider, entity);
 
-            internalValidMessages = new[] { (int) MessageId.Input };
+            internalValidMessages = new[] { (int) MessageId.Input, (int) MessageId.Update };
             messageProvider += this;
         }
+
+        bool isRunning = false;
 
         /// <summary>
         /// Processes the incoming message
@@ -58,16 +60,33 @@ namespace FreezingArcher.Content
             {
                 InputMessage im = msg as InputMessage;
 
+                isRunning = false;
+
                 if (im.IsActionDown ("sneek"))
                 {
                     movement *= 0.25f;
                     msr = 1;
                 }
-                else
-                if (im.IsActionDown ("run"))
+                else if (im.IsActionDown ("run"))
                 {
-                    movement *= 4;
-                    msr = 2;
+                    if (Entity.HasComponent<StaminaComponent>())
+                    {
+                        var sc = Entity.GetComponent<StaminaComponent>();
+
+                        if (sc.Stamina > sc.StaminaDeltaPerUpdate)
+                        {
+                            movement *= 4;
+                            msr = 2;
+                            var stamina = sc.Stamina - sc.StaminaDeltaPerUpdate;
+                            sc.Stamina = sc.Stamina < 0 ? 0 : stamina;
+                            isRunning = true;
+                        }
+                    }
+                    else
+                    {
+                        movement *= 4;
+                        msr = 2;
+                    }
                 }   
 
                 if (im.IsActionDown("forward"))
@@ -128,6 +147,13 @@ namespace FreezingArcher.Content
                     if (rb.Arbiters.Count > 0 && rb.Position.Y < 3)
                         CreateMessage(new MoveVerticalMessage(Entity, 5));
                 }
+            }
+
+            if (!isRunning && msg.MessageId == (int) MessageId.Update && Entity.HasComponent<StaminaComponent>())
+            {
+                var sc = Entity.GetComponent<StaminaComponent>();
+                var stamina = sc.Stamina + sc.StaminaDeltaPerUpdate / 10;
+                sc.Stamina = stamina > sc.MaximumStamina ? sc.MaximumStamina : stamina;
             }
         }
     }

@@ -1100,6 +1100,7 @@ namespace FreezingArcher.Game
                         {
                             var light = inventory.ActiveBarItem.Entity.GetComponent<LightComponent>().Light;
                             light.On = !light.On;
+                            MessageCreated (new FlashlightToggledMessage(light.On));
                         }
                         else
                         {

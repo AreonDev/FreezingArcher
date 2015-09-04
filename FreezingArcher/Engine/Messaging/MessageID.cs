@@ -183,6 +183,8 @@ namespace FreezingArcher.Messaging
 
         CollisionDetected,
 
-        AIAttack
+        AIAttack,
+
+        FlashlightToggled
     }
 }

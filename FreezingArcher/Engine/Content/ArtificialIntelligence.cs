@@ -34,6 +34,6 @@ namespace FreezingArcher.Content
 
         public bool Spawned { get; protected set;}
 
-        public abstract void SetSpawnPosition (Vector3 playerSpawn, PhysicsComponent ownPhysics, object map, Random rand);
+        public abstract void SetSpawnPosition (Vector3 playerSpawn, PhysicsComponent ownPhysics, object map, FastRandom rand);
     }
 }

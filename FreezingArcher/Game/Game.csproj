@@ -159,9 +159,6 @@
     <None Include="Audio\test2.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="command.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="loading.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

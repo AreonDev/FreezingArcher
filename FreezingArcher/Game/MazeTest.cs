@@ -47,11 +47,13 @@ namespace FreezingArcher.Game
     /// </summary>
     public sealed class MazeTest : IMessageConsumer, IMessageCreator
     {
-        const int ScobisCount = 2;
-        const int CaligoCount = 1;
-        const int PassusCount = 2;
-        const int ViridionCount = 2;
-        const int GhostCount = 3;
+        const int OverworldScobisCount = 2;
+        const int OverworldCaligoCount = 1;
+        const int OverworldPassusCount = 2;
+        const int OverworldViridionCount = 2;
+        const int OverworldGhostCount = 3;
+        const int UnderworldCaligoCount = 2;
+        const int UnderworldPassusCount = 4;
 
         Source switchMazeSound;
         Source playerDamagedSound;
@@ -199,22 +201,22 @@ namespace FreezingArcher.Game
             maze[0].PlayerPosition += Player.GetComponent<TransformComponent>().Position;
             maze[0].AIManager.RegisterEntity (Player);
 
-            for (int i = 0; i < ScobisCount; i++)
+            for (int i = 0; i < OverworldScobisCount; i++)
             {
                 ScobisInstances.Add (new Scobis (state, maze[0].AIManager, rendererContext));
             }
 
-            for (int i = 0; i < CaligoCount; i++)
+            for (int i = 0; i < OverworldCaligoCount; i++)
             {
                 CaligoInstances.Add (new Caligo (state, maze[0].AIManager, rendererContext, warpingNode));
             }
 
-            for (int i = 0; i < ViridionCount; i++)
+            for (int i = 0; i < OverworldViridionCount; i++)
             {
                 ViridionInstances.Add (new Viridion (state, maze[0].AIManager, rendererContext, ColorCorrectionNode)); 
             }
 
-            for (int i = 0; i < GhostCount; i++)
+            for (int i = 0; i < OverworldGhostCount; i++)
             {
                 GhostInstances.Add (new Ghost (state, maze[0].AIManager, rendererContext, ColorCorrectionNode));
             }
@@ -259,12 +261,12 @@ namespace FreezingArcher.Game
             state.MessageProxy.StopProcessing ();
             //game.SwitchToGameState("maze_overworld");
 
-            for (int i = 0; i < CaligoCount; i++)
+            for (int i = 0; i < UnderworldCaligoCount; i++)
             {
                 CaligoInstances.Add (new Caligo (state, maze[1].AIManager, rendererContext, warpingNode));
             }
 
-            for (int i = 0; i < PassusCount; i++)
+            for (int i = 0; i < UnderworldPassusCount; i++)
             {
                 PassusInstances.Add (new Passus (ColorCorrectionNode, state, maze[1].AIManager, rendererContext));
             }
@@ -627,7 +629,7 @@ namespace FreezingArcher.Game
                     {
                         //ColorCorrectionNode.Brightness += (float) um.TimeStamp.TotalSeconds * 0.8f;
                         ColorCorrectionNode.Contrast -= (float) um.TimeStamp.TotalSeconds * 0.3f;
-                        WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 2.0f;
+                        WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 0.5f;
                     }
                     else if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
                     {
@@ -638,7 +640,7 @@ namespace FreezingArcher.Game
                     {
                                 //ColorCorrectionNode.Brightness -= (float) um.TimeStamp.TotalSeconds * 0.8f;
                                 ColorCorrectionNode.Contrast += (float) um.TimeStamp.TotalSeconds * 0.3f;
-                                WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 2.0f;
+                                WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 0.5f;
                     }
                     else
                     {

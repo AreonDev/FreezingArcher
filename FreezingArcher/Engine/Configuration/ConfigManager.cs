@@ -64,6 +64,8 @@ namespace FreezingArcher.Configuration
             general.Add ("fullscreen", new Value (false));
             general.Add ("loglevel", new Value (3));
             general.Add ("mouse_speed", new Value (1.2));
+            general.Add ("gamma", new Value (1.0f));
+            general.Add ("language", new Value ("en_US")); 
         }
 
         /// <summary>

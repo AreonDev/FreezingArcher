@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 
 <locale parent="en_US">
+    <string name="en_US">Englisch</string>
+    <string name="de_DE">Deutsch</string>
     <string name="app_name">Freezing Archer</string>
     <string name="inventory">Inventar</string>
     <string name="drop">Wegwerfen</string>
@@ -13,6 +15,11 @@
     <string name="minutes">Minuten überlebt!</string>
     <string name="start_game">Spiel starten</string>
     <string name="settings">Einstellungen</string>
+    <string name="language">Sprache</string>
+    <string name="gamma">Gamma</string>
+    <string name="reset">Zurücksetzen</string>
+    <string name="save">Speichern</string>
+    <string name="tutorial">Einführung</string>
     <string name="flashlight_description">
         Nutze die Taschenlampe um etwas Licht in die
         Dunkelheit zu bringen. Einige Kreaturen werden

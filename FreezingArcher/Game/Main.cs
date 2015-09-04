@@ -70,15 +70,13 @@ namespace FreezingArcher.Game
 
                 rc.Compositor = compositor;
 
-                Localizer.Instance.CurrentLocale = LocaleEnum.de_DE;
-
                 new MainMenu(Application.Instance, () => {
                     outputNode.EnableUI = false;
                     maze = new MazeTest(messageManager, objmnr, rc, game, Application.Instance, sceneNode,
                         healthOverlayNode, colorCorrectionNode, outputNode, warpingNode);
                     outputNode.EnableUI = true;
                     maze.Generate();
-                });
+                }, colorCorrectionNode);
             }
 
             Application.Instance.Run ();

@@ -27,6 +27,7 @@ using FreezingArcher.Messaging;
 using Gwen.Control;
 using FreezingArcher.Localization;
 using FreezingArcher.UI.Input;
+using FreezingArcher.Renderer.Compositor;
 
 namespace FreezingArcher.Game
 {
@@ -34,7 +35,7 @@ namespace FreezingArcher.Game
     {
         const int BUTTON_WIDTH = 200;
 
-        public MainMenu (Application application, Action onPlayGame)
+        public MainMenu (Application application, Action onPlayGame, CompositorColorCorrectionNode colorCorrectionNode)
         {
             this.application = application;
             this.onPlayGame = onPlayGame;
@@ -48,6 +49,8 @@ namespace FreezingArcher.Game
 
             canvas.SetSize(application.Window.Size.X, application.Window.Size.Y);
             canvas.ShouldDrawBackground = false;
+
+            settings = new SettingsMenu (application, canvas, colorCorrectionNode);
 
             background = new ImagePanel (canvas);
             background.ImageName = "Content/MainMenu.jpg";
@@ -65,13 +68,21 @@ namespace FreezingArcher.Game
             settingsButton.Width = BUTTON_WIDTH;
             settingsButton.X = 40;
             settingsButton.Y = exitButton.Y - settingsButton.Height - 40;
+            settingsButton.Clicked += (sender, arguments) => settings.Show();
+
+            tutorialButton = new Button (canvas);
+            tutorialButton.Text = Localizer.Instance.GetValueForName("tutorial");
+            tutorialButton.Width = BUTTON_WIDTH;
+            tutorialButton.X = 40;
+            tutorialButton.Y = settingsButton.Y - tutorialButton.Height - 40;
 
             startButton = new Button (canvas);
             startButton.Text = Localizer.Instance.GetValueForName("start_game");
             startButton.Width = BUTTON_WIDTH;
             startButton.X = 40;
-            startButton.Y = settingsButton.Y - startButton.Height - 40;
+            startButton.Y = tutorialButton.Y - startButton.Height - 40;
             startButton.Clicked += (sender, arguments) => {
+                settings.Destroy();
                 canvas.Dispose();
                 onPlayGame();
             };
@@ -85,6 +96,8 @@ namespace FreezingArcher.Game
         readonly Button startButton;
         readonly Button settingsButton;
         readonly Button exitButton;
+        readonly Button tutorialButton;
+        SettingsMenu settings;
 
         void updateBackground ()
         {

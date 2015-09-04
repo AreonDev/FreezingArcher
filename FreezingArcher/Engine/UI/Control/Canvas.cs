@@ -188,10 +188,13 @@ namespace Gwen.Control
         /// <param name="control">Control to delete.</param>
         public void AddDelayedDelete(Base control)
         {
-            if (!m_DisposeQueue.Contains(control))
+            lock (m_DisposeQueue)
             {
-                m_DisposeQueue.Add(control);
-                RemoveChild(control, false);
+                if (!m_DisposeQueue.Contains(control))
+                {
+                    m_DisposeQueue.Add(control);
+                    RemoveChild(control, false);
+                }
             }
         }
 
@@ -199,12 +202,14 @@ namespace Gwen.Control
         {
             //if (m_DisposeQueue.Count > 0)
             //    System.Diagnostics.Debug.Print("Canvas.ProcessDelayedDeletes: {0} items", m_DisposeQueue.Count);
-            var temp = new List<IDisposable>(m_DisposeQueue);
-            foreach (IDisposable control in temp)
+            lock (m_DisposeQueue)
             {
-                control.Dispose();
+                foreach (IDisposable control in m_DisposeQueue)
+                {
+                    control.Dispose();
+                }
+                m_DisposeQueue.Clear();
             }
-            m_DisposeQueue.Clear();
         }
 
         /// <summary>

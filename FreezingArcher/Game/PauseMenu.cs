@@ -43,6 +43,8 @@ namespace FreezingArcher.Game
             this.application = app;
             this.parent = parent;
 
+            settings = new SettingsMenu (app, parent, colorCorrectionNode);
+
             window = new WindowControl (parent, Localizer.Instance.GetValueForName("pause"));
             window.DisableResizing();
             window.IsMoveable = false;
@@ -57,29 +59,21 @@ namespace FreezingArcher.Game
             continueButton.Y = 10;
             continueButton.Clicked += (sender, arguments) => Hide();
 
+            settingsButton = new Button (window);
+            settingsButton.Text = Localizer.Instance.GetValueForName("settings");
+            settingsButton.Width = BUTTON_WIDTH;
+            settingsButton.X = 10;
+            settingsButton.Y = 10 + continueButton.Y + continueButton.Height;
+            settingsButton.Clicked += (sender, arguments) => settings.Show();
+
             exitButton = new Button (window);
             exitButton.Text = Localizer.Instance.GetValueForName("quit_game");
             exitButton.Width = BUTTON_WIDTH;
             exitButton.X = 10;
-            exitButton.Y = 10 + continueButton.Y + continueButton.Height;
+            exitButton.Y = 10 + settingsButton.Y + settingsButton.Height;
             exitButton.Clicked += (sender, arguments) => application.Window.Close ();
 
-            gammaSlider = new HorizontalSlider (window);
-            gammaSlider.SnapToNotches = false;
-            gammaSlider.Min = 0;
-            gammaSlider.Max = 2;
-            gammaSlider.Value = 1;
-            gammaSlider.ValueChanged += (sender, arguments) => {
-                var slider = sender as HorizontalSlider;
-                if (slider != null)
-                    this.colorCorrectionNode.Gamma = slider.Value;
-            };
-            gammaSlider.Width = BUTTON_WIDTH;
-            gammaSlider.Height = 20;
-            gammaSlider.X = 10;
-            gammaSlider.Y = 10 + exitButton.Y + exitButton.Height;
-
-            window.Height += gammaSlider.Y + gammaSlider.Height + 10;
+            window.Height += exitButton.Y + exitButton.Height + 10;
             window.X = (parent.Width - window.Width) / 2;
             window.Y = (parent.Height - window.Height) / 2;
 
@@ -97,8 +91,9 @@ namespace FreezingArcher.Game
         readonly Base parent;
         readonly WindowControl window;
         readonly Button continueButton;
+        readonly Button settingsButton;
         readonly Button exitButton;
-        readonly HorizontalSlider gammaSlider;
+        readonly SettingsMenu settings;
 
         public void Show ()
         {

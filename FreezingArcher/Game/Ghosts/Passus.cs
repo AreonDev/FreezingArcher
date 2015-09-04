@@ -40,36 +40,40 @@ namespace FreezingArcher.Game.Ghosts
         {
             passusEmitter = new PassusGhostParticleEmitter ();
 
+            PassusGameState = state;
+
             particlePassus = new ParticleSceneObject (passusEmitter.ParticleCount);
             particlePassus.Priority = 7001;
             state.Scene.AddObject (particlePassus);
             passusEmitter.Init (particlePassus, rendererContext);
 
-            passusEntity = EntityFactory.Instance.CreateWith ("Passus." + InstanceCount++, state.MessageProxy,
+            PassusEntity = EntityFactory.Instance.CreateWith ("Passus." + InstanceCount++, state.MessageProxy,
                 new[] { typeof (ArtificialIntelligenceComponent) },
                 new[] { typeof (ParticleSystem), typeof (PhysicsSystem) });
 
-            passusEntity.GetComponent<ParticleComponent> ().Emitter = passusEmitter;
-            passusEntity.GetComponent<ParticleComponent> ().Particle = particlePassus;
+            PassusEntity.GetComponent<ParticleComponent> ().Emitter = passusEmitter;
+            PassusEntity.GetComponent<ParticleComponent> ().Particle = particlePassus;
 
             RigidBody passusBody = new RigidBody (new SphereShape (1.2f));
             passusBody.AffectedByGravity = false;
             passusBody.AllowDeactivation = false;
             passusBody.Mass = 20;
-            passusEntity.GetComponent<PhysicsComponent> ().RigidBody = passusBody;
-            passusEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-            passusEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
+            PassusEntity.GetComponent<PhysicsComponent> ().RigidBody = passusBody;
+            PassusEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+            PassusEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (passusBody);
 
-            var AIcomp = passusEntity.GetComponent<ArtificialIntelligenceComponent>();
+            var AIcomp = PassusEntity.GetComponent<ArtificialIntelligenceComponent>();
             AIcomp.AIManager = aiManager;
-            AIcomp.ArtificialIntelligence = new PassusAI (passusEntity, state, colorCorrectionNode);
-            aiManager.RegisterEntity (passusEntity);
+            AIcomp.ArtificialIntelligence = new PassusAI (PassusEntity, state, colorCorrectionNode);
+            aiManager.RegisterEntity (PassusEntity);
         }
 
-        readonly Entity passusEntity;
+        public Entity PassusEntity { get; private set;}
         readonly ParticleSceneObject particlePassus;
         readonly PassusGhostParticleEmitter passusEmitter;
+
+        public GameState PassusGameState { get; private set;}
     }
 }

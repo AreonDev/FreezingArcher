@@ -54,6 +54,8 @@ namespace FreezingArcher.Game
         const int GhostCount = 3;
 
         Source switchMazeSound;
+        Source playerDamagedSound;
+        Source playerDiedSound;
 
         Texture2D PortalWarpTexture;
         Texture2D DefaultWarpingTexture;
@@ -127,7 +129,7 @@ namespace FreezingArcher.Game
             state.Scene.AmbientIntensity = 0.3f;
             state.Scene.MaxRenderingDistance = 500.0f;
 
-            state.AudioContext = new AudioContext (messageProvider);
+            state.AudioContext = new AudioContext (state.MessageProxy);
 
             state.MessageProxy.StartProcessing ();
 
@@ -231,7 +233,7 @@ namespace FreezingArcher.Game
             state.Scene.AmbientIntensity = 0.3f;
             state.Scene.MaxRenderingDistance = 500.0f;
 
-            state.AudioContext = new AudioContext (messageProvider);
+            state.AudioContext = new AudioContext (state.MessageProxy);
 
             AddAudio (state);
 
@@ -267,9 +269,19 @@ namespace FreezingArcher.Game
                 PassusInstances.Add (new Passus (ColorCorrectionNode, state, maze[1].AIManager, rendererContext));
             }
 
+            AddAudioToGhosts ();
+
             //Load SwitchMaze sound
             application.AudioManager.LoadSound("portal_Sound", "Content/Audio/portal.wav");
             switchMazeSound = application.AudioManager.CreateSource ("portal_SoundSource", "portal_Sound");
+
+            //Load some player sounds
+            application.AudioManager.LoadSound ("player_damage_Sound", "Content/Audio/player_damage.wav");
+            playerDamagedSound = application.AudioManager.CreateSource ("player_damage_SoundSource", "player_damage_Sound");
+            playerDamagedSound.Gain = 0.3f;
+
+            application.AudioManager.LoadSound ("player_died_Sound", "Content/Audio/player_died.wav");
+            playerDiedSound = application.AudioManager.CreateSource ("player_died_SoundSource", "player_died_Sound");
         }
 
         public void Generate ()
@@ -339,6 +351,7 @@ namespace FreezingArcher.Game
             state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.PlayerMove,
                 new SoundSourceDescription (src, SoundAction.Play, Player));
 
+
             //Set listener Position from PlayerPosition
             TransformComponent tfc = Player.GetComponent<TransformComponent>();
             tfc.OnPositionChanged += (Vector3 obj) => application.AudioManager.Listener.Position = obj;
@@ -352,7 +365,7 @@ namespace FreezingArcher.Game
                 src = application.AudioManager.CreateSource ("item_collected_SoundSource", "item_collected_Sound");
             }
 
-            src.Gain = 1.0f;
+            src.Gain = 0.5f;
             src.Loop = false;
 
             state.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.ItemCollected,
@@ -367,7 +380,7 @@ namespace FreezingArcher.Game
                 src = application.AudioManager.CreateSource ("item_dropped_SoundSource", "item_dropped_Sound");
             }
 
-            src.Gain = 1.0f;
+            src.Gain = 0.5f;
             src.Loop = false;
 
             state.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.ItemDropped,
@@ -382,7 +395,7 @@ namespace FreezingArcher.Game
                 src = application.AudioManager.CreateSource ("moving_wall_SoundSource", "moving_wall_Sound");
             }
 
-            src.Gain = 1.0f;
+            src.Gain = 0.7f;
             src.Loop = false;
 
             state.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.BeginWallMovement,
@@ -391,6 +404,57 @@ namespace FreezingArcher.Game
             //Stop wall moving sound on stop
             state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.EndWallMovement,
                 new SoundSourceDescription (src, SoundAction.Stop));
+        }
+
+        void AddAudioToGhosts()
+        {
+            //Add Caligo sound
+            application.AudioManager.LoadSound("caligo_attack_Sound", "Content/Audio/caligo_attack.wav");
+            Source src = application.AudioManager.CreateSource ("caligo_attack_SoundSource", "caligo_attack_Sound");
+
+            src.Gain = 0.4f;
+
+            foreach (Caligo cal in CaligoInstances)
+            {
+                cal.CaligoGameState.AudioContext.RegisterSoundPlaybackOnMessage(MessageId.AIAttack, 
+                    new SoundSourceDescription(src, SoundAction.Play, cal.CaligoEntity));
+            }
+
+            //Add Passus sound
+            application.AudioManager.LoadSound("passus_attack_Sound", "Content/Audio/passus_attack.wav");
+            src = application.AudioManager.CreateSource ("passus_attack_SoundSource", "passus_attack_Sound");
+
+            src.Gain = 0.4f;
+
+            foreach(Passus pass in PassusInstances)
+            {
+                pass.PassusGameState.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.AIAttack,
+                    new SoundSourceDescription (src, SoundAction.Play, pass.PassusEntity));
+            }
+
+            //Add Scobis sound
+            application.AudioManager.LoadSound("scobis_attack_Sound", "Content/Audio/scobis_attack.wav");
+            src = application.AudioManager.CreateSource ("scobis_attack_SoundSource", "scobis_attack_Sound");
+
+            src.Gain = 0.2f;
+
+            foreach (Scobis scob in ScobisInstances)
+            {
+                scob.ScobisGameState.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.AIAttack,
+                    new SoundSourceDescription (src, SoundAction.Play, scob.ScobisEntity));
+            }
+
+            //Add white ghost sound
+            application.AudioManager.LoadSound("ghost_attack_Sound", "Content/Audio/white_ghost_attack.wav");
+            src = application.AudioManager.CreateSource ("ghost_attack_SoundSource", "ghost_attack_Sound");
+
+            src.Gain = 0.4f;
+
+            foreach (Ghost gho in GhostInstances)
+            {
+                gho.GhostGameState.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.AIAttack,
+                    new SoundSourceDescription (src, SoundAction.Play, gho.GhostEntity));
+            }
         }
 
         void SwitchMaze ()
@@ -561,7 +625,7 @@ namespace FreezingArcher.Game
                     {
                         //ColorCorrectionNode.Brightness += (float) um.TimeStamp.TotalSeconds * 0.8f;
                         ColorCorrectionNode.Contrast -= (float) um.TimeStamp.TotalSeconds * 0.3f;
-                        WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 4.0f;
+                        WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 2.0f;
                     }
                     else if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
                     {
@@ -572,13 +636,15 @@ namespace FreezingArcher.Game
                     {
                                 //ColorCorrectionNode.Brightness -= (float) um.TimeStamp.TotalSeconds * 0.8f;
                                 ColorCorrectionNode.Contrast += (float) um.TimeStamp.TotalSeconds * 0.3f;
-                                WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 4.0f;
+                                WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 2.0f;
                     }
                     else
                     {
+                        ColorCorrectionNode.Contrast = 1.0f;
                         switch_maze = false;
-                        WarpingNode.WarpTexture = DefaultWarpingTexture;
-                        WarpingNode.WarpFactor = 0.0f;
+
+                        //WarpingNode.WarpTexture = DefaultWarpingTexture;
+                        WarpingNode.WarpFactor = 0;
                     }
                 }
             }
@@ -630,7 +696,7 @@ namespace FreezingArcher.Game
                 }
             }
 
-            if (msg.MessageId == (int) MessageId.HealthChanged)
+            if (msg.MessageId == (int) MessageId.HealthChanged && finishedLoading)
             {
                 var hcm = msg as HealthChangedMessage;
 
@@ -640,6 +706,9 @@ namespace FreezingArcher.Game
                     {
                         var factor = -hcm.HealthDelta / 20;
                         HealthOverlayNode.Factor = factor > 1 ? 1 : factor;
+
+                        if (playerDamagedSound.GetState () != SourceState.Playing)
+                            playerDamagedSound.Play ();
                     }
 
                     var healthComponent = Player.GetComponent<HealthComponent>();
@@ -652,6 +721,9 @@ namespace FreezingArcher.Game
                         endScreen.State.Scene = game.CurrentGameState.Scene;
 
                         game.SwitchToGameState ("endscreen_state");
+
+                        if (playerDiedSound.GetState () != SourceState.Playing)
+                            playerDiedSound.Play ();
 
                         if (MessageCreated != null)
                             MessageCreated (new GameEndedDiedMessage ());
@@ -698,7 +770,7 @@ namespace FreezingArcher.Game
 
                 if (im.IsActionPressed("damage"))
                 {
-
+                    SwitchMaze ();
                 }
             }
 

@@ -44,31 +44,34 @@ namespace FreezingArcher.Game.Ghosts
             state.Scene.AddObject (particleCaligo);
             caligoEmitter.Init (particleCaligo, rendererContext);
 
-            caligoEntity = EntityFactory.Instance.CreateWith ("Caligo." + InstanceCount++, state.MessageProxy,
+            CaligoGameState = state;
+
+            CaligoEntity = EntityFactory.Instance.CreateWith ("Caligo." + InstanceCount++, state.MessageProxy,
                 new[] { typeof (ArtificialIntelligenceComponent) },
                 new[] { typeof (ParticleSystem), typeof (PhysicsSystem) });
 
-            caligoEntity.GetComponent<ParticleComponent> ().Emitter = caligoEmitter;
-            caligoEntity.GetComponent<ParticleComponent> ().Particle = particleCaligo;
+            CaligoEntity.GetComponent<ParticleComponent> ().Emitter = caligoEmitter;
+            CaligoEntity.GetComponent<ParticleComponent> ().Particle = particleCaligo;
 
             RigidBody caligoBody = new RigidBody (new SphereShape (1.2f));
             caligoBody.AffectedByGravity = false;
             caligoBody.AllowDeactivation = false;
             caligoBody.Mass = 20;
-            caligoEntity.GetComponent<PhysicsComponent> ().RigidBody = caligoBody;
-            caligoEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-            caligoEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
+            CaligoEntity.GetComponent<PhysicsComponent> ().RigidBody = caligoBody;
+            CaligoEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+            CaligoEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (caligoBody);
 
-            var AIcomp = caligoEntity.GetComponent<ArtificialIntelligenceComponent>();
+            var AIcomp = CaligoEntity.GetComponent<ArtificialIntelligenceComponent>();
             AIcomp.AIManager = aiManager;
-            AIcomp.ArtificialIntelligence = new CaligoAI (caligoEntity, state, warpingNode);
-            aiManager.RegisterEntity (caligoEntity);
+            AIcomp.ArtificialIntelligence = new CaligoAI (CaligoEntity, state, warpingNode);
+            aiManager.RegisterEntity (CaligoEntity);
         }
 
         readonly ParticleSceneObject particleCaligo;
         readonly CaligoParticleEmitter caligoEmitter;
-        readonly Entity caligoEntity;
+        public Entity CaligoEntity { get; private set;}
+        public GameState CaligoGameState { get; private set;}
     }
 }

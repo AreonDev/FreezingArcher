@@ -445,6 +445,7 @@
     <Compile Include="Content\StaminaComponent.cs" />
     <Compile Include="Messaging\StaminaChangedMessage.cs" />
     <Compile Include="Core\FastRandom.cs" />
+    <Compile Include="Messaging\AIAttackMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

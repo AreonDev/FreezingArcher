@@ -33,17 +33,29 @@ using Jitter.LinearMath;
 using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Audio;
 using FreezingArcher.Audio.Filters;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Game.AI
 {
-    public sealed class CaligoAI : ArtificialIntelligence
+    public sealed class CaligoAI : ArtificialIntelligence, Messaging.Interfaces.IMessageCreator
     {
+        #region IMessageCreator implementation
+
+        public event MessageEvent MessageCreated;
+
+        #endregion
+
+        private MessageProvider Provider;
+
         public CaligoAI (Entity entity, GameState state, CompositorWarpingNode warpingNode)
         {
             this.entity = entity;
             this.state = state;
             this.warpingNode = warpingNode;
             this.AIcomp = entity.GetComponent<ArtificialIntelligenceComponent>();
+
+            Provider = state.MessageProxy;
+            this.Provider += this;
         }
 
         const float acceleration = 0.2f;
@@ -162,6 +174,11 @@ namespace FreezingArcher.Game.AI
                     }
                     lowpass.GainHF = (1 - fac) / 10;
                     temp_player = player;
+
+                    //Here send Caligo Attack Message
+                    if (MessageCreated != null)
+                        MessageCreated (new AIAttackMessage (entity));
+                    
                 }
                 else if (do_reset)
                 {
@@ -213,6 +230,8 @@ namespace FreezingArcher.Game.AI
                 fallback = JVector.Transform (JVector.Backward, JMatrix.CreateFromAxisAngle (JVector.Up,
                     (float) rand.NextDouble() * 2 * MathHelper.Pi));
                 direction = fallback;
+
+                Spawned = true;
             }
         }
     }

@@ -44,6 +44,8 @@ namespace FreezingArcher.Game.Ghosts
             particleEye2.Priority = 5999;
             particleSmoke.Priority = 6000;
 
+            ScobisGameState = state;
+
             state.Scene.AddObject (particleEye1);
             state.Scene.AddObject (particleEye2);
             state.Scene.AddObject (particleSmoke);
@@ -54,27 +56,27 @@ namespace FreezingArcher.Game.Ghosts
 
             paremitter.Init (particle, particleEye1, particleEye2, particleSmoke, rendererContext);
 
-            scobisEntity = EntityFactory.Instance.CreateWith ("Scobis." + InstanceCount++, state.MessageProxy,
+            ScobisEntity = EntityFactory.Instance.CreateWith ("Scobis." + InstanceCount++, state.MessageProxy,
                 new[] { typeof (ArtificialIntelligenceComponent) },
                 new[] { typeof (ParticleSystem), typeof (PhysicsSystem) });
 
-            scobisEntity.GetComponent<ParticleComponent> ().Emitter = paremitter;
-            scobisEntity.GetComponent<ParticleComponent> ().Particle = particle;
+            ScobisEntity.GetComponent<ParticleComponent> ().Emitter = paremitter;
+            ScobisEntity.GetComponent<ParticleComponent> ().Particle = particle;
             RigidBody scobisBody = new RigidBody (new SphereShape (0.3f));
             scobisBody.AffectedByGravity = false;
             scobisBody.AllowDeactivation = false;
             scobisBody.Mass = 20;
-            scobisEntity.GetComponent<PhysicsComponent> ().RigidBody = scobisBody;
-            scobisEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-            scobisEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
+            ScobisEntity.GetComponent<PhysicsComponent> ().RigidBody = scobisBody;
+            ScobisEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+            ScobisEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (scobisBody);
 
-            var AIcomp = scobisEntity.GetComponent<ArtificialIntelligenceComponent>();
+            var AIcomp = ScobisEntity.GetComponent<ArtificialIntelligenceComponent>();
             AIcomp.AIManager = aiManager;
-            AIcomp.ArtificialIntelligence = new ScobisAI (paremitter.Smoke, scobisEntity, state);
+            AIcomp.ArtificialIntelligence = new ScobisAI (paremitter.Smoke, ScobisEntity, state);
             AIcomp.MaximumEntityDistance = 30;
-            aiManager.RegisterEntity (scobisEntity);
+            aiManager.RegisterEntity (ScobisEntity);
         }
 
         readonly ParticleSceneObject particle;
@@ -82,6 +84,8 @@ namespace FreezingArcher.Game.Ghosts
         readonly ParticleSceneObject particleEye2;
         readonly ParticleSceneObject particleSmoke;
         readonly ScobisParticleEmitter paremitter;
-        readonly Entity scobisEntity;
+        public Entity ScobisEntity { get; private set;}
+
+        public GameState ScobisGameState {get; private set;}
     }
 }

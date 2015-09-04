@@ -175,10 +175,14 @@ namespace FreezingArcher.Messaging
         PlayerJump,
         PlayerSneak,
 
+        PlayerDamaged,
+        PlayerDied,
 
         GameEnded,
         GameEndedDied,
 
-        CollisionDetected
+        CollisionDetected,
+
+        AIAttack
     }
 }

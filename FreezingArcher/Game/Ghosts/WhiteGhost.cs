@@ -45,14 +45,16 @@ namespace FreezingArcher.Game.Ghosts
             state.Scene.AddObject (particleGhost);
             ghostEmitter.Init (particleGhost, rendererContext);
 
-            ghostEntity = EntityFactory.Instance.CreateWith ("Ghost." + InstanceCount++, state.MessageProxy,
+            GhostGameState = state;
+
+            GhostEntity = EntityFactory.Instance.CreateWith ("Ghost." + InstanceCount++, state.MessageProxy,
                 new[] { typeof (ArtificialIntelligenceComponent) },
                 new[] { typeof (ParticleSystem), typeof (PhysicsSystem), typeof(LightSystem) });
 
-            ghostEntity.GetComponent<ParticleComponent> ().Emitter = ghostEmitter;
-            ghostEntity.GetComponent<ParticleComponent> ().Particle = particleGhost;
+            GhostEntity.GetComponent<ParticleComponent> ().Emitter = ghostEmitter;
+            GhostEntity.GetComponent<ParticleComponent> ().Particle = particleGhost;
 
-            var light = ghostEntity.GetComponent<LightComponent> ().Light;
+            var light = GhostEntity.GetComponent<LightComponent> ().Light;
             light = new FreezingArcher.Renderer.Scene.Light (FreezingArcher.Renderer.Scene.LightType.PointLight);
             light.On = true;
             light.Color = new FreezingArcher.Math.Color4 (0.6f, 0.6f, 0.6f, 1.0f);
@@ -60,7 +62,7 @@ namespace FreezingArcher.Game.Ghosts
             light.PointLightConstantAttenuation = 0.7f;
             light.PointLightExponentialAttenuation = 0.008f;
 
-            ghostEntity.GetComponent<LightComponent> ().Light = light;
+            GhostEntity.GetComponent<LightComponent> ().Light = light;
 
             state.Scene.AddLight (light);
 
@@ -68,19 +70,20 @@ namespace FreezingArcher.Game.Ghosts
             ghostBody.AffectedByGravity = false;
             ghostBody.AllowDeactivation = false;
             ghostBody.Mass = 20;
-            ghostEntity.GetComponent<PhysicsComponent> ().RigidBody = ghostBody;
-            ghostEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-            ghostEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
+            GhostEntity.GetComponent<PhysicsComponent> ().RigidBody = ghostBody;
+            GhostEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+            GhostEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (ghostBody);
 
-            ghostEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
-            ghostEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence =
-                new GhostAI (ghostEntity, state, colorCorrectionNode);
-            aiManager.RegisterEntity (ghostEntity);
+            GhostEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
+            GhostEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence =
+                new GhostAI (GhostEntity, state, colorCorrectionNode);
+            aiManager.RegisterEntity (GhostEntity);
         }
 
-        readonly Entity ghostEntity;
+        public GameState GhostGameState { get; private set;}
+        public Entity GhostEntity { get; private set;}
         readonly ParticleSceneObject particleGhost;
         readonly WhiteGhostParticleEmitter ghostEmitter;
     }

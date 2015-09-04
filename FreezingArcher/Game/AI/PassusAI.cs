@@ -1,6 +1,6 @@
 ﻿//
 //  PassusAI.cs
-//
+//=
 //  Author:
 //       Fin Christensen <christensen.fin@gmail.com>
 //
@@ -31,17 +31,30 @@ using Jitter.Dynamics;
 using FreezingArcher.Core;
 using Jitter.LinearMath;
 using FreezingArcher.Renderer.Compositor;
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Game.AI
 {
-    public sealed class PassusAI : ArtificialIntelligence
+    public sealed class PassusAI : ArtificialIntelligence, IMessageCreator
     {
+        #region IMessageCreator implementation
+
+        public event MessageEvent MessageCreated;
+
+        #endregion
+
+        private MessageProvider Provider;
+
         public PassusAI (Entity entity, GameState state, CompositorColorCorrectionNode colorCorrectionNode)
         {
             this.entity = entity;
             this.state = state;
             this.colorCorrectionNode = colorCorrectionNode;
             AIcomp = entity.GetComponent<ArtificialIntelligenceComponent>();
+
+            Provider = state.MessageProxy;
+            Provider += this;
         }
 
         const float acceleration = 0.1f;
@@ -114,6 +127,10 @@ namespace FreezingArcher.Game.AI
                     colorCorrectionNode.Brightness = -fac / 4;
 
                     direction += (player_pos - ghost_pos).ToJitterVector ();
+
+                    if (MessageCreated != null)
+                        MessageCreated (new AIAttackMessage (entity));
+                        
                 }
                 else if (do_reset)
                 {
@@ -182,6 +199,8 @@ namespace FreezingArcher.Game.AI
                 fallback = JVector.Transform (JVector.Backward, JMatrix.CreateFromAxisAngle (JVector.Up,
                     (float) rand.NextDouble() * 2 * MathHelper.Pi));
                 direction = fallback;
+
+                Spawned = true;
             }
         }
     }

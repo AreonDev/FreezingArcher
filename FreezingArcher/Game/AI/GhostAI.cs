@@ -31,17 +31,30 @@ using Jitter.Dynamics;
 using FreezingArcher.Core;
 using Jitter.LinearMath;
 using FreezingArcher.Renderer.Compositor;
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Game.AI
 {
-    public sealed class GhostAI : ArtificialIntelligence
+    public sealed class GhostAI : ArtificialIntelligence, IMessageCreator
     {
+        #region IMessageCreator implementation
+
+        public event MessageEvent MessageCreated;
+
+        #endregion
+
+        MessageProvider Provider;
+
         public GhostAI (Entity entity, GameState state, CompositorColorCorrectionNode colorCorrectionNode)
         {
             gameState = state;
             this.entity = entity;
             AIcomp = entity.GetComponent<ArtificialIntelligenceComponent>();
             this.colorCorrectionNode = colorCorrectionNode;
+
+            Provider = state.MessageProxy;
+            Provider += this;
         }
 
         const float acceleration = 0.3f;
@@ -143,6 +156,9 @@ namespace FreezingArcher.Game.AI
 
                     colorCorrectionNode.Contrast = 1 - (fov / 1.5f);
                     colorCorrectionNode.Brightness = fov / 2;
+
+                    if (MessageCreated != null)
+                        MessageCreated (new AIAttackMessage (entity));
                 }
                 else if (do_reset)
                 {
@@ -189,6 +205,8 @@ namespace FreezingArcher.Game.AI
                 fallback = JVector.Transform (JVector.Backward, JMatrix.CreateFromAxisAngle (JVector.Up,
                     (float) rand.NextDouble() * 2 * MathHelper.Pi));
                 direction = fallback;
+
+                Spawned = true;
             }
         }
     }

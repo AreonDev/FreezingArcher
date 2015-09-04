@@ -120,12 +120,40 @@ namespace FreezingArcher.Content
                 List<SoundSourceDescription> ssds = SoundDictionary[(MessageId)msg.MessageId];
                 if (ssds != null)
                 {
+                    bool can_play = true;
+
                     foreach (SoundSourceDescription ssd in ssds)
                     {
                         TransformComponent tfc = null;
 
                         if (ssd.Entity != null)
+                        {
                             tfc = ssd.Entity.GetComponent<TransformComponent> ();
+
+                            if (msg.MessageId == (int) MessageId.AIAttack)
+                            {
+                                AIAttackMessage aam = msg as AIAttackMessage;
+                                if (aam.Entity.InstId != ssd.Entity.InstId)
+                                {
+                                    can_play = false;
+                                    continue;
+                                }
+                                else
+                                    can_play = true;
+                            }
+
+                            ArtificialIntelligenceComponent aic = ssd.Entity.GetComponent<ArtificialIntelligenceComponent> ();
+                            if (aic != null)
+                            {
+                                if (!aic.ArtificialIntelligence.Spawned)
+                                {
+                                    can_play = false;
+                                    continue;
+                                }
+                                else
+                                    can_play = true;
+                            }
+                        }
                         else
                         {
                             if (msg.MessageId == (int) MessageId.BeginWallMovement)
@@ -137,6 +165,9 @@ namespace FreezingArcher.Content
 
                         if (tfc != null)
                             ssd.SoundSource.Position = tfc.Position;
+
+                        if (!can_play)
+                            return;
 
                         switch (ssd.SoundAction)
                         {
@@ -182,7 +213,8 @@ namespace FreezingArcher.Content
                 SoundDictionary [Message].Add (desc);
             }
 
-            _ValidMessages.Add ((int) Message);
+            if(!_ValidMessages.Contains((int)Message))
+                _ValidMessages.Add ((int) Message);
 
             MessageProvider.RegisterMessageConsumer (this);
         }

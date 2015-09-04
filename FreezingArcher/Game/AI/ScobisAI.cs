@@ -31,17 +31,30 @@ using Jitter.Dynamics;
 using FreezingArcher.Core;
 using Jitter.LinearMath;
 using System.Net.NetworkInformation;
+using FreezingArcher.Messaging;
+using FreezingArcher.Messaging.Interfaces;
 
 namespace FreezingArcher.Game.AI
 {
-    public sealed class ScobisAI : ArtificialIntelligence
+    public sealed class ScobisAI : ArtificialIntelligence, IMessageCreator
     {
+        #region IMessageCreator implementation
+
+        public event MessageEvent MessageCreated;
+
+        #endregion
+
+        private MessageProvider Provider;
+
         public ScobisAI (ScobisSmokeParticleEmitter smokeParticleEmitter, Entity entity, GameState state)
         {
             this.smokeParticleEmitter = smokeParticleEmitter;
             this.entity = entity;
             this.state = state;
             AIcomp = entity.GetComponent<ArtificialIntelligenceComponent>();
+
+            Provider = state.MessageProxy;
+            Provider += this;
         }
 
         const float acceleration = 0.1f;
@@ -169,6 +182,9 @@ namespace FreezingArcher.Game.AI
                         player_health.Health -= fac * 20;
                         lastDamage = DateTime.Now;
                     }
+
+                    if (MessageCreated != null)
+                        MessageCreated (new AIAttackMessage (entity));
                 }
                 else if (do_reset)
                 {
@@ -212,6 +228,8 @@ namespace FreezingArcher.Game.AI
                 fallback = JVector.Transform (JVector.Backward, JMatrix.CreateFromAxisAngle (JVector.Up,
                     (float) rand.NextDouble() * 2 * MathHelper.Pi));
                 direction = fallback;
+
+                Spawned = true;
             }
         }
     }

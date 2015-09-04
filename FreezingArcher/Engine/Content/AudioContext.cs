@@ -166,6 +166,9 @@ namespace FreezingArcher.Content
                         if (tfc != null)
                             ssd.SoundSource.Position = tfc.Position;
 
+                        if (msg.MessageId == (int) MessageId.PlayerMove && ssd.SoundSource.Position.Y > 1.2f)
+                            return;
+
                         if (!can_play)
                             return;
 

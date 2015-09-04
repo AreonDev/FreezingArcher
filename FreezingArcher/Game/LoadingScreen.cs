@@ -46,15 +46,27 @@ namespace FreezingArcher.Game
                 return;
             }
 
+            this.application = application;
+
             ValidMessages = new[] { (int) MessageId.WindowResize };
             messageProvider += this;
 
             image = new ImagePanel(application.RendererContext.Canvas);
             image.ImageName = backgroundPath;
-            image.Width = application.Window.Size.X;
-            image.Height = application.Window.Size.Y;
+            updateImage();
             image.BringToFront();
+
+            progressBar = new ProgressBar (image);
+            progressBar.IsHorizontal = true;
+            progressBar.AutoLabel = false;
+            progressBar.Y = application.RendererContext.Canvas.Height - 70;
+            progressBar.X = 40 + (image.Width - application.RendererContext.Canvas.Width) / 2;
+            progressBar.Height = 30;
+            progressBar.Width = application.RendererContext.Canvas.Width - 80;
         }
+
+        readonly Application application;
+        readonly ProgressBar progressBar;
 
         public void Ready()
         {
@@ -66,6 +78,31 @@ namespace FreezingArcher.Game
             image.BringToFront();
         }
 
+        public void UpdateProgress (float progressDelta, string message)
+        {
+            progressBar.Value += progressDelta;
+            progressBar.SetText(message);
+        }
+
+        void updateImage ()
+        {
+            int width, height;
+            if (application.RendererContext.Canvas.Height * 16 / 9 > application.RendererContext.Canvas.Width)
+            {
+                width = application.RendererContext.Canvas.Height * 16 / 9;
+                height = application.RendererContext.Canvas.Height;
+            }
+            else
+            {
+                width = application.RendererContext.Canvas.Width;
+                height = application.RendererContext.Canvas.Width * 9 / 16;
+            }
+            image.Width = width;
+            image.Height = height;
+            image.X = (application.RendererContext.Canvas.Width - width) / 2;
+            image.Y = (application.RendererContext.Canvas.Height - height) / 2;
+        }
+
         public GameState LoadingState { get; private set; }
 
         readonly ImagePanel image;
@@ -74,9 +111,10 @@ namespace FreezingArcher.Game
         {
             if (msg.MessageId == (int)MessageId.WindowResize) 
             {
-                WindowResizeMessage wrm = msg as WindowResizeMessage;
-
-                image.SetBounds(new System.Drawing.Rectangle(0, 0, wrm.Width, wrm.Height));
+                updateImage();
+                progressBar.Y = application.RendererContext.Canvas.Height - 70;
+                progressBar.X = 40 + (image.Width - application.RendererContext.Canvas.Width) / 2;
+                progressBar.Width = application.RendererContext.Canvas.Width - 80;
             }
         }
 

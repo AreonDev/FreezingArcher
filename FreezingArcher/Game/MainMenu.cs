@@ -127,7 +127,8 @@ namespace FreezingArcher.Game
                 updateBackground();
                 exitButton.Y = canvas.Height - exitButton.Height - 40;
                 settingsButton.Y = exitButton.Y - settingsButton.Height - 40;
-                startButton.Y = settingsButton.Y - startButton.Height - 40;
+                tutorialButton.Y = settingsButton.Y - tutorialButton.Height - 40;
+                startButton.Y = tutorialButton.Y - startButton.Height - 40;
             }
 
             if (msg.MessageId == (int) MessageId.UpdateLocale)

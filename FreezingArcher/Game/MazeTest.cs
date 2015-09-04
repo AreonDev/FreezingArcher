@@ -288,12 +288,12 @@ namespace FreezingArcher.Game
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Generating mazes....");
 
-            maze [0].Generate (() =>
+            maze [0].Generate (loadingScreen.UpdateProgress, () =>
             {
                 if (MessageCreated != null)
                     MessageCreated (new TransformMessage (Player, maze [0].PlayerPosition, Quaternion.Identity));
                 var _state = game.GetGameState ("maze_underworld");
-                maze [1].Generate (() =>
+                maze [1].Generate (loadingScreen.UpdateProgress, () =>
                 {
                     if (maze [0].IsGenerated && !maze [0].AreFeaturesPlaced)
                         maze [0].SpawnFeatures (null, maze [1].graph);
@@ -584,6 +584,8 @@ namespace FreezingArcher.Game
                     }
 
                     finishedLoading = true;
+
+                    application.Window.CaptureMouse();
 
                     loadingScreen.Ready ();
 

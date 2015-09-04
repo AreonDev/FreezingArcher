@@ -454,7 +454,8 @@ namespace FreezingArcher.Game.Maze
 
         static void AddMazeToGameState (AudioManager am, WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
             MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
-            FastRandom rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs)
+            FastRandom rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs,
+            Action<float, string> progressUpdate)
         {
             int x = 0, y = 0;
 
@@ -469,6 +470,8 @@ namespace FreezingArcher.Game.Maze
                     startNode.Data.Position.X * scale.X * 2 + xOffs, playerPosition.Y,
                     startNode.Data.Position.Y * scale.Y * 2 + yOffs);
             }
+
+            float step = 0.25f / graph.Nodes.Count;
 
             TransformComponent transform;
 
@@ -607,6 +610,8 @@ namespace FreezingArcher.Game.Maze
                     x = 0;
                     y++;
                 }
+
+                progressUpdate (step, "Adding maze to scene...");
             }
 
             theme.Finish ();

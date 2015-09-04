@@ -50,7 +50,8 @@ namespace FreezingArcher.Game.Maze
     /// </summary>
     delegate void AddMazeToGameStateDelegate(AudioManager am, WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
         MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
-        FastRandom rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs);
+        FastRandom rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs,
+        Action<float, string> progressUpdate);
 
     /// <summary>
     /// Calculate path to exit delegate.
@@ -250,7 +251,7 @@ namespace FreezingArcher.Game.Maze
         /// <summary>
         /// Generate this instance.
         /// </summary>
-        public void Generate(Action postGenerateHook = null, GameState state = null)
+        public void Generate(Action<float, string> progressUpdate, Action postGenerateHook = null, GameState state = null)
         {
             if (!IsInitialized)
             {
@@ -270,6 +271,8 @@ namespace FreezingArcher.Game.Maze
 
                 var generationThread = new Thread(() => 
                 {
+                    progressUpdate(0, "Generating maze...");
+
                     bool proxy = false;
                     if (!state.MessageProxy.Running)
                     {
@@ -278,9 +281,13 @@ namespace FreezingArcher.Game.Maze
                     }
                     
                     generateMazeDelegate (ref graph, ref rand, MaximumContinuousPathLength, Turbulence);
-                    if (state != null)
-                        AddToGameState (state);
 
+                    progressUpdate(0.25f, "Adding maze to scene...");
+
+                    if (state != null)
+                        AddToGameState (state, progressUpdate);
+
+                    progressUpdate(0, "Running post generation hooks...");
                     CalculatePathToExit ();
 
                     if (proxy)
@@ -291,7 +298,9 @@ namespace FreezingArcher.Game.Maze
 
                     if (postGenerateHook != null)
                         postGenerateHook();
-                    
+
+                    progressUpdate(0, "Finished!");
+
                     HasFinished = true;
                     AIManager.StartThinking ();
                 });
@@ -344,7 +353,7 @@ namespace FreezingArcher.Game.Maze
         /// Adds to scene.
         /// </summary>
         /// <param name="state">The game state the maze should be added to.</param>
-        public void AddToGameState(GameState state)
+        public void AddToGameState(GameState state, Action<float, string> progressUpdate)
         {
             if (!IsInitialized)
             {
@@ -355,7 +364,7 @@ namespace FreezingArcher.Game.Maze
             if (addMazeToGameStateDelegate != null)
             {
                 addMazeToGameStateDelegate(audio, graph, state.MessageProxy, entities, ref playerPosition, state, rand, theme,
-                    Scale, (uint) Size.X, Offset.X, Offset.Y);
+                    Scale, (uint) Size.X, Offset.X, Offset.Y, progressUpdate);
             }
             else
             {

@@ -40,19 +40,21 @@ namespace FreezingArcher.Game.Ghosts
         {
             viridionEmitter = new ViridionParticleEmitter ();
 
+            ViridionGameState = state;
+
             particleViridion = new ParticleSceneObject (viridionEmitter.ParticleCount);
             particleViridion.Priority = 7002;
             state.Scene.AddObject (particleViridion);
             viridionEmitter.Init (particleViridion, rendererContext);
 
-            viridionEntity = EntityFactory.Instance.CreateWith ("Viridion." + InstanceCount++, state.MessageProxy,
+            ViridionEntity = EntityFactory.Instance.CreateWith ("Viridion." + InstanceCount++, state.MessageProxy,
                 new[] { typeof (ArtificialIntelligenceComponent) },
                 new[] { typeof (ParticleSystem), typeof (PhysicsSystem), typeof(LightSystem) });
 
-            viridionEntity.GetComponent<ParticleComponent> ().Emitter = viridionEmitter;
-            viridionEntity.GetComponent<ParticleComponent> ().Particle = particleViridion;
+            ViridionEntity.GetComponent<ParticleComponent> ().Emitter = viridionEmitter;
+            ViridionEntity.GetComponent<ParticleComponent> ().Particle = particleViridion;
 
-            var light = viridionEntity.GetComponent<LightComponent> ().Light;
+            var light = ViridionEntity.GetComponent<LightComponent> ().Light;
             light = new FreezingArcher.Renderer.Scene.Light (FreezingArcher.Renderer.Scene.LightType.PointLight);
             light.On = true;
             light.Color = new FreezingArcher.Math.Color4 (0.6f, 0.6f, 0.6f, 1.0f);
@@ -60,7 +62,7 @@ namespace FreezingArcher.Game.Ghosts
             light.PointLightConstantAttenuation = 0.7f;
             light.PointLightExponentialAttenuation = 0.008f;
 
-            viridionEntity.GetComponent<LightComponent> ().Light = light;
+            ViridionEntity.GetComponent<LightComponent> ().Light = light;
 
             state.Scene.AddLight (light);
 
@@ -68,19 +70,20 @@ namespace FreezingArcher.Game.Ghosts
             ghostBody.AffectedByGravity = false;
             ghostBody.AllowDeactivation = false;
             ghostBody.Mass = 20;
-            viridionEntity.GetComponent<PhysicsComponent> ().RigidBody = ghostBody;
-            viridionEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
-            viridionEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
+            ViridionEntity.GetComponent<PhysicsComponent> ().RigidBody = ghostBody;
+            ViridionEntity.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+            ViridionEntity.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
             state.PhysicsManager.World.AddBody (ghostBody);
 
-            viridionEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
-            viridionEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence =
-                new ViridionAI (viridionEntity, state, colorCorrectionNode);
-            aiManager.RegisterEntity (viridionEntity);
+            ViridionEntity.GetComponent<ArtificialIntelligenceComponent>().AIManager = aiManager;
+            ViridionEntity.GetComponent<ArtificialIntelligenceComponent>().ArtificialIntelligence =
+                new ViridionAI (ViridionEntity, state, colorCorrectionNode);
+            aiManager.RegisterEntity (ViridionEntity);
         }
 
-        readonly Entity viridionEntity;
+        public GameState ViridionGameState { get; private set;}
+        public Entity ViridionEntity { get; private set;}
         readonly ParticleSceneObject particleViridion;
         readonly ViridionParticleEmitter viridionEmitter;
     }

@@ -32,17 +32,30 @@ using FreezingArcher.Core;
 using Jitter.LinearMath;
 using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Game.Ghosts;
+using FreezingArcher.Messaging.Interfaces;
+using FreezingArcher.Messaging;
 
 namespace FreezingArcher.Game.AI
 {
-    public sealed class ViridionAI : ArtificialIntelligence
+    public sealed class ViridionAI : ArtificialIntelligence, IMessageCreator
     {
+        #region IMessageCreator implementation
+
+        public event FreezingArcher.Messaging.MessageEvent MessageCreated;
+
+        #endregion
+
+        MessageProvider Provider;
+
         public ViridionAI (Entity entity, GameState state, CompositorColorCorrectionNode colorCorrectionNode)
         {
             this.colorCorrectionNode = colorCorrectionNode;
             this.entity = entity;
             gameState = state;
             AIcomp = entity.GetComponent<ArtificialIntelligenceComponent>();
+
+            Provider = state.MessageProxy;
+            Provider += this;
         }
 
         const float acceleration = 0.3f;
@@ -140,6 +153,9 @@ namespace FreezingArcher.Game.AI
                     colorCorrectionNode.Lightness = -fac;
                     var player_health = player.GetComponent<HealthComponent>();
                     player_health.Health += fac * 2;
+
+                    if (MessageCreated != null)
+                        MessageCreated (new AIAttackMessage (entity));
                 }
                 else if (do_reset)
                 {
@@ -185,6 +201,8 @@ namespace FreezingArcher.Game.AI
                 fallback = JVector.Transform (JVector.Backward, JMatrix.CreateFromAxisAngle (JVector.Up,
                     (float) rand.NextDouble() * 2 * MathHelper.Pi));
                 direction = fallback;
+
+                Spawned = true;
             }
         }
     }

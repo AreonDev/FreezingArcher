@@ -61,6 +61,7 @@ namespace FreezingArcher.Game
         Source playerNoStamina;
         Source playerDrinked;
         Source playerEaten;
+        Source playerFlashlightTrigger;
 
         Texture2D PortalWarpTexture;
         Texture2D DefaultWarpingTexture;
@@ -98,7 +99,8 @@ namespace FreezingArcher.Game
                 (int) MessageId.HealthChanged,
                 (int) MessageId.CollisionDetected,
                 (int) MessageId.StaminaChanged,
-                (int) MessageId.ItemUse
+                (int) MessageId.ItemUse,
+                (int)MessageId.FlashlightToggled
             };
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
@@ -293,7 +295,6 @@ namespace FreezingArcher.Game
 
             application.AudioManager.LoadSound ("player_no_stamina_Sound", "Content/Audio/player_no_stamina.wav");
             playerNoStamina = application.AudioManager.CreateSource ("player_no_stamina_SoundSource", "player_no_stamina_Sound");
-
             playerNoStamina.Gain = 0.2f;
 
             application.AudioManager.LoadSound ("player_drinked_Sound", "Content/Audio/player_drinked.wav");
@@ -301,6 +302,10 @@ namespace FreezingArcher.Game
 
             application.AudioManager.LoadSound ("player_eaten_Sound", "Content/Audio/player_eaten.wav");
             playerEaten = application.AudioManager.CreateSource ("player_eaten_SoundSource", "player_eaten_Sound");
+
+            application.AudioManager.LoadSound ("player_flashlight_Sound", "Content/Audio/flashlight_trigger.wav");
+            playerFlashlightTrigger = application.AudioManager.CreateSource ("player_flashlight_SoundSource", "player_flashlight_Sound");
+            playerFlashlightTrigger.Gain = 0.15f;
         }
 
         public void Generate ()
@@ -370,6 +375,20 @@ namespace FreezingArcher.Game
             state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.PlayerMove,
                 new SoundSourceDescription (src, SoundAction.Play, Player));
 
+            //Load jump sound
+            src = application.AudioManager.GetSource("player_jump_SoundSource");
+
+            if (src == null)
+            {
+                application.AudioManager.LoadSound ("player_jump_Sound", "Content/Audio/player_jumped.wav");
+                src = application.AudioManager.CreateSource ("player_jump_SoundSource", "player_jump_Sound");
+            }
+
+            src.Gain = 1.0f;
+            src.Loop = false;
+
+            state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.PlayerJump,
+                new SoundSourceDescription (src, SoundAction.Play, Player));
 
             //Set listener Position from PlayerPosition
             TransformComponent tfc = Player.GetComponent<TransformComponent>();
@@ -491,6 +510,18 @@ namespace FreezingArcher.Game
             {
                 gho.GhostGameState.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.AIAttack,
                     new SoundSourceDescription (src, SoundAction.Play, gho.GhostEntity));
+            }
+
+            //Add viridion sound
+            application.AudioManager.LoadSound("viridion_attack_Sound", "Content/Audio/viridion_attack.wav");
+            src = application.AudioManager.CreateSource ("viridion_attack_SoundSource", "viridion_attack_Sound");
+
+            src.Gain = 0.4f;
+
+            foreach (Viridion vir in ViridionInstances)
+            {
+                vir.ViridionGameState.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.AIAttack,
+                    new SoundSourceDescription (src, SoundAction.Play, vir.ViridionEntity));
             }
         }
 
@@ -845,6 +876,11 @@ namespace FreezingArcher.Game
                             playerEaten.Play ();
                     }
                 }
+            }
+
+            if (msg.MessageId == (int) MessageId.FlashlightToggled)
+            {
+                playerFlashlightTrigger.Play ();
             }
         }
 

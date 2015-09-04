@@ -145,7 +145,10 @@ namespace FreezingArcher.Content
                 {
                     var rb = Entity.GetComponent<PhysicsComponent>().RigidBody;
                     if (rb.Arbiters.Count > 0 && rb.Position.Y < 3)
-                        CreateMessage(new MoveVerticalMessage(Entity, 5));
+                    {
+                        CreateMessage (new MoveVerticalMessage (Entity, 5));
+                        CreateMessage (new PlayerJumpedMessage (Entity));
+                    }
                 }
             }
 

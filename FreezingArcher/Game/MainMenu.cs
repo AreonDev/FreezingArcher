@@ -51,6 +51,7 @@ namespace FreezingArcher.Game
             canvas.ShouldDrawBackground = false;
 
             settings = new SettingsMenu (application, canvas, colorCorrectionNode);
+            tutorial = new TutorialMenu (application, canvas);
 
             background = new ImagePanel (canvas);
             background.ImageName = "Content/MainMenu.jpg";
@@ -75,6 +76,7 @@ namespace FreezingArcher.Game
             tutorialButton.Width = BUTTON_WIDTH;
             tutorialButton.X = 40;
             tutorialButton.Y = settingsButton.Y - tutorialButton.Height - 40;
+            tutorialButton.Clicked += (sender, arguments) => tutorial.Show();
 
             startButton = new Button (canvas);
             startButton.Text = Localizer.Instance.GetValueForName("start_game");
@@ -82,8 +84,9 @@ namespace FreezingArcher.Game
             startButton.X = 40;
             startButton.Y = tutorialButton.Y - startButton.Height - 40;
             startButton.Clicked += (sender, arguments) => {
+                application.MessageManager.UnregisterMessageConsumer(this);
+                application.MessageManager.UnregisterMessageConsumer(settings);
                 settings.Destroy();
-                canvas.Dispose();
                 onPlayGame();
             };
         }
@@ -98,6 +101,7 @@ namespace FreezingArcher.Game
         readonly Button exitButton;
         readonly Button tutorialButton;
         SettingsMenu settings;
+        TutorialMenu tutorial;
 
         void updateBackground ()
         {
@@ -134,6 +138,7 @@ namespace FreezingArcher.Game
             if (msg.MessageId == (int) MessageId.UpdateLocale)
             {
                 exitButton.Text = Localizer.Instance.GetValueForName("quit_game");
+                tutorialButton.Text = Localizer.Instance.GetValueForName("tutorial");
                 settingsButton.Text = Localizer.Instance.GetValueForName("settings");
                 startButton.Text = Localizer.Instance.GetValueForName("start_game");
             }

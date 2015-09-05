@@ -46,4 +46,32 @@
     <string name="toast_description">
         To appear...
     </string>
+    <string name="tutorial_text">
+        The player finds himself in the middle of a maze. Its mission is to escape from this maze alive. It is very
+        dark and difficult to see the path. To shed some light into the darkness a flashlight is located in the
+        inventory of the player which can be accessed with [I]. By clicking on the flashlight, a brief description and
+        a bigger picture of the item is displayed. An item can be dragged into the bottom bar to place it in the
+        player's hand. The inventory be closed by clicking on the [X] in the upper right part of the window or by
+        pressing [I] again. You may activate the previously stored item in the bottom inventory bar with your mouse
+        wheel. Alternatively, the number keys on the keyboard can be used. To use an item click the left mouse button
+        or the button in the inventory. Using the active item will turn the flashlight on and off, consume food or hit
+        something with the pickaxe. With the right mouse button objects can be thrown away.
+
+        The player can move forward, to the left, backward and to the right with [W, A, S, D]. With [Ctrl] the player
+        can run, with [Shift] he can sneak with [Spacebar] he can jump and with [Esc] the game can be paused.
+
+        On the ground, the player will find other items that he may collect with the left mouse button. To do so, the
+        player has to look at the item and click on the item in a short distance.
+
+        While looking for an exit from the maze the player will notice that the walls of the maze move, portals are
+        placed inside the maze that teleport the player into another maze and ghosts that can hurt him but also help
+        him.
+
+        There are many different ghosts that differ from each other in their behavior. The player's task is to study
+        this behavior in order to increase his chances to find out of the maze alive. Not every ghosts exists in every
+        maze. Some ghosts can cause severe damage to the player, while others can heal him. Some are afraid of light,
+        while others follow the player.
+
+        Have fun with the whims of the ghosts!
+    </string>
 </locale>

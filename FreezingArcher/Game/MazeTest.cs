@@ -551,8 +551,7 @@ namespace FreezingArcher.Game
                 maze [0].AIManager.StopThinking ();
                 maze [1].AIManager.StartThinking ();
             }
-            else
-            if (currentMaze == 1)
+            else if (currentMaze == 1)
             {
                 maze [1].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
                 maze [0].PlayerPosition = Player.GetComponent<TransformComponent> ().Position;
@@ -570,7 +569,7 @@ namespace FreezingArcher.Game
                     
                 currentMaze = 0;
 
-                    maze [1].AIManager.StopThinking ();
+                maze [1].AIManager.StopThinking ();
                 maze [0].AIManager.StartThinking ();
             }
                     

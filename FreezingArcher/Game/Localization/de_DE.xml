@@ -50,4 +50,35 @@
     <string name="toast_description">
         Hier könnte ihre Werbung stehen!
     </string>
+    <string name="tutorial_text">
+        Der Spieler findet sich mitten in einem Labyrinth wieder. Seine Aufgabe ist es lebend diesem Labyrinth zu
+        entkommen. Zunächst ist es sehr dunkel und schwierig den Weg zu erkennen. Um etwas Licht ins Dunkel zu bringen
+        ist in dem Inventar des Spielers, das mit [I] geöffnet werden kann, eine Taschenlampe. Durch klicken auf diese
+        kann eine kurze Beschreibung und ein größeres Bild des Gegenstands angezeigt werden. Ein Gegenstand kann durch
+        ziehen in die untere Leiste in die Hand des Spielers gelegt werden. Das Inventar kann mit [I] oder dem [X] im
+        oberen rechten Teil des Inventarfensters wieder geschlossen werden. Mit dem Mausrad kann nun der zuvor
+        abgelegte Gegenstand in der unteren Inventarleiste aktiviert werden. Alternativ können die Nummerntasten auf
+        der Tastatur verwendet werden. Zum Benutzen eines Gegenstände kann die linke Maustaste oder die Schaltfläche im
+        Inventar genutzt werden. Durch Benutzen eines Gegenstands wird beispielsweise die Taschenlampe ein- und
+        ausgeschaltet, Lebensmittel konsumiert oder die Pickaxt eingesetzt. Mit der rechten Maustaste können
+        Gegenstände weggeworfen werden.
+
+        Der Spieler kann sich mit [W,A,S,D] vorwärts, nach links, rückwärts und nach rechts bewegen. Mit [Strg] kann der
+        Spieler rennen, mit [Shift] kann er schleichen, mit [Leertaste] kann er springen und mit [Esc] kann das Spiel
+        pausiert werden.
+
+        Auf dem Boden wird der Spieler weitere Gegenstände entdecken, die er mit der linken Maustaste aufheben kann.
+        Dazu muss der Spieler den Gegenstand in geringer Entfernung angucken und anklicken.
+
+        Auf der Suche nach dem Ausgang aus dem Labyrinth wird der Spieler bemerken, dass sich die Wände des Labyrinths
+        verschieben, in dem Labyrinth Portale platziert sind, die ihn in ein anderes Labyrinth teleportieren und Geister
+        die ihm schaden aber auch helfen können.
+
+        Es gibt viele verschiedene Geister, die vom Verhalten her sich stark voneinander unterscheiden. Aufgabe des
+        Spielers ist es dieses Verhalten zu studieren um seine Chancen lebend aus dem Labyrinth zu finden zu erhöhen.
+        Dabei existiert nicht jeder Geist in jedem Labyrinth. Einige Geister können dem Spieler starken Schaden zufügen,
+        andere können ihn wieder heilen. Einige haben Angst vor Licht, andere verfolgen den Spieler.
+
+        Viel Spaß mit den Launen der Geister!
+    </string>
 </locale>

@@ -143,6 +143,8 @@ namespace FreezingArcher.Game
 
         public void Show ()
         {
+            window.X = (parent.Width - window.Width) / 2;
+            window.Y = (parent.Height - window.Height) / 2;
             window.Show();
         }
 

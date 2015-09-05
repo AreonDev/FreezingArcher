@@ -223,62 +223,65 @@ namespace Gwen.Control
                 return;
 
             //Get the max size of all our children together
-            int childrenWidth = Children.Count > 0 ? Children.Max(x => x.Right) : 0;
-            int childrenHeight = Children.Count > 0 ? Children.Max(x => x.Bottom) : 0;
-
-            if (m_CanScrollH)
+            lock (Children)
             {
-                m_InnerPanel.SetSize(Math.Max(Width, childrenWidth), Math.Max(Height, childrenHeight));
+                int childrenWidth = Children.Count > 0 ? Children.Max(x => x.Right) : 0;
+                int childrenHeight = Children.Count > 0 ? Children.Max(x => x.Bottom) : 0;
+
+                if (m_CanScrollH)
+                {
+                    m_InnerPanel.SetSize(Math.Max(Width, childrenWidth), Math.Max(Height, childrenHeight));
+                }
+                else
+                {
+                    m_InnerPanel.SetSize(Width - (m_VerticalScrollBar.IsHidden ? 0 : m_VerticalScrollBar.Width),
+                        Math.Max(Height, childrenHeight));
+                }
+
+                float wPercent = Width /
+                    (float)(childrenWidth + (m_VerticalScrollBar.IsHidden ? 0 : m_VerticalScrollBar.Width));
+                float hPercent = Height /
+                    (float)
+                    (childrenHeight + (m_HorizontalScrollBar.IsHidden ? 0 : m_HorizontalScrollBar.Height));
+
+                if (m_CanScrollV)
+                    VScrollRequired = hPercent >= 1;
+                else
+                    m_VerticalScrollBar.IsHidden = true;
+
+                if (m_CanScrollH)
+                    HScrollRequired = wPercent >= 1;
+                else
+                    m_HorizontalScrollBar.IsHidden = true;
+
+
+                m_VerticalScrollBar.ContentSize = m_InnerPanel.Height;
+                m_VerticalScrollBar.ViewableContentSize = Height - (m_HorizontalScrollBar.IsHidden ? 0 : m_HorizontalScrollBar.Height);
+
+
+                m_HorizontalScrollBar.ContentSize = m_InnerPanel.Width;
+                m_HorizontalScrollBar.ViewableContentSize = Width - (m_VerticalScrollBar.IsHidden ? 0 : m_VerticalScrollBar.Width);
+
+                int newInnerPanelPosX = 0;
+                int newInnerPanelPosY = 0;
+
+                if (CanScrollV && !m_VerticalScrollBar.IsHidden)
+                {
+                    newInnerPanelPosY =
+                        (int)(
+                            -((m_InnerPanel.Height) - Height + (m_HorizontalScrollBar.IsHidden ? 0 : m_HorizontalScrollBar.Height)) *
+                            m_VerticalScrollBar.ScrollAmount);
+                }
+                if (CanScrollH && !m_HorizontalScrollBar.IsHidden)
+                {
+                    newInnerPanelPosX =
+                        (int)(
+                            -((m_InnerPanel.Width) - Width + (m_VerticalScrollBar.IsHidden ? 0 : m_VerticalScrollBar.Width)) *
+                            m_HorizontalScrollBar.ScrollAmount);
+                }
+
+                m_InnerPanel.SetPosition(newInnerPanelPosX, newInnerPanelPosY);
             }
-            else
-            {
-                m_InnerPanel.SetSize(Width - (m_VerticalScrollBar.IsHidden ? 0 : m_VerticalScrollBar.Width),
-                                     Math.Max(Height, childrenHeight));
-            }
-
-            float wPercent = Width /
-                             (float)(childrenWidth + (m_VerticalScrollBar.IsHidden ? 0 : m_VerticalScrollBar.Width));
-            float hPercent = Height /
-                             (float)
-                             (childrenHeight + (m_HorizontalScrollBar.IsHidden ? 0 : m_HorizontalScrollBar.Height));
-
-            if (m_CanScrollV)
-                VScrollRequired = hPercent >= 1;
-            else
-                m_VerticalScrollBar.IsHidden = true;
-
-            if (m_CanScrollH)
-                HScrollRequired = wPercent >= 1;
-            else
-                m_HorizontalScrollBar.IsHidden = true;
-
-
-            m_VerticalScrollBar.ContentSize = m_InnerPanel.Height;
-            m_VerticalScrollBar.ViewableContentSize = Height - (m_HorizontalScrollBar.IsHidden ? 0 : m_HorizontalScrollBar.Height);
-
-
-            m_HorizontalScrollBar.ContentSize = m_InnerPanel.Width;
-            m_HorizontalScrollBar.ViewableContentSize = Width - (m_VerticalScrollBar.IsHidden ? 0 : m_VerticalScrollBar.Width);
-
-            int newInnerPanelPosX = 0;
-            int newInnerPanelPosY = 0;
-
-            if (CanScrollV && !m_VerticalScrollBar.IsHidden)
-            {
-                newInnerPanelPosY =
-                    (int)(
-                        -((m_InnerPanel.Height) - Height + (m_HorizontalScrollBar.IsHidden ? 0 : m_HorizontalScrollBar.Height)) *
-                        m_VerticalScrollBar.ScrollAmount);
-            }
-            if (CanScrollH && !m_HorizontalScrollBar.IsHidden)
-            {
-                newInnerPanelPosX =
-                    (int)(
-                        -((m_InnerPanel.Width) - Width + (m_VerticalScrollBar.IsHidden ? 0 : m_VerticalScrollBar.Width)) *
-                        m_HorizontalScrollBar.ScrollAmount);
-            }
-
-            m_InnerPanel.SetPosition(newInnerPanelPosX, newInnerPanelPosY);
         }
 
         public virtual void ScrollToBottom()

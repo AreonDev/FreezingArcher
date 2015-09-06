@@ -292,39 +292,6 @@ namespace FreezingArcher.Game
             {
                 FenFireInstances.Add (new FenFire (state, maze [1].AIManager, rendererContext));
             }
-
-            AddAudioToGhosts ();
-
-            //Load SwitchMaze sound
-            application.AudioManager.LoadSound ("portal_Sound", "Content/Audio/portal.wav");
-            switchMazeSound = application.AudioManager.CreateSource ("portal_SoundSource", "portal_Sound");
-
-            //Load some player sounds
-            application.AudioManager.LoadSound ("player_damage_Sound", "Content/Audio/player_damage.wav");
-            playerDamagedSound = application.AudioManager.CreateSource ("player_damage_SoundSource", "player_damage_Sound");
-            playerDamagedSound.Gain = 0.3f;
-
-            application.AudioManager.LoadSound ("player_died_Sound", "Content/Audio/player_died.wav");
-            playerDiedSound = application.AudioManager.CreateSource ("player_died_SoundSource", "player_died_Sound");
-
-            application.AudioManager.LoadSound ("player_no_stamina_Sound", "Content/Audio/player_no_stamina.wav");
-            playerNoStamina = application.AudioManager.CreateSource ("player_no_stamina_SoundSource", "player_no_stamina_Sound");
-            playerNoStamina.Gain = 0.2f;
-
-            application.AudioManager.LoadSound ("player_drinked_Sound", "Content/Audio/player_drinked.wav");
-            playerDrinked = application.AudioManager.CreateSource ("player_drinked_SoundSource", "player_drinked_Sound");
-
-            application.AudioManager.LoadSound ("player_eaten_Sound", "Content/Audio/player_eaten.wav");
-            playerEaten = application.AudioManager.CreateSource ("player_eaten_SoundSource", "player_eaten_Sound");
-
-            application.AudioManager.LoadSound ("player_flashlight_Sound", "Content/Audio/flashlight_trigger.wav");
-            playerFlashlightTrigger = application.AudioManager.CreateSource ("player_flashlight_SoundSource", "player_flashlight_Sound");
-            playerFlashlightTrigger.Gain = 0.15f;
-
-            application.AudioManager.LoadSound ("background_music_Sound", "Content/Audio/background_music.wav");
-            backgroundMusic = application.AudioManager.CreateSource ("background_music_SoundSource", "background_music_Sound");
-            backgroundMusic.Gain = 1.0f;
-            backgroundMusic.Loop = true;
         }
 
         public void Generate ()
@@ -347,6 +314,12 @@ namespace FreezingArcher.Game
                     inventoryGui.CreateInitialFlashlight ();
                     var healthcomp = Player.GetComponent<HealthComponent>();
                     healthcomp.Health = healthcomp.MaximumHealth;
+
+                    application.AudioManager.LoadSound ("background_music_Sound", "Content/Audio/background_music.ogg");
+                    backgroundMusic = application.AudioManager.CreateSource ("background_music_SoundSource", "background_music_Sound");
+                    backgroundMusic.Gain = 1.0f;
+                    backgroundMusic.Loop = true;
+
                     StartTime = DateTime.Now;
                 }, _state);
             }, game.GetGameState ("maze_overworld"));            
@@ -386,7 +359,7 @@ namespace FreezingArcher.Game
 
             if (src == null)
             {
-                application.AudioManager.LoadSound ("footstep_Sound", "Content/Audio/footstep.wav");
+                application.AudioManager.LoadSound ("footstep_Sound", "Content/Audio/footstep.ogg");
                 src = application.AudioManager.CreateSource ("footstep_SoundSource", "footstep_Sound");
             }
 
@@ -404,7 +377,7 @@ namespace FreezingArcher.Game
 
             if (src == null)
             {
-                application.AudioManager.LoadSound ("footstep_run_Sound", "Content/Audio/footstep_run.wav");
+                application.AudioManager.LoadSound ("footstep_run_Sound", "Content/Audio/footstep_run.ogg");
                 src = application.AudioManager.CreateSource ("footstep_run_SoundSource", "footstep_run_Sound");
             }
 
@@ -422,7 +395,7 @@ namespace FreezingArcher.Game
 
             if (src == null)
             {
-                application.AudioManager.LoadSound ("player_jump_Sound", "Content/Audio/player_jumped.wav");
+                application.AudioManager.LoadSound ("player_jump_Sound", "Content/Audio/player_jumped.ogg");
                 src = application.AudioManager.CreateSource ("player_jump_SoundSource", "player_jump_Sound");
             }
 
@@ -441,7 +414,7 @@ namespace FreezingArcher.Game
 
             if (src == null)
             {
-                application.AudioManager.LoadSound ("item_collected_Sound", "Content/Audio/item_collected.wav");
+                application.AudioManager.LoadSound ("item_collected_Sound", "Content/Audio/item_collected.ogg");
                 src = application.AudioManager.CreateSource ("item_collected_SoundSource", "item_collected_Sound");
             }
 
@@ -456,7 +429,7 @@ namespace FreezingArcher.Game
 
             if (src == null)
             {
-                application.AudioManager.LoadSound ("item_dropped_Sound", "Content/Audio/item_dropped.wav");
+                application.AudioManager.LoadSound ("item_dropped_Sound", "Content/Audio/item_dropped.ogg");
                 src = application.AudioManager.CreateSource ("item_dropped_SoundSource", "item_dropped_Sound");
             }
 
@@ -473,7 +446,7 @@ namespace FreezingArcher.Game
             {
                 if (src == null)
                 {
-                    application.AudioManager.LoadSound ("moving_wall_Sound", "Content/Audio/moving_wall.wav");
+                    application.AudioManager.LoadSound ("moving_wall_Sound", "Content/Audio/moving_wall.ogg");
                     src = application.AudioManager.CreateSource ("moving_wall_SoundSource", "moving_wall_Sound");
                 }
 
@@ -486,8 +459,8 @@ namespace FreezingArcher.Game
 
                 if (src == null)
                 {
-                    //application.AudioManager.LoadSound ("moving_wall_Sound", "Content/Audio/moving_wall.wav");
-                    application.AudioManager.LoadSound ("moving_wall_wood_Sound", "Content/Audio/moving_wall_wood.wav");
+                    //application.AudioManager.LoadSound ("moving_wall_Sound", "Content/Audio/moving_wall.ogg");
+                    application.AudioManager.LoadSound ("moving_wall_wood_Sound", "Content/Audio/moving_wall_wood.ogg");
 
                     src = application.AudioManager.CreateSource ("moving_wall_wood_SoundSource", "moving_wall_wood_Sound");
                 }
@@ -507,7 +480,7 @@ namespace FreezingArcher.Game
         void AddAudioToGhosts()
         {
             //Add Caligo sound
-            application.AudioManager.LoadSound("caligo_attack_Sound", "Content/Audio/caligo_attack.wav");
+            application.AudioManager.LoadSound("caligo_attack_Sound", "Content/Audio/caligo_attack.ogg");
             Source src = application.AudioManager.CreateSource ("caligo_attack_SoundSource", "caligo_attack_Sound");
 
             src.Gain = 0.4f;
@@ -519,7 +492,7 @@ namespace FreezingArcher.Game
             }
 
             //Add Passus sound
-            application.AudioManager.LoadSound("passus_attack_Sound", "Content/Audio/passus_attack.wav");
+            application.AudioManager.LoadSound("passus_attack_Sound", "Content/Audio/passus_attack.ogg");
             src = application.AudioManager.CreateSource ("passus_attack_SoundSource", "passus_attack_Sound");
 
             src.Gain = 0.4f;
@@ -531,7 +504,7 @@ namespace FreezingArcher.Game
             }
 
             //Add Scobis sound
-            application.AudioManager.LoadSound("scobis_attack_Sound", "Content/Audio/scobis_attack.wav");
+            application.AudioManager.LoadSound("scobis_attack_Sound", "Content/Audio/scobis_attack.ogg");
             src = application.AudioManager.CreateSource ("scobis_attack_SoundSource", "scobis_attack_Sound");
 
             src.Gain = 0.1f;
@@ -543,7 +516,7 @@ namespace FreezingArcher.Game
             }
 
             //Add white ghost sound
-            application.AudioManager.LoadSound("ghost_attack_Sound", "Content/Audio/white_ghost_attack.wav");
+            application.AudioManager.LoadSound("ghost_attack_Sound", "Content/Audio/white_ghost_attack.ogg");
             src = application.AudioManager.CreateSource ("ghost_attack_SoundSource", "ghost_attack_Sound");
 
             src.Gain = 0.4f;
@@ -555,7 +528,7 @@ namespace FreezingArcher.Game
             }
 
             //Add viridion sound
-            application.AudioManager.LoadSound("viridion_attack_Sound", "Content/Audio/viridion_attack.wav");
+            application.AudioManager.LoadSound("viridion_attack_Sound", "Content/Audio/viridion_attack.ogg");
             src = application.AudioManager.CreateSource ("viridion_attack_SoundSource", "viridion_attack_Sound");
 
             src.Gain = 0.4f;
@@ -627,6 +600,7 @@ namespace FreezingArcher.Game
 
         bool switch_maze = false;
         bool entered_portal = false;
+        bool can_play_background = false;
 
         /// <summary>
         /// Processes the incoming message
@@ -929,6 +903,37 @@ namespace FreezingArcher.Game
             if (msg.MessageId == (int) MessageId.FlashlightToggled)
             {
                 playerFlashlightTrigger.Play ();
+            }
+
+            if (msg.MessageId == (int) MessageId.Running)
+            {
+                AddAudioToGhosts ();
+
+                //Load SwitchMaze sound
+                application.AudioManager.LoadSound ("portal_Sound", "Content/Audio/portal.ogg");
+                switchMazeSound = application.AudioManager.CreateSource ("portal_SoundSource", "portal_Sound");
+
+                //Load some player sounds
+                application.AudioManager.LoadSound ("player_damage_Sound", "Content/Audio/player_damage.ogg");
+                playerDamagedSound = application.AudioManager.CreateSource ("player_damage_SoundSource", "player_damage_Sound");
+                playerDamagedSound.Gain = 0.3f;
+
+                application.AudioManager.LoadSound ("player_died_Sound", "Content/Audio/player_died.ogg");
+                playerDiedSound = application.AudioManager.CreateSource ("player_died_SoundSource", "player_died_Sound");
+
+                application.AudioManager.LoadSound ("player_no_stamina_Sound", "Content/Audio/player_no_stamina.ogg");
+                playerNoStamina = application.AudioManager.CreateSource ("player_no_stamina_SoundSource", "player_no_stamina_Sound");
+                playerNoStamina.Gain = 0.2f;
+
+                application.AudioManager.LoadSound ("player_drinked_Sound", "Content/Audio/player_drinked.ogg");
+                playerDrinked = application.AudioManager.CreateSource ("player_drinked_SoundSource", "player_drinked_Sound");
+
+                application.AudioManager.LoadSound ("player_eaten_Sound", "Content/Audio/player_eaten.ogg");
+                playerEaten = application.AudioManager.CreateSource ("player_eaten_SoundSource", "player_eaten_Sound");
+
+                application.AudioManager.LoadSound ("player_flashlight_Sound", "Content/Audio/flashlight_trigger.ogg");
+                playerFlashlightTrigger = application.AudioManager.CreateSource ("player_flashlight_SoundSource", "player_flashlight_Sound");
+                playerFlashlightTrigger.Gain = 0.15f;
             }
         }
 

@@ -43,7 +43,7 @@ namespace FreezingArcher.Game
             Application.Instance.Init ();
             Application.Instance.Load ();
 
-            Application.Instance.AudioManager.LoadSound ("main_menu_Sound", "Content/Audio/main_menu.wav");
+            Application.Instance.AudioManager.LoadSound ("main_menu_Sound", "Content/Audio/main_menu.ogg");
             MainMenuMusic = Application.Instance.AudioManager.CreateSource ("main_menu_SoundSource", "main_menu_Sound");
             MainMenuMusic.Loop = true;
             MainMenuMusic.Gain = 0.6f;

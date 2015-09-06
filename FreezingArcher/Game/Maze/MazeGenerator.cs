@@ -452,6 +452,14 @@ namespace FreezingArcher.Game.Maze
         static int mate_idx = 0;
         static int toast_idx = 0;
 
+        const int pickaxe = 2;
+        const int flashlight = 4;
+        const int choco_milk = 12;
+        const int soda_can = 6;
+        const int apple = 6;
+        const int mate = 6;
+        const int toast = 6;
+
         static void AddMazeToGameState (AudioManager am, WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
             MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
             FastRandom rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs,
@@ -488,14 +496,21 @@ namespace FreezingArcher.Game.Maze
 
                     string name = string.Empty;
                     int idx;
+                    int pickaxeOffset = pickaxe;
+                    int flashlightOffset = pickaxeOffset + flashlight;
+                    int chocoMilkOffset = flashlightOffset + choco_milk;
+                    int sodaCanOffset = chocoMilkOffset + soda_can;
+                    int appleOffset = sodaCanOffset + apple;
+                    int mateOffset = appleOffset + mate;
+                    int toastOffset = mateOffset + toast;
                     // pickaxe
-                    if (r == 0)
+                    if (r > -1 && r <= pickaxeOffset)
                     {
                         idx = 2;
                         name = ItemTemplates[idx].Name + pickaxe_idx++;
                     }
                     // flashlight
-                    else if (r > 0 && r <= 4)
+                    else if (r > pickaxeOffset && r <= flashlightOffset)
                     {
                         if (lightCount++ < CompositorNodeScene.MaximumLightCount)
                         {
@@ -508,28 +523,28 @@ namespace FreezingArcher.Game.Maze
                         }
                     }
                     // choco_milk
-                    else if (r > 4 && r <= 20)
+                    else if (r > flashlightOffset && r <= chocoMilkOffset)
                     {
                         idx = 0;
                         name = ItemTemplates[idx].Name + choco_milk_idx++;
                     }
                     // soda_can
-                    else if (r > 20 && r <= 28)
+                    else if (r > chocoMilkOffset && r <= sodaCanOffset)
                     {
                         idx = 3;
                         name = ItemTemplates[idx].Name + soda_can_idx++;
                     }
-                    else if (r > 28 && r <= 36)
+                    else if (r > sodaCanOffset && r <= appleOffset)
                     {
                         idx = 4;
                         name = ItemTemplates[idx].Name + apple_idx++;
                     }
-                    else if (r > 36 && r <= 44)
+                    else if (r > appleOffset && r <= mateOffset)
                     {
                         idx = 5;
                         name = ItemTemplates[idx].Name + mate_idx++;
                     }
-                    else if (r > 44 && r <= 52)
+                    else if (r > mateOffset && r <= toastOffset)
                     {
                         idx = 6;
                         name = ItemTemplates[idx].Name + toast_idx++;

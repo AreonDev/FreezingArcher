@@ -105,7 +105,7 @@ namespace FreezingArcher.Game
                 new_text += regex.Match(text).Groups[1];
                 text = new_text;
 
-                                textLabels = new List<List<Label>>();
+                textLabels = new List<List<Label>>();
                 var lines = text.Split('\n');
 
                 string[] words;

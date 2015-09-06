@@ -54,6 +54,7 @@ namespace FreezingArcher.Game
         const int OverworldGhostCount = 3;
         const int UnderworldCaligoCount = 2;
         const int UnderworldPassusCount = 4;
+        const int UnderworldRoachesCount = 20;
 
         Source switchMazeSound;
         Source playerDamagedSound;
@@ -279,6 +280,11 @@ namespace FreezingArcher.Game
                 PassusInstances.Add (new Passus (ColorCorrectionNode, state, maze [1].AIManager, rendererContext));
             }
 
+            for (int i = 0; i < UnderworldRoachesCount; i++)
+            {
+                RoachesInstances.Add(new Roaches (state, maze [0].AIManager, rendererContext));
+            }
+
             AddAudioToGhosts ();
 
             //Load SwitchMaze sound
@@ -348,6 +354,7 @@ namespace FreezingArcher.Game
         List<Passus> PassusInstances = new List<Passus>();
         List<Viridion> ViridionInstances = new List<Viridion>();
         List<Ghost> GhostInstances = new List<Ghost>();
+        List<Roaches> RoachesInstances = new List<Roaches>();
 
         readonly InventoryGUI inventoryGui;
         readonly Content.Game game;

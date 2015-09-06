@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
-<model>
-    <object>monkey.obj</object>
-
-    <material>
-        <graphics normal="monkey.png" diffuse="monkey.png"/>
-    </material>
-</model>

@@ -42,8 +42,9 @@
     <ConsolePause>False</ConsolePause>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>..\Build\Release\FurryLana.xml</DocumentationFile>
+    <DocumentationFile>..\Build\Release\NoWayOut.xml</DocumentationFile>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -99,6 +100,11 @@
     <Compile Include="MainMenu.cs" />
     <Compile Include="SettingsMenu.cs" />
     <Compile Include="TutorialMenu.cs" />
+    <Compile Include="Ghosts\RoachGroup.cs" />
+    <Compile Include="Ghosts\Roaches.cs" />
+    <Compile Include="Ghosts\RoachGroupComponent.cs" />
+    <Compile Include="Ghosts\RoachGroupSystem.cs" />
+    <Compile Include="AI\RoachesAI.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -152,12 +158,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Localization\en_US.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Audio\test.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Audio\test2.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Flashlight\ambient_occlusion.jpg">
@@ -386,7 +386,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Audio\" />
     <Folder Include="Localization\" />
     <Folder Include="Maze\" />
     <Folder Include="Content\" />

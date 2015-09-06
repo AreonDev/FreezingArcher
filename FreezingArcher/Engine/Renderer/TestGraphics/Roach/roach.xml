@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<model>
+    <object>roach.obj</object>
+
+    <material>
+        <graphics diffuse="roach.png"/>
+    </material>
+</model>

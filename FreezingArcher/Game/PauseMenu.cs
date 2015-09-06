@@ -108,6 +108,7 @@ namespace FreezingArcher.Game
         {
             onContinue();
             window.Hide();
+            settings.Hide();
             application.Window.CaptureMouse();
             application.Game.CurrentGameState.MessageProxy.StartProcessing();
             application.Game.CurrentGameState.PhysicsManager.Start();

@@ -71,7 +71,7 @@ namespace FreezingArcher.Content
 
         public override void ConsumeMessage (IMessage msg)
         {
-            if (msg.MessageId == (int) MessageId.Update)
+            if (msg.MessageId == (int) MessageId.Update && Entity != null && Entity.GetComponent<LightComponent>() != null)
             {
                 var light = Entity.GetComponent<LightComponent>().Light;
                 var item = Entity.GetComponent<ItemComponent> ();

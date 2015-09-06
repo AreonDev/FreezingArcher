@@ -42,7 +42,7 @@ namespace FreezingArcher.Content
         /// </summary>
         public static readonly float DefaultMaximumStamina = 100f;
 
-        public static readonly float DefaultStaminaDeltaPerUpdate = 0.5f;
+        public static readonly float DefaultStaminaDeltaPerUpdate = 0;//0.5f;
 
         #endregion
 

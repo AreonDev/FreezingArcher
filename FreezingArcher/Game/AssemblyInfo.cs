@@ -25,12 +25,12 @@ using System.Reflection;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("FurryLana")]
-[assembly: AssemblyDescription("3D snake")]
+[assembly: AssemblyTitle("No Way Out")]
+[assembly: AssemblyDescription("3D horror game")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("AreonDev")]
-[assembly: AssemblyProduct("FurryLana")]
-[assembly: AssemblyCopyright("Fin Christensen, Claudius Grimm, Paul Stang")]
+[assembly: AssemblyProduct("No Way Out")]
+[assembly: AssemblyCopyright("David Bögelsack, Fin Christensen, Willy Failla")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

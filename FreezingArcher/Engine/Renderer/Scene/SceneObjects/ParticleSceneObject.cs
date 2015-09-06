@@ -174,7 +174,7 @@ namespace FreezingArcher.Renderer.Scene.SceneObjects
                 ParticleEffect.PixelProgram = rc.CreateShaderProgramFromFile("ParticleEffect_PixelProgram_" + ticks, ShaderType.PixelShader, "lib/Renderer/Effects/BasicParticleEffect/pixel_shader.ps");
                 ParticleEffect.GeometryProgram = rc.CreateShaderProgramFromFile("ParticleEffect_GeometryProgram" + ticks, ShaderType.GeometryShader, "lib/Renderer/Effects/BasicParticleEffect/geometry_shader.gs");
 
-                BillboardTexture = rc.CreateTexture2D("BillboardTexture_" + ticks, true, "lib/Renderer/TestGraphics/particle_03.png");
+                BillboardTexture = rc.CreateTexture2D("BillboardTexture_" + ticks, true, "Content/Particles/particle_03.png");
                 BillboardTexture.Sampler.MagnificationFilter = MagnificationFilter.InterpolateLinear;
                 BillboardTexture.Sampler.MinificationFilter = MinificationFilter.InterpolateLinearAndInterpolateMipmapLinear;
             }

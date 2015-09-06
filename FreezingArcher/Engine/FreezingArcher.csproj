@@ -98,7 +98,9 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Package>xbuild12</Package>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -452,12 +454,6 @@
     <RemoveDir Directories="$(TargetDir)" />
   </Target>
   <ItemGroup>
-    <Content Include="Renderer\TestGraphics\texture.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Renderer\TestGraphics\texture2.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Renderer\Effects\BasicEffect\PixelShader.ps">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -492,21 +488,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Renderer\Effects\2D\VertexShader.vs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit.mtl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit.obj">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_D.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_N.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Rabbit\Rabbit_S.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Renderer\Effects\DeferredShading\vertex_shader.sh">
@@ -582,15 +563,6 @@
     <None Include="UI\Skins\FreezingArcherSkin.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Renderer\TestGraphics\Monkey\monkey.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Monkey\monkey.obj">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\Monkey\monkey.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="UI\Skins\NoWayOutSkin.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -604,27 +576,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Renderer\Effects\BasicParticleEffect\pixel_shader.ps">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\particle.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\particle_01.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\particle_02.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\particle_03.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\particle_04.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\particle_05.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\particle_06.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Renderer\Effects\SceneDepthAlphaMerger\SceneDepthAlphaMerger.ps">
@@ -666,27 +617,6 @@
     <None Include="Renderer\TestGraphics\Ground\underworld_ground_specular.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Renderer\TestGraphics\UnderworldCeiling\ao.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\UnderworldCeiling\diffuse.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\UnderworldCeiling\height.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\UnderworldCeiling\normal.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\UnderworldCeiling\specular.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\UnderworldCeiling\underworld_ceiling.obj">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Renderer\TestGraphics\UnderworldCeiling\underworld_ceiling.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Renderer\Effects\ColorCorrection\color_correction.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -720,26 +650,33 @@
     <None Include="Renderer\TestGraphics\UnderworldExit\underworld_exit.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Renderer\TestGraphics\Roach\roach.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\Roach\roach.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Renderer\TestGraphics\Roach\roach.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderer\Compositor\" />
-    <Folder Include="Renderer\TestGraphics\Rabbit\" />
     <Folder Include="Renderer\Effects\DeferredShading\" />
     <Folder Include="Renderer\Effects\SimpleMaterial\" />
     <Folder Include="Renderer\Scene\SceneObjects\" />
     <Folder Include="UI\" />
     <Folder Include="UI\Skins\" />
-    <Folder Include="Renderer\TestGraphics\Monkey\" />
     <Folder Include="Renderer\Effects\Blur\" />
     <Folder Include="Renderer\Effects\BasicParticleEffect\" />
     <Folder Include="Renderer\Effects\SceneDepthAlphaMerger\" />
     <Folder Include="Renderer\TestGraphics\UnderworldWall\" />
-    <Folder Include="Renderer\TestGraphics\UnderworldCeiling\" />
     <Folder Include="Renderer\Effects\ImageOverlay\" />
     <Folder Include="Renderer\Effects\ColorCorrection\" />
     <Folder Include="Renderer\Effects\Warping\" />
     <Folder Include="Renderer\TestGraphics\OverworldExit\" />
     <Folder Include="Renderer\TestGraphics\UnderworldExit\" />
+    <Folder Include="Renderer\TestGraphics\Roach\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

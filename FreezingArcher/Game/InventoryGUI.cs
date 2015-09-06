@@ -280,7 +280,7 @@ namespace FreezingArcher.Game
                 usageProgress.Y = Height - usageProgress.Height;
                 usageProgress.X = 0;
 
-                if (m_Image != null)
+                if (m_Image != null && Height / Width != 0)
                 {
                     m_Image.Width = Width;
                     m_Image.Height = Width / (Height / Width);
@@ -1117,7 +1117,7 @@ namespace FreezingArcher.Game
                         float f;
                         GameState.PhysicsManager.World.CollisionSystem.Raycast(
                             player.GetComponent<TransformComponent>().Position.ToJitterVector(),
-                            Vector3.Transform(Vector3.UnitZ, GameState.Scene.CameraManager.ActiveCamera.Rotation).ToJitterVector() * 20,
+                            Vector3.Transform(Vector3.UnitZ, GameState.Scene.CameraManager.ActiveCamera.Rotation).ToJitterVector() * 5,
                             new Jitter.Collision.RaycastCallback((body, normal, fraction) => {
                                 var entity = body.Tag as Entity;
                                 return entity != null && entity.Name.Contains ("wall") && fraction < 1 && !entity.GetComponent<WallComponent> ().IsEdge;

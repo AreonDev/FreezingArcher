@@ -87,6 +87,7 @@ namespace FreezingArcher.Game
                 application.MessageManager.UnregisterMessageConsumer(this);
                 application.MessageManager.UnregisterMessageConsumer(settings);
                 settings.Destroy();
+                canvas.Dispose();
                 onPlayGame();
             };
         }

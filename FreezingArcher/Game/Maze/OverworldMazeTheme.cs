@@ -142,7 +142,10 @@ namespace FreezingArcher.Game.Maze
                         AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
                     state.PhysicsManager.World.AddBody (exitBody);
+
+                    exitEntity.Suspend();
                 }
+                entity.Suspend();
             }
             else if (cell.MazeCellType == MazeCellType.Wall)
             {
@@ -173,6 +176,8 @@ namespace FreezingArcher.Game.Maze
                 entity.GetComponent<WallComponent>().IsEdge = cell.IsEdge;
 
                 state.PhysicsManager.World.AddBody (body);
+
+                entity.Suspend();
             }
 
             return entity;

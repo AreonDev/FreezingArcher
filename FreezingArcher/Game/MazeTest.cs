@@ -136,13 +136,13 @@ namespace FreezingArcher.Game
             state.Scene.DistanceFogIntensity = 0.07f;
             state.Scene.AmbientColor = Color4.White;
             state.Scene.AmbientIntensity = 0.3f;
-            state.Scene.MaxRenderingDistance = 500.0f;
+            state.Scene.MaxRenderingDistance = 1000.0f;
 
             state.AudioContext = new AudioContext (state.MessageProxy);
 
             state.MessageProxy.StartProcessing ();
 
-            loadingScreen = new LoadingScreen (application, messageProvider, "loading.png",
+            loadingScreen = new LoadingScreen (application, messageProvider, "Content/loading.png",
                 "MazeLoadingScreen",
                 new[] { new Tuple<string, GameStateTransition> ("main_menu", GameStateTransition.DefaultTransition) },
                 new[] { new Tuple<string, GameStateTransition> (state.Name, new GameStateTransition (0)) });
@@ -240,7 +240,7 @@ namespace FreezingArcher.Game
             state.Scene.DistanceFogIntensity = 0.07f;
             state.Scene.AmbientColor = Color4.White;
             state.Scene.AmbientIntensity = 0.3f;
-            state.Scene.MaxRenderingDistance = 500.0f;
+            state.Scene.MaxRenderingDistance = 1000.0f;
 
             state.AudioContext = new AudioContext (state.MessageProxy);
 
@@ -598,8 +598,10 @@ namespace FreezingArcher.Game
 
                 if (maze [0].HasFinished && maze [1].HasFinished && !finishedLoading)
                 {
+                    #if DEBUG
                     maze [0].ExportAsImage ("overworld.png");
                     maze [1].ExportAsImage ("underworld.png");
+                    #endif
 
                     //Add Portals
                     Portals = new List<Entity> ();
@@ -806,20 +808,15 @@ namespace FreezingArcher.Game
             var im = msg as InputMessage;
             if (im != null)
             {
+                #if RELEASE
                 if (im.IsActionPressed ("frame"))
                 {
-                    /*
-                    if (!switch_maze)
-                    {
-                        entered_portal = true;
-                        switch_maze = true;
-
-                        warpingNode.WarpTexture = PortalWarpTexture;
-
-                        switchMazeSound.Play ();
-                    }*/
+                    if (FPS_Text.IsHidden)
+                        FPS_Text.Show();
+                    else
+                        FPS_Text.Hide();
                 }
-
+                #else
                 if (im.IsActionPressed ("frame"))
                 {
                     if (lighting)
@@ -844,6 +841,7 @@ namespace FreezingArcher.Game
                 {
                     SwitchMaze ();
                 }
+                #endif
             }
            
             if (msg.MessageId == (int) MessageId.StaminaChanged && finishedLoading)

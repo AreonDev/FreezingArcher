@@ -94,6 +94,16 @@ namespace FreezingArcher.Content
             providerTo += this;
         }
 
+        public void Suspend ()
+        {
+            messageProvider -= this;
+        }
+
+        public void WakeUp ()
+        {
+            messageProvider += this;
+        }
+
         /// <summary>
         /// Creates the message.
         /// </summary>

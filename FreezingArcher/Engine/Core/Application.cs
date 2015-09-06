@@ -548,6 +548,7 @@ namespace FreezingArcher.Core
                 {
                     Window.ToggleFullscreen();
                 }
+                #if DEBUG
                 if (im.IsActionPressedAndRepeated("capture_mouse"))
                 {
                     if (Window.IsMouseCaptured ())
@@ -555,13 +556,10 @@ namespace FreezingArcher.Core
                     else
                         Window.CaptureMouse ();
                 }
+                #endif
                 if (im.Keys.Any(k => k.Action == KeyAction.Release && k.Key == Key.F4 && k.Modifier == KeyModifiers.Alt))
                 {
                     Window.Close();
-                }
-                if (im.IsActionPressedAndRepeated("save"))
-                {
-                    ConfigManager.Instance.SaveAll();
                 }
             }
         }

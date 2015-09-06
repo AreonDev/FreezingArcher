@@ -201,9 +201,12 @@ namespace FreezingArcher.Game.Maze
                 .GetComponent<TransformComponent>().Position;
             tmp_wall_position = new Vector3 (tmp_wall_position.X, -0.5f, tmp_wall_position.Z);
 
+            wall.WakeUp();
+
             MoveEntityTo (wall, tmp_wall_position, position, () => {
                 GameState.Scene.RemoveObject(ground2_model);
                 wall.GetComponent<WallComponent>().IsMoving = false;
+                wall.Suspend();
                 ground2.Destroy(); if(MessageCreated != null) MessageCreated(new EndWallMovementMessage(wall));
             });
         }

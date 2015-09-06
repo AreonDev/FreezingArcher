@@ -75,7 +75,7 @@ namespace FreezingArcher.Content
 
                         if (sc.Stamina > sc.StaminaDeltaPerUpdate)
                         {
-                            movement *= 4;
+                            movement *= 3;
                             msr = 2;
                             var stamina = sc.Stamina - sc.StaminaDeltaPerUpdate;
                             sc.Stamina = sc.Stamina < 0 ? 0 : stamina;
@@ -109,7 +109,7 @@ namespace FreezingArcher.Content
                         break;
                     }
 
-                    CreateMessage(new MoveStraightMessage(Entity, -movement));
+                    CreateMessage(new MoveStraightMessage(Entity, -6));
                 }
                 if (im.IsActionDown("left"))
                 {
@@ -120,7 +120,7 @@ namespace FreezingArcher.Content
                         break;
                     }
 
-                    CreateMessage(new MoveSidewardsMessage(Entity, -movement));
+                    CreateMessage(new MoveSidewardsMessage(Entity, -6));
                 }
                 if (im.IsActionDown("right"))
                 {
@@ -131,8 +131,9 @@ namespace FreezingArcher.Content
                         break;
                     }
 
-                    CreateMessage(new MoveSidewardsMessage(Entity, movement));
+                    CreateMessage(new MoveSidewardsMessage(Entity, 6));
                 }
+                #if DEBUG
                 if (im.IsActionDown("up"))
                 {
                     CreateMessage(new MoveVerticalMessage(Entity, movement));
@@ -141,6 +142,7 @@ namespace FreezingArcher.Content
                 {
                     CreateMessage(new MoveVerticalMessage(Entity, -movement));
                 }
+                #endif
                 if (im.IsActionDown("jump"))
                 {
                     var rb = Entity.GetComponent<PhysicsComponent>().RigidBody;

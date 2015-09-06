@@ -28,6 +28,7 @@ using FreezingArcher.Messaging;
 using FreezingArcher.Localization;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Drawing.Drawing2D;
 
 namespace FreezingArcher.Game
 {
@@ -54,9 +55,9 @@ namespace FreezingArcher.Game
             scrollFrame.Width = window.Width - 12;
             scrollFrame.Height = window.Height - 32;
 
-            setTutorialText(Localizer.Instance.GetValueForName("tutorial_text"));
+            updateTutorialText(Localizer.Instance.GetValueForName("tutorial_text"));
 
-            ValidMessages = new[] { (int) MessageId.WindowResize, (int) MessageId.UpdateLocale, (int) MessageId.WindowFocus };
+            ValidMessages = new[] { (int) MessageId.WindowResize, (int) MessageId.UpdateLocale };
             application.MessageManager += this;
         }
 
@@ -64,7 +65,7 @@ namespace FreezingArcher.Game
         readonly Base parent;
         readonly WindowControl window;
         readonly ScrollControl scrollFrame;
-        List<Label> textLabels;
+        List<List<Label>> textLabels;
 
         public void Show ()
         {
@@ -76,31 +77,57 @@ namespace FreezingArcher.Game
             window.Hide();
         }
 
-        void setTutorialText (string text)
+        void updateTutorialText (string text = null)
         {
-            RegexOptions options = RegexOptions.Multiline;
-            var regex = new Regex(@"(.+)(\n*)\n", options);     
-            var m = regex.Matches(text);
-            string new_text = "";
-            foreach (Match match in m)
+            if (text != null && textLabels != null)
             {
-                new_text += match.Groups[1] + " " + match.Groups[2];
-            }
-
-            regex = new Regex (@"\n(.)$", options);
-            new_text += regex.Match(text).Groups[1];
-            text = new_text;
-
-            if (textLabels != null)
-            {
-                foreach (var l in textLabels)
+                foreach (var line in textLabels)
                 {
-                    l.DelayedDelete();
+                    foreach (var word in line)
+                    {
+                        word.Parent.RemoveChild(word, true);
+                    }
                 }
             }
 
-            textLabels = new List<Label>();
-            var lines = text.Split('\n');
+            if (textLabels == null || text != null)
+            {
+                RegexOptions options = RegexOptions.Multiline;
+                var regex = new Regex(@"(.+)(\n*)\n", options);     
+                var m = regex.Matches(text);
+                string new_text = "";
+                foreach (Match match in m)
+                {
+                    new_text += match.Groups[1] + " " + match.Groups[2];
+                }
+
+                regex = new Regex (@"\n(.)$", options);
+                new_text += regex.Match(text).Groups[1];
+                text = new_text;
+
+                                textLabels = new List<List<Label>>();
+                var lines = text.Split('\n');
+
+                string[] words;
+                Label label = null;
+                List<Label> labelLine = null;
+                foreach (var line in lines)
+                {
+                    labelLine = new List<Label>();
+                    words = line.Split(' ');
+                    foreach (var word in words)
+                    {
+                        if (word.Length == 0)
+                            continue;
+
+                        label = new Label(scrollFrame);
+                        label.AutoSizeToContents = true;
+                        label.Text = word;
+                        labelLine.Add(label);
+                    }
+                    textLabels.Add(labelLine);
+                }
+            }
 
             int maxWidth = scrollFrame.Width;
 
@@ -111,42 +138,28 @@ namespace FreezingArcher.Game
 
             int y = 0, x = 0;
             const int paragraphHeight = 8;
-            string[] words;
-            Label label = null;
-            foreach (var line in lines)
+            foreach (var line in textLabels)
             {
-                words = line.Split(' ');
-                foreach (var word in words)
+                foreach (var word in line)
                 {
-                    if (word.Length == 0)
-                        continue;
-
-                    label = new Label(scrollFrame);
-                    label.AutoSizeToContents = true;
-                    label.Y = y;
-                    label.X = x;
-
-                    label.Text = word;
+                    word.Y = y;
+                    word.X = x;
                         
-                    x += label.Width;
+                    x += word.Width;
 
                     if (x >= maxWidth)
                     {
-                        y += label.Height;
-                        label.Y = y;
-                        label.X = 0;
-                        x = label.Width;
+                        y += word.Height;
+                        word.Y = y;
+                        word.X = 0;
+                        x = word.Width;
                     }
-
-                    textLabels.Add(label);
                 }
 
-                y += textLabels[0].Height + paragraphHeight;
+                y += textLabels[0][0].Height + paragraphHeight;
                 x = 0;
             }
         }
-
-        bool recalcText = false;
 
         #region IMessageConsumer implementation
 
@@ -160,13 +173,7 @@ namespace FreezingArcher.Game
                 window.X = 280;
                 scrollFrame.Width = window.Width - 12;
                 scrollFrame.Height = window.Height - 32;
-
-                recalcText = true;
-            }
-
-            if (msg.MessageId == (int) MessageId.WindowFocus && recalcText)
-            {
-                setTutorialText(Localizer.Instance.GetValueForName("tutorial_text"));
+                updateTutorialText();
                 scrollFrame.AutoHideBars = true;
                 scrollFrame.EnableScroll (false, true);
             }
@@ -174,7 +181,9 @@ namespace FreezingArcher.Game
             if (msg.MessageId == (int) MessageId.UpdateLocale)
             {
                 window.Title = Localizer.Instance.GetValueForName("tutorial");
-                setTutorialText(Localizer.Instance.GetValueForName("tutorial_text"));
+                updateTutorialText(Localizer.Instance.GetValueForName("tutorial_text"));
+                scrollFrame.AutoHideBars = true;
+                scrollFrame.EnableScroll (false, true);
             }
         }
 

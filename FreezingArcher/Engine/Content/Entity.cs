@@ -238,6 +238,22 @@ namespace FreezingArcher.Content
                 pair.Value.SwitchMessageProvider(providerFrom, providerTo);
         }
 
+        public void Suspend ()
+        {
+            foreach (var pair in Systems)
+                pair.Value.Suspend();
+            foreach (var pair in Components)
+                pair.Value.Suspend();
+        }
+
+        public void WakeUp ()
+        {
+            foreach (var pair in Systems)
+                pair.Value.WakeUp();
+            foreach (var pair in Components)
+                pair.Value.WakeUp();
+        }
+
         /// <summary>
         /// The message provider.
         /// </summary>

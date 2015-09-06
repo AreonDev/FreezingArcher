@@ -996,11 +996,13 @@ namespace FreezingArcher.Game
             {
                 var im = msg as InputMessage;
 
+                #if DEBUG
                 if (im.IsActionPressed("drop"))
                 {
                     Localizer.Instance.CurrentLocale =
                         Localizer.Instance.CurrentLocale == LocaleEnum.en_US ? LocaleEnum.de_DE : LocaleEnum.en_US;
                 }
+                #endif
 
                 if (im.IsActionPressed("inventory"))
                 {

@@ -98,6 +98,16 @@ namespace FreezingArcher.Content
             providerTo += this;
         }
 
+        public void Suspend ()
+        {
+            MessageProvider -= this;
+        }
+
+        public void WakeUp ()
+        {
+            MessageProvider += this;
+        }
+
         #region IMessageCreator implementation
 
         public event MessageEvent MessageCreated;

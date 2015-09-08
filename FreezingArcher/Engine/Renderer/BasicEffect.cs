@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using FreezingArcher.Math;
+using Pencil.Gaming.Graphics;
 
 using FreezingArcher.Output;
 
@@ -40,9 +41,9 @@ namespace FreezingArcher.Renderer
         {
             public static int SIZE = sizeof(float) * 4 * 3 + sizeof(float);
 
-            public Color4 Ambient;
-            public Color4 Diffuse;
-            public Color4 Specular;
+            public FreezingArcher.Math.Color4 Ambient;
+            public FreezingArcher.Math.Color4 Diffuse;
+            public FreezingArcher.Math.Color4 Specular;
             public float Shininess;
         }
 
@@ -75,14 +76,45 @@ namespace FreezingArcher.Renderer
         {
             m_MatricesBlockUniformBuffer = rc.CreateUniformBuffer<MatricesBlock>(m_MatricesBlock, MatricesBlock.SIZE, "Internal_Basic_Effect_Vertex_Shader_MatricesBlock");
 
+            var err_code = GL.GetError();
+
+            if (err_code != ErrorCode.NoError)
+                Logger.Log.AddLogEntry(LogLevel.Error, "RendererCore", FreezingArcher.Core.Status.DamnThreading, err_code.ToString()); 
+
             this.VertexProgram.SetUniformBlockBinding("MatricesBlock", 10);
+
+            err_code = GL.GetError();
+
+            if (err_code != ErrorCode.NoError)
+                Logger.Log.AddLogEntry(LogLevel.Error, "RendererCore", FreezingArcher.Core.Status.DamnThreading, err_code.ToString()); 
+
             m_MatricesBlockUniformBuffer.SetBufferBase(10);
+
+            err_code = GL.GetError();
+
+            if (err_code != ErrorCode.NoError)
+                Logger.Log.AddLogEntry(LogLevel.Error, "RendererCore", FreezingArcher.Core.Status.DamnThreading, err_code.ToString()); 
 
             m_LightBlockUniformBuffer = rc.CreateUniformBuffer<LightBlock1>(m_LightBlock, LightBlock1.SIZE, "Internal_Basic_Effect_Vertex_Pixel_Shader_LightBlock");
 
+            err_code = GL.GetError();
+
+            if (err_code != ErrorCode.NoError)
+                Logger.Log.AddLogEntry(LogLevel.Error, "RendererCore", FreezingArcher.Core.Status.DamnThreading, err_code.ToString()); 
+
             this.VertexProgram.SetUniformBlockBinding("LightBlock", 4);
 
+            err_code = GL.GetError();
+
+            if (err_code != ErrorCode.NoError)
+                Logger.Log.AddLogEntry(LogLevel.Error, "RendererCore", FreezingArcher.Core.Status.DamnThreading, err_code.ToString()); 
+
             m_LightBlockUniformBuffer.SetBufferBase(4);
+
+            err_code = GL.GetError();
+
+            if (err_code != ErrorCode.NoError)
+                Logger.Log.AddLogEntry(LogLevel.Error, "RendererCore", FreezingArcher.Core.Status.DamnThreading, err_code.ToString()); 
 
             //m_MaterialBlockUniformBuffer = rc.CreateUniformBuffer<MaterialBlock>(m_MaterialBlock, MaterialBlock.SIZE, "Internal_Basic_Effect_MaterialBlock");
 
@@ -295,11 +327,11 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        public Color4 LightColor
+        public FreezingArcher.Math.Color4 LightColor
         {
             get
             {
-                return new Color4(m_LightBlock.LightColorR, m_LightBlock.LightColorG,
+                return new FreezingArcher.Math.Color4(m_LightBlock.LightColorR, m_LightBlock.LightColorG,
                     m_LightBlock.LightColorB, m_LightBlock.LightColorA);
             }
             set
@@ -327,7 +359,7 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        public Color4 Ambient
+        public FreezingArcher.Math.Color4 Ambient
         {
             get
             {
@@ -340,7 +372,7 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        public Color4 Diffuse
+        public FreezingArcher.Math.Color4 Diffuse
         {
             get
             {
@@ -353,7 +385,7 @@ namespace FreezingArcher.Renderer
             }
         }
 
-        public Color4 Specular
+        public FreezingArcher.Math.Color4 Specular
         {
             get
             {

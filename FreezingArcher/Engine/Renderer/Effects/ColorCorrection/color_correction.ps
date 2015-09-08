@@ -4,7 +4,7 @@ layout(location = 1) in vec2 InTexCoord;
 
 layout(location = 0) out vec4 frag_color;
 
-uniform sampler2D input;
+uniform sampler2D InputTexture;
 uniform float hue;
 uniform float saturation;
 uniform float lightness;
@@ -160,7 +160,7 @@ vec4 addGamma(vec4 color, float g)
 }
 
 void main() {
-        vec4 inColor = texture2D(input, InTexCoord);
+        vec4 inColor = texture(InputTexture, InTexCoord);
         inColor = hueSatLig(inColor, hue, saturation, lightness);
         inColor = brightnessContrast(inColor, brightness, contrast);
         inColor = addGamma(inColor, gamma);

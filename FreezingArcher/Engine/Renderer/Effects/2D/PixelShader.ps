@@ -18,7 +18,7 @@ uniform int InstancedDrawing;
 void main() 
 {
         vec2 tex_coord = vec2(InTexCoord1.x, InTexCoord1.y);
-        vec4 tex_color =  texture2D(Texture1, tex_coord);
+        vec4 tex_color =  texture(Texture1, tex_coord);
 
         if(InstancedDrawing == 1)
                 frag_color = UseTexture * tex_color + (1-UseTexture)*(DrawColor * (1 - InColor.a) + InColor);

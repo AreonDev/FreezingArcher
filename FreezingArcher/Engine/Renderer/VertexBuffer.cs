@@ -84,7 +84,7 @@ namespace FreezingArcher.Renderer
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
 
-            GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)0, (IntPtr)SizeInBytes, IntPtr.Zero);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)SizeInBytes, IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }

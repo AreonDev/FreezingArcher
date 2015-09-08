@@ -37,7 +37,7 @@ namespace FreezingArcher.Core
     /// <summary>
     /// Window.
     /// </summary>
-    public class Window : IResource, IMessageCreator
+    public class Window :  IMessageCreator
     {
         /// <summary>
         /// The name of the class.
@@ -70,7 +70,7 @@ namespace FreezingArcher.Core
         /// Init this window. This method may not be called from the main thread as the initialization process is
         /// multi threaded.
         /// </summary>
-        protected void Init ()
+        public void Init ()
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Initializing window '{0}'", Title);
             try
@@ -90,16 +90,17 @@ namespace FreezingArcher.Core
         /// </summary>
         /// <returns>The init jobs.</returns>
         /// <param name="list">List.</param>
+        /*
         public List<Action> GetInitJobs (List<Action> list)
         {
             list.Add (Init);
             return list;
-        }
+        }*/
 
         /// <summary>
         /// Load this window.
         /// </summary>
-        protected void Load ()
+        public void Load ()
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Loading window '{0}'", Title);
             try
@@ -121,12 +122,13 @@ namespace FreezingArcher.Core
         /// <returns>The load jobs.</returns>
         /// <param name="list">List.</param>
         /// <param name="reloader">Reloader.</param>
+       /*
         public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
             list.Add (Load);
             NeedsLoad = reloader;
             return list;
-        }
+        }*/
 
         /// <summary>
         /// Destroy this resource.
@@ -147,7 +149,7 @@ namespace FreezingArcher.Core
         /// Gets or sets a value indicating whether this <see cref="FreezingArcher.Core.Window"/> is loaded.
         /// </summary>
         /// <value><c>true</c> if loaded; otherwise, <c>false</c>.</value>
-        public bool Loaded { get; protected set; }
+        //public bool Loaded { get; protected set; }
 
         /// <summary>
         /// Fire this event when you need the binded load function to be called.
@@ -476,6 +478,8 @@ namespace FreezingArcher.Core
         /// </summary>
 	protected void CreateWindow ()
         {
+            Glfw.WindowHint (WindowHint.OpenGLProfile, (int) OpenGLProfile.Core);
+            Glfw.WindowHint (WindowHint.OpenGLForwardCompat, 1);
 #if LINUX_INTEL_COMPATIBLE
             Logger.Log.AddLogEntry (LogLevel.Warning, ClassName, Status.ItsNotABugItsAFeature,
                 "You are using an unsupported graphics mode! Disable LINUX_INTEL_COMPATIBLE compile flag to fix it.");
@@ -488,6 +492,7 @@ namespace FreezingArcher.Core
 #if DEBUG
             Glfw.WindowHint (WindowHint.OpenGLDebugContext, 1);
 #endif
+
 
             if (ConfigManager.Instance["freezing_archer"].GetBool ("general", "fullscreen"))
                 Win = Glfw.CreateWindow (Resolution.X, Resolution.Y, Title,

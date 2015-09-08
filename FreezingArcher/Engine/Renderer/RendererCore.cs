@@ -679,13 +679,12 @@ namespace FreezingArcher.Renderer
 
             //Do more init
             _GraphicsResourceManager = new GraphicsResourceManager();
-
-            //Init BasicEffect
-            CreateBasicEffect("Internal_Basic_Effect");
-            BasicEffect.Init(this);
+           
+            ErrorCode err_code = ErrorCode.NoError;
 
             //Init 2D Rendering Effect
             Create2DEffect("Internal_2D_Effect");
+
             GenerateBuffer();
 
             return true;

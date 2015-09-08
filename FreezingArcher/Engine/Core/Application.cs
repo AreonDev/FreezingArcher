@@ -186,6 +186,7 @@ namespace FreezingArcher.Core
                 ParserUtils.ParseVector (
                     ConfigManager.Instance["freezing_archer"].GetString ("general", "resolution")),
                 name);
+
             MessageManager += Window;
             Game = new Game (name, ObjectManager, MessageManager, null, RendererContext);
             LoadAgain = false;
@@ -404,6 +405,8 @@ namespace FreezingArcher.Core
             Loader.InsertJobs (GetLoadJobs (new List<Action>(), Loader.NeedsReexecHandler));
             Loader.DoReexec += () => { LoadAgain = true; };
             Initer.ExecJobsParallel (System.Environment.ProcessorCount);
+
+            Window.Init ();
         }
 
         /// <summary>
@@ -413,7 +416,7 @@ namespace FreezingArcher.Core
         /// <param name="list">List.</param>
         public List<Action> GetInitJobs (List<Action> list)
         {
-            Window.GetInitJobs (list);
+            //Window.GetInitJobs (list);
             return list;
         }
 
@@ -430,6 +433,8 @@ namespace FreezingArcher.Core
             Loader.ExecJobsSequential ();
             Loaded = true;
 
+            Window.Load ();
+
             //Later some more stuff
             RendererContext.Init(this);
             RendererContext.ViewportResize(0, 0, Window.Size.X, Window.Size.Y);
@@ -443,7 +448,7 @@ namespace FreezingArcher.Core
         /// <param name="reloader">The NeedLoad event handler.</param>
         public List<Action> GetLoadJobs (List<Action> list, Handler reloader)
         {
-            Window.GetLoadJobs (list, reloader);
+            //Window.GetLoadJobs (list, reloader);
             NeedsLoad = reloader;
             return list;
         }

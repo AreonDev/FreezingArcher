@@ -46,8 +46,8 @@ void main()
 
         vec2 texcrd = texcoord*Tile;
 
-        vec3 normalcol = texture2D(NormalTexture, texcrd).xyz;
-        vec3 color = texture2D(ColorTexture, texcrd).xyz;
+        vec3 normalcol = texture(NormalTexture, texcrd).xyz;
+        vec3 color = texture(ColorTexture, texcrd).xyz;
 
         //transform normal to view space
         normalcol -= 0.5;

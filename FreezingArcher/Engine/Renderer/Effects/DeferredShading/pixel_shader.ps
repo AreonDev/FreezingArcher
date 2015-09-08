@@ -52,10 +52,10 @@ uniform vec4  DistanceFogColor;
 
 void main ()
 {
-        vec4 image = texture2D(TextureDiffuse, texcoord);
-        vec4 position = texture2D(TexturePosition, texcoord);
-        vec4 normal = texture2D(TextureNormal,  texcoord);
-        vec4 specular = texture2D(TextureSpecular, texcoord);
+        vec4 image = texture(TextureDiffuse, texcoord);
+        vec4 position = texture(TexturePosition, texcoord);
+        vec4 normal = texture(TextureNormal,  texcoord);
+        vec4 specular = texture(TextureSpecular, texcoord);
 
         resulting_color = vec4(image.rgb, 1.0);
 

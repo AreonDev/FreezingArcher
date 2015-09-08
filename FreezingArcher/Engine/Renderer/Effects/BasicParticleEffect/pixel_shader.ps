@@ -15,7 +15,7 @@ uniform sampler2D BillboardTexture;
 
 void main()
 {
-        vec4 color = texture2D(BillboardTexture, TexCoords) * Color;
+        vec4 color = texture(BillboardTexture, TexCoords) * Color;
         float dist = distance(View_Position, Position);
         dist = 2 / dist;
         if (dist > 1)

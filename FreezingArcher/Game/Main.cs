@@ -31,6 +31,8 @@ namespace FreezingArcher.Game
     /// </summary>
     public class FurryLana
     {
+        public static Audio.Source MainMenuMusic;
+
         /// <summary>
         /// The entry point of the program, where the program control starts and ends.
         /// </summary>
@@ -40,6 +42,13 @@ namespace FreezingArcher.Game
             Application.Instance = new Application ("No Way Out", args);
             Application.Instance.Init ();
             Application.Instance.Load ();
+
+            Application.Instance.AudioManager.LoadSound ("main_menu_Sound", "Content/Audio/main_menu.wav");
+            MainMenuMusic = Application.Instance.AudioManager.CreateSource ("main_menu_SoundSource", "main_menu_Sound");
+            MainMenuMusic.Loop = true;
+            MainMenuMusic.Gain = 0.6f;
+
+            MainMenuMusic.Play ();
 
             MazeTest maze = null;
             if (!Application.Instance.IsCommandLineInterface)

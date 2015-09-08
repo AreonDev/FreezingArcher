@@ -172,6 +172,7 @@ namespace FreezingArcher.Messaging
 
         PlayerSprint,
         PlayerMove,
+        PlayerRun,
         PlayerJump,
         PlayerSneak,
 

@@ -105,6 +105,9 @@
     <Compile Include="Ghosts\RoachGroupComponent.cs" />
     <Compile Include="Ghosts\RoachGroupSystem.cs" />
     <Compile Include="AI\RoachesAI.cs" />
+    <Compile Include="Particles\FenFire.cs" />
+    <Compile Include="Ghosts\FenFire.cs" />
+    <Compile Include="AI\FenFireAI.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWindows|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -362,6 +365,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\loading.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\footstep_run.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\background_music.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\main_menu.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

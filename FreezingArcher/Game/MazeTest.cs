@@ -55,6 +55,7 @@ namespace FreezingArcher.Game
         const int UnderworldCaligoCount = 2;
         const int UnderworldPassusCount = 4;
         const int UnderworldRoachesCount = 20;
+        const int UnderworldFenFireCount = 5;
 
         Source switchMazeSound;
         Source playerDamagedSound;
@@ -63,6 +64,8 @@ namespace FreezingArcher.Game
         Source playerDrinked;
         Source playerEaten;
         Source playerFlashlightTrigger;
+
+        Source backgroundMusic;
 
         Texture2D PortalWarpTexture;
         Texture2D DefaultWarpingTexture;
@@ -285,6 +288,11 @@ namespace FreezingArcher.Game
                 RoachesInstances.Add(new Roaches (state, maze [0].AIManager, rendererContext));
             }
 
+            for (int i = 0; i < UnderworldFenFireCount; i++)
+            {
+                FenFireInstances.Add (new FenFire (state, maze [1].AIManager, rendererContext));
+            }
+
             AddAudioToGhosts ();
 
             //Load SwitchMaze sound
@@ -312,6 +320,11 @@ namespace FreezingArcher.Game
             application.AudioManager.LoadSound ("player_flashlight_Sound", "Content/Audio/flashlight_trigger.wav");
             playerFlashlightTrigger = application.AudioManager.CreateSource ("player_flashlight_SoundSource", "player_flashlight_Sound");
             playerFlashlightTrigger.Gain = 0.15f;
+
+            application.AudioManager.LoadSound ("background_music_Sound", "Content/Audio/background_music.wav");
+            backgroundMusic = application.AudioManager.CreateSource ("background_music_SoundSource", "background_music_Sound");
+            backgroundMusic.Gain = 1.0f;
+            backgroundMusic.Loop = true;
         }
 
         public void Generate ()
@@ -355,6 +368,7 @@ namespace FreezingArcher.Game
         List<Viridion> ViridionInstances = new List<Viridion>();
         List<Ghost> GhostInstances = new List<Ghost>();
         List<Roaches> RoachesInstances = new List<Roaches>();
+        List<FenFire> FenFireInstances = new List<FenFire>();
 
         readonly InventoryGUI inventoryGui;
         readonly Content.Game game;
@@ -376,11 +390,32 @@ namespace FreezingArcher.Game
                 src = application.AudioManager.CreateSource ("footstep_SoundSource", "footstep_Sound");
             }
 
-            src.Gain = 1.0f;
+            src.Gain = 0.5f;
             src.Loop = false;
 
             state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.PlayerMove,
                 new SoundSourceDescription (src, SoundAction.Play, Player));
+
+            state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.PlayerRun,
+                new SoundSourceDescription (src, SoundAction.Stop, Player));
+
+            //Load running sound
+            src = application.AudioManager.GetSource("footstep_run_SoundSource");
+
+            if (src == null)
+            {
+                application.AudioManager.LoadSound ("footstep_run_Sound", "Content/Audio/footstep_run.wav");
+                src = application.AudioManager.CreateSource ("footstep_run_SoundSource", "footstep_run_Sound");
+            }
+
+            src.Loop = false;
+            src.Gain = 0.5f;
+
+            state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.PlayerRun, 
+                new SoundSourceDescription (src, SoundAction.Play, Player));
+
+            state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.PlayerMove,
+                new SoundSourceDescription (src, SoundAction.Stop, Player));
 
             //Load jump sound
             src = application.AudioManager.GetSource("player_jump_SoundSource");
@@ -391,7 +426,7 @@ namespace FreezingArcher.Game
                 src = application.AudioManager.CreateSource ("player_jump_SoundSource", "player_jump_Sound");
             }
 
-            src.Gain = 1.0f;
+            src.Gain = 0.5f;
             src.Loop = false;
 
             state.AudioContext.RegisterSoundPlaybackOnMessage (MessageId.PlayerJump,
@@ -442,7 +477,7 @@ namespace FreezingArcher.Game
                     src = application.AudioManager.CreateSource ("moving_wall_SoundSource", "moving_wall_Sound");
                 }
 
-                src.Gain = 0.7f;
+                src.Gain = 0.5f;
                 src.Loop = false;
             }
             else
@@ -457,7 +492,7 @@ namespace FreezingArcher.Game
                     src = application.AudioManager.CreateSource ("moving_wall_wood_SoundSource", "moving_wall_wood_Sound");
                 }
 
-                src.Gain = 0.7f;
+                src.Gain = 0.5f;
                 src.Loop = false;
             }
 
@@ -499,7 +534,7 @@ namespace FreezingArcher.Game
             application.AudioManager.LoadSound("scobis_attack_Sound", "Content/Audio/scobis_attack.wav");
             src = application.AudioManager.CreateSource ("scobis_attack_SoundSource", "scobis_attack_Sound");
 
-            src.Gain = 0.2f;
+            src.Gain = 0.1f;
 
             foreach (Scobis scob in ScobisInstances)
             {
@@ -671,6 +706,9 @@ namespace FreezingArcher.Game
 
                         game.CurrentGameState.Scene.Active = true;
                     }
+
+                    backgroundMusic.Play ();
+                    FurryLana.MainMenuMusic.Stop ();
                 }
 
                 if (!finishedLoading)
@@ -727,6 +765,12 @@ namespace FreezingArcher.Game
                         //WarpingNode.WarpTexture = DefaultWarpingTexture;
                         WarpingNode.WarpFactor = 0;
                     }
+                }
+
+                if (Player.GetComponent<TransformComponent> ().Position.Y <= -10.0f && 
+                    finishedLoading && game.CurrentGameState.Name != "MazeLoadingScreen")
+                {
+                    Player.GetComponent<HealthComponent> ().Health = 0.0f;
                 }
             }
 

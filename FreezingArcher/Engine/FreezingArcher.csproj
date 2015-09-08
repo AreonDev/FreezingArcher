@@ -446,6 +446,7 @@
     <Compile Include="Messaging\AIAttackMessage.cs" />
     <Compile Include="Messaging\FlashlightToggledMessage.cs" />
     <Compile Include="Messaging\PlayerJumpedMessage.cs" />
+    <Compile Include="Messaging\PlayerRun.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterClean">

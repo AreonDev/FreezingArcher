@@ -62,23 +62,25 @@ namespace FreezingArcher.Content
 
                 isRunning = false;
 
+                /*
                 if (im.IsActionDown ("sneek"))
                 {
                     movement *= 0.25f;
                     msr = 1;
                 }
-                else if (im.IsActionDown ("run"))
+                else */if (im.IsActionDown ("run"))
                 {
                     if (Entity.HasComponent<StaminaComponent>())
                     {
                         var sc = Entity.GetComponent<StaminaComponent>();
 
-                        if (sc.Stamina > sc.StaminaDeltaPerUpdate)
+                        var stamina = sc.Stamina - sc.StaminaDeltaPerUpdate;
+                        sc.Stamina = sc.Stamina < 0 ? 0 : stamina;
+
+                        if ((sc.Stamina) > (sc.MaximumStamina*0.1f))
                         {
-                            movement *= 3;
+                            movement *= 2;
                             msr = 2;
-                            var stamina = sc.Stamina - sc.StaminaDeltaPerUpdate;
-                            sc.Stamina = sc.Stamina < 0 ? 0 : stamina;
                             isRunning = true;
                         }
                     }
@@ -96,6 +98,10 @@ namespace FreezingArcher.Content
                     case 0:
                         CreateMessage (new PlayerMoveMessage (this.Entity));
                         break;
+
+                    case 2:
+                        CreateMessage (new PlayerRunMessage (this.Entity));
+                        break;
                     }
 
                     CreateMessage(new MoveStraightMessage(Entity, movement));
@@ -106,6 +112,10 @@ namespace FreezingArcher.Content
                     {
                     case 0:
                         CreateMessage (new PlayerMoveMessage (this.Entity));
+                        break;
+
+                    case 2:
+                        CreateMessage (new PlayerRunMessage (this.Entity));
                         break;
                     }
 
@@ -118,6 +128,10 @@ namespace FreezingArcher.Content
                     case 0:
                         CreateMessage (new PlayerMoveMessage (this.Entity));
                         break;
+
+                    case 2:
+                        CreateMessage (new PlayerRunMessage (this.Entity));
+                        break;
                     }
 
                     CreateMessage(new MoveSidewardsMessage(Entity, -6));
@@ -128,6 +142,10 @@ namespace FreezingArcher.Content
                     {
                     case 0:
                         CreateMessage (new PlayerMoveMessage (this.Entity));
+                        break;
+
+                    case 2:
+                        CreateMessage (new PlayerRunMessage (this.Entity));
                         break;
                     }
 

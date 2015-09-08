@@ -586,10 +586,16 @@ namespace FreezingArcher.Game
         const int infoFrameSize = 300;
         const int barBoxSize = 50;
         int imagePanelHeight;
+        Gwen.ControlInternal.Text Item_Text;
 
         public void Init(Base parent, Inventory inventory)
         {
             this.inventory = inventory;
+
+            Item_Text = new Gwen.ControlInternal.Text (parent);
+            Item_Text.Font = new Gwen.Font (application.RendererContext.GwenRenderer);
+            Item_Text.Y = 5;
+            Item_Text.Font.Size = 15;
 
             spaces = new InventorySpace[inventory.Size.X, inventory.Size.Y];
             barItems = new List<InventoryBarButton>();
@@ -952,6 +958,8 @@ namespace FreezingArcher.Game
                 inventoryBar.X = (canvasFrame.Width - inventoryBar.Width) / 2;
                 window.SetPosition ((canvasFrame.Width - window.Width) / 2,
                     (canvasFrame.Height - window.Height - inventoryBar.Height) / 2);
+
+                Item_Text.X = application.Window.Size.X - Item_Text.Width - 5;
             }
 
             if (msg.MessageId == (int) MessageId.UpdateLocale)
@@ -965,6 +973,27 @@ namespace FreezingArcher.Game
                 rotateBtn.X = useBtn.X - rotateBtn.Width - 8;
                 if (toggledBtn != null)
                     setDescriptionLabel(Localizer.Instance.GetValueForName(toggledBtn.Item.Description));
+
+                if (mouseCollisionBody != null)
+                {
+                    var entity = (mouseCollisionBody.Tag as Entity);
+                    if (entity != null)
+                    {
+                        var name = entity.Name;
+                        int idx = name.IndexOf ('.');
+                        if (idx >= 0)
+                        {
+                            name = name.Substring (0, idx);
+                            Item_Text.String = Localizer.Instance.GetValueForName (name);
+                            Item_Text.X = application.Window.Size.X - Item_Text.Width - 5;
+                        }
+                    }
+                }
+                else
+                {
+                    Item_Text.String = "";
+                    Item_Text.X = application.Window.Size.X - Item_Text.Width - 5;
+                }
             }
 
             if (msg.MessageId == (int) MessageId.ActiveInventoryBarItemChanged)
@@ -1199,6 +1228,27 @@ namespace FreezingArcher.Game
                         return false;
                     }), out mouseCollisionBody, out mouseCollisionBodyNormal, out mouseCollisionBodyFraction
                 );
+
+                if (mouseCollisionBody != null)
+                {
+                    var entity = (mouseCollisionBody.Tag as Entity);
+                    if (entity != null)
+                    {
+                        var name = entity.Name;
+                        int idx = name.IndexOf ('.');
+                        if (idx >= 0)
+                        {
+                            name = name.Substring (0, idx);
+                            Item_Text.String = Localizer.Instance.GetValueForName (name);
+                            Item_Text.X = application.Window.Size.X - Item_Text.Width - 5;
+                        }
+                    }
+                }
+                else
+                {
+                    Item_Text.String = "";
+                    Item_Text.X = application.Window.Size.X - Item_Text.Width - 5;
+                }
             }
         }
 

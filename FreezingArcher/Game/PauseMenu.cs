@@ -127,6 +127,7 @@ namespace FreezingArcher.Game
             if (msg.MessageId == (int) MessageId.UpdateLocale)
             {
                 window.Title = Localizer.Instance.GetValueForName("pause");
+                settingsButton.Text = Localizer.Instance.GetValueForName("settings");
                 continueButton.Text = Localizer.Instance.GetValueForName("back_to_game");
                 exitButton.Text = Localizer.Instance.GetValueForName("quit_game");
             }

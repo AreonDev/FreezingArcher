@@ -154,7 +154,7 @@ namespace FreezingArcher.Game.AI
                     if (fov >= 0.5f)
                     {
                         var player_health = player.GetComponent<HealthComponent> ();
-                        player_health.Health = player_health.MaximumHealth * 0.05f;
+                        player_health.Health += player_health.MaximumHealth * 0.05f;
                     }
                 }
                 else if (do_reset)

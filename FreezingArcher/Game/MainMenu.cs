@@ -90,6 +90,13 @@ namespace FreezingArcher.Game
                 canvas.Dispose();
                 onPlayGame();
             };
+
+            acagamicsFoo = new ImagePanel (canvas);
+            acagamicsFoo.ImageName = "Content/figure_color.png";
+            acagamicsFoo.Width = 64;
+            acagamicsFoo.Height = 106;
+            acagamicsFoo.X = canvas.Width - acagamicsFoo.Width - 10;
+            acagamicsFoo.Y = canvas.Height - acagamicsFoo.Height - 10;
         }
 
         readonly Application application;
@@ -101,6 +108,8 @@ namespace FreezingArcher.Game
         readonly Button settingsButton;
         readonly Button exitButton;
         readonly Button tutorialButton;
+        readonly ImagePanel acagamicsFoo;
+
         SettingsMenu settings;
         TutorialMenu tutorial;
 
@@ -134,6 +143,8 @@ namespace FreezingArcher.Game
                 settingsButton.Y = exitButton.Y - settingsButton.Height - 40;
                 tutorialButton.Y = settingsButton.Y - tutorialButton.Height - 40;
                 startButton.Y = tutorialButton.Y - startButton.Height - 40;
+                acagamicsFoo.X = canvas.Width - acagamicsFoo.Width - 10;
+                acagamicsFoo.Y = canvas.Height - acagamicsFoo.Height - 10;
             }
 
             if (msg.MessageId == (int) MessageId.UpdateLocale)

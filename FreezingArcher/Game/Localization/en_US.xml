@@ -20,31 +20,44 @@
     <string name="save">Save</string>
     <string name="reset">Reset</string>
     <string name="tutorial">Tutorial</string>
+    <string name="choco_milk">Choco milk</string>
+    <string name="flashlight">Flashlight</string>
+    <string name="pickaxe">Pickaxe</string>
+    <string name="soda_can">Soda can</string>
+    <string name="apple">Apple</string>
+    <string name="mate">Mate</string>
+    <string name="toast">Toast</string>
     <string name="flashlight_description">
-        Use the flashlight to shed some light into the dark.
-        Some creatures may not like the light. Take care
-        of the batteries or you will end up in the dark again.
+        Use the flashlight to shed some light into the
+        dark. Some creatures may not like the light.
+        Take care of the batteries or you will end up
+        in the dark again.
     </string>
     <string name="soda_can_description">
-        Drink some of this soft drink to restore your health.
+        Drink some of this soft drink to restore your
+        health.
     </string>
     <string name="pickaxe_description">
-        This pickaxe is quite heavy. It seems quite strong
-        as if it could break walls.
+        This pickaxe is quite heavy. It seems quite
+        strong as if it could break walls.
     </string>
     <string name="choco_milk_description">
         This choco milk smells slightly sour. This is
         definitely not the first choice!
     </string>
     <string name="apple_description">
-        This apple has a worm in it. Proteins aren't that bad
-        for you!
+        This apple has a worm in it. Proteins aren't
+        that bad for you!
     </string>
     <string name="mate_description">
-        To appear...
+        What kind of student would leave a mate in
+        this maze? Take it to restore your health
+        and feel like Popeye.
     </string>
     <string name="toast_description">
-        To appear...
+        Looks like someone had already taken a bite
+        here. But nevertheless this toast will sustain
+        you.
     </string>
     <string name="tutorial_text">
         The player finds himself in the middle of a maze. Its mission is to escape from this maze alive. It is very
@@ -58,7 +71,7 @@
         something with the pickaxe. With the right mouse button objects can be thrown away.
 
         The player can move forward, to the left, backward and to the right with [W, A, S, D]. With [Ctrl] the player
-        can run, with [Shift] he can sneak with [Spacebar] he can jump and with [Esc] the game can be paused.
+        can run, with [Shift] he can sneak, with [Spacebar] he can jump and with [Esc] the game can be paused.
 
         On the ground, the player will find other items that he may collect with the left mouse button. To do so, the
         player has to look at the item and click on the item in a short distance.

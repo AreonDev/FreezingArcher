@@ -20,35 +20,48 @@
     <string name="reset">Zurücksetzen</string>
     <string name="save">Speichern</string>
     <string name="tutorial">Einführung</string>
+    <string name="choco_milk">Schokomilch</string>
+    <string name="flashlight">Taschenlampe</string>
+    <string name="pickaxe">Spitzhacke</string>
+    <string name="soda_can">Getränkedose</string>
+    <string name="apple">Apfel</string>
+    <string name="mate">Mate</string>
+    <string name="toast">Toast</string>
     <string name="flashlight_description">
         Nutze die Taschenlampe um etwas Licht in die
-        Dunkelheit zu bringen. Einige Kreaturen werden
-        Angst vor dem Licht haben. Pass auf, dass die
-        Batterien nicht leer werden, sonst stehst du wieder
-        im Dunkeln.
+        Dunkelheit zu bringen. Einige Kreaturen
+        werden Angst vor dem Licht haben. Pass auf,
+        dass die Batterien nicht leer werden, sonst
+        stehst du wieder im Dunkeln.
     </string>
     <string name="soda_can_description">
-        Trinke etwas von diesem Erfrischungsgetränk, um
-        deine Gesundheit wiederherzustellen.
+        Trinke etwas von diesem Erfrischungsgetränk,
+        um deine Gesundheit wiederherzustellen.
     </string>
     <string name="pickaxe_description">
-        Die Spitzhacke ist recht schwer. Sie sieht ziemlich
-        stabil aus, als könnte man mit ihr Wände
-        durchbrechen.
+        Die Spitzhacke ist recht schwer. Sie sieht
+        ziemlich stabil aus, als könnte man mit
+        ihr Wände durchbrechen.
     </string>
     <string name="choco_milk_description">
-        Diese Schokomilch riecht bereits etwas sauer. Das
-        ist definitiv nicht die erste Wahl!
+        Diese Schokomilch riecht bereits etwas sauer.
+        Das ist definitiv nicht die erste Wahl!
     </string>
     <string name="apple_description">
-        Dieser Apfel enthält einen Wurm. Proteine sind aber
-        nicht so übel wie du vielleicht denken magst.
+        Dieser Apfel enthält einen Wurm. Proteine
+        sind aber nicht so übel wie du vielleicht
+        denken magst.
     </string>
     <string name="mate_description">
-        Hier könnte ihre Werbung stehen!
+        Welcher Student würde schon eine Mate
+        liegen lassen? Nimm sie um deine Gesundheit
+        wiederherzustellen und fühle dich wie
+        Popeye.
     </string>
     <string name="toast_description">
-        Hier könnte ihre Werbung stehen!
+        Sieht so aus als hätte hier schon jemand einen
+        Happen genommen. Nichtsdestotrotz wird
+        dieses Toast dich auf den Beinen halten.
     </string>
     <string name="tutorial_text">
         Der Spieler findet sich mitten in einem Labyrinth wieder. Seine Aufgabe ist es lebend diesem Labyrinth zu

@@ -507,7 +507,7 @@ namespace FreezingArcher.Game.Maze
                     if (r > -1 && r <= pickaxeOffset)
                     {
                         idx = 2;
-                        name = ItemTemplates[idx].Name + pickaxe_idx++;
+                        name = ItemTemplates[idx].Name + "." + pickaxe_idx++;
                     }
                     // flashlight
                     else if (r > pickaxeOffset && r <= flashlightOffset)
@@ -515,7 +515,7 @@ namespace FreezingArcher.Game.Maze
                         if (lightCount++ < CompositorNodeScene.MaximumLightCount)
                         {
                             idx = 1;
-                            name = ItemTemplates[idx].Name + flashlight_idx++;
+                            name = ItemTemplates[idx].Name + "." + flashlight_idx++;
                         }
                         else
                         {
@@ -526,28 +526,28 @@ namespace FreezingArcher.Game.Maze
                     else if (r > flashlightOffset && r <= chocoMilkOffset)
                     {
                         idx = 0;
-                        name = ItemTemplates[idx].Name + choco_milk_idx++;
+                        name = ItemTemplates[idx].Name + "." + choco_milk_idx++;
                     }
                     // soda_can
                     else if (r > chocoMilkOffset && r <= sodaCanOffset)
                     {
                         idx = 3;
-                        name = ItemTemplates[idx].Name + soda_can_idx++;
+                        name = ItemTemplates[idx].Name + "." + soda_can_idx++;
                     }
                     else if (r > sodaCanOffset && r <= appleOffset)
                     {
                         idx = 4;
-                        name = ItemTemplates[idx].Name + apple_idx++;
+                        name = ItemTemplates[idx].Name + "." + apple_idx++;
                     }
                     else if (r > appleOffset && r <= mateOffset)
                     {
                         idx = 5;
-                        name = ItemTemplates[idx].Name + mate_idx++;
+                        name = ItemTemplates[idx].Name + "." + mate_idx++;
                     }
                     else if (r > mateOffset && r <= toastOffset)
                     {
                         idx = 6;
-                        name = ItemTemplates[idx].Name + toast_idx++;
+                        name = ItemTemplates[idx].Name + "." + toast_idx++;
                     }
                     else
                     {

@@ -75,7 +75,7 @@ namespace FreezingArcher.Game
         Gwen.ControlInternal.Text FPS_Text;
 
         BasicCompositor Compositor;
-
+         
         PauseMenu PauseMenu;
 
         CompositorNodeScene MazeSceneNode;
@@ -99,7 +99,6 @@ namespace FreezingArcher.Game
             ValidMessages = new[] {
                 (int) MessageId.Input,
                 (int) MessageId.Update,
-                (int) MessageId.Running,
                 (int) MessageId.HealthChanged,
                 (int) MessageId.CollisionDetected,
                 (int) MessageId.StaminaChanged,
@@ -122,6 +121,7 @@ namespace FreezingArcher.Game
             FPS_Text.Font = new Gwen.Font (app.RendererContext.GwenRenderer);
             FPS_Text.SetPosition (5, 5);
             FPS_Text.Font.Size = 15;
+            FPS_Text.Hide ();
 
             HealthOverlayNode.OverlayTexture = rendererContext.CreateTexture2D ("bloodsplatter", true, "Content/bloodsplatter.png");
             HealthOverlayNode.Factor = 0;
@@ -932,11 +932,6 @@ namespace FreezingArcher.Game
             if (msg.MessageId == (int) MessageId.FlashlightToggled)
             {
                 playerFlashlightTrigger.Play ();
-            }
-
-            if (msg.MessageId == (int) MessageId.Running)
-            {
-                
             }
         }
 

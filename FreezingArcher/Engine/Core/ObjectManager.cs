@@ -3,8 +3,9 @@
 //
 //  Author:
 //       Martin Koppehel <martin.koppehel@st.ovgu.de>
+//       Fin Christensen <christensen.fin@gmail.com>
 //
-//  Copyright (c) 2015 Martin Koppehel
+//  Copyright (c) 2015 Martin Koppehel, Fin Christensen
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by

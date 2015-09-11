@@ -68,7 +68,7 @@ namespace FreezingArcher.Content
                     movement *= 0.25f;
                     msr = 1;
                 }
-                else */if (im.IsActionDown ("run"))
+                else */if (im.IsActionDown ("run") && im.IsActionDown("forward"))
                 {
                     if (Entity.HasComponent<StaminaComponent>())
                     {

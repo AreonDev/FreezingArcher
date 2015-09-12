@@ -860,6 +860,9 @@ namespace FreezingArcher.Game
             var im = msg as InputMessage;
             if (im != null)
             {
+                if (im.IsActionPressed ("drop"))
+                    application.Window.CaptureMouse ();
+
                 #if RELEASE
                 if (im.IsActionPressed ("frame"))
                 {

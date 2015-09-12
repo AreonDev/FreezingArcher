@@ -241,13 +241,22 @@ namespace FreezingArcher.Core
         /// </summary>
         public void PollEvents ()
         {
+            if (update)
+            {
+                if (mouse_captured)
+                    captureMouse ();
+                else
+                    releaseMouse ();
+                update = false;
+            }
+
             Glfw.PollEvents ();
         }
 
         /// <summary>
         /// Captures the mouse pointer.
         /// </summary>
-        public void CaptureMouse ()
+        void captureMouse ()
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Capturing mouse in window '{0}'", Title);
             CursorMode = CursorMode.CursorCaptured | CursorMode.CursorHidden;
@@ -257,10 +266,19 @@ namespace FreezingArcher.Core
                 MessageCreated(new MouseCaptureMessage(true));
         }
 
+        bool mouse_captured = false;
+        bool update = false;
+
+        public void CaptureMouse ()
+        {
+            mouse_captured = true;
+            update = true;
+        }
+
         /// <summary>
         /// Releases the mouse pointer.
         /// </summary>
-        public void ReleaseMouse ()
+        void releaseMouse ()
         {
             Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Releasing mouse from window '{0}'", Title);
             CursorMode = CursorMode.CursorNormal;
@@ -268,6 +286,12 @@ namespace FreezingArcher.Core
 
             if (MessageCreated != null)
                 MessageCreated(new MouseCaptureMessage(false));
+        }
+
+        public void ReleaseMouse ()
+        {
+            mouse_captured = false;
+            update = true;
         }
 
         /// <summary>

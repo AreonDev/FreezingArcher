@@ -221,7 +221,7 @@ namespace FreezingArcher.Game
             }
         }
 
-        public int[] ValidMessages{get;}
+        public int[] ValidMessages{ get; set; }
 
         #endregion
     }

@@ -83,7 +83,11 @@ namespace FreezingArcher.Game.Maze
                 health.Health = (health.Health - item.AttackStrength) < 0 ? 0 : health.Health - item.AttackStrength;
                 var tmp = (health.MaximumHealth - health.Health) / health.MaximumHealth;
                 var pos = model.Position;
-                pos.Y = -15.5f * tmp - 0.5f;
+                pos.Y = 7.75f * tmp - 0.5f;
+
+                if (wallcomp.IsOverworld)
+                    pos.Y *= -2;
+
                 model.Position = pos;
                 var rbpos = rigidBody.Position;
                 rbpos.Y = pos.Y + 8;

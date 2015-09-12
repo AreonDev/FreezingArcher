@@ -46,6 +46,11 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         public static readonly bool DefaultIsMoving = false;
 
+        /// <summary>
+        /// The default is overworld.
+        /// </summary>
+        public static readonly bool DefaultIsOverworld = true;
+
         #endregion
 
         /// <summary>
@@ -65,5 +70,11 @@ namespace FreezingArcher.Game.Maze
         /// </summary>
         /// <value><c>true</c> if this instance is moving; otherwise, <c>false</c>.</value>
         public bool IsMoving { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is overworld.
+        /// </summary>
+        /// <value><c>true</c> if this instance is overworld; otherwise, <c>false</c>.</value>
+        public bool IsOverworld { get; set; }
     }
 }

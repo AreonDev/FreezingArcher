@@ -944,7 +944,7 @@ namespace FreezingArcher.Game
 
         #region IMessageConsumer implementation
 
-        bool maze_leaved = false;
+        bool maze_left = false;
 
         public void ConsumeMessage (IMessage msg)
         {
@@ -1100,7 +1100,7 @@ namespace FreezingArcher.Game
 
                         if (entity.Name.Contains ("exit") && mouseCollisionBodyFraction < 1)
                         {
-                            if (!maze_leaved)
+                            if (!maze_left)
                             {
                                 warpingNode.Stop();
                                 GameState endstate = application.Game.GetGameState ("endscreen_state");
@@ -1111,7 +1111,7 @@ namespace FreezingArcher.Game
                                 if (MessageCreated != null)
                                     MessageCreated (new GameEndedMessage ());
 
-                                maze_leaved = true;
+                                maze_left = true;
 
                                 Logger.Log.AddLogEntry (LogLevel.Info, "InventoryGUI", "Leaving maze...");
                                 return;
@@ -1165,7 +1165,11 @@ namespace FreezingArcher.Game
                                 health.Health = temp_health < 0 ? 0 : temp_health;
                                 var tmp = (health.MaximumHealth - health.Health) / health.MaximumHealth;
                                 var tmp_pos = model.Position;
-                                tmp_pos.Y = -15.5f * tmp - 0.5f;
+                                tmp_pos.Y = 7.75f * tmp - 0.5f;
+
+                                if (wallcomp.IsOverworld)
+                                    tmp_pos.Y *= -2;
+
                                 model.Position = tmp_pos;
                                 var rbpos = rb.Position;
                                 rbpos.Y = tmp_pos.Y + 8;

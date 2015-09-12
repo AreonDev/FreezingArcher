@@ -218,7 +218,7 @@ namespace FreezingArcher.Game.Maze
         /// <param name="portalSpawnFactor">Portal spawn factor. The higher the less portals will appear.</param>
         public Maze CreateMaze<TTheme>(int seed, MessageProvider messageProvider, PhysicsManager physics, AudioManager am, 
             int sizeX = 40, int sizeY = 40, float scale = 10, double turbulence = 2,
-            int maximumContinuousPathLength = 20, uint portalSpawnFactor = 3) where TTheme : IMazeTheme, new ()
+            int maximumContinuousPathLength = 20, uint portalSpawnFactor = 2) where TTheme : IMazeTheme, new ()
         {
             Maze maze = new Maze (objectManager, messageProvider, am, seed, sizeX, sizeY, scale, physics, new TTheme (),
                 InitializeMaze, CreateMaze, AddMazeToGameState, CalculatePathToExit, SpawnPortals, turbulence,

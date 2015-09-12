@@ -174,6 +174,7 @@ namespace FreezingArcher.Game.Maze
                     AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
                 entity.GetComponent<WallComponent>().IsEdge = cell.IsEdge;
+                entity.GetComponent<WallComponent>().IsOverworld = true;
 
                 state.PhysicsManager.World.AddBody (body);
 

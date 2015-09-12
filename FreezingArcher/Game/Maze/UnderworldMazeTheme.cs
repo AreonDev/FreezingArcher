@@ -161,8 +161,8 @@ namespace FreezingArcher.Game.Maze
                 transform.Rotation = cell.Rotation;
                 transform.Scale = scale;
 
-                var body = new RigidBody (new BoxShape (scale.X * 2, scale.Y * 4, scale.Z * 2));
-                body.Position = transform.Position.ToJitterVector () + JVector.Up * (scale.Y * 4 * 0.5f);
+                var body = new RigidBody (new BoxShape (scale.X * 2, scale.Y * 4.5f, scale.Z * 2));
+                body.Position = transform.Position.ToJitterVector () + JVector.Up * (scale.Y * 4.5f * 0.5f);
                 body.Material.Restitution = -10;
                 body.IsStatic = true;
                 body.Tag = entity;
@@ -173,10 +173,38 @@ namespace FreezingArcher.Game.Maze
                     AffectedByPhysics.Orientation | AffectedByPhysics.Position;
 
                 entity.GetComponent<WallComponent>().IsEdge = cell.IsEdge;
+                entity.GetComponent<WallComponent>().IsOverworld = false;
 
                 state.PhysicsManager.World.AddBody (body);
 
                 entity.Suspend();
+
+                var ground = EntityFactory.Instance.CreateWith ("ground" + gridPosition.X + "." + gridPosition.Y,
+                    state.MessageProxy, systems: systems);
+                var groundModel = new ModelSceneObject ("lib/Renderer/TestGraphics/Ground/underworld_ground.xml");
+                ground.GetComponent<ModelComponent>().Model = groundModel;
+
+                scnobjarr_ground.AddObject (groundModel);
+                //state.Scene.AddObject(model);
+
+                var groundTransform = ground.GetComponent<TransformComponent>();
+                groundTransform.Position = worldPosition;
+                groundTransform.Scale = scale;
+
+                var groundBody = new RigidBody (new BoxShape (2.0f * scale.X, 0.2f, 2.0f * scale.Y));
+                groundBody.Position = new JVector(groundTransform.Position.X, groundTransform.Position.Y - 0.1f, groundTransform.Position.Z);
+                groundBody.Material.Restitution = -10;
+                groundBody.IsStatic = true;
+                groundBody.Tag = cell;
+
+                ground.GetComponent<PhysicsComponent> ().RigidBody = groundBody;
+                ground.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
+                ground.GetComponent<PhysicsComponent> ().PhysicsApplying =
+                    AffectedByPhysics.Orientation | AffectedByPhysics.Position;
+
+                state.PhysicsManager.World.AddBody (groundBody);
+
+                ground.Suspend();
             }
 
             return entity;

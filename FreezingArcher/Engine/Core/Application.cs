@@ -240,7 +240,7 @@ namespace FreezingArcher.Core
                     Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Mouse entered window '{0}'",
                         Window.Title);
                 else
-                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Mouse leaved window '{0}'",
+                    Logger.Log.AddLogEntry (LogLevel.Debug, ClassName, "Mouse left window '{0}'",
                         Window.Title);
 
                 if (MessageCreated != null)

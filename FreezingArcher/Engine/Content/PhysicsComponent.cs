@@ -71,6 +71,8 @@ namespace FreezingArcher.Content
         /// </summary>
         public static readonly float DefaultSpeedMultiplier = 1f;
 
+        public static readonly bool DefaultIsMoveable = true;
+
         /// <summary>
         /// Gets or sets the rigid body.
         /// </summary>
@@ -103,6 +105,8 @@ namespace FreezingArcher.Content
         public AffectedByPhysics PhysicsApplying {get; set;}
 
         public float SpeedMultiplier { get; set; }
+
+        public bool IsMoveable { get; set; }
 
         public override void Destroy()
         {

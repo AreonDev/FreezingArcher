@@ -60,6 +60,10 @@ namespace FreezingArcher.Content
             {
                 InputMessage im = msg as InputMessage;
 
+                var pc = Entity.GetComponent<PhysicsComponent>();
+                if (pc != null && !pc.IsMoveable)
+                    return;
+
                 isRunning = false;
 
                 /*

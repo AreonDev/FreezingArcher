@@ -747,14 +747,12 @@ namespace FreezingArcher.Game
                         ColorCorrectionNode.Contrast -= (float) um.TimeStamp.TotalSeconds * 0.3f;
                         WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 0.5f;
                     }
-                    else
-                    if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
+                    else if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
                     {
                         SwitchMaze ();
                         entered_portal = false;
                     }
-                    else
-                    if (!entered_portal && ColorCorrectionNode.Contrast < 1.0f)
+                    else if (!entered_portal && ColorCorrectionNode.Contrast < 1.0f)
                     {
                         //ColorCorrectionNode.Brightness -= (float) um.TimeStamp.TotalSeconds * 0.8f;
                         ColorCorrectionNode.Contrast += (float) um.TimeStamp.TotalSeconds * 0.3f;
@@ -764,6 +762,7 @@ namespace FreezingArcher.Game
                     {
                         ColorCorrectionNode.Contrast = 1.0f;
                         switch_maze = false;
+                        Player.GetComponent<PhysicsComponent>().IsMoveable = true;
 
                         //WarpingNode.WarpTexture = DefaultWarpingTexture;
                         WarpingNode.WarpFactor = 0;
@@ -796,13 +795,12 @@ namespace FreezingArcher.Game
                         {
                             entered_portal = true;
                             switch_maze = true;
-
+                            Player.GetComponent<PhysicsComponent>().IsMoveable = false;
                             switchMazeSound.Play ();
                         }
                     }
                 }
-                else
-                if (cdm.Body2.Tag == null)
+                else if (cdm.Body2.Tag == null)
                 {
                     if (cdm.Body1.Tag == null)
                         return;
@@ -817,7 +815,7 @@ namespace FreezingArcher.Game
                         {
                             entered_portal = true;
                             switch_maze = true;
-
+                            Player.GetComponent<PhysicsComponent>().IsMoveable = false;
                             switchMazeSound.Play ();
                         }
                     }

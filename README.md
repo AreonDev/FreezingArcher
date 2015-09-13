@@ -40,8 +40,16 @@ External libraries
  * [Pencil.Gaming](https://github.com/andykorth/Pencil.Gaming) from Andy Korth and Antonie Blom, licensed under [MIT](https://github.com/andykorth/Pencil.Gaming/blob/master/Pencil.Gaming/LICENSE.TXT)  
  we created out own fork [here](https://github.com/AreonDev/Pencil.Gaming)
  * [CommandLine](http://commandline.codeplex.com/) from Giacomo Stelluti Scala, licensed under [MIT](http://commandline.codeplex.com/license)
- * [Henge3D](https://github.com/bretternst/henge3d) from Brett Ernst, licensed under [MIT](http://henge3d.codeplex.com/license)
+ * [Jitter](https://code.google.com/p/jitterphysics/) from Thorben Linneweber
  * [Assimp-Net](https://code.google.com/p/assimp-net/) from Nicholas Woodfield, licensed under [MIT](http://opensource.org/licenses/mit-license.php)  
 we created our own fork [here](https://github.com/AreonDev/assimp-net)
  * [GWEN dotnet](https://code.google.com/p/gwen-dotnet/), licensed under [MIT](http://opensource.org/licenses/mit-license.php)  
 we created our own fork [here](https://github.com/AreonDev/gwen-dotnet)
+
+Used Textures and Models
+-------------
+ * http://www.turbosquid.com/3d-models/free-max-model-pick-axe/677178
+ * http://tf3dm.com/3d-model/low-poly-rock-4631.html
+ * http://tf3dm.com/3d-model/low-poly-rock-set-5-different-rocks-92678.html
+ * http://www.turbosquid.com/3d-models/free-max-model-apple/549455
+ * http://www.c4d-jack.de/php/textures/index.php?spgmGal=SRT_Packages

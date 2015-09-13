@@ -37,6 +37,7 @@ Have a look at the [wiki](https://github.com/fin-ger/FreezingArcher/wiki) for so
 External libraries
 ------------------
  * [STA.INIFile](http://www.codeproject.com/Articles/35401/A-Cross-platform-C-Class-for-Using-INI-Files-to-St) from Moreno Airoldi, licensed under [The Code Project Open License (CPOL)](http://www.codeproject.com/info/cpol10.aspx)
+ * [FastRandom](http://www.codeproject.com/Articles/9187/A-fast-equivalent-for-System-Random) from Colin Green
  * [Pencil.Gaming](https://github.com/andykorth/Pencil.Gaming) from Andy Korth and Antonie Blom, licensed under [MIT](https://github.com/andykorth/Pencil.Gaming/blob/master/Pencil.Gaming/LICENSE.TXT)  
  we created out own fork [here](https://github.com/AreonDev/Pencil.Gaming)
  * [CommandLine](http://commandline.codeplex.com/) from Giacomo Stelluti Scala, licensed under [MIT](http://commandline.codeplex.com/license)

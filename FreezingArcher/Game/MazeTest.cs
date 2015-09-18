@@ -47,6 +47,17 @@ namespace FreezingArcher.Game
     /// </summary>
     public sealed class MazeTest : IMessageConsumer, IMessageCreator
     {
+        #if PRESENTATION
+        const int OverworldScobisCount = 1;
+        const int OverworldCaligoCount = 1;
+        const int OverworldPassusCount = 1;
+        const int OverworldViridionCount = 1;
+        const int OverworldGhostCount = 1;
+        const int UnderworldCaligoCount = 1;
+        const int UnderworldPassusCount = 1;
+        const int UnderworldRoachesCount = 1;
+        const int UnderworldFenFireCount = 1;
+        #else
         const int OverworldScobisCount = 2;
         const int OverworldCaligoCount = 1;
         const int OverworldPassusCount = 2;
@@ -56,6 +67,7 @@ namespace FreezingArcher.Game
         const int UnderworldPassusCount = 4;
         const int UnderworldRoachesCount = 5;
         const int UnderworldFenFireCount = 5;
+        #endif
 
         Source switchMazeSound;
         Source playerDamagedSound;
@@ -207,7 +219,11 @@ namespace FreezingArcher.Game
             var rand = new FastRandom (seed);
             Logger.Log.AddLogEntry (LogLevel.Debug, "MazeTest", "Seed: {0}", seed);
 
+            #if PRESENTATION
+            maze [0] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next (), state.MessageProxy, state.PhysicsManager, app.AudioManager, 10, 10);
+            #else
             maze [0] = mazeGenerator.CreateMaze<OverworldMazeTheme> (rand.Next (), state.MessageProxy, state.PhysicsManager, app.AudioManager, 30, 30);
+            #endif
             maze [0].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
             maze [0].AIManager.RegisterEntity (Player);
 
@@ -251,7 +267,11 @@ namespace FreezingArcher.Game
             AddAudio (state);
 
             state.Scene.CameraManager.AddCamera (new BaseCamera (Player, state.MessageProxy), "player");
+            #if PRESENTATION
+            maze [1] = mazeGenerator.CreateMaze<UnderworldMazeTheme> (rand.Next (), state.MessageProxy, state.PhysicsManager, app.AudioManager, 10, 10);
+            #else
             maze [1] = mazeGenerator.CreateMaze<UnderworldMazeTheme> (rand.Next (), state.MessageProxy, state.PhysicsManager, app.AudioManager, 30, 30);
+            #endif
             maze [1].PlayerPosition += Player.GetComponent<TransformComponent> ().Position;
             maze [1].AIManager.RegisterEntity (Player);
 
@@ -572,7 +592,11 @@ namespace FreezingArcher.Game
         void SwitchMaze ()
         {
             game.CurrentGameState.Scene.Active = false;
-            game.CurrentGameState.AudioContext.StopAllSounds();
+
+            if (game.CurrentGameState.AudioContext != null)
+            {
+                game.CurrentGameState.AudioContext.StopAllSounds ();
+            }
 
             if (currentMaze == 0)
             {
@@ -631,6 +655,7 @@ namespace FreezingArcher.Game
         bool entered_portal = false;
         bool can_play_background = false;
         DateTime lastDamage = DateTime.Now;
+        DateTime lastPortal = DateTime.Now;
 
         /// <summary>
         /// Processes the incoming message
@@ -742,32 +767,41 @@ namespace FreezingArcher.Game
 
                 if (switch_maze)
                 {
-                    if (entered_portal && ColorCorrectionNode.Contrast > 0.0f)
+                    if ((DateTime.Now - lastPortal).TotalSeconds >= 10.0f)
                     {
-                        //ColorCorrectionNode.Brightness += (float) um.TimeStamp.TotalSeconds * 0.8f;
-                        ColorCorrectionNode.Contrast -= (float) um.TimeStamp.TotalSeconds * 0.3f;
-                        WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 0.5f;
-                    }
-                    else if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
-                    {
-                        SwitchMaze ();
-                        entered_portal = false;
-                    }
-                    else if (!entered_portal && ColorCorrectionNode.Contrast < 1.0f)
-                    {
-                        //ColorCorrectionNode.Brightness -= (float) um.TimeStamp.TotalSeconds * 0.8f;
-                        ColorCorrectionNode.Contrast += (float) um.TimeStamp.TotalSeconds * 0.3f;
-                        WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 0.5f;
+                        if (entered_portal && ColorCorrectionNode.Contrast > 0.0f)
+                        {
+                            //ColorCorrectionNode.Brightness += (float) um.TimeStamp.TotalSeconds * 0.8f;
+                            ColorCorrectionNode.Contrast -= (float) um.TimeStamp.TotalSeconds * 0.3f;
+                            WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 0.5f;
+                        }
+                        else
+                        if (entered_portal && ColorCorrectionNode.Contrast <= 0.0f)
+                        {
+                            SwitchMaze ();
+                            entered_portal = false;
+                        }
+                        else
+                        if (!entered_portal && ColorCorrectionNode.Contrast < 1.0f)
+                        {
+                            //ColorCorrectionNode.Brightness -= (float) um.TimeStamp.TotalSeconds * 0.8f;
+                            ColorCorrectionNode.Contrast += (float) um.TimeStamp.TotalSeconds * 0.3f;
+                            WarpingNode.WarpFactor = (1 - ColorCorrectionNode.Contrast) * 0.5f;
+                        }
+                        else
+                        {
+                            ColorCorrectionNode.Contrast = 1.0f;
+                            switch_maze = false;
+                            Player.GetComponent<PhysicsComponent> ().IsMoveable = true;
+
+                            //WarpingNode.WarpTexture = DefaultWarpingTexture;
+                            WarpingNode.WarpFactor = 0;
+
+                            lastPortal = DateTime.Now;
+                        }
                     }
                     else
-                    {
-                        ColorCorrectionNode.Contrast = 1.0f;
                         switch_maze = false;
-                        Player.GetComponent<PhysicsComponent>().IsMoveable = true;
-
-                        //WarpingNode.WarpTexture = DefaultWarpingTexture;
-                        WarpingNode.WarpFactor = 0;
-                    }
                 }
 
                 if (Player.GetComponent<TransformComponent> ().Position.Y <= -10.0f &&
@@ -783,16 +817,17 @@ namespace FreezingArcher.Game
                         Player.GetComponent<PhysicsComponent> ().RigidBody.Position.X, 8.0f, 
                         Player.GetComponent<PhysicsComponent> ().RigidBody.Position.Z);*/
 
+                    /*
                     if (Player.GetComponent<PhysicsComponent> ().RigidBody.LinearVelocity.Y > 0)
                     {
                         Player.GetComponent<PhysicsComponent> ().RigidBody.LinearVelocity =
                             new Jitter.LinearMath.JVector (Player.GetComponent<PhysicsComponent> ().RigidBody.LinearVelocity.X,
                             0.0f, Player.GetComponent<PhysicsComponent> ().RigidBody.LinearVelocity.Z);
-                    }
+                    }*/
 
                     if ((DateTime.Now - lastDamage).TotalSeconds > 0.5f)
                     {
-                        Player.GetComponent<HealthComponent> ().Health -= Player.GetComponent<HealthComponent> ().MaximumHealth * 0.1f;
+                        //Player.GetComponent<HealthComponent> ().Health -= Player.GetComponent<HealthComponent> ().MaximumHealth * 0.1f;
                         lastDamage = DateTime.Now;
                     }
                 }
@@ -813,12 +848,15 @@ namespace FreezingArcher.Game
 
                     if (mc.IsPortal)
                     {
-                        if (!switch_maze)
+                        if ((DateTime.Now - lastDamage).TotalSeconds > 10.0f)
                         {
-                            entered_portal = true;
-                            switch_maze = true;
-                            Player.GetComponent<PhysicsComponent>().IsMoveable = false;
-                            switchMazeSound.Play ();
+                            if (!switch_maze)
+                            {
+                                entered_portal = true;
+                                switch_maze = true;
+                                Player.GetComponent<PhysicsComponent> ().IsMoveable = false;
+                                switchMazeSound.Play ();
+                            }
                         }
                     }
                 }
@@ -833,12 +871,15 @@ namespace FreezingArcher.Game
 
                     if (mc.IsPortal)
                     {
-                        if (!switch_maze)
+                        if ((DateTime.Now - lastDamage).TotalSeconds > 10.0f)
                         {
-                            entered_portal = true;
-                            switch_maze = true;
-                            Player.GetComponent<PhysicsComponent>().IsMoveable = false;
-                            switchMazeSound.Play ();
+                            if (!switch_maze)
+                            {
+                                entered_portal = true;
+                                switch_maze = true;
+                                Player.GetComponent<PhysicsComponent> ().IsMoveable = false;
+                                switchMazeSound.Play ();
+                            }
                         }
                     }
                 }

@@ -33,7 +33,7 @@ namespace FreezingArcher.Game.Maze
     {
         void Init (GameState state);
 
-        Entity ProcessAndAddCell (MazeCell cell, Vector3 worldPosition, Vector2i gridPosition);
+        Entity ProcessAndAddCell (MazeCell cell, Vector3 worldPosition, Vector2i gridPosition, uint sizex, uint sizey);
 
         void Finish ();
     }

@@ -71,7 +71,7 @@ namespace FreezingArcher.Game.Maze
             scale = new Vector3 (4, 4, 4);
         }
 
-        public Entity ProcessAndAddCell (MazeCell cell, Vector3 worldPosition, Vector2i gridPosition)
+        public Entity ProcessAndAddCell (MazeCell cell, Vector3 worldPosition, Vector2i gridPosition, uint sizex, uint sizey)
         {
             Entity entity = null;
             if (cell.MazeCellType == MazeCellType.Ground)
@@ -119,12 +119,12 @@ namespace FreezingArcher.Game.Maze
                         exitTransform.Rotation = Quaternion.FromAxisAngle (Vector3.UnitY, MathHelper.ThreePiOver2);
                     }
                     else
-                    if (cell.Position.X == 29)
+                    if (cell.Position.X == (sizex - 1))
                     {
                         exitTransform.Rotation = Quaternion.FromAxisAngle (Vector3.UnitY, MathHelper.Pi);
                     }
                     else
-                    if (cell.Position.Y == 29)
+                    if (cell.Position.Y == (sizey - 1))
                     {
                         exitTransform.Rotation = Quaternion.FromAxisAngle (Vector3.UnitY, MathHelper.PiOver2);
                     }

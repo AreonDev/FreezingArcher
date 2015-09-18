@@ -737,35 +737,47 @@ namespace Jitter
         #region private void ArbiterCallback(object obj)
         private void ArbiterCallback(object obj)
         {
-            CollisionIsland island = obj as CollisionIsland;
-
-            int thisIterations;
-            if (island.Bodies.Count + island.Constraints.Count > 3) thisIterations = contactIterations;
-            else thisIterations = smallIterations;
-
-            for (int i = -1; i < thisIterations; i++)
+            try
             {
-                // Contact and Collision
-                foreach (Arbiter arbiter in island.arbiter)
+                CollisionIsland island = obj as CollisionIsland;
+
+                int thisIterations;
+                if (island.Bodies.Count + island.Constraints.Count > 3)
+                    thisIterations = contactIterations;
+                else
+                    thisIterations = smallIterations;
+
+                for (int i = -1; i < thisIterations; i++)
                 {
-                    int contactCount = arbiter.contactList.Count;
-                    for (int e = 0; e < contactCount; e++)
+                    // Contact and Collision
+                    foreach (Arbiter arbiter in island.arbiter)
                     {
-                        if (i == -1) arbiter.contactList[e].PrepareForIteration(timestep);
-                        else arbiter.contactList[e].Iterate();
+                        int contactCount = arbiter.contactList.Count;
+                        for (int e = 0; e < contactCount; e++)
+                        {
+                            if (i == -1)
+                                arbiter.contactList [e].PrepareForIteration (timestep);
+                            else
+                                arbiter.contactList [e].Iterate ();
+                        }
                     }
+
+                    //  Constraints
+                    foreach (Constraint c in island.constraints)
+                    {
+                        if (c.body1 != null && !c.body1.IsActive && c.body2 != null && !c.body2.IsActive)
+                            continue;
+
+                        if (i == -1)
+                            c.PrepareForIteration (timestep);
+                        else
+                            c.Iterate ();
+                    }
+
                 }
-
-                //  Constraints
-                foreach (Constraint c in island.constraints)
-                {
-                    if (c.body1 != null && !c.body1.IsActive && c.body2 != null && !c.body2.IsActive)
-                        continue;
-
-                    if (i == -1) c.PrepareForIteration(timestep);
-                    else c.Iterate();
-                }
-
+            }
+            catch
+            {
             }
         }
         #endregion

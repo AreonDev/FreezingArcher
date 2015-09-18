@@ -14,7 +14,7 @@
     <DebugType>full</DebugType>
     <Optimize>True</Optimize>
     <OutputPath>..\Build\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG;PRESENTATION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CustomCommands>

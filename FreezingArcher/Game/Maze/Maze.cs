@@ -50,7 +50,7 @@ namespace FreezingArcher.Game.Maze
     /// </summary>
     delegate void AddMazeToGameStateDelegate(AudioManager am, WeightedGraph<MazeCell, MazeCellEdgeWeight> graph,
         MessageProvider messageProvider, Entity[,] entities, ref Vector3 playerPosition, GameState state,
-        FastRandom rand, IMazeTheme theme, float scaling, uint maxX, int xOffs, int yOffs,
+        FastRandom rand, IMazeTheme theme, float scaling, uint maxX, uint maxY, int xOffs, int yOffs,
         Action<float, string> progressUpdate);
 
     /// <summary>
@@ -364,7 +364,7 @@ namespace FreezingArcher.Game.Maze
             if (addMazeToGameStateDelegate != null)
             {
                 addMazeToGameStateDelegate(audio, graph, state.MessageProxy, entities, ref playerPosition, state, rand, theme,
-                    Scale, (uint) Size.X, Offset.X, Offset.Y, progressUpdate);
+                    Scale, (uint) Size.X, (uint)Size.Y, Offset.X, Offset.Y, progressUpdate);
             }
             else
             {

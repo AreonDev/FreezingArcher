@@ -1165,7 +1165,7 @@ namespace FreezingArcher.Game
                                 health.Health = temp_health < 0 ? 0 : temp_health;
                                 var tmp = (health.MaximumHealth - health.Health) / health.MaximumHealth;
                                 var tmp_pos = model.Position;
-                                tmp_pos.Y = 7.75f * tmp - 0.5f;
+                                tmp_pos.Y = 7.5f * tmp + 0.25f;
 
                                 if (wallcomp.IsOverworld)
                                     tmp_pos.Y *= -2;

@@ -630,6 +630,7 @@ namespace FreezingArcher.Game
         bool switch_maze = false;
         bool entered_portal = false;
         bool can_play_background = false;
+        DateTime lastDamage = DateTime.Now;
 
         /// <summary>
         /// Processes the incoming message
@@ -769,10 +770,31 @@ namespace FreezingArcher.Game
                     }
                 }
 
-                if (Player.GetComponent<TransformComponent> ().Position.Y <= -10.0f && 
+                if (Player.GetComponent<TransformComponent> ().Position.Y <= -10.0f &&
                     finishedLoading && game.CurrentGameState.Name != "MazeLoadingScreen")
                 {
                     Player.GetComponent<HealthComponent> ().Health = 0.0f;
+                }
+                else if (Player.GetComponent<TransformComponent> ().Position.Y >= 5.9f &&
+                    finishedLoading && game.CurrentGameState.Name != "MazeLoadingScreen")
+                {/*
+                        
+                    Player.GetComponent<PhysicsComponent> ().RigidBody.Position = new Jitter.LinearMath.JVector (
+                        Player.GetComponent<PhysicsComponent> ().RigidBody.Position.X, 8.0f, 
+                        Player.GetComponent<PhysicsComponent> ().RigidBody.Position.Z);*/
+
+                    if (Player.GetComponent<PhysicsComponent> ().RigidBody.LinearVelocity.Y > 0)
+                    {
+                        Player.GetComponent<PhysicsComponent> ().RigidBody.LinearVelocity =
+                            new Jitter.LinearMath.JVector (Player.GetComponent<PhysicsComponent> ().RigidBody.LinearVelocity.X,
+                            0.0f, Player.GetComponent<PhysicsComponent> ().RigidBody.LinearVelocity.Z);
+                    }
+
+                    if ((DateTime.Now - lastDamage).TotalSeconds > 0.5f)
+                    {
+                        Player.GetComponent<HealthComponent> ().Health -= Player.GetComponent<HealthComponent> ().MaximumHealth * 0.1f;
+                        lastDamage = DateTime.Now;
+                    }
                 }
             }
 
@@ -915,17 +937,26 @@ namespace FreezingArcher.Game
                 ItemUseMessage ium = msg as ItemUseMessage;
                 if (ium.Usage.HasFlag (ItemUsage.Eatable) && ium.Item.ItemUsages.HasFlag (ItemUsage.Eatable))
                 {
-                    if (ium.Item.Entity.Name.Contains ("choco_milk") || ium.Item.Entity.Name.Contains ("soda_can") ||
-                                           ium.Item.Entity.Name.Contains ("mate"))
+                    if (ium.Entity.Name != null)
                     {
-                        if (playerDrinked.GetState () != SourceState.Playing)
-                            playerDrinked.Play ();
-                    }
-                    else
-                    if (ium.Item.Entity.Name.Contains ("apple") || ium.Item.Entity.Name.Contains ("toast"))
-                    {
-                        if (playerEaten.GetState () != SourceState.Playing)
-                            playerEaten.Play ();
+                        try
+                        {
+                            if (ium.Item.Entity.Name.Contains ("choco_milk") || ium.Item.Entity.Name.Contains ("soda_can") ||
+                            ium.Item.Entity.Name.Contains ("mate"))
+                            {
+                                if (playerDrinked.GetState () != SourceState.Playing)
+                                    playerDrinked.Play ();
+                            }
+                            else
+                            if (ium.Item.Entity.Name.Contains ("apple") || ium.Item.Entity.Name.Contains ("toast"))
+                            {
+                                if (playerEaten.GetState () != SourceState.Playing)
+                                    playerEaten.Play ();
+                            }
+                        }
+                        catch
+                        {
+                        }
                     }
                 }
             }

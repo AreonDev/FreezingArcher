@@ -564,6 +564,8 @@ namespace FreezingArcher.Game
 
     public class InventoryGUI : IMessageConsumer, IMessageCreator
     {
+        ImagePanel bla_unfug_crosshair;
+
         internal void dropItem(Base btn, ItemComponent item, Inventory inv, bool destroy = false)
         {
             var barbtn = barItems.FirstOrDefault(b => b.Item == item);
@@ -611,6 +613,14 @@ namespace FreezingArcher.Game
 
             itemGridFrame = new Base (window);
             itemGridFrame.SetSize ((BoxSize + 1) * inventory.Size.X, (BoxSize + 1) * inventory.Size.Y);
+
+
+            bla_unfug_crosshair = new ImagePanel (canvasFrame);
+            bla_unfug_crosshair.SetSize (16, 16);
+            bla_unfug_crosshair.ImageName = "Content/crosshair.png";
+            bla_unfug_crosshair.SetPosition ((canvasFrame.Width / 2.0f) - (bla_unfug_crosshair.Width / 2.0f), 
+                (canvasFrame.Height / 2.0f) - (bla_unfug_crosshair.Width / 2.0f));
+            bla_unfug_crosshair.BringToFront ();
 
             itemInfoFrame = new Base (window);
             itemInfoFrame.SetSize (infoFrameSize, itemGridFrame.Height);
@@ -960,6 +970,10 @@ namespace FreezingArcher.Game
                     (canvasFrame.Height - window.Height - inventoryBar.Height) / 2);
 
                 Item_Text.X = application.Window.Size.X - Item_Text.Width - 5;
+
+                bla_unfug_crosshair.SetPosition ((wrm.Width / 2.0f) - (bla_unfug_crosshair.Width / 2.0f), 
+                    (wrm.Height / 2.0f) - (bla_unfug_crosshair.Width / 2.0f));
+                bla_unfug_crosshair.BringToFront ();
             }
 
             if (msg.MessageId == (int) MessageId.UpdateLocale)

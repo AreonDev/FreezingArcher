@@ -27,6 +27,7 @@
     <DocumentationFile>..\Build\Debug\NoWayOut.xml</DocumentationFile>
     <ConsolePause>false</ConsolePause>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <Commandlineparameters>-f -r "1280x720"</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -377,6 +378,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\figure_color.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\crosshair.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

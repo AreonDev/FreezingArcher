@@ -213,6 +213,11 @@ namespace FreezingArcher.Game
             Player.GetComponent<PhysicsComponent> ().World = state.PhysicsManager.World;
             Player.GetComponent<PhysicsComponent> ().PhysicsApplying = AffectedByPhysics.Position;
 
+            #if PRESENTATION
+            Player.GetComponent<HealthComponent>().MaximumHealth = 500;
+            Player.GetComponent<HealthComponent>().Health = 500;
+            #endif
+
             state.PhysicsManager.World.AddBody (playerBody);
 
             int seed = new FastRandom ().Next ();
@@ -801,7 +806,10 @@ namespace FreezingArcher.Game
                         }
                     }
                     else
+                    {
                         switch_maze = false;
+                        Player.GetComponent<PhysicsComponent> ().IsMoveable = true;
+                    }
                 }
 
                 if (Player.GetComponent<TransformComponent> ().Position.Y <= -10.0f &&

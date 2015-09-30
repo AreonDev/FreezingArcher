@@ -45,7 +45,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>..\Build\Release\NoWayOut.xml</DocumentationFile>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <DefineConstants>RELEASE</DefineConstants>
+    <DefineConstants>RELEASE;PRESENTATION</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

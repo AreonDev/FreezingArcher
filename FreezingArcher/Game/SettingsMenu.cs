@@ -70,7 +70,7 @@ namespace FreezingArcher.Game
             gammaSlider = new HorizontalSlider (window);
             gammaSlider.SnapToNotches = false;
             gammaSlider.Min = 0;
-            gammaSlider.Max = 2;
+            gammaSlider.Max = 3;
             gammaSlider.Value = gamma;
             gammaSlider.ValueChanged += (sender, arguments) => {
                 var slider = sender as HorizontalSlider;

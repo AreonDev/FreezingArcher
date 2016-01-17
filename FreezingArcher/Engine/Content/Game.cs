@@ -58,7 +58,7 @@ namespace FreezingArcher.Content
             MessageProvider = messageProvider;
             RendererContext = rendererContext;
 
-            MazeSceneNode = scenenode;
+            SceneNode = scenenode;
 
             GameStateGraph = objmnr.CreateOrRecycle<DirectedWeightedGraph<GameState, GameStateTransition>>();
             GameStateGraph.Init();
@@ -80,7 +80,7 @@ namespace FreezingArcher.Content
         MessageProvider MessageProvider;
         RendererContext RendererContext;
 
-        public CompositorNodeScene MazeSceneNode { get; set;}
+        public CompositorNodeScene SceneNode { get; set;}
 
         /// <summary>
         /// Gets the game state graph.
@@ -111,7 +111,7 @@ namespace FreezingArcher.Content
                     currentNode.Data.Scene.CameraManager.ToggleCamera();
                 }
                     
-                MazeSceneNode.Scene = currentNode.Data.Scene;
+                SceneNode.Scene = currentNode.Data.Scene;
 
                 currentNode.Data.MessageProxy.StartProcessing();
                 return true;
@@ -152,7 +152,7 @@ namespace FreezingArcher.Content
                 currentNode.Data.Scene.CameraManager.ToggleCamera();
             }
 
-            MazeSceneNode.Scene = currentNode.Data.Scene;;
+            SceneNode.Scene = currentNode.Data.Scene;;
             
             currentNode.Data.MessageProxy.StartProcessing();
             return true;

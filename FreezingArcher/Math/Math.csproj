@@ -38,6 +38,7 @@
         <Command type="Clean" command="rm -f ${TargetDir}/Math.xml" />
       </CustomCommands>
     </CustomCommands>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

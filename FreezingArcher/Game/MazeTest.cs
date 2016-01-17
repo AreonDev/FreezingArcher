@@ -58,11 +58,10 @@ namespace FreezingArcher.Game
         const int UnderworldRoachesCount = 1;
         const int UnderworldFenFireCount = 1;
         #else
-        const int OverworldScobisCount = 2;
+        const int OverworldScobisCount = 3;
         const int OverworldCaligoCount = 1;
-        const int OverworldPassusCount = 2;
-        const int OverworldViridionCount = 2;
-        const int OverworldGhostCount = 3;
+        const int OverworldViridionCount = 3;
+        const int OverworldGhostCount = 4;
         const int UnderworldCaligoCount = 2;
         const int UnderworldPassusCount = 4;
         const int UnderworldRoachesCount = 5;
@@ -115,7 +114,7 @@ namespace FreezingArcher.Game
                 (int) MessageId.CollisionDetected,
                 (int) MessageId.StaminaChanged,
                 (int) MessageId.ItemUse,
-                (int)MessageId.FlashlightToggled
+                (int) MessageId.FlashlightToggled
             };
             messageProvider += this;
             mazeGenerator = new MazeGenerator (objmnr);
@@ -140,7 +139,7 @@ namespace FreezingArcher.Game
             HealthOverlayNode.Blending = OverlayBlendMode.Multiply;
             warpingNode.WarpTexture = rendererContext.CreateTexture2D ("warp", true, "Content/warp.jpg");
 
-            game.MazeSceneNode = MazeSceneNode;
+            game.SceneNode = MazeSceneNode;
 
             game.AddGameState ("maze_overworld", Content.Environment.Default, null);
             var state = game.GetGameState ("maze_overworld");

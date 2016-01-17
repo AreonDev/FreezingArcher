@@ -26,6 +26,7 @@ using FreezingArcher.Messaging.Interfaces;
 using FreezingArcher.Math;
 using FreezingArcher.Configuration;
 using FreezingArcher.Core;
+using System.Xml.Linq;
 
 namespace FreezingArcher.Content
 {
@@ -43,11 +44,18 @@ namespace FreezingArcher.Content
         {
             base.Init(messageProvider, entity);
 
+            DoSmoothing = true;
+            SmoothingFactor = 7;
+
             NeededComponents = new[] { typeof(TransformComponent) };
 
             internalValidMessages = new[] { (int) MessageId.Input };
             messageProvider += this;
         }
+
+        public float SmoothingFactor { get; set; }
+
+        public bool DoSmoothing { get; set; }
 
         readonly float movement =
             (float) ConfigManager.Instance ["freezing_archer"].GetDouble("general", "mouse_speed") * 0.0001f;
@@ -58,6 +66,9 @@ namespace FreezingArcher.Content
         float rotationX;
         float rotationY;
         float rotationZ;
+
+        float last_x = 0;
+        float last_y = 0;
 
         /// <summary>
         /// Processes the incoming message
@@ -74,6 +85,12 @@ namespace FreezingArcher.Content
 
                 float x = im.MouseMovement.Y * movement * (float) im.DeltaTime.TotalMilliseconds;
                 float y = im.MouseMovement.X * -movement * (float) im.DeltaTime.TotalMilliseconds;
+
+                x = (SmoothingFactor * last_x + x) / (SmoothingFactor + 1);
+                y = (SmoothingFactor * last_y + y) / (SmoothingFactor + 1);
+
+                last_x = x;
+                last_y = y;
 
                 if (rotationX + x > clampTop)
                 {

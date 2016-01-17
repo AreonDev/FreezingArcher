@@ -23,6 +23,7 @@
 using FreezingArcher.Core;
 using FreezingArcher.Renderer.Compositor;
 using FreezingArcher.Localization;
+using Gwen.Control.Property;
 
 namespace FreezingArcher.Game
 {
